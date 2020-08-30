@@ -10,9 +10,14 @@ const App: FC = () => {
     },
     []
   )
+  const onClick = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+    const base = e.currentTarget.getBoundingClientRect()
+    const [x, y] = [e.clientX - base.x, e.clientY - base.y]
+    setStones((prev) => [...prev, [Math.round(x / 50), Math.round(y / 50)]])
+  }
   return (
     <div className="App">
-      <svg width="800px" height="800px">
+      <svg width="800px" height="800px" onClick={onClick}>
         { points.map(
           (x, i) => <line key={i} x1={x} y1="50" x2={x} y2="750" stroke="black" />
         )
