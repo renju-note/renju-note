@@ -45,7 +45,7 @@ const App: FC = () => {
           ([i, j], n) => {
             const fill = n % 2 === 0 ? 'black' : 'white'
             const [cx, cy] = [i * C, (N_INDICES - j + 1) * C]
-            return <circle key={n} cx={cx} cy={cy} r={C / 2 - 1} fill={fill} stroke="black" />
+            return <circle key={n} cx={cx} cy={cy} r={C / 2 - 2} fill={fill} stroke="black" />
           }
         )
         }
