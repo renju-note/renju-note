@@ -2,17 +2,6 @@ import { Line } from './line'
 
 type BlackPattern = Line
 
-const WHITE_FIVE_PATTERN_SIZE = 5
-const WHITE_FIVE_PATTERN_WS = 0b11111
-
-const BLACK_FIVE_PATTERN_SIZE = 7
-const BLACK_FIVE_PATTERNS: BlackPattern[] = [
-  { size: BLACK_FIVE_PATTERN_SIZE, bs: 0b0111110, ws: 0b0000000 },
-  { size: BLACK_FIVE_PATTERN_SIZE, bs: 0b0111110, ws: 0b0000001 },
-  { size: BLACK_FIVE_PATTERN_SIZE, bs: 0b0111110, ws: 0b1000000 },
-  { size: BLACK_FIVE_PATTERN_SIZE, bs: 0b0111110, ws: 0b1000001 },
-]
-
 const BLACK_FOUR_PATTERN_SIZE = 7
 const BLACK_FOUR_PATTERNS: BlackPattern[] = [
   { size: BLACK_FOUR_PATTERN_SIZE, bs: 0b0011110, ws: 0b0000000 },
@@ -57,49 +46,33 @@ const BLACK_THREE_PATTERNS: BlackPattern[] = [
   { size: BLACK_THREE_PATTERN_SIZE, bs: 0b00111000, ws: 0b1000001 },
 ]
 
-export const whiteWonByFive = (l: Line): [boolean, number | undefined] => {
-  if (l.size < WHITE_FIVE_PATTERN_SIZE) return [false, undefined]
-  for (let shift = 0; shift < l.size - WHITE_FIVE_PATTERN_SIZE; shift++) {
-    const w = getWindow(l, shift, WHITE_FIVE_PATTERN_SIZE)
-    if (w && w.ws === WHITE_FIVE_PATTERN_WS) {
-      return [true, shift]
-    }
-  }
-  return [false, undefined]
+export const whiteWonByFive = (l: Line): [boolean, number] => {
+  return hasFive(l.ws, l.size)
 }
 
 export const blackWonByFive = (l: Line): [boolean, number | undefined] => {
-  if (l.size + 2 < BLACK_FIVE_PATTERN_SIZE) return [false, undefined]
-  const l_ = appendWhiteToEnds(l)
-  for (let shift = 0; shift <= l_.size - BLACK_FIVE_PATTERN_SIZE; shift++) {
-    const w = getWindow(l_, shift, BLACK_FIVE_PATTERN_SIZE)
-    if (!w) continue
-    for (let i = 0; i < BLACK_FIVE_PATTERNS.length; i++) {
-      const p = BLACK_FIVE_PATTERNS[i]
-      if (w.bs === p.bs && w.ws === p.ws) {
-        return [true, shift]
-      }
-    }
-  }
-  return [false, undefined]
+  return hasJustFive(l.bs, l.size)
 }
 
-const getWindow = (l: Line, shift: number, size: number): Line | undefined => {
-  if (l.size - shift < size) {
-    return undefined
-  } else {
-    return {
-      size: size,
-      bs: (l.bs >> shift) & (2 ** size - 1),
-      ws: (l.ws >> shift) & (2 ** size - 1),
+const hasFive = (bits: number, within: number): [boolean, number] => {
+  if (within < 5) return [false, -1]
+  for (let shift = 0; shift <= within - 5; shift++) {
+    if (window(bits, shift, within) === 0b11111) {
+      return [true, shift]
     }
   }
+  return [false, -1]
 }
 
-const appendWhiteToEnds = (l: Line): Line => {
-  return {
-    size: l.size + 2,
-    bs: l.bs << 1, // 0b01110 -> 0b0011100
-    ws: (l.ws << 1) | 0b1 | (0b1 << (l.size + 1)), // 0b01110 -> 0b1011101
+const hasJustFive = (bits: number, within: number): [boolean, number] => {
+  if (within < 5) return [false, -1]
+  const bits_ = bits << 1
+  for (let shift = 0; shift <= within - 5; shift++) {
+    if (window(bits_, shift, 7) === 0b0111110) {
+      return [true, shift]
+    }
   }
+  return [false, -1]
 }
+
+const window = (bits: number, shift: number, size: number): number => (bits >> shift) & (2 ** size - 1)
