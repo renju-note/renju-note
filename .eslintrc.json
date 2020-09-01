@@ -28,5 +28,16 @@
         "react/prop-types": ["off"],
         "@typescript-eslint/no-unused-vars": "error",
         "@typescript-eslint/no-useless-constructor": "error"
-    }
+    },
+    "overrides": [
+        {
+            "files": [
+                "**/*.test.ts",
+                "**/*.test.tsx"
+            ],
+            "env": {
+                "jest": true
+            }
+        }
+    ]
 }
