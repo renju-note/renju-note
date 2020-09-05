@@ -1,12 +1,14 @@
+import { N_INDICES } from './foundation'
+
 export class Line {
   readonly size: number // length, between 1 and 15
   readonly blacks: number // black stones as bit e.g. 0b00111010
   readonly whites: number // white stones as bit e.g. 0b01000100
-  readonly blackProps: LineProperties
-  readonly whiteProps: LineProperties
+  readonly blackProps: LineProps
+  readonly whiteProps: LineProps
 
   constructor (size: number, blacks: number = 0b0, whites: number = 0b0) {
-    if (size < 1 || size > 15) throw new Error('Wrong size')
+    if (size < 1 || size > N_INDICES) throw new Error('Wrong size')
     if (overlap(blacks, whites)) throw new Error('Black and white stones are overlapping')
     this.size = size
     this.blacks = blacks
@@ -39,7 +41,7 @@ export class Line {
   }
 }
 
-export type LineProperties = {
+export type LineProps = {
   fives: number[]
 }
 

@@ -1,16 +1,21 @@
 import React, { FC, useState, useEffect } from 'react'
 import './App.css'
 
-import { Point, Index, indices, N_INDICES } from '../rule'
+import { Board, Point, Index, N_INDICES, indices } from '../rule'
 
 const C = 50
 const boardSize = (N_INDICES + 1) * C
 
 const App: FC = () => {
-  const [moves, setMoves] = useState<Point[]>([])
+  const [board, setBoard] = useState<Board>(new Board())
   useEffect(
     () => {
-      setMoves([[8, 8], [8, 9], [10, 10]]) // D3
+      const example: Point[] = [[8, 8], [8, 9], [10, 10]]
+      let b = board
+      for (let i = 0; i < example.length; i++) {
+        b = b.move(example[i])
+      }
+      setBoard(b)
     },
     []
   )
@@ -18,7 +23,7 @@ const App: FC = () => {
     const base = e.currentTarget.getBoundingClientRect()
     const [x, y] = [e.clientX - base.x, e.clientY - base.y]
     const p: Point = [adjust(x / C), adjust((boardSize - y) / C)]
-    setMoves((prev) => [...prev, p])
+    setBoard(board.move(p))
   }
   return (
     <div className="App">
@@ -41,15 +46,19 @@ const App: FC = () => {
             }
           )
         }
-        { moves.map(
-          ([i, j], n) => {
+        { board.moves.map(
+          ([x, y], n) => {
             const fill = n % 2 === 0 ? 'black' : 'white'
-            const [cx, cy] = [i * C, (N_INDICES - j + 1) * C]
+            const [cx, cy] = [x * C, (N_INDICES - y + 1) * C]
             return <circle key={n} cx={cx} cy={cy} r={C / 2 - 2} fill={fill} stroke="black" />
           }
         )
         }
       </svg>
+      <div>
+        blackWon: {board.blackWon().toString()} <br/>
+        whiteWon: {board.whiteWon().toString()}
+      </div>
     </div>
   )
 }

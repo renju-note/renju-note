@@ -1,71 +1,128 @@
+import { Point, N_INDICES } from './foundation'
 import { Line } from './line'
 
-export const N_INDICES = 15
-export const indices = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] as const
+export type LineGroupType = 'vertical' | 'horizontal' | 'ascending' | 'descending'
 
-export type Index = typeof indices[number]
-
-export class Point {
-  readonly x: Index = 1
-  readonly y: Index = 1
-}
+export type LineGroupCoordinate = [number, number]
 
 export class Board {
-  moves: Point[] = []
-  vLines: LineGroup // vertical lines
-  hLines: LineGroup // horizontal lines
-  aLines: LineGroup // ascending lines
-  dLines: LineGroup // descending lines
+  readonly moves: Point[]
+  readonly lineGroups: Record<LineGroupType, LineGroup>
+  readonly blackProps: BoardProps
+  readonly whiteProps: BoardProps
 
-  constructor () {
-    this.vLines = new LineGroup('vertical')
-    this.hLines = new LineGroup('horizontal')
-    this.aLines = new LineGroup('ascending')
-    this.dLines = new LineGroup('descending')
+  constructor (init?: Pick<Board, 'moves' | 'lineGroups'>) {
+    if (init === undefined) {
+      this.moves = []
+      this.lineGroups = {
+        vertical: new LineGroup('vertical'),
+        horizontal: new LineGroup('horizontal'),
+        ascending: new LineGroup('ascending'),
+        descending: new LineGroup('descending'),
+      }
+    } else {
+      this.moves = init.moves
+      this.lineGroups = init.lineGroups
+    }
+
+    this.blackProps = this.computeBlackProps()
+    this.whiteProps = this.computeWhiteProps()
   }
 
-  push (p: Point) {
+  move (p: Point): Board {
     if (this.occupied(p)) throw new Error('Already occupied')
-    this.moves.push(p)
+    const moves = [...this.moves, p]
 
     const black = this.blackTurn()
-    this.vLines.push(black, p)
-    this.hLines.push(black, p)
-    this.aLines.push(black, p)
-    this.dLines.push(black, p)
+    const lineGroups = {
+      vertical: this.lineGroups.vertical.add(black, p),
+      horizontal: this.lineGroups.horizontal.add(black, p),
+      ascending: this.lineGroups.ascending.add(black, p),
+      descending: this.lineGroups.descending.add(black, p)
+    }
+
+    return new Board({ moves, lineGroups })
   }
 
-  occupied (p: Point): boolean {
-    return this.moves.findIndex(m => m.x === p.x && m.y === p.y) > 0
+  occupied ([x, y]: Point): boolean {
+    return this.moves.findIndex(m => m[0] === x && m[1] === y) > 0
   }
 
   blackTurn (): boolean {
     return this.moves.length % 2 === 0
   }
-}
 
-export type LineGroupType = 'vertical' | 'horizontal' | 'ascending' | 'descending'
+  blackWon (): boolean {
+    return this.blackProps.fives.length > 0
+  }
 
-export class LineGroup {
-  type_: LineGroupType
-  lines: Line[]
+  whiteWon (): boolean {
+    return this.whiteProps.fives.length > 0
+  }
 
-  constructor (type_: LineGroupType) {
-    this.type_ = type_
-    switch (type_) {
-      case 'vertical':
-      case 'horizontal':
-        this.lines = newOrthogonalLines()
-        break
-      case 'ascending':
-      case 'descending':
-        this.lines = newDiagonalLines()
-        break
+  private computeBlackProps (): BoardProps {
+    return {
+      fives: this.lineGroupArray().flatMap(
+        lg => lg.blackProps.fives.map(
+          x => {
+            return { type_: lg.type_, coordinate: x }
+          }
+        )
+      )
     }
   }
 
-  push (black: boolean, p: Point) {
-    var i: number, j: number
+  private computeWhiteProps (): BoardProps {
+    return {
+      fives: this.lineGroupArray().flatMap(
+        lg => lg.whiteProps.fives.map(
+          x => {
+            return { type_: lg.type_, coordinate: x }
+          }
+        )
+      )
+    }
+  }
+
+  private lineGroupArray (): LineGroup[] {
+    return [
+      this.lineGroups.vertical,
+      this.lineGroups.horizontal,
+      this.lineGroups.ascending,
+      this.lineGroups.descending,
+    ]
+  }
+}
+
+export type BoardProps = {
+  fives: {type_: LineGroupType, coordinate: LineGroupCoordinate}[]
+}
+
+export class LineGroup {
+  readonly type_: LineGroupType
+  readonly lines: Line[]
+  readonly blackProps: LineGroupProps
+  readonly whiteProps: LineGroupProps
+
+  constructor (init: LineGroupType | Pick<LineGroup, 'type_' | 'lines'>) {
+    if (typeof init === 'string') {
+      this.type_ = init
+      if (init === 'vertical' || init === 'horizontal') {
+        this.lines = newOrthogonalLines()
+      } else {
+        this.lines = newDiagonalLines()
+      }
+    } else {
+      this.type_ = init.type_
+      this.lines = init.lines
+    }
+
+    this.blackProps = this.computeBlackProps()
+    this.whiteProps = this.computeWhiteProps()
+  }
+
+  add (black: boolean, p: Point): LineGroup {
+    let i: number, j: number
     switch (this.type_) {
       case 'vertical':
         [i, j] = p2v(p)
@@ -83,8 +140,34 @@ export class LineGroup {
 
     const newLine = this.lines[i].add(black, j)
     if (!newLine) throw new Error('Wrong move')
-    this.lines[i] = newLine
+    const lines = this.lines.map((l, li) => li === i ? newLine : l)
+
+    return new LineGroup({ type_: this.type_, lines })
   }
+
+  private computeBlackProps (): LineGroupProps {
+    return {
+      fives: this.lines.flatMap(
+        (l, i) => l.blackProps.fives.map(
+          j => [i, j] as [number, number]
+        )
+      )
+    }
+  }
+
+  private computeWhiteProps (): LineGroupProps {
+    return {
+      fives: this.lines.flatMap(
+        (l, i) => l.whiteProps.fives.map(
+          j => [i, j] as LineGroupCoordinate
+        )
+      )
+    }
+  }
+}
+
+export type LineGroupProps = {
+  fives: LineGroupCoordinate[]
 }
 
 const N_DIAGONAL_LINES = N_INDICES * 2 - 1 // 29
@@ -100,20 +183,20 @@ const newDiagonalLines = (): Line[] => new Array(N_DIAGONAL_LINES).fill(null).ma
   }
 )
 
-type PointToLinesCoordinate = (p: Point) => [number, number]
+type PointToCoordinate = ([x, y]: Point) => LineGroupCoordinate
 
-const p2v: PointToLinesCoordinate = (p) => [p.x, p.y]
+const p2v: PointToCoordinate = ([x, y]) => [x - 1, y - 1]
 
-const p2h: PointToLinesCoordinate = (p) => [p.y, p.x]
+const p2h: PointToCoordinate = ([x, y]) => [y - 1, x - 1]
 
-const p2a: PointToLinesCoordinate = (p) => {
-  const i = (p.x - 1) + (N_INDICES - p.y)
-  const j = i < N_INDICES ? p.x : (p.y - 1)
+const p2a: PointToCoordinate = ([x, y]) => {
+  const i = (x - 1) + (N_INDICES - y)
+  const j = i < N_INDICES ? x : (y - 1)
   return [i, j]
 }
 
-const p2d: PointToLinesCoordinate = (p) => {
-  const i = (p.x - 1) + (p.y - 1)
-  const j = i < N_INDICES ? p.x : (N_INDICES - p.y)
+const p2d: PointToCoordinate = ([x, y]) => {
+  const i = (x - 1) + (y - 1)
+  const j = i < N_INDICES ? x : (N_INDICES - y)
   return [i, j]
 }
