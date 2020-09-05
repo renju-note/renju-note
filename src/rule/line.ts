@@ -1,7 +1,3 @@
-import { N_INDICES } from './foundation'
-
-const N_DIAGONAL_LINES = N_INDICES * 2 - 1 // 29
-
 export type Line = {
   size: number // length, between 1 and 15
   bs: number // black stones as bit e.g. 0b00111010
@@ -12,24 +8,37 @@ export const newLine = (size: number): Line => {
   return { size: size, bs: 0b0, ws: 0b0 }
 }
 
-export type OrthogonalLines = Line[]
+export const findWhiteFive = (l: Line): number[] => {
+  return findFive(l.ws, l.size)
+}
 
-export type DiagonalLines = Line[]
+export const findBlackFive = (l: Line): number[] => {
+  return findJustFive(l.bs, l.size)
+}
 
-export const newOrthogonalLines = (): OrthogonalLines => new Array(N_INDICES).fill(null).map(() => newLine(N_INDICES))
+type PatternFinder = (bits: number, within: number) => number[]
 
-export const newDiagonalLines = (): DiagonalLines => new Array(N_DIAGONAL_LINES).fill(null).map(
-  (_, i_) => {
-    const i = i_ + 1
-    const size = i <= N_INDICES ? i : N_DIAGONAL_LINES - (i - 1)
-    return newLine(size)
+const findFive: PatternFinder = (bits, within) => {
+  if (within < 5) return []
+  const result = []
+  for (let i = 0; i <= within - 5; i++) {
+    if (window(bits, i, 5) === 0b11111) {
+      result.push(i)
+    }
   }
-)
+  return result
+}
 
-export type VerticalLines = OrthogonalLines
+const findJustFive: PatternFinder = (bits, within) => {
+  if (within < 5) return []
+  const bits_ = bits << 1 // dummy bit
+  const result = []
+  for (let i = 0; i <= within - 5; i++) {
+    if (window(bits_, i, 5 + 2) === 0b0111110) {
+      result.push(i)
+    }
+  }
+  return result
+}
 
-export type HorizontalLines = OrthogonalLines
-
-export type AscendingLines = DiagonalLines
-
-export type DescendingLines = DiagonalLines
+const window = (bits: number, shift: number, size: number): number => (bits >> shift) & (2 ** size - 1)
