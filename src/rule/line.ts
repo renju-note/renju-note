@@ -1,20 +1,33 @@
 export type Line = {
   size: number // length, between 1 and 15
-  bs: number // black stones as bit e.g. 0b00111010
-  ws: number // white stones as bit e.g. 0b01000100
+  blacks: number // black stones as bit e.g. 0b00111010
+  whites: number // white stones as bit e.g. 0b01000100
 }
 
 export const newLine = (size: number): Line => {
-  return { size: size, bs: 0b0, ws: 0b0 }
+  return { size: size, blacks: 0b0, whites: 0b0 }
 }
 
-export const findWhiteFive = (l: Line): number[] => {
-  return findFive(l.ws, l.size)
+export const moveOnLine = (current: Line, black: boolean, i: number): Line | undefined => {
+  if (exists(current.blacks, i) || exists(current.whites, i)) return undefined
+  if (black) {
+    return { ...current, blacks: put(current.blacks, i) }
+  } else {
+    return { ...current, whites: put(current.whites, i) }
+  }
 }
 
-export const findBlackFive = (l: Line): number[] => {
-  return findJustFive(l.bs, l.size)
+export const findWhiteFive = (line: Line): number[] => {
+  return findFive(line.whites, line.size)
 }
+
+export const findBlackFive = (line: Line): number[] => {
+  return findJustFive(line.blacks, line.size)
+}
+
+const put = (bits: number, i: number): number => bits | (0b1 << i)
+
+const exists = (bits: number, i: number): boolean => (bits & (0b1 << i)) !== 0b0
 
 type PatternFinder = (bits: number, within: number) => number[]
 
