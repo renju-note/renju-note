@@ -1,41 +1,41 @@
-import { findWhiteFive, findBlackFive } from './line'
+import { Line } from './line'
 
-test('findWhiteFive1', () => {
-  const res = findWhiteFive({ size: 7, blacks: 0b0000001, whites: 0b0111110 })
-  expect(res).toEqual([1])
+test('BlackFives1', () => {
+  const line = new Line(5, 0b11111, 0b00000)
+  expect(line.blackProps.fives).toEqual([0])
 })
 
-test('findWhiteFive2', () => {
-  const res = findWhiteFive({ size: 15, blacks: 0b000000110001000, whites: 0b011111001100010 })
-  expect(res).toEqual([9])
+test('BlackFives2', () => {
+  const line = new Line(7, 0b0111110, 0b1000001)
+  expect(line.blackProps.fives).toEqual([1])
 })
 
-test('findWhiteFive3', () => {
-  const res = findWhiteFive({ size: 15, blacks: 0b000000110001000, whites: 0b001111001100010 })
-  expect(res).toEqual([])
+test('BlackFives3', () => {
+  const line = new Line(8, 0b01111101, 0b00000000)
+  expect(line.blackProps.fives).toEqual([2])
 })
 
-test('findBlackFive1', () => {
-  const res = findBlackFive({ size: 5, blacks: 0b11111, whites: 0b00000 })
-  expect(res).toEqual([0])
+test('BlackFives4', () => {
+  const line = new Line(6, 0b111111, 0b000000)
+  expect(line.blackProps.fives).toEqual([])
 })
 
-test('findBlackFive2', () => {
-  const res = findBlackFive({ size: 7, blacks: 0b0111110, whites: 0b1000001 })
-  expect(res).toEqual([1])
+test('BlackFives5', () => {
+  const line = new Line(5, 0b11011, 0b00000)
+  expect(line.blackProps.fives).toEqual([])
 })
 
-test('findBlackFive3', () => {
-  const res = findBlackFive({ size: 8, blacks: 0b01111101, whites: 0b00000000 })
-  expect(res).toEqual([2])
+test('WhiteFives1', () => {
+  const line = new Line(7, 0b0000001, 0b0111110)
+  expect(line.whiteProps.fives).toEqual([1])
 })
 
-test('findBlackFive4', () => {
-  const res = findBlackFive({ size: 6, blacks: 0b111111, whites: 0b000000 })
-  expect(res).toEqual([])
+test('WhiteFives2', () => {
+  const line = new Line(15, 0b000000110001000, 0b011111001100010)
+  expect(line.whiteProps.fives).toEqual([9])
 })
 
-test('findBlackFive5', () => {
-  const res = findBlackFive({ size: 5, blacks: 0b11011, whites: 0b00000 })
-  expect(res).toEqual([])
+test('WhiteFives3', () => {
+  const line = new Line(15, 0b000000110001000, 0b001111001100010)
+  expect(line.whiteProps.fives).toEqual([])
 })

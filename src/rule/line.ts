@@ -1,33 +1,55 @@
-export type Line = {
-  size: number // length, between 1 and 15
-  blacks: number // black stones as bit e.g. 0b00111010
-  whites: number // white stones as bit e.g. 0b01000100
-}
+export class Line {
+  readonly size: number // length, between 1 and 15
+  readonly blacks: number // black stones as bit e.g. 0b00111010
+  readonly whites: number // white stones as bit e.g. 0b01000100
+  readonly blackProps: LineProperties
+  readonly whiteProps: LineProperties
 
-export const newLine = (size: number): Line => {
-  return { size: size, blacks: 0b0, whites: 0b0 }
-}
+  constructor (size: number, blacks: number = 0b0, whites: number = 0b0) {
+    if (size < 1 || size > 15) throw new Error('Wrong size')
+    if (overlap(blacks, whites)) throw new Error('Black and white stones are overlapping')
+    this.size = size
+    this.blacks = blacks
+    this.whites = whites
+    this.blackProps = {
+      fives: findJustFive(this.blacks, this.size),
+    }
+    this.whiteProps = {
+      fives: findFive(this.whites, this.size),
+    }
+  }
 
-export const moveOnLine = (current: Line, black: boolean, i: number): Line | undefined => {
-  if (exists(current.blacks, i) || exists(current.whites, i)) return undefined
-  if (black) {
-    return { ...current, blacks: put(current.blacks, i) }
-  } else {
-    return { ...current, whites: put(current.whites, i) }
+  add (black: boolean, i: number): Line | undefined {
+    if (exists(this.blacks, i) || exists(this.whites, i)) return undefined
+    if (black) {
+      return new Line(this.size, add(this.blacks, i), this.whites)
+    } else {
+      return new Line(this.size, this.blacks, add(this.whites, i))
+    }
+  }
+
+  remove (black: boolean, i: number): Line | undefined {
+    if (black) {
+      if (!exists(this.blacks, i)) return undefined
+      return new Line(this.size, remove(this.blacks, i), this.whites)
+    } else {
+      if (!exists(this.whites, i)) return undefined
+      return new Line(this.size, this.blacks, remove(this.whites, i))
+    }
   }
 }
 
-export const findWhiteFive = (line: Line): number[] => {
-  return findFive(line.whites, line.size)
+export type LineProperties = {
+  fives: number[]
 }
 
-export const findBlackFive = (line: Line): number[] => {
-  return findJustFive(line.blacks, line.size)
-}
+const overlap = (blacks: number, whites: number) => (blacks & whites) !== 0b0
 
-const put = (bits: number, i: number): number => bits | (0b1 << i)
+const exists = (stones: number, i: number): boolean => (stones & (0b1 << i)) !== 0b0
 
-const exists = (bits: number, i: number): boolean => (bits & (0b1 << i)) !== 0b0
+const add = (stones: number, i: number): number => stones + (0b1 << i)
+
+const remove = (stones: number, i: number): number => stones - (0b1 << i)
 
 type PatternFinder = (bits: number, within: number) => number[]
 
