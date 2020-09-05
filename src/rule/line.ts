@@ -2,41 +2,57 @@ import { N_INDICES } from './foundation'
 
 export class Line {
   readonly size: number // length, between 1 and 15
-  readonly blacks: number // black stones as bit e.g. 0b00111010
-  readonly whites: number // white stones as bit e.g. 0b01000100
+  readonly blacks: number // black stones as bits e.g. 0b00111010
+  readonly whites: number // white stones as bits e.g. 0b01000100
   readonly blackProps: LineProps
   readonly whiteProps: LineProps
 
-  constructor (size: number, blacks: number = 0b0, whites: number = 0b0) {
-    if (size < 1 || size > N_INDICES) throw new Error('Wrong size')
-    if (overlap(blacks, whites)) throw new Error('Black and white stones are overlapping')
-    this.size = size
-    this.blacks = blacks
-    this.whites = whites
-    this.blackProps = {
-      fives: findJustFive(this.blacks, this.size),
+  constructor (init: number | Pick<Line, 'size' | 'blacks' | 'whites'>) {
+    if (typeof init === 'number') {
+      this.size = init
+      this.blacks = 0b0
+      this.whites = 0b0
+    } else {
+      this.size = init.size
+      this.blacks = init.blacks
+      this.whites = init.whites
     }
-    this.whiteProps = {
-      fives: findFive(this.whites, this.size),
-    }
+
+    if (this.size < 1 || this.size > N_INDICES) throw new Error('Wrong size')
+    if (overlap(this.blacks, this.whites)) throw new Error('Black and white stones are overlapping')
+
+    this.blackProps = this.computeBlackProps()
+    this.whiteProps = this.computeWhiteProps()
   }
 
   add (black: boolean, i: number): Line | undefined {
     if (exists(this.blacks, i) || exists(this.whites, i)) return undefined
     if (black) {
-      return new Line(this.size, add(this.blacks, i), this.whites)
+      return new Line({ size: this.size, blacks: add(this.blacks, i), whites: this.whites })
     } else {
-      return new Line(this.size, this.blacks, add(this.whites, i))
+      return new Line({ size: this.size, blacks: this.blacks, whites: add(this.whites, i) })
     }
   }
 
   remove (black: boolean, i: number): Line | undefined {
     if (black) {
       if (!exists(this.blacks, i)) return undefined
-      return new Line(this.size, remove(this.blacks, i), this.whites)
+      return new Line({ size: this.size, blacks: remove(this.blacks, i), whites: this.whites })
     } else {
       if (!exists(this.whites, i)) return undefined
-      return new Line(this.size, this.blacks, remove(this.whites, i))
+      return new Line({ size: this.size, blacks: this.blacks, whites: remove(this.whites, i) })
+    }
+  }
+
+  private computeBlackProps (): LineProps {
+    return {
+      fives: findJustFive(this.blacks, this.size)
+    }
+  }
+
+  private computeWhiteProps (): LineProps {
+    return {
+      fives: findFive(this.whites, this.size)
     }
   }
 }
