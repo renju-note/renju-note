@@ -1,14 +1,17 @@
 import { N_INDICES } from './foundation'
 
 export type Stones = number // stones as bits e.g. 0b00111010
+
 export type Row = [number, number] // start, size
+
+export type PropType = 'five' | 'four' | 'three'
 
 export class Line {
   readonly size: number
   readonly blacks: Stones
   readonly whites: Stones
-  readonly blackProps: LineProps
-  readonly whiteProps: LineProps
+  readonly blackProps: Record<PropType, Row[]>
+  readonly whiteProps: Record<PropType, Row[]>
 
   constructor (init: number | Pick<Line, 'size' | 'blacks' | 'whites'>) {
     if (typeof init === 'number') {
@@ -47,15 +50,19 @@ export class Line {
     }
   }
 
-  private computeBlackProps (): LineProps {
+  private computeBlackProps (): Record<PropType, Row[]> {
     return {
-      fives: findBlackFives(this)
+      five: findBlackFive(this),
+      four: findBlackFour(this),
+      three: findBlackThree(this),
     }
   }
 
-  private computeWhiteProps (): LineProps {
+  private computeWhiteProps (): Record<PropType, Row[]> {
     return {
-      fives: findWhiteFives(this)
+      five: findWhiteFive(this),
+      four: findWhiteFour(this),
+      three: findWhiteThree(this),
     }
   }
 
@@ -68,9 +75,7 @@ export class Line {
   }
 }
 
-export type LineProps = {
-  fives: Row[]
-}
+const appendDummy = (stones: Stones, size: number): [Stones, number] => [stones << 1, size + 2]
 
 const overlap = (blacks: Stones, whites: Stones) => (blacks & whites) !== 0b0
 
@@ -80,16 +85,18 @@ const add = (stones: Stones, i: number): number => stones + (0b1 << i)
 
 const remove = (stones: Stones, i: number): number => stones - (0b1 << i)
 
-export const findWhiteFives = (line: Line): Row[] => {
+export const findBlackFive = (line: Line): Row[] => {
+  const [blacks_, size_] = appendDummy(line.blacks, line.size)
+  const rows = find(blacks_, size_, [0b0111110], 7)
+  return rows.map(r => [r[0], 5])
+}
+
+export const findWhiteFive = (line: Line): Row[] => {
   return find(line.whites, line.size, [0b11111], 5)
 }
 
-export const findBlackFives = (line: Line): Row[] => {
-  const blacks0 = line.blacks << 1 // append dummy bit
-  return find(blacks0, line.size + 2, [0b0111110], 7)
-}
-
-export const findBlackFours = (line: Line): Row[] => {
+export const findBlackFour = (line: Line): Row[] => {
+  const [blacks_, size_] = appendDummy(line.blacks, line.size)
   const patterns = [
     0b0111100,
     0b0111010,
@@ -97,8 +104,79 @@ export const findBlackFours = (line: Line): Row[] => {
     0b0101110,
     0b0011110,
   ]
-  const stones0 = line.blacks << 1 // append dummy bit
-  return find(stones0, line.size + 2, patterns, 7)
+  const candidates = find(blacks_, size_, patterns, 7)
+  if (candidates.length === 0) return []
+
+  const result: Row[] = []
+  for (let i = 0; i < candidates.length; i++) {
+    const row = [candidates[i][0], 5] as Row
+    if (cut(line.whites, row) === 0b00000) {
+      result.push(row)
+    }
+  }
+  return result
+}
+
+export const findWhiteFour = (line: Line): Row[] => {
+  const patterns = [
+    0b01111,
+    0b11101,
+    0b11011,
+    0b10111,
+    0b11110,
+  ]
+  const candidates = find(line.whites, line.size, patterns, 5)
+  if (candidates.length === 0) return []
+
+  const result: Row[] = []
+  for (let i = 0; i < candidates.length; i++) {
+    const row = candidates[i]
+    if (cut(line.blacks, row) === 0b00000) {
+      result.push(row)
+    }
+  }
+  return result
+}
+
+export const findBlackThree = (line: Line): Row[] => {
+  const [blacks_, size_] = appendDummy(line.blacks, line.size)
+  const patterns = [
+    0b00011100,
+    0b00101100,
+    0b00110100,
+    0b00111000,
+  ]
+  const candidates = find(blacks_, size_, patterns, 8)
+  if (candidates.length === 0) return []
+
+  const result: Row[] = []
+  for (let i = 0; i < candidates.length; i++) {
+    const row = [candidates[i][0], 6] as Row
+    if (cut(line.whites, row) === 0b000000) {
+      result.push(row)
+    }
+  }
+  return result
+}
+
+export const findWhiteThree = (line: Line): Row[] => {
+  const patterns = [
+    0b001110,
+    0b010110,
+    0b011010,
+    0b011100,
+  ]
+  const candidates = find(line.whites, line.size, patterns, 6)
+  if (candidates.length === 0) return []
+
+  const result: Row[] = []
+  for (let i = 0; i < candidates.length; i++) {
+    const row = candidates[i]
+    if (cut(line.blacks, row) === 0b000000) {
+      result.push(row)
+    }
+  }
+  return result
 }
 
 const find = (stones: Stones, within: number, patterns: Stones[], size: number): Row[] => {
@@ -106,7 +184,7 @@ const find = (stones: Stones, within: number, patterns: Stones[], size: number):
   const result = []
   for (let i = 0; i <= within - size; i++) {
     for (let j = 0; j < patterns.length; j++) {
-      if (cut(stones, i, size) === patterns[j]) {
+      if (cut(stones, [i, size]) === patterns[j]) {
         result.push([i, size] as Row)
       }
     }
@@ -114,4 +192,4 @@ const find = (stones: Stones, within: number, patterns: Stones[], size: number):
   return result
 }
 
-const cut = (stones: Stones, start: number, size: number): number => (stones >> start) & (2 ** size - 1)
+const cut = (stones: Stones, [start, size]: Row): number => (stones >> start) & (2 ** size - 1)

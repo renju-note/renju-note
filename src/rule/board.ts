@@ -1,11 +1,11 @@
 import { Point, N_INDICES } from './foundation'
-import { Line } from './line'
+import { Line, PropType } from './line'
 
 export class Board {
   readonly moves: Point[]
   readonly stripes: Record<StripeType, Stripe>
-  readonly blackProps: BoardProps
-  readonly whiteProps: BoardProps
+  readonly blackProps: Record<PropType, [Point, Point][]>
+  readonly whiteProps: Record<PropType, [Point, Point][]>
 
   constructor (init?: Pick<Board, 'moves' | 'stripes'>) {
     if (init === undefined) {
@@ -49,22 +49,26 @@ export class Board {
   }
 
   blackWon (): boolean {
-    return this.blackProps.fives.length > 0
+    return this.blackProps.five.length > 0
   }
 
   whiteWon (): boolean {
-    return this.whiteProps.fives.length > 0
+    return this.whiteProps.five.length > 0
   }
 
-  private computeBlackProps (): BoardProps {
+  private computeBlackProps (): Record<PropType, [Point, Point][]> {
     return {
-      fives: this.stripeArray().flatMap(s => s.blackProps.fives)
+      five: this.stripeArray().flatMap(s => s.blackProps.five),
+      four: this.stripeArray().flatMap(s => s.blackProps.four),
+      three: this.stripeArray().flatMap(s => s.blackProps.three),
     }
   }
 
-  private computeWhiteProps (): BoardProps {
+  private computeWhiteProps (): Record<PropType, [Point, Point][]> {
     return {
-      fives: this.stripeArray().flatMap(s => s.whiteProps.fives)
+      five: this.stripeArray().flatMap(s => s.whiteProps.five),
+      four: this.stripeArray().flatMap(s => s.whiteProps.four),
+      three: this.stripeArray().flatMap(s => s.whiteProps.three),
     }
   }
 
@@ -78,10 +82,6 @@ export class Board {
   }
 }
 
-export type BoardProps = {
-  fives: [Point, Point][],
-}
-
 export type StripeType = 'vertical' | 'horizontal' | 'ascending' | 'descending'
 
 export type StripeCoordinate = [number, number]
@@ -89,8 +89,8 @@ export type StripeCoordinate = [number, number]
 export class Stripe {
   readonly type_: StripeType
   readonly lines: Line[]
-  readonly blackProps: StripeProps
-  readonly whiteProps: StripeProps
+  readonly blackProps: Record<PropType, [Point, Point][]>
+  readonly whiteProps: Record<PropType, [Point, Point][]>
 
   constructor (init: StripeType | Pick<Stripe, 'type_' | 'lines'>) {
     if (typeof init === 'string') {
@@ -110,7 +110,7 @@ export class Stripe {
   }
 
   add (black: boolean, p: Point): Stripe {
-    const [i, j] = pointToCoordinate(p, this.type_)
+    const [i, j] = toCoordinate(this.type_, p)
 
     const newLine = this.lines[i].add(black, j)
     if (!newLine) throw new Error('Wrong move')
@@ -119,37 +119,49 @@ export class Stripe {
     return new Stripe({ type_: this.type_, lines })
   }
 
-  private computeBlackProps (): StripeProps {
+  private computeBlackProps (): Record<PropType, [Point, Point][]> {
     return {
-      fives: this.lines.flatMap(
-        (l, i) => l.blackProps.fives.map(
-          ([j, size]) => [
-            coordinateToPoint([i, j], this.type_), coordinateToPoint([i, j + size], this.type_)
-          ]
+      five: this.lines.flatMap(
+        (l, i) => l.blackProps.five.map(
+          ([j, size]) => toPoints(this.type_, [i, j], size)
         )
-      )
+      ),
+      four: this.lines.flatMap(
+        (l, i) => l.blackProps.four.map(
+          ([j, size]) => toPoints(this.type_, [i, j], size)
+        )
+      ),
+      three: this.lines.flatMap(
+        (l, i) => l.blackProps.three.map(
+          ([j, size]) => toPoints(this.type_, [i, j], size)
+        )
+      ),
     }
   }
 
-  private computeWhiteProps (): StripeProps {
+  private computeWhiteProps (): Record<PropType, [Point, Point][]> {
     return {
-      fives: this.lines.flatMap(
-        (l, i) => l.whiteProps.fives.map(
-          ([j, size]) => [
-            coordinateToPoint([i, j], this.type_), coordinateToPoint([i, j + size], this.type_)
-          ]
+      five: this.lines.flatMap(
+        (l, i) => l.whiteProps.five.map(
+          ([j, size]) => toPoints(this.type_, [i, j], size)
         )
-      )
+      ),
+      four: this.lines.flatMap(
+        (l, i) => l.whiteProps.four.map(
+          ([j, size]) => toPoints(this.type_, [i, j], size)
+        )
+      ),
+      three: this.lines.flatMap(
+        (l, i) => l.whiteProps.three.map(
+          ([j, size]) => toPoints(this.type_, [i, j], size)
+        )
+      ),
     }
   }
 
   toString (): string {
     return this.lines.map(l => l.toSting()).join('\n')
   }
-}
-
-export type StripeProps = {
-  fives: [Point, Point][]
 }
 
 const N_DIAGONAL_LINES = N_INDICES * 2 - 1 // 29
@@ -165,7 +177,7 @@ const newDiagonalLines = (): Line[] => new Array(N_DIAGONAL_LINES).fill(null).ma
   }
 )
 
-export const pointToCoordinate = (p: Point, type_: StripeType): StripeCoordinate => {
+export const toCoordinate = (type_: StripeType, p: Point): StripeCoordinate => {
   switch (type_) {
     case 'vertical':
       return p2v(p)
@@ -194,7 +206,7 @@ const p2d = ([x, y]: Point): StripeCoordinate => {
   return [i, j]
 }
 
-export const coordinateToPoint = (c: StripeCoordinate, type_: StripeType): Point => {
+export const toPoint = (type_: StripeType, c: StripeCoordinate): Point => {
   switch (type_) {
     case 'vertical':
       return v2p(c)
@@ -225,4 +237,8 @@ const d2p = ([i, j]: StripeCoordinate): Point => {
   } else {
     return [(i + 1) + (j + 1) - N_INDICES, N_INDICES - j] as Point
   }
+}
+
+export const toPoints = (type_: StripeType, [i, j]: StripeCoordinate, size: number): [Point, Point] => {
+  return [toPoint(type_, [i, j]), toPoint(type_, [i, j + size])]
 }

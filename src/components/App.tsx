@@ -3,7 +3,7 @@ import './App.css'
 
 import { Board, Point, Index, N_INDICES, indices } from '../rule'
 
-const C = 50
+const C = 40
 const boardSize = (N_INDICES + 1) * C
 
 const App: FC = () => {
@@ -61,8 +61,37 @@ const App: FC = () => {
         }
       </svg>
       <div>
-        blackWon: {board.blackWon().toString()} <br/>
-        whiteWon: {board.whiteWon().toString()}
+        <table style={{ marginRight: 'auto', marginLeft: 'auto' }}>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Black</th>
+              <th>White</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>Won</th>
+              <td>{board.blackWon().toString()}</td>
+              <td>{board.whiteWon().toString()}</td>
+            </tr>
+            <tr>
+              <th>Five</th>
+              <td>{board.blackProps.five.map(([a, b]) => `(${a})-(${b})`).join('\n')}</td>
+              <td>{board.whiteProps.five.map(([a, b]) => `(${a})-(${b})`).join('\n')}</td>
+            </tr>
+            <tr>
+              <th>Four</th>
+              <td>{board.blackProps.four.map(([a, b]) => `(${a})-(${b})`).join('\n')}</td>
+              <td>{board.whiteProps.four.map(([a, b]) => `(${a})-(${b})`).join('\n')}</td>
+            </tr>
+            <tr>
+              <th>Three</th>
+              <td>{board.blackProps.three.map(([a, b]) => `(${a})-(${b})`).join('\n')}</td>
+              <td>{board.whiteProps.three.map(([a, b]) => `(${a})-(${b})`).join('\n')}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   )
