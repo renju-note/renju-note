@@ -4,7 +4,8 @@ export type Stones = number // stones as bits e.g. 0b00111010
 
 export type Row = [number, number] // start, size
 
-export type PropType = 'five' | 'four' | 'three'
+export const propTypes = ['three', 'four', 'five'] as const
+export type PropType = typeof propTypes[number]
 
 export class Line {
   readonly size: number
@@ -52,17 +53,17 @@ export class Line {
 
   private computeBlackProps (): Record<PropType, Row[]> {
     return {
-      five: findBlackFive(this),
-      four: findBlackFour(this),
       three: findBlackThree(this),
+      four: findBlackFour(this),
+      five: findBlackFive(this),
     }
   }
 
   private computeWhiteProps (): Record<PropType, Row[]> {
     return {
-      five: findWhiteFive(this),
-      four: findWhiteFour(this),
       three: findWhiteThree(this),
+      four: findWhiteFour(this),
+      five: findWhiteFive(this),
     }
   }
 
@@ -85,14 +86,45 @@ const add = (stones: Stones, i: number): number => stones + (0b1 << i)
 
 const remove = (stones: Stones, i: number): number => stones - (0b1 << i)
 
-export const findBlackFive = (line: Line): Row[] => {
+export const findBlackThree = (line: Line): Row[] => {
   const [blacks_, size_] = appendDummy(line.blacks, line.size)
-  const rows = find(blacks_, size_, [0b0111110], 7)
-  return rows.map(r => [r[0], 5])
+  const patterns = [
+    0b00011100,
+    0b00101100,
+    0b00110100,
+    0b00111000,
+  ]
+  const candidates = find(blacks_, size_, patterns, 8)
+  if (candidates.length === 0) return []
+
+  const result: Row[] = []
+  for (let i = 0; i < candidates.length; i++) {
+    const row = [candidates[i][0], 6] as Row
+    if (cut(line.whites, row) === 0b000000) {
+      result.push(row)
+    }
+  }
+  return result
 }
 
-export const findWhiteFive = (line: Line): Row[] => {
-  return find(line.whites, line.size, [0b11111], 5)
+export const findWhiteThree = (line: Line): Row[] => {
+  const patterns = [
+    0b001110,
+    0b010110,
+    0b011010,
+    0b011100,
+  ]
+  const candidates = find(line.whites, line.size, patterns, 6)
+  if (candidates.length === 0) return []
+
+  const result: Row[] = []
+  for (let i = 0; i < candidates.length; i++) {
+    const row = candidates[i]
+    if (cut(line.blacks, row) === 0b000000) {
+      result.push(row)
+    }
+  }
+  return result
 }
 
 export const findBlackFour = (line: Line): Row[] => {
@@ -138,45 +170,14 @@ export const findWhiteFour = (line: Line): Row[] => {
   return result
 }
 
-export const findBlackThree = (line: Line): Row[] => {
+export const findBlackFive = (line: Line): Row[] => {
   const [blacks_, size_] = appendDummy(line.blacks, line.size)
-  const patterns = [
-    0b00011100,
-    0b00101100,
-    0b00110100,
-    0b00111000,
-  ]
-  const candidates = find(blacks_, size_, patterns, 8)
-  if (candidates.length === 0) return []
-
-  const result: Row[] = []
-  for (let i = 0; i < candidates.length; i++) {
-    const row = [candidates[i][0], 6] as Row
-    if (cut(line.whites, row) === 0b000000) {
-      result.push(row)
-    }
-  }
-  return result
+  const rows = find(blacks_, size_, [0b0111110], 7)
+  return rows.map(r => [r[0], 5])
 }
 
-export const findWhiteThree = (line: Line): Row[] => {
-  const patterns = [
-    0b001110,
-    0b010110,
-    0b011010,
-    0b011100,
-  ]
-  const candidates = find(line.whites, line.size, patterns, 6)
-  if (candidates.length === 0) return []
-
-  const result: Row[] = []
-  for (let i = 0; i < candidates.length; i++) {
-    const row = candidates[i]
-    if (cut(line.blacks, row) === 0b000000) {
-      result.push(row)
-    }
-  }
-  return result
+export const findWhiteFive = (line: Line): Row[] => {
+  return find(line.whites, line.size, [0b11111], 5)
 }
 
 const find = (stones: Stones, within: number, patterns: Stones[], size: number): Row[] => {
