@@ -3,19 +3,19 @@ import { Line, PropType, propTypes } from './line'
 
 export class Board {
   readonly moves: Point[]
-  readonly stripes: Record<StripeType, Stripe>
+  readonly stripes: Stripe[]
   readonly blackProps: Record<PropType, [Point, Point][]>
   readonly whiteProps: Record<PropType, [Point, Point][]>
 
   constructor (init?: Pick<Board, 'moves' | 'stripes'>) {
     if (init === undefined) {
       this.moves = []
-      this.stripes = {
-        vertical: new Stripe('vertical'),
-        horizontal: new Stripe('horizontal'),
-        ascending: new Stripe('ascending'),
-        descending: new Stripe('descending'),
-      }
+      this.stripes = [
+        new Stripe('vertical'),
+        new Stripe('horizontal'),
+        new Stripe('ascending'),
+        new Stripe('descending'),
+      ]
     } else {
       this.moves = init.moves
       this.stripes = init.stripes
@@ -28,15 +28,8 @@ export class Board {
   move (p: Point): Board {
     if (this.occupied(p)) throw new Error('Already occupied')
     const moves = [...this.moves, p]
-
     const black = this.blackTurn()
-    const stripes = {
-      vertical: this.stripes.vertical.add(black, p),
-      horizontal: this.stripes.horizontal.add(black, p),
-      ascending: this.stripes.ascending.add(black, p),
-      descending: this.stripes.descending.add(black, p)
-    }
-
+    const stripes = this.stripes.map(s => s.add(black, p))
     return new Board({ moves, stripes })
   }
 
@@ -59,7 +52,7 @@ export class Board {
   private computeBlackProps (): Record<PropType, [Point, Point][]> {
     return Object.fromEntries(propTypes.map(
       (t) => {
-        const props = this.stripeArray().flatMap(s => s.blackProps[t])
+        const props = this.stripes.flatMap(s => s.blackProps[t])
         return [t, props]
       }
     )) as Record<PropType, [Point, Point][]>
@@ -68,19 +61,10 @@ export class Board {
   private computeWhiteProps (): Record<PropType, [Point, Point][]> {
     return Object.fromEntries(propTypes.map(
       (t) => {
-        const props = this.stripeArray().flatMap(s => s.whiteProps[t])
+        const props = this.stripes.flatMap(s => s.whiteProps[t])
         return [t, props]
       }
     )) as Record<PropType, [Point, Point][]>
-  }
-
-  private stripeArray (): Stripe[] {
-    return [
-      this.stripes.vertical,
-      this.stripes.horizontal,
-      this.stripes.ascending,
-      this.stripes.descending,
-    ]
   }
 }
 

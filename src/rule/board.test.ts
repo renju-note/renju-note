@@ -2,14 +2,14 @@ import { Board } from './board'
 
 test('newBoard', () => {
   const board = new Board()
-  expect(board.stripes.vertical.type_).toBe('vertical')
-  expect(board.stripes.vertical.lines).toMatchObject(orthogonalLines)
-  expect(board.stripes.horizontal.type_).toBe('horizontal')
-  expect(board.stripes.horizontal.lines).toMatchObject(orthogonalLines)
-  expect(board.stripes.ascending.type_).toBe('ascending')
-  expect(board.stripes.ascending.lines).toMatchObject(diagonalLines)
-  expect(board.stripes.descending.type_).toBe('descending')
-  expect(board.stripes.descending.lines).toMatchObject(diagonalLines)
+  expect(board.stripes[0].type_).toBe('vertical')
+  expect(board.stripes[0].lines).toMatchObject(orthogonalLines)
+  expect(board.stripes[1].type_).toBe('horizontal')
+  expect(board.stripes[1].lines).toMatchObject(orthogonalLines)
+  expect(board.stripes[2].type_).toBe('ascending')
+  expect(board.stripes[2].lines).toMatchObject(diagonalLines)
+  expect(board.stripes[3].type_).toBe('descending')
+  expect(board.stripes[3].lines).toMatchObject(diagonalLines)
 })
 
 const orthogonalLines = [

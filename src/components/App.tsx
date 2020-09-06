@@ -25,10 +25,7 @@ const App: FC = () => {
     const p: Point = [adjust(x / C), adjust((boardSize - y) / C)]
     const newBoard = board.move(p)
     setBoard(newBoard)
-    console.log(newBoard.stripes.vertical.toString())
-    console.log(newBoard.stripes.horizontal.toString())
-    console.log(newBoard.stripes.ascending.toString())
-    console.log(newBoard.stripes.descending.toString())
+    newBoard.stripes.forEach(s => console.log(s.toString()))
   }
   return (
     <div className="App">
