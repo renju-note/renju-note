@@ -23,7 +23,12 @@ const App: FC = () => {
     const base = e.currentTarget.getBoundingClientRect()
     const [x, y] = [e.clientX - base.x, e.clientY - base.y]
     const p: Point = [adjust(x / C), adjust((boardSize - y) / C)]
-    setBoard(board.move(p))
+    const newBoard = board.move(p)
+    setBoard(newBoard)
+    console.log(newBoard.stripes.vertical.toString())
+    console.log(newBoard.stripes.horizontal.toString())
+    console.log(newBoard.stripes.ascending.toString())
+    console.log(newBoard.stripes.descending.toString())
   }
   return (
     <div className="App">

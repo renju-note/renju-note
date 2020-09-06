@@ -142,6 +142,10 @@ export class Stripe {
       )
     }
   }
+
+  toString (): string {
+    return this.lines.map(l => l.toSting()).join('\n')
+  }
 }
 
 export type StripeProps = {

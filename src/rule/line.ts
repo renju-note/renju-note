@@ -58,6 +58,14 @@ export class Line {
       fives: findWhiteFives(this)
     }
   }
+
+  toSting (): string {
+    let result = ''
+    for (let i = 0; i < this.size; i++) {
+      result += exists(this.blacks, i) ? 'o' : (exists(this.whites, i) ? 'x' : '-')
+    }
+    return result
+  }
 }
 
 export type LineProps = {
