@@ -215,18 +215,18 @@ const a2p = ([i, j]: StripeCoordinate): Point => {
   if (i < N_INDICES) {
     return [j + 1, N_INDICES - (i + 1) + (j + 1)] as Point
   } else {
-    return [N_INDICES - (i + 1) - (j + 1), j + 1] as Point
+    return [(i + 1) + (j + 1) - N_INDICES, j + 1] as Point
   }
 }
 
 const d2p = ([i, j]: StripeCoordinate): Point => {
   if (i < N_INDICES) {
-    return [j + 1, (i + 1) + (j + 1) - N_INDICES] as Point
+    return [j + 1, (i + 1) - j] as Point
   } else {
     return [(i + 1) + (j + 1) - N_INDICES, N_INDICES - j] as Point
   }
 }
 
 export const toPoints = (type_: StripeType, [i, j]: StripeCoordinate, size: number): [Point, Point] => {
-  return [toPoint(type_, [i, j]), toPoint(type_, [i, j + size])]
+  return [toPoint(type_, [i, j]), toPoint(type_, [i, j + size - 1])]
 }
