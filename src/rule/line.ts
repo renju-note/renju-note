@@ -1,9 +1,12 @@
 import { N_INDICES } from './foundation'
 
+export type Stones = number // stones as bits e.g. 0b00111010
+export type Row = [number, number] // start, size
+
 export class Line {
-  readonly size: number // length, between 1 and 15
-  readonly blacks: number // black stones as bits e.g. 0b00111010
-  readonly whites: number // white stones as bits e.g. 0b01000100
+  readonly size: number
+  readonly blacks: Stones
+  readonly whites: Stones
   readonly blackProps: LineProps
   readonly whiteProps: LineProps
 
@@ -46,52 +49,61 @@ export class Line {
 
   private computeBlackProps (): LineProps {
     return {
-      fives: findJustFive(this.blacks, this.size)
+      fives: findBlackFives(this)
     }
   }
 
   private computeWhiteProps (): LineProps {
     return {
-      fives: findFive(this.whites, this.size)
+      fives: findWhiteFives(this)
     }
   }
 }
 
 export type LineProps = {
-  fives: number[]
+  fives: Row[]
 }
 
-const overlap = (blacks: number, whites: number) => (blacks & whites) !== 0b0
+const overlap = (blacks: Stones, whites: Stones) => (blacks & whites) !== 0b0
 
-const exists = (stones: number, i: number): boolean => (stones & (0b1 << i)) !== 0b0
+const exists = (stones: Stones, i: number): boolean => (stones & (0b1 << i)) !== 0b0
 
-const add = (stones: number, i: number): number => stones + (0b1 << i)
+const add = (stones: Stones, i: number): number => stones + (0b1 << i)
 
-const remove = (stones: number, i: number): number => stones - (0b1 << i)
+const remove = (stones: Stones, i: number): number => stones - (0b1 << i)
 
-type PatternFinder = (bits: number, within: number) => number[]
+export const findWhiteFives = (line: Line): Row[] => {
+  return find(line.whites, line.size, [0b11111], 5)
+}
 
-const findFive: PatternFinder = (bits, within) => {
-  if (within < 5) return []
+export const findBlackFives = (line: Line): Row[] => {
+  const blacks0 = line.blacks << 1 // append dummy bit
+  return find(blacks0, line.size + 2, [0b0111110], 7)
+}
+
+export const findBlackFours = (line: Line): Row[] => {
+  const patterns = [
+    0b0111100,
+    0b0111010,
+    0b0110110,
+    0b0101110,
+    0b0011110,
+  ]
+  const stones0 = line.blacks << 1 // append dummy bit
+  return find(stones0, line.size + 2, patterns, 7)
+}
+
+const find = (stones: Stones, within: number, patterns: Stones[], size: number): Row[] => {
+  if (within < size) return []
   const result = []
-  for (let i = 0; i <= within - 5; i++) {
-    if (window(bits, i, 5) === 0b11111) {
-      result.push(i)
+  for (let i = 0; i <= within - size; i++) {
+    for (let j = 0; j < patterns.length; j++) {
+      if (cut(stones, i, size) === patterns[j]) {
+        result.push([i, size] as Row)
+      }
     }
   }
   return result
 }
 
-const findJustFive: PatternFinder = (bits, within) => {
-  if (within < 5) return []
-  const bits_ = bits << 1 // dummy bit
-  const result = []
-  for (let i = 0; i <= within - 5; i++) {
-    if (window(bits_, i, 5 + 2) === 0b0111110) {
-      result.push(i)
-    }
-  }
-  return result
-}
-
-const window = (bits: number, shift: number, size: number): number => (bits >> shift) & (2 ** size - 1)
+const cut = (stones: Stones, start: number, size: number): number => (stones >> start) & (2 ** size - 1)

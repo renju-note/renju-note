@@ -1,28 +1,24 @@
 import { Point, N_INDICES } from './foundation'
 import { Line } from './line'
 
-export type LineGroupType = 'vertical' | 'horizontal' | 'ascending' | 'descending'
-
-export type LineGroupCoordinate = [number, number]
-
 export class Board {
   readonly moves: Point[]
-  readonly lineGroups: Record<LineGroupType, LineGroup>
+  readonly stripes: Record<StripeType, Stripe>
   readonly blackProps: BoardProps
   readonly whiteProps: BoardProps
 
-  constructor (init?: Pick<Board, 'moves' | 'lineGroups'>) {
+  constructor (init?: Pick<Board, 'moves' | 'stripes'>) {
     if (init === undefined) {
       this.moves = []
-      this.lineGroups = {
-        vertical: new LineGroup('vertical'),
-        horizontal: new LineGroup('horizontal'),
-        ascending: new LineGroup('ascending'),
-        descending: new LineGroup('descending'),
+      this.stripes = {
+        vertical: new Stripe('vertical'),
+        horizontal: new Stripe('horizontal'),
+        ascending: new Stripe('ascending'),
+        descending: new Stripe('descending'),
       }
     } else {
       this.moves = init.moves
-      this.lineGroups = init.lineGroups
+      this.stripes = init.stripes
     }
 
     this.blackProps = this.computeBlackProps()
@@ -34,14 +30,14 @@ export class Board {
     const moves = [...this.moves, p]
 
     const black = this.blackTurn()
-    const lineGroups = {
-      vertical: this.lineGroups.vertical.add(black, p),
-      horizontal: this.lineGroups.horizontal.add(black, p),
-      ascending: this.lineGroups.ascending.add(black, p),
-      descending: this.lineGroups.descending.add(black, p)
+    const stripes = {
+      vertical: this.stripes.vertical.add(black, p),
+      horizontal: this.stripes.horizontal.add(black, p),
+      ascending: this.stripes.ascending.add(black, p),
+      descending: this.stripes.descending.add(black, p)
     }
 
-    return new Board({ moves, lineGroups })
+    return new Board({ moves, stripes })
   }
 
   occupied ([x, y]: Point): boolean {
@@ -62,49 +58,41 @@ export class Board {
 
   private computeBlackProps (): BoardProps {
     return {
-      fives: this.lineGroupArray().flatMap(
-        lg => lg.blackProps.fives.map(
-          x => {
-            return { type_: lg.type_, coordinate: x }
-          }
-        )
-      )
+      fives: this.stripeArray().flatMap(s => s.blackProps.fives)
     }
   }
 
   private computeWhiteProps (): BoardProps {
     return {
-      fives: this.lineGroupArray().flatMap(
-        lg => lg.whiteProps.fives.map(
-          x => {
-            return { type_: lg.type_, coordinate: x }
-          }
-        )
-      )
+      fives: this.stripeArray().flatMap(s => s.whiteProps.fives)
     }
   }
 
-  private lineGroupArray (): LineGroup[] {
+  private stripeArray (): Stripe[] {
     return [
-      this.lineGroups.vertical,
-      this.lineGroups.horizontal,
-      this.lineGroups.ascending,
-      this.lineGroups.descending,
+      this.stripes.vertical,
+      this.stripes.horizontal,
+      this.stripes.ascending,
+      this.stripes.descending,
     ]
   }
 }
 
 export type BoardProps = {
-  fives: {type_: LineGroupType, coordinate: LineGroupCoordinate}[]
+  fives: [Point, Point][],
 }
 
-export class LineGroup {
-  readonly type_: LineGroupType
-  readonly lines: Line[]
-  readonly blackProps: LineGroupProps
-  readonly whiteProps: LineGroupProps
+export type StripeType = 'vertical' | 'horizontal' | 'ascending' | 'descending'
 
-  constructor (init: LineGroupType | Pick<LineGroup, 'type_' | 'lines'>) {
+export type StripeCoordinate = [number, number]
+
+export class Stripe {
+  readonly type_: StripeType
+  readonly lines: Line[]
+  readonly blackProps: StripeProps
+  readonly whiteProps: StripeProps
+
+  constructor (init: StripeType | Pick<Stripe, 'type_' | 'lines'>) {
     if (typeof init === 'string') {
       this.type_ = init
       if (init === 'vertical' || init === 'horizontal') {
@@ -121,53 +109,43 @@ export class LineGroup {
     this.whiteProps = this.computeWhiteProps()
   }
 
-  add (black: boolean, p: Point): LineGroup {
-    let i: number, j: number
-    switch (this.type_) {
-      case 'vertical':
-        [i, j] = p2v(p)
-        break
-      case 'horizontal':
-        [i, j] = p2h(p)
-        break
-      case 'ascending':
-        [i, j] = p2a(p)
-        break
-      case 'descending':
-        [i, j] = p2d(p)
-        break
-    }
+  add (black: boolean, p: Point): Stripe {
+    const [i, j] = pointToCoordinate(p, this.type_)
 
     const newLine = this.lines[i].add(black, j)
     if (!newLine) throw new Error('Wrong move')
     const lines = this.lines.map((l, li) => li === i ? newLine : l)
 
-    return new LineGroup({ type_: this.type_, lines })
+    return new Stripe({ type_: this.type_, lines })
   }
 
-  private computeBlackProps (): LineGroupProps {
+  private computeBlackProps (): StripeProps {
     return {
       fives: this.lines.flatMap(
         (l, i) => l.blackProps.fives.map(
-          j => [i, j] as [number, number]
+          ([j, size]) => [
+            coordinateToPoint([i, j], this.type_), coordinateToPoint([i, j + size], this.type_)
+          ]
         )
       )
     }
   }
 
-  private computeWhiteProps (): LineGroupProps {
+  private computeWhiteProps (): StripeProps {
     return {
       fives: this.lines.flatMap(
         (l, i) => l.whiteProps.fives.map(
-          j => [i, j] as LineGroupCoordinate
+          ([j, size]) => [
+            coordinateToPoint([i, j], this.type_), coordinateToPoint([i, j + size], this.type_)
+          ]
         )
       )
     }
   }
 }
 
-export type LineGroupProps = {
-  fives: LineGroupCoordinate[]
+export type StripeProps = {
+  fives: [Point, Point][]
 }
 
 const N_DIAGONAL_LINES = N_INDICES * 2 - 1 // 29
@@ -183,20 +161,64 @@ const newDiagonalLines = (): Line[] => new Array(N_DIAGONAL_LINES).fill(null).ma
   }
 )
 
-type PointToCoordinate = ([x, y]: Point) => LineGroupCoordinate
+const pointToCoordinate = (p: Point, type_: StripeType): StripeCoordinate => {
+  switch (type_) {
+    case 'vertical':
+      return p2v(p)
+    case 'horizontal':
+      return p2h(p)
+    case 'ascending':
+      return p2a(p)
+    case 'descending':
+      return p2d(p)
+  }
+}
 
-const p2v: PointToCoordinate = ([x, y]) => [x - 1, y - 1]
+const p2v = ([x, y]: Point): StripeCoordinate => [x - 1, y - 1]
 
-const p2h: PointToCoordinate = ([x, y]) => [y - 1, x - 1]
+const p2h = ([x, y]: Point): StripeCoordinate => [y - 1, x - 1]
 
-const p2a: PointToCoordinate = ([x, y]) => {
+const p2a = ([x, y]: Point): StripeCoordinate => {
   const i = (x - 1) + (N_INDICES - y)
-  const j = i < N_INDICES ? x : (y - 1)
+  const j = i < N_INDICES ? (x - 1) : (y - 1)
   return [i, j]
 }
 
-const p2d: PointToCoordinate = ([x, y]) => {
+const p2d = ([x, y]: Point): StripeCoordinate => {
   const i = (x - 1) + (y - 1)
-  const j = i < N_INDICES ? x : (N_INDICES - y)
+  const j = i < N_INDICES ? (x - 1) : (N_INDICES - y)
   return [i, j]
+}
+
+export const coordinateToPoint = (c: StripeCoordinate, type_: StripeType): Point => {
+  switch (type_) {
+    case 'vertical':
+      return v2p(c)
+    case 'horizontal':
+      return h2p(c)
+    case 'ascending':
+      return a2p(c)
+    case 'descending':
+      return d2p(c)
+  }
+}
+
+const v2p = ([i, j]: StripeCoordinate): Point => [i + 1, j + 1] as Point
+
+const h2p = ([i, j]: StripeCoordinate): Point => [j + 1, i + 1] as Point
+
+const a2p = ([i, j]: StripeCoordinate): Point => {
+  if (i < N_INDICES) {
+    return [j + 1, N_INDICES - (i + 1) + (j + 1)] as Point
+  } else {
+    return [N_INDICES - (i + 1) - (j + 1), j + 1] as Point
+  }
+}
+
+const d2p = ([i, j]: StripeCoordinate): Point => {
+  if (i < N_INDICES) {
+    return [j + 1, (i + 1) + (j + 1) - N_INDICES] as Point
+  } else {
+    return [(i + 1) + (j + 1) - N_INDICES, N_INDICES - j] as Point
+  }
 }
