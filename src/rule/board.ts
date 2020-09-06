@@ -161,7 +161,7 @@ const newDiagonalLines = (): Line[] => new Array(N_DIAGONAL_LINES).fill(null).ma
   }
 )
 
-const pointToCoordinate = (p: Point, type_: StripeType): StripeCoordinate => {
+export const pointToCoordinate = (p: Point, type_: StripeType): StripeCoordinate => {
   switch (type_) {
     case 'vertical':
       return p2v(p)
