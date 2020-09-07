@@ -32,12 +32,12 @@ const App: FC = () => {
       <svg width={boardSize} height={boardSize} onClick={onClick}>
         <Ruler cellSize={C} />
         <Moves cellSize={C} moves={board.moves} />
-        <Rows cellSize={C} rows={board.blackRows.three} stroke="blue" />
-        <Rows cellSize={C} rows={board.whiteRows.three} stroke="green" />
-        <Rows cellSize={C} rows={board.blackRows.four} stroke="blue" />
-        <Rows cellSize={C} rows={board.whiteRows.four} stroke="green" />
-        <Rows cellSize={C} rows={board.blackRows.five} stroke="blue" />
-        <Rows cellSize={C} rows={board.whiteRows.five} stroke="green" />
+        <Rows cellSize={C} rows={(board.blackRows.get('three') ?? []).map(([ps, _]) => ps)} stroke="blue" />
+        <Rows cellSize={C} rows={(board.whiteRows.get('three') ?? []).map(([ps, _]) => ps)} stroke="green" />
+        <Rows cellSize={C} rows={(board.blackRows.get('four') ?? []).map(([ps, _]) => ps)} stroke="blue" />
+        <Rows cellSize={C} rows={(board.whiteRows.get('four') ?? []).map(([ps, _]) => ps)} stroke="green" />
+        <Rows cellSize={C} rows={(board.blackRows.get('five') ?? []).map(([ps, _]) => ps)} stroke="blue" />
+        <Rows cellSize={C} rows={(board.whiteRows.get('five') ?? []).map(([ps, _]) => ps)} stroke="green" />
       </svg>
       <div>
         <RowsTable board={board} />
@@ -119,18 +119,18 @@ const RowsTable: FC<{board: Board}> = ({
       </tr>
       <tr>
         <th>Five</th>
-        <td>{board.blackRows.five.map(([a, b]) => `(${a})-(${b})`).join('\n')}</td>
-        <td>{board.whiteRows.five.map(([a, b]) => `(${a})-(${b})`).join('\n')}</td>
+        <td>{(board.blackRows.get('five') ?? []).map(([[a, b], _]) => `(${a})-(${b})`).join('\n')}</td>
+        <td>{(board.whiteRows.get('five') ?? []).map(([[a, b], _]) => `(${a})-(${b})`).join('\n')}</td>
       </tr>
       <tr>
         <th>Four</th>
-        <td>{board.blackRows.four.map(([a, b]) => `(${a})-(${b})`).join('\n')}</td>
-        <td>{board.whiteRows.four.map(([a, b]) => `(${a})-(${b})`).join('\n')}</td>
+        <td>{(board.blackRows.get('four') ?? []).map(([[a, b], _]) => `(${a})-(${b})`).join('\n')}</td>
+        <td>{(board.whiteRows.get('four') ?? []).map(([[a, b], _]) => `(${a})-(${b})`).join('\n')}</td>
       </tr>
       <tr>
         <th>Three</th>
-        <td>{board.blackRows.three.map(([a, b]) => `(${a})-(${b})`).join('\n')}</td>
-        <td>{board.whiteRows.three.map(([a, b]) => `(${a})-(${b})`).join('\n')}</td>
+        <td>{(board.blackRows.get('three') ?? []).map(([[a, b], _]) => `(${a})-(${b})`).join('\n')}</td>
+        <td>{(board.whiteRows.get('three') ?? []).map(([[a, b], _]) => `(${a})-(${b})`).join('\n')}</td>
       </tr>
     </tbody>
   </table>

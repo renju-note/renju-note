@@ -1,11 +1,11 @@
 import { Point, N_INDICES } from './foundation'
-import { Line, RowType, rowTypes } from './line'
+import { Line, Row, RowType, rowTypes } from './line'
 
 export class Board {
   readonly moves: Point[]
   readonly stripes: Stripe[]
-  readonly blackRows: Record<RowType, [Point, Point][]>
-  readonly whiteRows: Record<RowType, [Point, Point][]>
+  readonly blackRows: Map<RowType, [[Point, Point], Row][]>
+  readonly whiteRows: Map<RowType, [[Point, Point], Row][]>
 
   constructor (init?: Pick<Board, 'moves' | 'stripes'>) {
     if (init === undefined) {
@@ -42,29 +42,33 @@ export class Board {
   }
 
   blackWon (): boolean {
-    return this.blackRows.five.length > 0
+    return (this.blackRows.get('five') ?? []).length > 0
   }
 
   whiteWon (): boolean {
-    return this.whiteRows.five.length > 0
+    return (this.whiteRows.get('five') ?? []).length > 0
   }
 
-  private computeBlackRows (): Record<RowType, [Point, Point][]> {
-    return Object.fromEntries(rowTypes.map(
-      (t) => {
-        const rows = this.stripes.flatMap(s => s.blackRows[t])
-        return [t, rows]
-      }
-    )) as Record<RowType, [Point, Point][]>
+  private computeBlackRows (): Map<RowType, [[Point, Point], Row][]> {
+    return new Map(rowTypes.map(
+      t => [
+        t,
+        this.stripes.flatMap(
+          l => (l.blackRows.get(t) ?? [])
+        )
+      ]
+    ))
   }
 
-  private computeWhiteRows (): Record<RowType, [Point, Point][]> {
-    return Object.fromEntries(rowTypes.map(
-      (t) => {
-        const rows = this.stripes.flatMap(s => s.whiteRows[t])
-        return [t, rows]
-      }
-    )) as Record<RowType, [Point, Point][]>
+  private computeWhiteRows (): Map<RowType, [[Point, Point], Row][]> {
+    return new Map(rowTypes.map(
+      t => [
+        t,
+        this.stripes.flatMap(
+          l => (l.whiteRows.get(t) ?? [])
+        )
+      ]
+    ))
   }
 }
 
@@ -75,8 +79,8 @@ export type StripeCoordinate = [number, number]
 export class Stripe {
   readonly type: StripeType
   readonly lines: Line[]
-  readonly blackRows: Record<RowType, [Point, Point][]>
-  readonly whiteRows: Record<RowType, [Point, Point][]>
+  readonly blackRows: Map<RowType, [[Point, Point], Row][]>
+  readonly whiteRows: Map<RowType, [[Point, Point], Row][]>
 
   constructor (init: StripeType | Pick<Stripe, 'type' | 'lines'>) {
     if (typeof init === 'string') {
@@ -105,30 +109,30 @@ export class Stripe {
     return new Stripe({ type: this.type, lines })
   }
 
-  private computeBlackRows (): Record<RowType, [Point, Point][]> {
-    return Object.fromEntries(rowTypes.map(
-      (t) => {
-        const rows = this.lines.flatMap(
-          (l, i) => l.blackRows[t].map(
-            ([j, size]) => toPoints(this.type, [i, j], size)
+  private computeBlackRows (): Map<RowType, [[Point, Point], Row][]> {
+    return new Map(rowTypes.map(
+      t => [
+        t,
+        this.lines.flatMap(
+          (l, i) => (l.blackRows.get(t) ?? []).map(
+            ([j, row]) => [toPoints(this.type, [i, j], row.size), row]
           )
         )
-        return [t, rows]
-      }
-    )) as Record<RowType, [Point, Point][]>
+      ]
+    ))
   }
 
-  private computeWhiteRows (): Record<RowType, [Point, Point][]> {
-    return Object.fromEntries(rowTypes.map(
-      (t) => {
-        const rows = this.lines.flatMap(
-          (l, i) => l.whiteRows[t].map(
-            ([j, size]) => toPoints(this.type, [i, j], size)
+  private computeWhiteRows (): Map<RowType, [[Point, Point], Row][]> {
+    return new Map(rowTypes.map(
+      t => [
+        t,
+        this.lines.flatMap(
+          (l, i) => (l.whiteRows.get(t) ?? []).map(
+            ([j, row]) => [toPoints(this.type, [i, j], row.size), row]
           )
         )
-        return [t, rows]
-      }
-    )) as Record<RowType, [Point, Point][]>
+      ]
+    ))
   }
 
   toString (): string {

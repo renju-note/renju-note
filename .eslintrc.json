@@ -27,7 +27,7 @@
         "no-useless-constructor": ["off"],
         "comma-dangle": ["error", "only-multiline"],
         "react/prop-types": ["off"],
-        "@typescript-eslint/no-unused-vars": "error",
+        "@typescript-eslint/no-unused-vars": ["error", { "varsIgnorePattern": "^_$", "argsIgnorePattern": "^_$" }],
         "@typescript-eslint/no-useless-constructor": "error"
     },
     "overrides": [
