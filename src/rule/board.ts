@@ -1,24 +1,28 @@
-import { Point, N_INDICES } from './foundation'
-import { Line, Row, RowType, rowTypes } from './line'
+import { Stripe, StripeType, StripeCoordinate } from './stripe'
+import { Row, RowType, rowTypes } from './row'
+
+export type Point = [number, number]
 
 export class Board {
+  readonly size: number
   readonly moves: Point[]
   readonly stripes: Stripe[]
   readonly blackRows: Map<RowType, [[Point, Point], Row][]>
   readonly whiteRows: Map<RowType, [[Point, Point], Row][]>
 
-  constructor (init?: Pick<Board, 'moves' | 'stripes'>) {
-    if (init === undefined) {
-      this.moves = []
-      this.stripes = [
-        new Stripe('vertical'),
-        new Stripe('horizontal'),
-        new Stripe('ascending'),
-        new Stripe('descending'),
-      ]
-    } else {
+  constructor (init: Pick<Board, 'size'> | Pick<Board, 'size' | 'moves' | 'stripes'>) {
+    this.size = init.size
+    if ('moves' in init && 'stripes' in init) {
       this.moves = init.moves
       this.stripes = init.stripes
+    } else {
+      this.moves = []
+      this.stripes = [
+        new Stripe({ size: this.size, type: 'vertical' }),
+        new Stripe({ size: this.size, type: 'horizontal' }),
+        new Stripe({ size: this.size, type: 'ascending' }),
+        new Stripe({ size: this.size, type: 'descending' }),
+      ]
     }
 
     this.blackRows = this.computeBlackRows()
@@ -29,8 +33,8 @@ export class Board {
     if (this.occupied(p)) throw new Error('Already occupied')
     const moves = [...this.moves, p]
     const black = this.blackTurn()
-    const stripes = this.stripes.map(s => s.add(black, p))
-    return new Board({ moves, stripes })
+    const stripes = this.stripes.map(s => s.add(black, toCoordinate(this.size, s.type, p)))
+    return new Board({ size: this.size, moves, stripes })
   }
 
   occupied ([x, y]: Point): boolean {
@@ -54,7 +58,9 @@ export class Board {
       t => [
         t,
         this.stripes.flatMap(
-          l => (l.blackRows.get(t) ?? [])
+          s => (s.blackRows.get(t) ?? []).map(
+            ([c, row]) => [toPoints(this.size, s.type, c, row.size), row]
+          )
         )
       ]
     ))
@@ -65,156 +71,77 @@ export class Board {
       t => [
         t,
         this.stripes.flatMap(
-          l => (l.whiteRows.get(t) ?? [])
+          s => (s.whiteRows.get(t) ?? []).map(
+            ([c, row]) => [toPoints(this.size, s.type, c, row.size), row]
+          )
         )
       ]
     ))
   }
 }
 
-export type StripeType = 'vertical' | 'horizontal' | 'ascending' | 'descending'
-
-export type StripeCoordinate = [number, number]
-
-export class Stripe {
-  readonly type: StripeType
-  readonly lines: Line[]
-  readonly blackRows: Map<RowType, [[Point, Point], Row][]>
-  readonly whiteRows: Map<RowType, [[Point, Point], Row][]>
-
-  constructor (init: StripeType | Pick<Stripe, 'type' | 'lines'>) {
-    if (typeof init === 'string') {
-      this.type = init
-      if (init === 'vertical' || init === 'horizontal') {
-        this.lines = newOrthogonalLines()
-      } else {
-        this.lines = newDiagonalLines()
-      }
-    } else {
-      this.type = init.type
-      this.lines = init.lines
-    }
-
-    this.blackRows = this.computeBlackRows()
-    this.whiteRows = this.computeWhiteRows()
-  }
-
-  add (black: boolean, p: Point): Stripe {
-    const [i, j] = toCoordinate(this.type, p)
-
-    const newLine = this.lines[i].add(black, j)
-    if (!newLine) throw new Error('Wrong move')
-    const lines = this.lines.map((l, li) => li === i ? newLine : l)
-
-    return new Stripe({ type: this.type, lines })
-  }
-
-  private computeBlackRows (): Map<RowType, [[Point, Point], Row][]> {
-    return new Map(rowTypes.map(
-      t => [
-        t,
-        this.lines.flatMap(
-          (l, i) => (l.blackRows.get(t) ?? []).map(
-            ([j, row]) => [toPoints(this.type, [i, j], row.size), row]
-          )
-        )
-      ]
-    ))
-  }
-
-  private computeWhiteRows (): Map<RowType, [[Point, Point], Row][]> {
-    return new Map(rowTypes.map(
-      t => [
-        t,
-        this.lines.flatMap(
-          (l, i) => (l.whiteRows.get(t) ?? []).map(
-            ([j, row]) => [toPoints(this.type, [i, j], row.size), row]
-          )
-        )
-      ]
-    ))
-  }
-
-  toString (): string {
-    return this.lines.map(l => l.toSting()).join('\n')
-  }
-}
-
-const N_DIAGONAL_LINES = N_INDICES * 2 - 1 // 29
-
-const newOrthogonalLines = (): Line[] => new Array(N_INDICES).fill(null).map(
-  () => new Line(N_INDICES)
-)
-
-const newDiagonalLines = (): Line[] => new Array(N_DIAGONAL_LINES).fill(null).map(
-  (_, i) => {
-    const size = i < N_INDICES ? i + 1 : N_DIAGONAL_LINES - i
-    return new Line(size)
-  }
-)
-
-export const toCoordinate = (type: StripeType, p: Point): StripeCoordinate => {
+export const toCoordinate = (size: number, type: StripeType, p: Point): StripeCoordinate => {
   switch (type) {
     case 'vertical':
-      return p2v(p)
+      return p2v(size, p)
     case 'horizontal':
-      return p2h(p)
+      return p2h(size, p)
     case 'ascending':
-      return p2a(p)
+      return p2a(size, p)
     case 'descending':
-      return p2d(p)
+      return p2d(size, p)
   }
 }
 
-const p2v = ([x, y]: Point): StripeCoordinate => [x - 1, y - 1]
+const p2v = (size: number, [x, y]: Point): StripeCoordinate => [x - 1, y - 1]
 
-const p2h = ([x, y]: Point): StripeCoordinate => [y - 1, x - 1]
+const p2h = (size: number, [x, y]: Point): StripeCoordinate => [y - 1, x - 1]
 
-const p2a = ([x, y]: Point): StripeCoordinate => {
-  const i = (x - 1) + (N_INDICES - y)
-  const j = i < N_INDICES ? (x - 1) : (y - 1)
+const p2a = (size: number, [x, y]: Point): StripeCoordinate => {
+  const i = (x - 1) + (size - y)
+  const j = i < size ? (x - 1) : (y - 1)
   return [i, j]
 }
 
-const p2d = ([x, y]: Point): StripeCoordinate => {
+const p2d = (size: number, [x, y]: Point): StripeCoordinate => {
   const i = (x - 1) + (y - 1)
-  const j = i < N_INDICES ? (x - 1) : (N_INDICES - y)
+  const j = i < size ? (x - 1) : (size - y)
   return [i, j]
 }
 
-export const toPoint = (type: StripeType, c: StripeCoordinate): Point => {
+export const toPoint = (size: number, type: StripeType, c: StripeCoordinate): Point => {
   switch (type) {
     case 'vertical':
-      return v2p(c)
+      return v2p(size, c)
     case 'horizontal':
-      return h2p(c)
+      return h2p(size, c)
     case 'ascending':
-      return a2p(c)
+      return a2p(size, c)
     case 'descending':
-      return d2p(c)
+      return d2p(size, c)
   }
 }
 
-const v2p = ([i, j]: StripeCoordinate): Point => [i + 1, j + 1] as Point
+const v2p = (size: number, [i, j]: StripeCoordinate): Point => [i + 1, j + 1]
 
-const h2p = ([i, j]: StripeCoordinate): Point => [j + 1, i + 1] as Point
+const h2p = (size: number, [i, j]: StripeCoordinate): Point => [j + 1, i + 1]
 
-const a2p = ([i, j]: StripeCoordinate): Point => {
-  if (i < N_INDICES) {
-    return [j + 1, N_INDICES - (i + 1) + (j + 1)] as Point
+const a2p = (size: number, [i, j]: StripeCoordinate): Point => {
+  if (i < size) {
+    return [j + 1, size - (i + 1) + (j + 1)]
   } else {
-    return [(i + 1) + (j + 1) - N_INDICES, j + 1] as Point
+    return [(i + 1) + (j + 1) - size, j + 1]
   }
 }
 
-const d2p = ([i, j]: StripeCoordinate): Point => {
-  if (i < N_INDICES) {
-    return [j + 1, (i + 1) - j] as Point
+const d2p = (size: number, [i, j]: StripeCoordinate): Point => {
+  if (i < size) {
+    return [j + 1, (i + 1) - j]
   } else {
-    return [(i + 1) + (j + 1) - N_INDICES, N_INDICES - j] as Point
+    return [(i + 1) + (j + 1) - size, size - j]
   }
 }
 
-export const toPoints = (type: StripeType, [i, j]: StripeCoordinate, size: number): [Point, Point] => {
-  return [toPoint(type, [i, j]), toPoint(type, [i, j + size - 1])]
+export const toPoints = (size: number, type: StripeType, [i, j]: StripeCoordinate, rowSize: number): [Point, Point] => {
+  return [toPoint(size, type, [i, j]), toPoint(size, type, [i, j + rowSize - 1])]
 }

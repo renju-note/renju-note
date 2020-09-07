@@ -1,7 +1,7 @@
 import { Board } from './board'
 
 test('newBoard', () => {
-  const board = new Board()
+  const board = new Board({ size: 15 })
   expect(board.stripes[0].type).toBe('vertical')
   expect(board.stripes[0].lines).toMatchObject(orthogonalLines)
   expect(board.stripes[1].type).toBe('horizontal')

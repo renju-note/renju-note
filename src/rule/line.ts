@@ -1,13 +1,6 @@
-import { N_INDICES } from './foundation'
+import { Row, RowType, Stones } from './row'
 
-export type Stones = number // stones as bits e.g. 0b00111010
-
-export const rowTypes = ['three', 'four', 'five'] as const
-export type RowType = typeof rowTypes[number]
-export type Row = {
-  type: RowType
-  size: number
-}
+const INT_SIZE = 64
 
 export class Line {
   readonly size: number
@@ -16,18 +9,17 @@ export class Line {
   readonly blackRows: Map<RowType, [number, Row][]>
   readonly whiteRows: Map<RowType, [number, Row][]>
 
-  constructor (init: number | Pick<Line, 'size' | 'blacks' | 'whites'>) {
-    if (typeof init === 'number') {
-      this.size = init
-      this.blacks = 0b0
-      this.whites = 0b0
-    } else {
-      this.size = init.size
+  constructor (init: Pick<Line, 'size'> | Pick<Line, 'size' | 'blacks' | 'whites'>) {
+    this.size = init.size
+    if ('blacks' in init && 'whites' in init) {
       this.blacks = init.blacks
       this.whites = init.whites
+    } else {
+      this.blacks = 0b0
+      this.whites = 0b0
     }
 
-    if (this.size < 1 || this.size > N_INDICES) throw new Error('Wrong size')
+    if (this.size < 1 || this.size > INT_SIZE) throw new Error('Wrong size')
     if (overlap(this.blacks, this.whites)) throw new Error('Black and white stones are overlapping')
 
     this.blackRows = this.computeBlackRows()

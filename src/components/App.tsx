@@ -1,13 +1,13 @@
 import React, { FC, useState, useEffect } from 'react'
 import './App.css'
 
-import { Board, Point, Index, N_INDICES, indices } from '../rule'
+import { BOARD_SIZE, Board, Point } from '../rule'
 
 const C = 40
-const boardSize = (N_INDICES + 1) * C
+const WIDTH = (BOARD_SIZE + 1) * C
 
 const App: FC = () => {
-  const [board, setBoard] = useState<Board>(new Board())
+  const [board, setBoard] = useState<Board>(new Board({ size: BOARD_SIZE }))
   useEffect(
     () => {
       const example: Point[] = [[8, 8], [8, 9], [10, 10]]
@@ -22,14 +22,14 @@ const App: FC = () => {
   const onClick = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
     const base = e.currentTarget.getBoundingClientRect()
     const [x, y] = [e.clientX - base.x, e.clientY - base.y]
-    const p: Point = [adjust(x / C), adjust((boardSize - y) / C)]
+    const p: Point = [adjust(x / C), adjust((WIDTH - y) / C)]
     const newBoard = board.move(p)
     setBoard(newBoard)
     newBoard.stripes.forEach(s => console.log(s.toString()))
   }
   return (
     <div className="App">
-      <svg width={boardSize} height={boardSize} onClick={onClick}>
+      <svg width={WIDTH} height={WIDTH} onClick={onClick}>
         <Ruler cellSize={C} />
         <Moves cellSize={C} moves={board.moves} />
         <Rows cellSize={C} rows={(board.blackRows.get('three') ?? []).map(([ps, _]) => ps)} stroke="blue" />
@@ -53,7 +53,7 @@ const Moves: FC<{cellSize: number, moves: Point[]}> = ({
   const circles = moves.map(
     ([x, y], n) => {
       const fill = n % 2 === 0 ? 'black' : 'white'
-      const [cx, cy] = [x * cellSize, (N_INDICES - y + 1) * cellSize]
+      const [cx, cy] = [x * cellSize, (BOARD_SIZE - y + 1) * cellSize]
       return <circle key={n} cx={cx} cy={cy} r={C / 2 - 2} fill={fill} stroke="black" />
     }
   )
@@ -69,8 +69,8 @@ const Rows: FC<{cellSize: number, rows: [Point, Point][], stroke: string}> = ({
 }) => {
   const lines = rows.map(
     ([[p1x, p1y], [p2x, p2y]], key) => {
-      const [x1, y1] = [p1x * cellSize, (N_INDICES - p1y + 1) * cellSize]
-      const [x2, y2] = [p2x * cellSize, (N_INDICES - p2y + 1) * cellSize]
+      const [x1, y1] = [p1x * cellSize, (BOARD_SIZE - p1y + 1) * cellSize]
+      const [x2, y2] = [p2x * cellSize, (BOARD_SIZE - p2y + 1) * cellSize]
       return <line
         key={key}
         x1={x1} y1={y1} x2={x2} y2={y2}
@@ -86,13 +86,13 @@ const Rows: FC<{cellSize: number, rows: [Point, Point][], stroke: string}> = ({
 const Ruler: FC<{cellSize: number}> = ({
   cellSize
 }) => {
-  const verticalLines = indices.map((i, k) => {
+  const verticalLines = indices().map((i, key) => {
     const x = i * cellSize
-    return <line key={k} x1={x} y1={1 * cellSize} x2={x} y2={N_INDICES * cellSize} stroke="black" />
+    return <line key={key} x1={x} y1={1 * cellSize} x2={x} y2={BOARD_SIZE * cellSize} stroke="black" />
   })
-  const horizontalLines = indices.map((i, k) => {
-    const y = (N_INDICES - i + 1) * cellSize
-    return <line key={k} x1={1 * cellSize} y1={y} x2={N_INDICES * cellSize} y2={y} stroke="black" />
+  const horizontalLines = indices().map((i, key) => {
+    const y = (BOARD_SIZE - i + 1) * cellSize
+    return <line key={key} x1={1 * cellSize} y1={y} x2={BOARD_SIZE * cellSize} y2={y} stroke="black" />
   })
   return <>
     {verticalLines}
@@ -136,15 +136,8 @@ const RowsTable: FC<{board: Board}> = ({
   </table>
 }
 
-const adjust = (n: number): Index => {
-  const r = Math.round(n)
-  if (r < 1) {
-    return 1
-  } else if (r > 15) {
-    return 15
-  } else {
-    return r as Index
-  }
-}
+const indices = (): number[] => new Array(BOARD_SIZE).fill(null).map((_, i) => i + 1)
+
+const adjust = (n: number): number => Math.min(Math.max(1, Math.round(n)), BOARD_SIZE)
 
 export default App
