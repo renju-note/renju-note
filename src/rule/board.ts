@@ -80,65 +80,39 @@ export class Board {
   }
 }
 
-export const toCoordinate = (size: number, type: StripeType, p: Point): StripeCoordinate => {
+export const toCoordinate = (size: number, type: StripeType, [x, y]: Point): StripeCoordinate => {
+  let i: number, j: number
   switch (type) {
     case 'vertical':
-      return p2v(size, p)
+      return [x - 1, y - 1]
     case 'horizontal':
-      return p2h(size, p)
+      return [y - 1, x - 1]
     case 'ascending':
-      return p2a(size, p)
+      i = (x - 1) + (size - y)
+      j = i < size ? (x - 1) : (y - 1)
+      return [i, j]
     case 'descending':
-      return p2d(size, p)
+      i = (x - 1) + (y - 1)
+      j = i < size ? (x - 1) : (size - y)
+      return [i, j]
   }
 }
 
-const p2v = (size: number, [x, y]: Point): StripeCoordinate => [x - 1, y - 1]
-
-const p2h = (size: number, [x, y]: Point): StripeCoordinate => [y - 1, x - 1]
-
-const p2a = (size: number, [x, y]: Point): StripeCoordinate => {
-  const i = (x - 1) + (size - y)
-  const j = i < size ? (x - 1) : (y - 1)
-  return [i, j]
-}
-
-const p2d = (size: number, [x, y]: Point): StripeCoordinate => {
-  const i = (x - 1) + (y - 1)
-  const j = i < size ? (x - 1) : (size - y)
-  return [i, j]
-}
-
-export const toPoint = (size: number, type: StripeType, c: StripeCoordinate): Point => {
+export const toPoint = (size: number, type: StripeType, [i, j]: StripeCoordinate): Point => {
+  let x: number, y: number
   switch (type) {
     case 'vertical':
-      return v2p(size, c)
+      return [i + 1, j + 1]
     case 'horizontal':
-      return h2p(size, c)
+      return [j + 1, i + 1]
     case 'ascending':
-      return a2p(size, c)
+      x = i < size ? j + 1 : (i + 1) + (j + 1) - size
+      y = i < size ? size - (i + 1) + (j + 1) : j + 1
+      return [x, y]
     case 'descending':
-      return d2p(size, c)
-  }
-}
-
-const v2p = (size: number, [i, j]: StripeCoordinate): Point => [i + 1, j + 1]
-
-const h2p = (size: number, [i, j]: StripeCoordinate): Point => [j + 1, i + 1]
-
-const a2p = (size: number, [i, j]: StripeCoordinate): Point => {
-  if (i < size) {
-    return [j + 1, size - (i + 1) + (j + 1)]
-  } else {
-    return [(i + 1) + (j + 1) - size, j + 1]
-  }
-}
-
-const d2p = (size: number, [i, j]: StripeCoordinate): Point => {
-  if (i < size) {
-    return [j + 1, (i + 1) - j]
-  } else {
-    return [(i + 1) + (j + 1) - size, size - j]
+      x = i < size ? j + 1 : (i + 1) + (j + 1) - size
+      y = i < size ? (i + 1) - j : size - j
+      return [x, y]
   }
 }
 
