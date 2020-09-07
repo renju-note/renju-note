@@ -73,21 +73,21 @@ export type StripeType = 'vertical' | 'horizontal' | 'ascending' | 'descending'
 export type StripeCoordinate = [number, number]
 
 export class Stripe {
-  readonly type_: StripeType
+  readonly type: StripeType
   readonly lines: Line[]
   readonly blackProps: Record<PropType, [Point, Point][]>
   readonly whiteProps: Record<PropType, [Point, Point][]>
 
-  constructor (init: StripeType | Pick<Stripe, 'type_' | 'lines'>) {
+  constructor (init: StripeType | Pick<Stripe, 'type' | 'lines'>) {
     if (typeof init === 'string') {
-      this.type_ = init
+      this.type = init
       if (init === 'vertical' || init === 'horizontal') {
         this.lines = newOrthogonalLines()
       } else {
         this.lines = newDiagonalLines()
       }
     } else {
-      this.type_ = init.type_
+      this.type = init.type
       this.lines = init.lines
     }
 
@@ -96,13 +96,13 @@ export class Stripe {
   }
 
   add (black: boolean, p: Point): Stripe {
-    const [i, j] = toCoordinate(this.type_, p)
+    const [i, j] = toCoordinate(this.type, p)
 
     const newLine = this.lines[i].add(black, j)
     if (!newLine) throw new Error('Wrong move')
     const lines = this.lines.map((l, li) => li === i ? newLine : l)
 
-    return new Stripe({ type_: this.type_, lines })
+    return new Stripe({ type: this.type, lines })
   }
 
   private computeBlackProps (): Record<PropType, [Point, Point][]> {
@@ -110,7 +110,7 @@ export class Stripe {
       (t) => {
         const props = this.lines.flatMap(
           (l, i) => l.blackProps[t].map(
-            ([j, size]) => toPoints(this.type_, [i, j], size)
+            ([j, size]) => toPoints(this.type, [i, j], size)
           )
         )
         return [t, props]
@@ -123,7 +123,7 @@ export class Stripe {
       (t) => {
         const props = this.lines.flatMap(
           (l, i) => l.whiteProps[t].map(
-            ([j, size]) => toPoints(this.type_, [i, j], size)
+            ([j, size]) => toPoints(this.type, [i, j], size)
           )
         )
         return [t, props]
@@ -149,8 +149,8 @@ const newDiagonalLines = (): Line[] => new Array(N_DIAGONAL_LINES).fill(null).ma
   }
 )
 
-export const toCoordinate = (type_: StripeType, p: Point): StripeCoordinate => {
-  switch (type_) {
+export const toCoordinate = (type: StripeType, p: Point): StripeCoordinate => {
+  switch (type) {
     case 'vertical':
       return p2v(p)
     case 'horizontal':
@@ -178,8 +178,8 @@ const p2d = ([x, y]: Point): StripeCoordinate => {
   return [i, j]
 }
 
-export const toPoint = (type_: StripeType, c: StripeCoordinate): Point => {
-  switch (type_) {
+export const toPoint = (type: StripeType, c: StripeCoordinate): Point => {
+  switch (type) {
     case 'vertical':
       return v2p(c)
     case 'horizontal':
@@ -211,6 +211,6 @@ const d2p = ([i, j]: StripeCoordinate): Point => {
   }
 }
 
-export const toPoints = (type_: StripeType, [i, j]: StripeCoordinate, size: number): [Point, Point] => {
-  return [toPoint(type_, [i, j]), toPoint(type_, [i, j + size - 1])]
+export const toPoints = (type: StripeType, [i, j]: StripeCoordinate, size: number): [Point, Point] => {
+  return [toPoint(type, [i, j]), toPoint(type, [i, j + size - 1])]
 }
