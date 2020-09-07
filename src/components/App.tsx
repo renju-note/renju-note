@@ -32,15 +32,15 @@ const App: FC = () => {
       <svg width={boardSize} height={boardSize} onClick={onClick}>
         <Ruler cellSize={C} />
         <Moves cellSize={C} moves={board.moves} />
-        <Rows cellSize={C} rows={board.blackProps.three} stroke="blue" />
-        <Rows cellSize={C} rows={board.whiteProps.three} stroke="green" />
-        <Rows cellSize={C} rows={board.blackProps.four} stroke="blue" />
-        <Rows cellSize={C} rows={board.whiteProps.four} stroke="green" />
-        <Rows cellSize={C} rows={board.blackProps.five} stroke="blue" />
-        <Rows cellSize={C} rows={board.whiteProps.five} stroke="green" />
+        <Rows cellSize={C} rows={board.blackRows.three} stroke="blue" />
+        <Rows cellSize={C} rows={board.whiteRows.three} stroke="green" />
+        <Rows cellSize={C} rows={board.blackRows.four} stroke="blue" />
+        <Rows cellSize={C} rows={board.whiteRows.four} stroke="green" />
+        <Rows cellSize={C} rows={board.blackRows.five} stroke="blue" />
+        <Rows cellSize={C} rows={board.whiteRows.five} stroke="green" />
       </svg>
       <div>
-        <PropsTable board={board} />
+        <RowsTable board={board} />
       </div>
     </div>
   )
@@ -100,7 +100,7 @@ const Ruler: FC<{cellSize: number}> = ({
   </>
 }
 
-const PropsTable: FC<{board: Board}> = ({
+const RowsTable: FC<{board: Board}> = ({
   board
 }) => {
   return <table style={{ marginRight: 'auto', marginLeft: 'auto' }}>
@@ -119,18 +119,18 @@ const PropsTable: FC<{board: Board}> = ({
       </tr>
       <tr>
         <th>Five</th>
-        <td>{board.blackProps.five.map(([a, b]) => `(${a})-(${b})`).join('\n')}</td>
-        <td>{board.whiteProps.five.map(([a, b]) => `(${a})-(${b})`).join('\n')}</td>
+        <td>{board.blackRows.five.map(([a, b]) => `(${a})-(${b})`).join('\n')}</td>
+        <td>{board.whiteRows.five.map(([a, b]) => `(${a})-(${b})`).join('\n')}</td>
       </tr>
       <tr>
         <th>Four</th>
-        <td>{board.blackProps.four.map(([a, b]) => `(${a})-(${b})`).join('\n')}</td>
-        <td>{board.whiteProps.four.map(([a, b]) => `(${a})-(${b})`).join('\n')}</td>
+        <td>{board.blackRows.four.map(([a, b]) => `(${a})-(${b})`).join('\n')}</td>
+        <td>{board.whiteRows.four.map(([a, b]) => `(${a})-(${b})`).join('\n')}</td>
       </tr>
       <tr>
         <th>Three</th>
-        <td>{board.blackProps.three.map(([a, b]) => `(${a})-(${b})`).join('\n')}</td>
-        <td>{board.whiteProps.three.map(([a, b]) => `(${a})-(${b})`).join('\n')}</td>
+        <td>{board.blackRows.three.map(([a, b]) => `(${a})-(${b})`).join('\n')}</td>
+        <td>{board.whiteRows.three.map(([a, b]) => `(${a})-(${b})`).join('\n')}</td>
       </tr>
     </tbody>
   </table>

@@ -1,11 +1,11 @@
 import { Point, N_INDICES } from './foundation'
-import { Line, PropType, propTypes } from './line'
+import { Line, RowType, rowTypes } from './line'
 
 export class Board {
   readonly moves: Point[]
   readonly stripes: Stripe[]
-  readonly blackProps: Record<PropType, [Point, Point][]>
-  readonly whiteProps: Record<PropType, [Point, Point][]>
+  readonly blackRows: Record<RowType, [Point, Point][]>
+  readonly whiteRows: Record<RowType, [Point, Point][]>
 
   constructor (init?: Pick<Board, 'moves' | 'stripes'>) {
     if (init === undefined) {
@@ -21,8 +21,8 @@ export class Board {
       this.stripes = init.stripes
     }
 
-    this.blackProps = this.computeBlackProps()
-    this.whiteProps = this.computeWhiteProps()
+    this.blackRows = this.computeBlackRows()
+    this.whiteRows = this.computeWhiteRows()
   }
 
   move (p: Point): Board {
@@ -42,29 +42,29 @@ export class Board {
   }
 
   blackWon (): boolean {
-    return this.blackProps.five.length > 0
+    return this.blackRows.five.length > 0
   }
 
   whiteWon (): boolean {
-    return this.whiteProps.five.length > 0
+    return this.whiteRows.five.length > 0
   }
 
-  private computeBlackProps (): Record<PropType, [Point, Point][]> {
-    return Object.fromEntries(propTypes.map(
+  private computeBlackRows (): Record<RowType, [Point, Point][]> {
+    return Object.fromEntries(rowTypes.map(
       (t) => {
-        const props = this.stripes.flatMap(s => s.blackProps[t])
-        return [t, props]
+        const rows = this.stripes.flatMap(s => s.blackRows[t])
+        return [t, rows]
       }
-    )) as Record<PropType, [Point, Point][]>
+    )) as Record<RowType, [Point, Point][]>
   }
 
-  private computeWhiteProps (): Record<PropType, [Point, Point][]> {
-    return Object.fromEntries(propTypes.map(
+  private computeWhiteRows (): Record<RowType, [Point, Point][]> {
+    return Object.fromEntries(rowTypes.map(
       (t) => {
-        const props = this.stripes.flatMap(s => s.whiteProps[t])
-        return [t, props]
+        const rows = this.stripes.flatMap(s => s.whiteRows[t])
+        return [t, rows]
       }
-    )) as Record<PropType, [Point, Point][]>
+    )) as Record<RowType, [Point, Point][]>
   }
 }
 
@@ -75,8 +75,8 @@ export type StripeCoordinate = [number, number]
 export class Stripe {
   readonly type: StripeType
   readonly lines: Line[]
-  readonly blackProps: Record<PropType, [Point, Point][]>
-  readonly whiteProps: Record<PropType, [Point, Point][]>
+  readonly blackRows: Record<RowType, [Point, Point][]>
+  readonly whiteRows: Record<RowType, [Point, Point][]>
 
   constructor (init: StripeType | Pick<Stripe, 'type' | 'lines'>) {
     if (typeof init === 'string') {
@@ -91,8 +91,8 @@ export class Stripe {
       this.lines = init.lines
     }
 
-    this.blackProps = this.computeBlackProps()
-    this.whiteProps = this.computeWhiteProps()
+    this.blackRows = this.computeBlackRows()
+    this.whiteRows = this.computeWhiteRows()
   }
 
   add (black: boolean, p: Point): Stripe {
@@ -105,30 +105,30 @@ export class Stripe {
     return new Stripe({ type: this.type, lines })
   }
 
-  private computeBlackProps (): Record<PropType, [Point, Point][]> {
-    return Object.fromEntries(propTypes.map(
+  private computeBlackRows (): Record<RowType, [Point, Point][]> {
+    return Object.fromEntries(rowTypes.map(
       (t) => {
-        const props = this.lines.flatMap(
-          (l, i) => l.blackProps[t].map(
+        const rows = this.lines.flatMap(
+          (l, i) => l.blackRows[t].map(
             ([j, size]) => toPoints(this.type, [i, j], size)
           )
         )
-        return [t, props]
+        return [t, rows]
       }
-    )) as Record<PropType, [Point, Point][]>
+    )) as Record<RowType, [Point, Point][]>
   }
 
-  private computeWhiteProps (): Record<PropType, [Point, Point][]> {
-    return Object.fromEntries(propTypes.map(
+  private computeWhiteRows (): Record<RowType, [Point, Point][]> {
+    return Object.fromEntries(rowTypes.map(
       (t) => {
-        const props = this.lines.flatMap(
-          (l, i) => l.whiteProps[t].map(
+        const rows = this.lines.flatMap(
+          (l, i) => l.whiteRows[t].map(
             ([j, size]) => toPoints(this.type, [i, j], size)
           )
         )
-        return [t, props]
+        return [t, rows]
       }
-    )) as Record<PropType, [Point, Point][]>
+    )) as Record<RowType, [Point, Point][]>
   }
 
   toString (): string {

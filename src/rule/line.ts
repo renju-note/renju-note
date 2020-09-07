@@ -2,17 +2,16 @@ import { N_INDICES } from './foundation'
 
 export type Stones = number // stones as bits e.g. 0b00111010
 
+export const rowTypes = ['three', 'four', 'five'] as const
+export type RowType = typeof rowTypes[number]
 export type Row = [number, number] // start, size
-
-export const propTypes = ['three', 'four', 'five'] as const
-export type PropType = typeof propTypes[number]
 
 export class Line {
   readonly size: number
   readonly blacks: Stones
   readonly whites: Stones
-  readonly blackProps: Record<PropType, Row[]>
-  readonly whiteProps: Record<PropType, Row[]>
+  readonly blackRows: Record<RowType, Row[]>
+  readonly whiteRows: Record<RowType, Row[]>
 
   constructor (init: number | Pick<Line, 'size' | 'blacks' | 'whites'>) {
     if (typeof init === 'number') {
@@ -28,8 +27,8 @@ export class Line {
     if (this.size < 1 || this.size > N_INDICES) throw new Error('Wrong size')
     if (overlap(this.blacks, this.whites)) throw new Error('Black and white stones are overlapping')
 
-    this.blackProps = this.computeBlackProps()
-    this.whiteProps = this.computeWhiteProps()
+    this.blackRows = this.computeBlackRows()
+    this.whiteRows = this.computeWhiteRows()
   }
 
   add (black: boolean, i: number): Line | undefined {
@@ -51,7 +50,7 @@ export class Line {
     }
   }
 
-  private computeBlackProps (): Record<PropType, Row[]> {
+  private computeBlackRows (): Record<RowType, Row[]> {
     return {
       three: findBlackThree(this),
       four: findBlackFour(this),
@@ -59,7 +58,7 @@ export class Line {
     }
   }
 
-  private computeWhiteProps (): Record<PropType, Row[]> {
+  private computeWhiteRows (): Record<RowType, Row[]> {
     return {
       three: findWhiteThree(this),
       four: findWhiteFour(this),
