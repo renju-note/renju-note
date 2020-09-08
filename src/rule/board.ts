@@ -1,28 +1,23 @@
-import { Stripe, StripeType, StripeCoordinate } from './stripe'
-import { Row, RowType, rowTypes } from './row'
+import { Facet, FacetKind, facetKinds, FacetCoordinate } from './facet'
+import { Row, RowKind, rowKinds } from './row'
 
 export type Point = [number, number]
 
 export class Board {
   readonly size: number
   readonly moves: Point[]
-  readonly stripes: Stripe[]
-  readonly blackRows: Map<RowType, [[Point, Point], Row][]>
-  readonly whiteRows: Map<RowType, [[Point, Point], Row][]>
+  readonly facets: Facet[]
+  readonly blackRows: Map<RowKind, [[Point, Point], Row][]>
+  readonly whiteRows: Map<RowKind, [[Point, Point], Row][]>
 
-  constructor (init: Pick<Board, 'size'> | Pick<Board, 'size' | 'moves' | 'stripes'>) {
+  constructor (init: Pick<Board, 'size'> | Pick<Board, 'size' | 'moves' | 'facets'>) {
     this.size = init.size
-    if ('moves' in init && 'stripes' in init) {
+    if ('moves' in init && 'facets' in init) {
       this.moves = init.moves
-      this.stripes = init.stripes
+      this.facets = init.facets
     } else {
       this.moves = []
-      this.stripes = [
-        new Stripe({ size: this.size, type: 'vertical' }),
-        new Stripe({ size: this.size, type: 'horizontal' }),
-        new Stripe({ size: this.size, type: 'ascending' }),
-        new Stripe({ size: this.size, type: 'descending' }),
-      ]
+      this.facets = facetKinds.map(k => new Facet({ size: this.size, kind: k }))
     }
 
     this.blackRows = this.computeBlackRows()
@@ -33,8 +28,8 @@ export class Board {
     if (this.occupied(p)) throw new Error('Already occupied')
     const moves = [...this.moves, p]
     const black = this.blackTurn()
-    const stripes = this.stripes.map(s => s.add(black, toCoordinate(this.size, s.type, p)))
-    return new Board({ size: this.size, moves, stripes })
+    const facets = this.facets.map(s => s.add(black, toCoordinate(this.size, s.kind, p)))
+    return new Board({ size: this.size, moves, facets })
   }
 
   occupied ([x, y]: Point): boolean {
@@ -53,26 +48,26 @@ export class Board {
     return (this.whiteRows.get('five') ?? []).length > 0
   }
 
-  private computeBlackRows (): Map<RowType, [[Point, Point], Row][]> {
-    return new Map(rowTypes.map(
-      t => [
-        t,
-        this.stripes.flatMap(
-          s => (s.blackRows.get(t) ?? []).map(
-            ([c, row]) => [toPoints(this.size, s.type, c, row.size), row]
+  private computeBlackRows (): Map<RowKind, [[Point, Point], Row][]> {
+    return new Map(rowKinds.map(
+      k => [
+        k,
+        this.facets.flatMap(
+          f => (f.blackRows.get(k) ?? []).map(
+            ([c, row]) => [toPoints(this.size, f.kind, c, row.size), row]
           )
         )
       ]
     ))
   }
 
-  private computeWhiteRows (): Map<RowType, [[Point, Point], Row][]> {
-    return new Map(rowTypes.map(
-      t => [
-        t,
-        this.stripes.flatMap(
-          s => (s.whiteRows.get(t) ?? []).map(
-            ([c, row]) => [toPoints(this.size, s.type, c, row.size), row]
+  private computeWhiteRows (): Map<RowKind, [[Point, Point], Row][]> {
+    return new Map(rowKinds.map(
+      k => [
+        k,
+        this.facets.flatMap(
+          f => (f.whiteRows.get(k) ?? []).map(
+            ([c, row]) => [toPoints(this.size, f.kind, c, row.size), row]
           )
         )
       ]
@@ -80,9 +75,9 @@ export class Board {
   }
 }
 
-export const toCoordinate = (size: number, type: StripeType, [x, y]: Point): StripeCoordinate => {
+export const toCoordinate = (size: number, kind: FacetKind, [x, y]: Point): FacetCoordinate => {
   let i: number, j: number
-  switch (type) {
+  switch (kind) {
     case 'vertical':
       return [x - 1, y - 1]
     case 'horizontal':
@@ -98,9 +93,9 @@ export const toCoordinate = (size: number, type: StripeType, [x, y]: Point): Str
   }
 }
 
-export const toPoint = (size: number, type: StripeType, [i, j]: StripeCoordinate): Point => {
+export const toPoint = (size: number, kind: FacetKind, [i, j]: FacetCoordinate): Point => {
   let x: number, y: number
-  switch (type) {
+  switch (kind) {
     case 'vertical':
       return [i + 1, j + 1]
     case 'horizontal':
@@ -116,6 +111,6 @@ export const toPoint = (size: number, type: StripeType, [i, j]: StripeCoordinate
   }
 }
 
-export const toPoints = (size: number, type: StripeType, [i, j]: StripeCoordinate, rowSize: number): [Point, Point] => {
-  return [toPoint(size, type, [i, j]), toPoint(size, type, [i, j + rowSize - 1])]
+export const toPoints = (size: number, kind: FacetKind, [i, j]: FacetCoordinate, rowSize: number): [Point, Point] => {
+  return [toPoint(size, kind, [i, j]), toPoint(size, kind, [i, j + rowSize - 1])]
 }

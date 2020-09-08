@@ -1,4 +1,4 @@
-import { Row, RowType, Stones } from './row'
+import { Row, RowKind, Stones } from './row'
 
 const INT_SIZE = 64
 
@@ -6,8 +6,8 @@ export class Line {
   readonly size: number
   readonly blacks: Stones
   readonly whites: Stones
-  readonly blackRows: Map<RowType, [number, Row][]>
-  readonly whiteRows: Map<RowType, [number, Row][]>
+  readonly blackRows: Map<RowKind, [number, Row][]>
+  readonly whiteRows: Map<RowKind, [number, Row][]>
 
   constructor (init: Pick<Line, 'size'> | Pick<Line, 'size' | 'blacks' | 'whites'>) {
     this.size = init.size
@@ -45,7 +45,7 @@ export class Line {
     }
   }
 
-  private computeBlackRows (): Map<RowType, [number, Row][]> {
+  private computeBlackRows (): Map<RowKind, [number, Row][]> {
     return new Map([
       ['three', findBlackThree(this)],
       ['four', findBlackFour(this)],
@@ -53,7 +53,7 @@ export class Line {
     ])
   }
 
-  private computeWhiteRows (): Map<RowType, [number, Row][]> {
+  private computeWhiteRows (): Map<RowKind, [number, Row][]> {
     return new Map([
       ['three', findWhiteThree(this)],
       ['four', findWhiteFour(this)],
@@ -95,7 +95,7 @@ export const findBlackThree = (line: Line): [number, Row][] => {
   for (let k = 0; k < candidates.length; k++) {
     const i = candidates[k]
     if (cut(line.whites, i, 6) === 0b000000) {
-      result.push([i, { type: 'three', size: 6 }])
+      result.push([i, { kind: 'three', size: 6 }])
     }
   }
   return result
@@ -115,7 +115,7 @@ export const findWhiteThree = (line: Line): [number, Row][] => {
   for (let k = 0; k < candidates.length; k++) {
     const i = candidates[k]
     if (cut(line.blacks, i, 6) === 0b000000) {
-      result.push([i, { type: 'three', size: 6 }])
+      result.push([i, { kind: 'three', size: 6 }])
     }
   }
   return result
@@ -137,7 +137,7 @@ export const findBlackFour = (line: Line): [number, Row][] => {
   for (let k = 0; k < candidates.length; k++) {
     const i = candidates[k]
     if (cut(line.whites, i, 5) === 0b00000) {
-      result.push([i, { type: 'four', size: 5 }])
+      result.push([i, { kind: 'four', size: 5 }])
     }
   }
   return result
@@ -158,7 +158,7 @@ export const findWhiteFour = (line: Line): [number, Row][] => {
   for (let k = 0; k < candidates.length; k++) {
     const i = candidates[k]
     if (cut(line.blacks, i, 5) === 0b00000) {
-      result.push([i, { type: 'four', size: 5 }])
+      result.push([i, { kind: 'four', size: 5 }])
     }
   }
   return result
@@ -167,13 +167,13 @@ export const findWhiteFour = (line: Line): [number, Row][] => {
 export const findBlackFive = (line: Line): [number, Row][] => {
   const [blacks_, size_] = appendDummy(line.blacks, line.size)
   return find(blacks_, size_, [0b0111110], 7).map(
-    i => [i, { type: 'five', size: 5 }]
+    i => [i, { kind: 'five', size: 5 }]
   )
 }
 
 export const findWhiteFive = (line: Line): [number, Row][] => {
   return find(line.whites, line.size, [0b11111], 5).map(
-    i => [i, { type: 'five', size: 5 }]
+    i => [i, { kind: 'five', size: 5 }]
   )
 }
 

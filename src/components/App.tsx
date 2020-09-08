@@ -25,7 +25,7 @@ const App: FC = () => {
     const p: Point = [adjust(x / C), adjust((WIDTH - y) / C)]
     const newBoard = board.move(p)
     setBoard(newBoard)
-    newBoard.stripes.forEach(s => console.log(s.toString()))
+    newBoard.facets.forEach(f => console.log(f.toString()))
   }
   return (
     <div className="App">
