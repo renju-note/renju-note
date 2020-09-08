@@ -32,11 +32,10 @@ const App: FC = () => {
       <svg width={WIDTH} height={WIDTH} onClick={onClick}>
         <Ruler cellSize={C} />
         <Moves cellSize={C} moves={board.moves} />
-        <Rows cellSize={C} rows={(board.blackRows.get('three') ?? []).map(([ps, _]) => ps)} stroke="blue" />
-        <Rows cellSize={C} rows={(board.whiteRows.get('three') ?? []).map(([ps, _]) => ps)} stroke="green" />
-        <Rows cellSize={C} rows={(board.blackRows.get('four') ?? []).map(([ps, _]) => ps)} stroke="blue" />
-        <Rows cellSize={C} rows={(board.whiteRows.get('four') ?? []).map(([ps, _]) => ps)} stroke="green" />
+        <Rows cellSize={C} rows={(board.blackRows.get('three') ?? []).map(([ps, _]) => ps)} stroke="yellow" />
+        <Rows cellSize={C} rows={(board.blackRows.get('four') ?? []).map(([ps, _]) => ps)} stroke="purple" />
         <Rows cellSize={C} rows={(board.blackRows.get('five') ?? []).map(([ps, _]) => ps)} stroke="blue" />
+        <Rows cellSize={C} rows={(board.blackRows.get('overline') ?? []).map(([ps, _]) => ps)} stroke="red" />
         <Rows cellSize={C} rows={(board.whiteRows.get('five') ?? []).map(([ps, _]) => ps)} stroke="green" />
       </svg>
       <div>
