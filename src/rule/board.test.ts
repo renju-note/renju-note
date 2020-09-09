@@ -2,13 +2,13 @@ import { Board } from './board'
 
 test('newBoard', () => {
   const board = new Board({ size: 15 })
-  expect(board.facets[0].kind).toBe('vertical')
+  expect(board.facets[0].direction).toBe('vertical')
   expect(board.facets[0].lines).toMatchObject(orthogonalLines)
-  expect(board.facets[1].kind).toBe('horizontal')
+  expect(board.facets[1].direction).toBe('horizontal')
   expect(board.facets[1].lines).toMatchObject(orthogonalLines)
-  expect(board.facets[2].kind).toBe('ascending')
+  expect(board.facets[2].direction).toBe('ascending')
   expect(board.facets[2].lines).toMatchObject(diagonalLines)
-  expect(board.facets[3].kind).toBe('descending')
+  expect(board.facets[3].direction).toBe('descending')
   expect(board.facets[3].lines).toMatchObject(diagonalLines)
 })
 

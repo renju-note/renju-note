@@ -1,14 +1,17 @@
-import { Facet, FacetKind, facetKinds, FacetCoordinate } from './facet'
+import { Facet, Direction, directions, FacetCoordinate } from './facet'
 import { Row, RowKind, rowKinds } from './row'
 
 export type Point = [number, number]
+
+export const forbiddenKinds = ['doubleThree', 'doubleFour', 'overline'] as const
+export type ForbiddenKind = typeof forbiddenKinds[number]
 
 export class Board {
   readonly size: number
   readonly moves: Point[]
   readonly facets: Facet[]
-  readonly blackRows: Map<RowKind, [[Point, Point], Row][]>
-  readonly whiteRows: Map<RowKind, [[Point, Point], Row][]>
+  readonly blackRows: Map<RowKind, [[Point, Direction], Row][]>
+  readonly whiteRows: Map<RowKind, [[Point, Direction], Row][]>
 
   constructor (init: Pick<Board, 'size'> | Pick<Board, 'size' | 'moves' | 'facets'>) {
     this.size = init.size
@@ -17,7 +20,7 @@ export class Board {
       this.facets = init.facets
     } else {
       this.moves = []
-      this.facets = facetKinds.map(k => new Facet({ size: this.size, kind: k }))
+      this.facets = directions.map(d => new Facet({ size: this.size, direction: d }))
     }
 
     this.blackRows = this.computeBlackRows()
@@ -28,7 +31,7 @@ export class Board {
     if (this.occupied(p)) throw new Error('Already occupied')
     const moves = [...this.moves, p]
     const black = this.blackTurn()
-    const facets = this.facets.map(s => s.add(black, toCoordinate(this.size, s.kind, p)))
+    const facets = this.facets.map(s => s.add(black, toCoordinate(this.size, s.direction, p)))
     return new Board({ size: this.size, moves, facets })
   }
 
@@ -48,26 +51,26 @@ export class Board {
     return (this.whiteRows.get('five') ?? []).length > 0
   }
 
-  private computeBlackRows (): Map<RowKind, [[Point, Point], Row][]> {
+  private computeBlackRows (): Map<RowKind, [[Point, Direction], Row][]> {
     return new Map(rowKinds.map(
       k => [
         k,
         this.facets.flatMap(
           f => (f.blackRows.get(k) ?? []).map(
-            ([c, row]) => [toPoints(this.size, f.kind, c, row.size), row]
+            ([c, row]) => [[toPoint(this.size, f.direction, c), f.direction], row]
           )
         )
       ]
     ))
   }
 
-  private computeWhiteRows (): Map<RowKind, [[Point, Point], Row][]> {
+  private computeWhiteRows (): Map<RowKind, [[Point, Direction], Row][]> {
     return new Map(rowKinds.map(
       k => [
         k,
         this.facets.flatMap(
           f => (f.whiteRows.get(k) ?? []).map(
-            ([c, row]) => [toPoints(this.size, f.kind, c, row.size), row]
+            ([c, row]) => [[toPoint(this.size, f.direction, c), f.direction], row]
           )
         )
       ]
@@ -75,9 +78,9 @@ export class Board {
   }
 }
 
-export const toCoordinate = (size: number, kind: FacetKind, [x, y]: Point): FacetCoordinate => {
+export const toCoordinate = (size: number, direction: Direction, [x, y]: Point): FacetCoordinate => {
   let i: number, j: number
-  switch (kind) {
+  switch (direction) {
     case 'vertical':
       return [x - 1, y - 1]
     case 'horizontal':
@@ -93,9 +96,9 @@ export const toCoordinate = (size: number, kind: FacetKind, [x, y]: Point): Face
   }
 }
 
-export const toPoint = (size: number, kind: FacetKind, [i, j]: FacetCoordinate): Point => {
+export const toPoint = (size: number, direction: Direction, [i, j]: FacetCoordinate): Point => {
   let x: number, y: number
-  switch (kind) {
+  switch (direction) {
     case 'vertical':
       return [i + 1, j + 1]
     case 'horizontal':
@@ -111,6 +114,23 @@ export const toPoint = (size: number, kind: FacetKind, [i, j]: FacetCoordinate):
   }
 }
 
-export const toPoints = (size: number, kind: FacetKind, [i, j]: FacetCoordinate, rowSize: number): [Point, Point] => {
-  return [toPoint(size, kind, [i, j]), toPoint(size, kind, [i, j + rowSize - 1])]
+export const toPoints = (size: number, direction: Direction, [i, j]: FacetCoordinate, rowSize: number): [Point, Point] => {
+  return [toPoint(size, direction, [i, j]), toPoint(size, direction, [i, j + rowSize - 1])]
+}
+
+export const forbidden = (board: Board, point: Point): ForbiddenKind | undefined => {
+  return undefined
+}
+
+export const slide = (p: Point, d: Direction, i: number): Point => {
+  switch (d) {
+    case 'vertical':
+      return [p[0], p[1] + i]
+    case 'horizontal':
+      return [p[0] + i, p[1]]
+    case 'ascending':
+      return [p[0] + i, p[1] + i]
+    case 'descending':
+      return [p[0] + i, p[1] - i]
+  }
 }

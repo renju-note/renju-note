@@ -1,25 +1,25 @@
 import { Line } from './line'
 import { Row, RowKind, rowKinds } from './row'
 
-export const facetKinds = ['vertical', 'horizontal', 'ascending', 'descending'] as const
-export type FacetKind = typeof facetKinds[number]
+export const directions = ['vertical', 'horizontal', 'ascending', 'descending'] as const
+export type Direction = typeof directions[number]
 
 export type FacetCoordinate = [number, number]
 
 export class Facet {
   readonly size: number
-  readonly kind: FacetKind
+  readonly direction: Direction
   readonly lines: Line[]
   readonly blackRows: Map<RowKind, [FacetCoordinate, Row][]>
   readonly whiteRows: Map<RowKind, [FacetCoordinate, Row][]>
 
-  constructor (init: Pick<Facet, 'size' | 'kind'> | Pick<Facet, 'size' | 'kind' | 'lines'>) {
+  constructor (init: Pick<Facet, 'size' | 'direction'> | Pick<Facet, 'size' | 'direction' | 'lines'>) {
     this.size = init.size
-    this.kind = init.kind
+    this.direction = init.direction
     if ('lines' in init) {
       this.lines = init.lines
     } else {
-      if (this.kind === 'vertical' || this.kind === 'horizontal') {
+      if (this.direction === 'vertical' || this.direction === 'horizontal') {
         this.lines = newOrthogonalLines(this.size)
       } else {
         this.lines = newDiagonalLines(this.size)
@@ -35,7 +35,7 @@ export class Facet {
     if (!newLine) throw new Error('Wrong move')
     const lines = this.lines.map((l, li) => li === i ? newLine : l)
 
-    return new Facet({ size: this.size, kind: this.kind, lines })
+    return new Facet({ size: this.size, direction: this.direction, lines })
   }
 
   private computeBlackRows (): Map<RowKind, [FacetCoordinate, Row][]> {

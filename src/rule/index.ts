@@ -1,2 +1,5 @@
 export * from './board'
+export * from './facet'
+export * from './line'
+export * from './row'
 export * from './foundation'
