@@ -119,7 +119,58 @@ export const toPoints = (size: number, direction: Direction, [i, j]: FacetCoordi
 }
 
 export const forbidden = (board: Board, point: Point): ForbiddenKind | undefined => {
-  return undefined
+  if (overline(board, point)) {
+    return 'overline'
+  } else if (doubleFour(board, point)) {
+    return 'doubleFour'
+  } else if (doubleThree(board, point)) {
+    return 'doubleThree'
+  }
+}
+
+export const overline = (board: Board, point: Point): boolean => {
+  return (board.move(point).blackRows.get('overline') ?? []).length > 0
+}
+
+export const doubleFour = (board: Board, point: Point): boolean => {
+  const newFours = (board.move(point).blackRows.get('four') ?? []).filter(
+    ([vector, row]) => along(point, vector, row.size)
+  )
+  return newFours.length >= 2 // TODO: check not open four
+}
+
+export const doubleThree = (board: Board, point: Point): boolean => {
+  // TODO: check not in the same facet
+  const nextBoard = board.move(point)
+  const newThrees = (nextBoard.blackRows.get('three') ?? []).filter(
+    ([vector, row]) => along(point, vector, row.size)
+  )
+  if (newThrees.length < 2) return false
+
+  let trueNewThreeCount = 0
+  for (let i = 0; i < newThrees.length; i++) {
+    const [[start, direction], row] = newThrees[i]
+    const eyePoint = slide(start, direction, row.eyes[0])
+    const fb = forbidden(nextBoard, eyePoint) // WRONG: white must pass and black move
+    console.log(eyePoint, fb)
+    if (fb === undefined) {
+      trueNewThreeCount++
+    }
+  }
+  return trueNewThreeCount >= 2
+}
+
+const along = (p: Point, [s, d]: [Point, Direction], l: number): boolean => {
+  switch (d) {
+    case 'vertical':
+      return p[0] === s[0] && (s[1] <= p[1] && p[1] < (s[1] + l))
+    case 'horizontal':
+      return p[1] === s[1] && (s[0] <= p[0] && p[0] < (s[0] + l))
+    case 'ascending':
+      return (s[0] <= p[0] && p[0] < (s[0] + l)) && (s[1] <= p[1] && p[1] < (s[1] + l))
+    case 'descending':
+      return (s[0] <= p[0] && p[0] < (s[0] + l)) && (s[1] >= p[1] && p[1] > (s[1] + l))
+  }
 }
 
 export const slide = (p: Point, d: Direction, i: number): Point => {
