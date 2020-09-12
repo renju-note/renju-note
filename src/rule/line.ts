@@ -1,5 +1,5 @@
 import {
-  Row, RowKind, Stones, RowPattern, find,
+  Stones, Row, RowKind, RowPattern, find,
   BLACK_THREE_PATTERNS, BLACK_FOUR_PATTERNS, BLACK_FIVE_PATTERNS, BLACK_OVERLINE_PATTERNS,
   WHITE_FIVE_PATTERNS,
 } from './row'

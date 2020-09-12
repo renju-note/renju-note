@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect } from 'react'
 import './App.css'
 
-import { BOARD_SIZE, Board, Point, Segment, Row, ith } from '../rule'
+import { BOARD_SIZE, Board, Point, Segment, Row, ithPoint } from '../rule'
 
 const C = 40
 const WIDTH = (BOARD_SIZE + 1) * C
@@ -121,7 +121,7 @@ const Rows: FC<{cellSize: number, rows: [Segment, Row][], stroke: string}> = ({
   const lines = rows.map(
     ([seg, row], key) => {
       const [p1x, p1y] = seg.start
-      const [p2x, p2y] = ith(seg, row.size - 1)
+      const [p2x, p2y] = ithPoint(seg, row.size - 1)
       const [x1, y1] = [p1x * cellSize, (BOARD_SIZE - p1y + 1) * cellSize]
       const [x2, y2] = [p2x * cellSize, (BOARD_SIZE - p2y + 1) * cellSize]
       return <line

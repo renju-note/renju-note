@@ -1,4 +1,4 @@
-import { Facet, Direction, directions, Index } from './facet'
+import { Facet, Index, Direction, directions } from './facet'
 import { Row, RowKind, rowKinds } from './row'
 
 export type Point = [number, number]
@@ -191,7 +191,7 @@ export const doubleThree = (board: Board, point: Point): boolean => {
   const trueThrees: [Segment, Row][] = []
   for (let i = 0; i < newThrees.length; i++) {
     const [seg, row] = newThrees[i]
-    const eyep = ith(seg, row.eyes[0])
+    const eyep = ithPoint(seg, row.eyes[0])
     if (!forbidden(nextBoard, eyep)) {
       trueThrees.push([seg, row])
     }
@@ -209,7 +209,7 @@ export const doubleThree = (board: Board, point: Point): boolean => {
   return distinctSegs.length >= 2
 }
 
-export const ith = (s: Segment, i: number): Point => {
+export const ithPoint = (s: Segment, i: number): Point => {
   switch (s.direction) {
     case 'vertical':
       return [s.start[0], s.start[1] + i]
