@@ -18,7 +18,7 @@ const App: FC = () => {
       ]
       const whites: Point[] = [
         [7, 1],
-        [8, 10], [9, 13], [11, 11]
+        [8, 10], [9, 13], [11, 11], [12, 8],
       ]
       let b = board
       for (let i = 0; i < blacks.length; i++) {
