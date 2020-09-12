@@ -4,14 +4,14 @@ import { Row, RowKind, rowKinds } from './row'
 export const directions = ['vertical', 'horizontal', 'ascending', 'descending'] as const
 export type Direction = typeof directions[number]
 
-export type FacetCoordinate = [number, number]
+export type Index = [number, number]
 
 export class Facet {
   readonly size: number
   readonly direction: Direction
   readonly lines: Line[]
-  readonly blackRows: Map<RowKind, [FacetCoordinate, Row][]>
-  readonly whiteRows: Map<RowKind, [FacetCoordinate, Row][]>
+  readonly blackRows: Map<RowKind, [Index, Row][]>
+  readonly whiteRows: Map<RowKind, [Index, Row][]>
 
   constructor (init: Pick<Facet, 'size' | 'direction'> | Pick<Facet, 'size' | 'direction' | 'lines'>) {
     this.size = init.size
@@ -30,7 +30,7 @@ export class Facet {
     this.whiteRows = this.computeWhiteRows()
   }
 
-  add (black: boolean, [i, j]: FacetCoordinate): Facet {
+  add (black: boolean, [i, j]: Index): Facet {
     const newLine = this.lines[i].add(black, j)
     if (!newLine) throw new Error('Wrong move')
     const lines = this.lines.map((l, li) => li === i ? newLine : l)
@@ -38,26 +38,26 @@ export class Facet {
     return new Facet({ size: this.size, direction: this.direction, lines })
   }
 
-  private computeBlackRows (): Map<RowKind, [FacetCoordinate, Row][]> {
+  private computeBlackRows (): Map<RowKind, [Index, Row][]> {
     return new Map(rowKinds.map(
       k => [
         k,
         this.lines.flatMap(
           (l, i) => (l.blackRows.get(k) ?? []).map(
-            ([j, row]) => [[i, j] as FacetCoordinate, row]
+            ([j, row]) => [[i, j] as Index, row]
           )
         )
       ]
     ))
   }
 
-  private computeWhiteRows (): Map<RowKind, [FacetCoordinate, Row][]> {
+  private computeWhiteRows (): Map<RowKind, [Index, Row][]> {
     return new Map(rowKinds.map(
       k => [
         k,
         this.lines.flatMap(
           (l, i) => (l.whiteRows.get(k) ?? []).map(
-            ([j, row]) => [[i, j] as FacetCoordinate, row]
+            ([j, row]) => [[i, j] as Index, row]
           )
         )
       ]

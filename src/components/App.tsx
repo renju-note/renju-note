@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect } from 'react'
 import './App.css'
 
-import { BOARD_SIZE, Board, Point, Direction, Row, slide } from '../rule'
+import { BOARD_SIZE, Board, Point, Segment, Row, ith } from '../rule'
 
 const C = 40
 const WIDTH = (BOARD_SIZE + 1) * C
@@ -12,13 +12,18 @@ const App: FC = () => {
   useEffect(
     () => {
       const blacks: Point[] = [
-        [1, 1], [2, 1], [4, 1], [5, 1], [6, 1],
-        [1, 14], [2, 14], [4, 14], [3, 15], [3, 13], [3, 12],
-        [8, 8], [8, 9], [9, 9], [9, 11], [10, 8], [10, 11], [11, 8],
+        [2, 13], [3, 12], [3, 14], [4, 13], // dowble three
+        [2, 7], [3, 6], [3, 8], [4, 7], // fake dowble three
+        [12, 11], [12, 12], [13, 12], [13, 14], [14, 11], [14, 14], [15, 11], // dowble three
+        [11, 7], [12, 6], [12, 5], [14, 4], [14, 5], [15, 5], // dowble four
+        [1, 2], [2, 2], [4, 2], [7, 2], [8, 2], // dowble four
+        [1, 1], [3, 1], [5, 1], [7, 1], // dowble four
+        [10, 1], [11, 1], [13, 1], [14, 1], [15, 1], // overline
       ]
       const whites: Point[] = [
-        [7, 1],
-        [8, 10], [9, 13], [11, 11], [12, 8],
+        [6, 7],
+        [8, 1],
+        [12, 13],
       ]
       let b = board
       for (let i = 0; i < blacks.length; i++) {
@@ -108,15 +113,15 @@ const Forbiddens: FC<{cellSize: number, points: Point[]}> = ({
   </>
 }
 
-const Rows: FC<{cellSize: number, rows: [[Point, Direction], Row][], stroke: string}> = ({
+const Rows: FC<{cellSize: number, rows: [Segment, Row][], stroke: string}> = ({
   cellSize,
   rows,
   stroke,
 }) => {
   const lines = rows.map(
-    ([[point, direction], row], key) => {
-      const [p1x, p1y] = point
-      const [p2x, p2y] = slide(point, direction, row.size - 1)
+    ([seg, row], key) => {
+      const [p1x, p1y] = seg.start
+      const [p2x, p2y] = ith(seg, row.size - 1)
       const [x1, y1] = [p1x * cellSize, (BOARD_SIZE - p1y + 1) * cellSize]
       const [x2, y2] = [p2x * cellSize, (BOARD_SIZE - p2y + 1) * cellSize]
       return <line
@@ -167,21 +172,48 @@ const RowsTable: FC<{board: Board}> = ({
       </tr>
       <tr>
         <th>Five</th>
-        <td>{(board.blackRows.get('five') ?? []).map(([[a, b], _]) => `(${a})-(${b})`).join('\n')}</td>
-        <td>{(board.whiteRows.get('five') ?? []).map(([[a, b], _]) => `(${a})-(${b})`).join('\n')}</td>
+        <td>
+          <SegmentTexts segments={(board.blackRows.get('five') ?? []).map(([seg, _]) => seg)}/>
+        </td>
+        <td>
+          <SegmentTexts segments={(board.whiteRows.get('five') ?? []).map(([seg, _]) => seg)}/>
+        </td>
       </tr>
       <tr>
         <th>Four</th>
-        <td>{(board.blackRows.get('four') ?? []).map(([[a, b], _]) => `(${a})-(${b})`).join('\n')}</td>
-        <td>{(board.whiteRows.get('four') ?? []).map(([[a, b], _]) => `(${a})-(${b})`).join('\n')}</td>
+        <td>
+          <SegmentTexts segments={(board.blackRows.get('four') ?? []).map(([seg, _]) => seg)}/>
+        </td>
+        <td>
+          <SegmentTexts segments={(board.whiteRows.get('four') ?? []).map(([seg, _]) => seg)}/>
+        </td>
       </tr>
       <tr>
         <th>Three</th>
-        <td>{(board.blackRows.get('three') ?? []).map(([[a, b], _]) => `(${a})-(${b})`).join('\n')}</td>
-        <td>{(board.whiteRows.get('three') ?? []).map(([[a, b], _]) => `(${a})-(${b})`).join('\n')}</td>
+        <td>
+          <SegmentTexts segments={(board.blackRows.get('three') ?? []).map(([seg, _]) => seg)}/>
+        </td>
+        <td>
+          <SegmentTexts segments={(board.whiteRows.get('three') ?? []).map(([seg, _]) => seg)}/>
+        </td>
       </tr>
     </tbody>
   </table>
+}
+
+const SegmentTexts: FC<{ segments: Segment[]}> = ({
+  segments
+}) => {
+  return <>
+    {
+      segments.map(
+        (s, key) => <span key={key}>
+          { key !== 0 && <br /> }
+          {`(${s.start[0]}, ${s.start[1]})-${s.direction}`}
+        </span>
+      )
+    }
+  </>
 }
 
 const indices = (): number[] => new Array(BOARD_SIZE).fill(null).map((_, i) => i + 1)
