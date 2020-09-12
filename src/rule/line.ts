@@ -1,17 +1,17 @@
 import {
-  Stones, Row, RowKind, RowPattern, find,
-  BLACK_THREE_PATTERNS, BLACK_FOUR_PATTERNS, BLACK_FIVE_PATTERNS, BLACK_OVERLINE_PATTERNS,
-  WHITE_FIVE_PATTERNS,
+  Stones, Row, RowKind, find,
+  BLACK_PATTERNS, WHITE_PATTERNS,
 } from './row'
 
 const INT_SIZE = 32
+
+type RowsRecord = Record<RowKind, [number, Row][] | undefined>
 
 export class Line {
   readonly size: number
   readonly blacks: Stones
   readonly whites: Stones
-  readonly blackRows: Map<RowKind, [number, Row][]>
-  readonly whiteRows: Map<RowKind, [number, Row][]>
+  private readonly cache: [RowsRecord, RowsRecord]
 
   constructor (init: Pick<Line, 'size'> | Pick<Line, 'size' | 'blacks' | 'whites'>) {
     this.size = init.size
@@ -26,8 +26,7 @@ export class Line {
       this.whites = 0b0
     }
 
-    this.blackRows = this.computeBlackRows()
-    this.whiteRows = this.computeWhiteRows()
+    this.cache = [emptyRowsRecord(), emptyRowsRecord()]
   }
 
   put (black: boolean, i: number): Line {
@@ -56,19 +55,18 @@ export class Line {
     }
   }
 
-  private computeBlackRows (): Map<RowKind, [number, Row][]> {
-    return new Map([
-      ['three', BLACK_THREE_PATTERNS.flatMap(p => findBlackRows(this, p))],
-      ['four', BLACK_FOUR_PATTERNS.flatMap(p => findBlackRows(this, p))],
-      ['five', BLACK_FIVE_PATTERNS.flatMap(p => findBlackRows(this, p))],
-      ['overline', BLACK_OVERLINE_PATTERNS.flatMap(p => findBlackRows(this, p))],
-    ])
-  }
+  getRows (black: boolean, kind: RowKind): [number, Row][] {
+    const rowsCache = this.cache[black ? 0 : 1]
+    let rows = rowsCache[kind]
+    if (rows !== undefined) return rows
 
-  private computeWhiteRows (): Map<RowKind, [number, Row][]> {
-    return new Map([
-      ['five', WHITE_FIVE_PATTERNS.flatMap(p => findWhiteRows(this, p))],
-    ])
+    if (black) {
+      rows = BLACK_PATTERNS[kind].flatMap(p => find(this.blacks, this.whites, this.size, p))
+    } else {
+      rows = WHITE_PATTERNS[kind].flatMap(p => find(this.whites, this.blacks, this.size, p))
+    }
+    rowsCache[kind] = rows
+    return rows
   }
 
   toSting (): string {
@@ -81,10 +79,11 @@ export class Line {
   }
 }
 
-const findBlackRows = (line: Line, pattern: RowPattern): [number, Row][] => {
-  return find(line.blacks, line.whites, line.size, pattern).map(i => [i, pattern.row])
-}
-
-const findWhiteRows = (line: Line, pattern: RowPattern): [number, Row][] => {
-  return find(line.whites, line.blacks, line.size, pattern).map(i => [i, pattern.row])
+const emptyRowsRecord = (): RowsRecord => {
+  return {
+    three: undefined,
+    four: undefined,
+    five: undefined,
+    overline: undefined,
+  }
 }

@@ -1,5 +1,5 @@
 import { Line } from './line'
-import { Row, RowKind, rowKinds } from './row'
+import { Row, RowKind } from './row'
 
 export const directions = ['vertical', 'horizontal', 'ascending', 'descending'] as const
 export type Direction = typeof directions[number]
@@ -10,8 +10,6 @@ export class Facet {
   readonly size: number
   readonly direction: Direction
   readonly lines: Line[]
-  readonly blackRows: Map<RowKind, [Index, Row][]>
-  readonly whiteRows: Map<RowKind, [Index, Row][]>
 
   constructor (init: Pick<Facet, 'size' | 'direction'> | Pick<Facet, 'size' | 'direction' | 'lines'>) {
     this.size = init.size
@@ -25,9 +23,6 @@ export class Facet {
         this.lines = newDiagonalLines(this.size)
       }
     }
-
-    this.blackRows = this.computeBlackRows()
-    this.whiteRows = this.computeWhiteRows()
   }
 
   put (black: boolean, [i, j]: Index): Facet {
@@ -38,30 +33,12 @@ export class Facet {
     return new Facet({ size: this.size, direction: this.direction, lines: lines })
   }
 
-  private computeBlackRows (): Map<RowKind, [Index, Row][]> {
-    return new Map(rowKinds.map(
-      k => [
-        k,
-        this.lines.flatMap(
-          (l, i) => (l.blackRows.get(k) ?? []).map(
-            ([j, row]) => [[i, j] as Index, row]
-          )
-        )
-      ]
-    ))
-  }
-
-  private computeWhiteRows (): Map<RowKind, [Index, Row][]> {
-    return new Map(rowKinds.map(
-      k => [
-        k,
-        this.lines.flatMap(
-          (l, i) => (l.whiteRows.get(k) ?? []).map(
-            ([j, row]) => [[i, j] as Index, row]
-          )
-        )
-      ]
-    ))
+  getRows (black: boolean, kind: RowKind): [Index, Row][] {
+    return this.lines.flatMap(
+      (l, i) => l.getRows(black, kind).map(
+        ([j, row]) => [[i, j] as Index, row]
+      )
+    )
   }
 
   toString (): string {

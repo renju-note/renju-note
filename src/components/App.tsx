@@ -42,6 +42,7 @@ const App: FC = () => {
     const p: Point = [adjust(x / C), adjust((WIDTH - y) / C)]
     const newBoard = board.put(turn, p)
     setBoard(newBoard)
+    console.log(newBoard.toString())
     setTurn(!turn)
   }
   return (
@@ -51,11 +52,11 @@ const App: FC = () => {
         <Stones cellSize={C} points={board.blacks} black={true} />
         <Stones cellSize={C} points={board.whites} black={false} />
         <Forbiddens cellSize={C} points={board.forbiddens()} />
-        <Rows cellSize={C} rows={board.blackRows.get('three') ?? []} stroke="yellow" />
-        <Rows cellSize={C} rows={board.blackRows.get('four') ?? []} stroke="purple" />
-        <Rows cellSize={C} rows={board.blackRows.get('five') ?? []} stroke="blue" />
-        <Rows cellSize={C} rows={board.blackRows.get('overline') ?? []} stroke="red" />
-        <Rows cellSize={C} rows={board.whiteRows.get('five') ?? []} stroke="green" />
+        <Rows cellSize={C} rows={board.getRows(true, 'three')} stroke="yellow" />
+        <Rows cellSize={C} rows={board.getRows(true, 'four')} stroke="purple" />
+        <Rows cellSize={C} rows={board.getRows(true, 'five')} stroke="blue" />
+        <Rows cellSize={C} rows={board.getRows(true, 'overline')} stroke="red" />
+        <Rows cellSize={C} rows={board.getRows(false, 'five')} stroke="green" />
       </svg>
       <div>
         <RowsTable board={board} />
@@ -166,35 +167,30 @@ const RowsTable: FC<{board: Board}> = ({
     </thead>
     <tbody>
       <tr>
-        <th>Won</th>
-        <td>{board.blackWon().toString()}</td>
-        <td>{board.whiteWon().toString()}</td>
-      </tr>
-      <tr>
         <th>Five</th>
         <td>
-          <SegmentTexts segments={(board.blackRows.get('five') ?? []).map(([seg, _]) => seg)}/>
+          <SegmentTexts segments={board.getRows(true, 'five').map(([seg, _]) => seg)}/>
         </td>
         <td>
-          <SegmentTexts segments={(board.whiteRows.get('five') ?? []).map(([seg, _]) => seg)}/>
+          <SegmentTexts segments={board.getRows(false, 'five').map(([seg, _]) => seg)}/>
         </td>
       </tr>
       <tr>
         <th>Four</th>
         <td>
-          <SegmentTexts segments={(board.blackRows.get('four') ?? []).map(([seg, _]) => seg)}/>
+          <SegmentTexts segments={board.getRows(true, 'four').map(([seg, _]) => seg)}/>
         </td>
         <td>
-          <SegmentTexts segments={(board.whiteRows.get('four') ?? []).map(([seg, _]) => seg)}/>
+          <SegmentTexts segments={board.getRows(false, 'four').map(([seg, _]) => seg)}/>
         </td>
       </tr>
       <tr>
         <th>Three</th>
         <td>
-          <SegmentTexts segments={(board.blackRows.get('three') ?? []).map(([seg, _]) => seg)}/>
+          <SegmentTexts segments={board.getRows(true, 'three').map(([seg, _]) => seg)}/>
         </td>
         <td>
-          <SegmentTexts segments={(board.whiteRows.get('three') ?? []).map(([seg, _]) => seg)}/>
+          <SegmentTexts segments={board.getRows(false, 'three').map(([seg, _]) => seg)}/>
         </td>
       </tr>
     </tbody>

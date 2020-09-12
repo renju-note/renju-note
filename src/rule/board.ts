@@ -1,5 +1,5 @@
 import { Facet, Index, Direction, directions } from './facet'
-import { Row, RowKind, rowKinds } from './row'
+import { Row, RowKind } from './row'
 
 export type Point = [number, number]
 export type Segment = {
@@ -16,8 +16,6 @@ export class Board {
   readonly blacks: Point[]
   readonly whites: Point[]
   readonly facets: Facet[]
-  readonly blackRows: Map<RowKind, [Segment, Row][]>
-  readonly whiteRows: Map<RowKind, [Segment, Row][]>
 
   constructor (init: Pick<Board, 'size'> | Pick<Board, 'size' | 'blacks' | 'whites' | 'facets'>) {
     this.size = init.size
@@ -30,13 +28,10 @@ export class Board {
       this.whites = []
       this.facets = directions.map(d => new Facet({ size: this.size, direction: d }))
     }
-
-    this.blackRows = this.computeBlackRows()
-    this.whiteRows = this.computeWhiteRows()
   }
 
   put (black: boolean, p: Point): Board {
-    if (this.occupied(p)) return this
+    if (this.hasStone(p)) return this
     return new Board({
       size: this.size,
       blacks: black ? [...this.blacks, p] : this.blacks,
@@ -45,27 +40,18 @@ export class Board {
     })
   }
 
-  occupied (p: Point): boolean {
+  hasStone (p: Point): boolean {
     return (
-      (this.blacks.findIndex(q => equal(p, q)) > 0) ||
-      (this.whites.findIndex(q => equal(p, q)) > 0)
+      (this.blacks.findIndex(q => equal(p, q)) >= 0) ||
+      (this.whites.findIndex(q => equal(p, q)) >= 0)
     )
-  }
-
-  blackWon (): boolean {
-    return (this.blackRows.get('five') ?? []).length > 0
-  }
-
-  whiteWon (): boolean {
-    return (this.whiteRows.get('five') ?? []).length > 0
   }
 
   forbiddens (): Point[] {
     const result: Point[] = []
     for (let x = 1; x <= this.size; x++) {
       for (let y = 1; y <= this.size; y++) {
-        if (this.blacks.findIndex(p => equal(p, [x, y])) >= 0) continue
-        if (this.whites.findIndex(p => equal(p, [x, y])) >= 0) continue
+        if (this.hasStone([x, y])) continue
         if (forbidden(this, [x, y])) {
           result.push([x, y])
         }
@@ -74,44 +60,23 @@ export class Board {
     return result
   }
 
-  private computeBlackRows (): Map<RowKind, [Segment, Row][]> {
-    return new Map(rowKinds.map(
-      k => [
-        k,
-        this.facets.flatMap(
-          f => (f.blackRows.get(k) ?? []).map(
-            ([idx, row]) => [
-              {
-                start: toPoint(idx, f.direction, this.size),
-                direction: f.direction,
-                size: row.size,
-              },
-              row,
-            ] as [Segment, Row]
-          )
-        )
-      ]
-    ))
+  getRows (black: boolean, kind: RowKind): [Segment, Row][] {
+    return this.facets.flatMap(
+      f => f.getRows(black, kind).map(
+        ([idx, row]) => [
+          {
+            start: toPoint(idx, f.direction, this.size),
+            direction: f.direction,
+            size: row.size,
+          },
+          row,
+        ] as [Segment, Row]
+      )
+    )
   }
 
-  private computeWhiteRows (): Map<RowKind, [Segment, Row][]> {
-    return new Map(rowKinds.map(
-      k => [
-        k,
-        this.facets.flatMap(
-          f => (f.whiteRows.get(k) ?? []).map(
-            ([idx, row]) => [
-              {
-                start: toPoint(idx, f.direction, this.size),
-                direction: f.direction,
-                size: row.size,
-              },
-              row,
-            ] as [Segment, Row]
-          )
-        )
-      ]
-    ))
+  toString (): string {
+    return this.facets.find(f => f.direction === 'horizontal')!.lines.slice().reverse().map(l => l.toSting()).join('\n')
   }
 }
 
@@ -162,29 +127,20 @@ export const forbidden = (board: Board, point: Point): ForbiddenKind | undefined
 }
 
 export const overline = (board: Board, point: Point): boolean => {
-  const nextBoard = board.put(true, point)
-  return (nextBoard.blackRows.get('overline') ?? []).length > 0
+  return board.put(true, point).getRows(true, 'overline').length > 0
 }
 
 export const doubleFour = (board: Board, point: Point): boolean => {
-  const nextBoard = board.put(true, point)
-  const newFours = (nextBoard.blackRows.get('four') ?? []).filter(([s, _]) => on(point, s))
+  const newFours = board.put(true, point).getRows(true, 'four').filter(([s, _]) => on(point, s))
   if (newFours.length < 2) return false
 
   // checking not open four
-  const distinctSegs: Segment[] = []
-  for (let i = 0; i < newFours.length; i++) {
-    const seg = newFours[i][0]
-    if (distinctSegs.findIndex(s => adjacent(seg, s)) < 0) {
-      distinctSegs.push(seg)
-    }
-  }
-  return distinctSegs.length >= 2
+  return distinct(newFours.map(([seg, _]) => seg)).length >= 2
 }
 
 export const doubleThree = (board: Board, point: Point): boolean => {
   const nextBoard = board.put(true, point)
-  const newThrees = (nextBoard.blackRows.get('three') ?? []).filter(([s, _]) => on(point, s))
+  const newThrees = nextBoard.getRows(true, 'three').filter(([s, _]) => on(point, s))
   if (newThrees.length < 2) return false
 
   // checking not fake three
@@ -199,14 +155,7 @@ export const doubleThree = (board: Board, point: Point): boolean => {
   if (trueThrees.length < 2) return false
 
   // checking not open three
-  const distinctSegs: Segment[] = []
-  for (let i = 0; i < newThrees.length; i++) {
-    const seg = newThrees[i][0]
-    if (distinctSegs.findIndex(s => adjacent(seg, s)) < 0) {
-      distinctSegs.push(seg)
-    }
-  }
-  return distinctSegs.length >= 2
+  return distinct(newThrees.map(([seg, _]) => seg)).length >= 2
 }
 
 export const ithPoint = (s: Segment, i: number): Point => {
@@ -236,17 +185,29 @@ const on = (p: Point, segment: Segment): boolean => {
   }
 }
 
+const distinct = (segments: Segment[]): Segment[] => {
+  const result: Segment[] = []
+  for (let i = 0; i < segments.length; i++) {
+    const seg = segments[i]
+    if (result.findIndex(s => adjacent(seg, s)) < 0) {
+      result.push(seg)
+    }
+  }
+  return result
+}
+
 const adjacent = (a: Segment, b: Segment): boolean => {
   if (a.direction !== b.direction) return false
+  const [xd, yd] = [a.start[0] - b.start[0], a.start[1] - b.start[1]]
   switch (a.direction) {
     case 'vertical':
-      return a.start[0] === b.start[0] && Math.abs(a.start[1] - b.start[1]) === 1
+      return xd === 0 && Math.abs(yd) === 1
     case 'horizontal':
-      return Math.abs(a.start[0] - b.start[0]) === 1 && a.start[1] === b.start[1]
+      return Math.abs(xd) === 1 && yd === 0
     case 'ascending':
-      return Math.abs(a.start[0] - b.start[0]) === 1 && (a.start[0] - b.start[0]) === (a.start[1] - b.start[1])
+      return Math.abs(xd) === 1 && xd === yd
     case 'descending':
-      return Math.abs(a.start[0] - b.start[0]) === 1 && (a.start[0] - b.start[0]) === (b.start[1] - a.start[1])
+      return Math.abs(xd) === 1 && xd === -yd
   }
 }
 
