@@ -4,7 +4,7 @@ import {
   WHITE_FIVE_PATTERNS,
 } from './row'
 
-const INT_SIZE = 64
+const INT_SIZE = 32
 
 export class Line {
   readonly size: number
@@ -18,34 +18,41 @@ export class Line {
     if (this.size < 1 || this.size > INT_SIZE) throw new Error('Wrong size')
 
     if ('blacks' in init && 'whites' in init) {
+      if ((init.blacks & init.whites) !== 0b0) throw new Error('Black and white stones are overlapping')
       this.blacks = init.blacks
       this.whites = init.whites
     } else {
       this.blacks = 0b0
       this.whites = 0b0
     }
-    if (overlap(this.blacks, this.whites)) throw new Error('Black and white stones are overlapping')
 
     this.blackRows = this.computeBlackRows()
     this.whiteRows = this.computeWhiteRows()
   }
 
-  add (black: boolean, i: number): Line | undefined {
-    if (exists(this.blacks, i) || exists(this.whites, i)) return undefined
+  put (black: boolean, i: number): Line {
+    const stones = 0b1 << i
     if (black) {
-      return new Line({ size: this.size, blacks: add(this.blacks, i), whites: this.whites })
+      const blacks = this.blacks | stones
+      if (blacks === this.blacks) return this
+      return new Line({ size: this.size, blacks: blacks, whites: this.whites })
     } else {
-      return new Line({ size: this.size, blacks: this.blacks, whites: add(this.whites, i) })
+      const whites = this.whites | stones
+      if (whites === this.whites) return this
+      return new Line({ size: this.size, blacks: this.blacks, whites: whites })
     }
   }
 
-  remove (black: boolean, i: number): Line | undefined {
+  remove (black: boolean, i: number): Line {
+    const mask = ~(0b1 << i)
     if (black) {
-      if (!exists(this.blacks, i)) return undefined
-      return new Line({ size: this.size, blacks: remove(this.blacks, i), whites: this.whites })
+      const blacks = this.blacks & mask
+      if (blacks === this.blacks) return this
+      return new Line({ size: this.size, blacks: blacks, whites: this.whites })
     } else {
-      if (!exists(this.whites, i)) return undefined
-      return new Line({ size: this.size, blacks: this.blacks, whites: remove(this.whites, i) })
+      const whites = this.whites & mask
+      if (whites === this.whites) return this
+      return new Line({ size: this.size, blacks: this.blacks, whites: whites })
     }
   }
 
@@ -67,19 +74,12 @@ export class Line {
   toSting (): string {
     let result = ''
     for (let i = 0; i < this.size; i++) {
-      result += exists(this.blacks, i) ? 'o' : (exists(this.whites, i) ? 'x' : '-')
+      const pat = 0b1 << i
+      result += (this.blacks & pat) !== 0b0 ? 'o' : ((this.whites & pat) !== 0b0 ? 'x' : '-')
     }
     return result
   }
 }
-
-const overlap = (blacks: Stones, whites: Stones) => (blacks & whites) !== 0b0
-
-const exists = (stones: Stones, i: number): boolean => (stones & (0b1 << i)) !== 0b0
-
-const add = (stones: Stones, i: number): number => stones + (0b1 << i)
-
-const remove = (stones: Stones, i: number): number => stones - (0b1 << i)
 
 const findBlackRows = (line: Line, pattern: RowPattern): [number, Row][] => {
   return find(line.blacks, line.whites, line.size, pattern).map(i => [i, pattern.row])

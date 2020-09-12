@@ -35,13 +35,13 @@ export class Board {
     this.whiteRows = this.computeWhiteRows()
   }
 
-  put (p: Point, black: boolean): Board {
+  put (black: boolean, p: Point): Board {
     if (this.occupied(p)) return this
     return new Board({
       size: this.size,
       blacks: black ? [...this.blacks, p] : this.blacks,
       whites: black ? this.whites : [...this.whites, p],
-      facets: this.facets.map(f => f.add(black, toIndex(p, f.direction, this.size))),
+      facets: this.facets.map(f => f.put(black, toIndex(p, f.direction, this.size))),
     })
   }
 
@@ -162,12 +162,12 @@ export const forbidden = (board: Board, point: Point): ForbiddenKind | undefined
 }
 
 export const overline = (board: Board, point: Point): boolean => {
-  const nextBoard = board.put(point, true)
+  const nextBoard = board.put(true, point)
   return (nextBoard.blackRows.get('overline') ?? []).length > 0
 }
 
 export const doubleFour = (board: Board, point: Point): boolean => {
-  const nextBoard = board.put(point, true)
+  const nextBoard = board.put(true, point)
   const newFours = (nextBoard.blackRows.get('four') ?? []).filter(([s, _]) => on(point, s))
   if (newFours.length < 2) return false
 
@@ -183,7 +183,7 @@ export const doubleFour = (board: Board, point: Point): boolean => {
 }
 
 export const doubleThree = (board: Board, point: Point): boolean => {
-  const nextBoard = board.put(point, true)
+  const nextBoard = board.put(true, point)
   const newThrees = (nextBoard.blackRows.get('three') ?? []).filter(([s, _]) => on(point, s))
   if (newThrees.length < 2) return false
 

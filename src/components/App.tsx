@@ -27,10 +27,10 @@ const App: FC = () => {
       ]
       let b = board
       for (let i = 0; i < blacks.length; i++) {
-        b = b.put(blacks[i], true)
+        b = b.put(true, blacks[i])
       }
       for (let i = 0; i < whites.length; i++) {
-        b = b.put(whites[i], false)
+        b = b.put(false, whites[i])
       }
       setBoard(b)
     },
@@ -40,7 +40,7 @@ const App: FC = () => {
     const base = e.currentTarget.getBoundingClientRect()
     const [x, y] = [e.clientX - base.x, e.clientY - base.y]
     const p: Point = [adjust(x / C), adjust((WIDTH - y) / C)]
-    const newBoard = board.put(p, turn)
+    const newBoard = board.put(turn, p)
     setBoard(newBoard)
     setTurn(!turn)
   }

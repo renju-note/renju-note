@@ -30,12 +30,12 @@ export class Facet {
     this.whiteRows = this.computeWhiteRows()
   }
 
-  add (black: boolean, [i, j]: Index): Facet {
-    const newLine = this.lines[i].add(black, j)
-    if (!newLine) throw new Error('Wrong move')
-    const lines = this.lines.map((l, li) => li === i ? newLine : l)
+  put (black: boolean, [i, j]: Index): Facet {
+    const newLine = this.lines[i].put(black, j)
+    if (newLine === this.lines[i]) return this
 
-    return new Facet({ size: this.size, direction: this.direction, lines })
+    const lines = [...this.lines.slice(0, i), newLine, ...this.lines.slice(i + 1, this.lines.length)]
+    return new Facet({ size: this.size, direction: this.direction, lines: lines })
   }
 
   private computeBlackRows (): Map<RowKind, [Index, Row][]> {
