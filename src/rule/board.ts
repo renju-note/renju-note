@@ -2,24 +2,28 @@ import { Facet, Direction, directions, FacetCoordinate } from './facet'
 import { Row, RowKind, rowKinds } from './row'
 
 export type Point = [number, number]
+export type Arrow = [Point, Direction]
 
 export const forbiddenKinds = ['doubleThree', 'doubleFour', 'overline'] as const
 export type ForbiddenKind = typeof forbiddenKinds[number]
 
 export class Board {
   readonly size: number
-  readonly moves: Point[]
+  readonly blacks: Point[]
+  readonly whites: Point[]
   readonly facets: Facet[]
-  readonly blackRows: Map<RowKind, [[Point, Direction], Row][]>
-  readonly whiteRows: Map<RowKind, [[Point, Direction], Row][]>
+  readonly blackRows: Map<RowKind, [Arrow, Row][]>
+  readonly whiteRows: Map<RowKind, [Arrow, Row][]>
 
-  constructor (init: Pick<Board, 'size'> | Pick<Board, 'size' | 'moves' | 'facets'>) {
+  constructor (init: Pick<Board, 'size'> | Pick<Board, 'size' | 'blacks' | 'whites' | 'facets'>) {
     this.size = init.size
-    if ('moves' in init && 'facets' in init) {
-      this.moves = init.moves
+    if ('blacks' in init && 'whites' in init && 'facets' in init) {
+      this.blacks = init.blacks
+      this.whites = init.whites
       this.facets = init.facets
     } else {
-      this.moves = []
+      this.blacks = []
+      this.whites = []
       this.facets = directions.map(d => new Facet({ size: this.size, direction: d }))
     }
 
@@ -27,20 +31,21 @@ export class Board {
     this.whiteRows = this.computeWhiteRows()
   }
 
-  move (p: Point): Board {
-    if (this.occupied(p)) throw new Error('Already occupied')
-    const moves = [...this.moves, p]
-    const black = this.blackTurn()
-    const facets = this.facets.map(s => s.add(black, toCoordinate(this.size, s.direction, p)))
-    return new Board({ size: this.size, moves, facets })
+  put (p: Point, black: boolean): Board {
+    if (this.occupied(p)) return this
+    return new Board({
+      size: this.size,
+      blacks: black ? [...this.blacks, p] : this.blacks,
+      whites: black ? this.whites : [...this.whites, p],
+      facets: this.facets.map(f => f.add(black, toCoordinate(this.size, f.direction, p))),
+    })
   }
 
-  occupied ([x, y]: Point): boolean {
-    return this.moves.findIndex(m => m[0] === x && m[1] === y) > 0
-  }
-
-  blackTurn (): boolean {
-    return this.moves.length % 2 === 0
+  occupied (p: Point): boolean {
+    return (
+      (this.blacks.findIndex(q => equal(p, q)) > 0) ||
+      (this.whites.findIndex(q => equal(p, q)) > 0)
+    )
   }
 
   blackWon (): boolean {
@@ -49,6 +54,20 @@ export class Board {
 
   whiteWon (): boolean {
     return (this.whiteRows.get('five') ?? []).length > 0
+  }
+
+  forbiddens (): Point[] {
+    const result: Point[] = []
+    for (let x = 1; x <= this.size; x++) {
+      for (let y = 1; y <= this.size; y++) {
+        if (this.blacks.findIndex(p => equal(p, [x, y])) >= 0) continue
+        if (this.whites.findIndex(p => equal(p, [x, y])) >= 0) continue
+        if (forbidden(this, [x, y])) {
+          result.push([x, y])
+        }
+      }
+    }
+    return result
   }
 
   private computeBlackRows (): Map<RowKind, [[Point, Direction], Row][]> {
@@ -78,7 +97,7 @@ export class Board {
   }
 }
 
-export const toCoordinate = (size: number, direction: Direction, [x, y]: Point): FacetCoordinate => {
+export const toCoordinate = (bsize: number, direction: Direction, [x, y]: Point): FacetCoordinate => {
   let i: number, j: number
   switch (direction) {
     case 'vertical':
@@ -86,17 +105,17 @@ export const toCoordinate = (size: number, direction: Direction, [x, y]: Point):
     case 'horizontal':
       return [y - 1, x - 1]
     case 'ascending':
-      i = (x - 1) + (size - y)
-      j = i < size ? (x - 1) : (y - 1)
+      i = (x - 1) + (bsize - y)
+      j = i < bsize ? (x - 1) : (y - 1)
       return [i, j]
     case 'descending':
       i = (x - 1) + (y - 1)
-      j = i < size ? (x - 1) : (size - y)
+      j = i < bsize ? (x - 1) : (bsize - y)
       return [i, j]
   }
 }
 
-export const toPoint = (size: number, direction: Direction, [i, j]: FacetCoordinate): Point => {
+export const toPoint = (bsize: number, direction: Direction, [i, j]: FacetCoordinate): Point => {
   let x: number, y: number
   switch (direction) {
     case 'vertical':
@@ -104,18 +123,14 @@ export const toPoint = (size: number, direction: Direction, [i, j]: FacetCoordin
     case 'horizontal':
       return [j + 1, i + 1]
     case 'ascending':
-      x = i < size ? j + 1 : (i + 1) + (j + 1) - size
-      y = i < size ? size - (i + 1) + (j + 1) : j + 1
+      x = i < bsize ? j + 1 : (i + 1) + (j + 1) - bsize
+      y = i < bsize ? bsize - (i + 1) + (j + 1) : j + 1
       return [x, y]
     case 'descending':
-      x = i < size ? j + 1 : (i + 1) + (j + 1) - size
-      y = i < size ? (i + 1) - j : size - j
+      x = i < bsize ? j + 1 : (i + 1) + (j + 1) - bsize
+      y = i < bsize ? (i + 1) - j : bsize - j
       return [x, y]
   }
-}
-
-export const toPoints = (size: number, direction: Direction, [i, j]: FacetCoordinate, rowSize: number): [Point, Point] => {
-  return [toPoint(size, direction, [i, j]), toPoint(size, direction, [i, j + rowSize - 1])]
 }
 
 export const forbidden = (board: Board, point: Point): ForbiddenKind | undefined => {
@@ -129,35 +144,53 @@ export const forbidden = (board: Board, point: Point): ForbiddenKind | undefined
 }
 
 export const overline = (board: Board, point: Point): boolean => {
-  return (board.move(point).blackRows.get('overline') ?? []).length > 0
+  return (board.put(point, true).blackRows.get('overline') ?? []).length > 0
 }
 
 export const doubleFour = (board: Board, point: Point): boolean => {
-  const newFours = (board.move(point).blackRows.get('four') ?? []).filter(
+  const newFours = (board.put(point, true).blackRows.get('four') ?? []).filter(
     ([vector, row]) => along(point, vector, row.size)
   )
-  return newFours.length >= 2 // TODO: check not open four
+  if (newFours.length < 2) return false
+
+  // checking not open four
+  const distinctFours: [Arrow, Row][] = []
+  for (let i = 0; i < newFours.length; i++) {
+    const four = newFours[i]
+    if (distinctFours.findIndex(f => f[0][1] === four[0][1] && adjacent(f[0][0], four[0][0])) < 0) {
+      distinctFours.push(four)
+    }
+  }
+  return distinctFours.length >= 2
 }
 
 export const doubleThree = (board: Board, point: Point): boolean => {
-  // TODO: check not in the same facet
-  const nextBoard = board.move(point)
+  const nextBoard = board.put(point, true)
   const newThrees = (nextBoard.blackRows.get('three') ?? []).filter(
     ([vector, row]) => along(point, vector, row.size)
   )
   if (newThrees.length < 2) return false
 
-  let trueNewThreeCount = 0
+  // checking not fake three
+  const trueThrees: [Arrow, Row][] = []
   for (let i = 0; i < newThrees.length; i++) {
     const [[start, direction], row] = newThrees[i]
-    const eyePoint = slide(start, direction, row.eyes[0])
-    const fb = forbidden(nextBoard, eyePoint) // WRONG: white must pass and black move
-    console.log(eyePoint, fb)
-    if (fb === undefined) {
-      trueNewThreeCount++
+    const eyep = slide(start, direction, row.eyes[0])
+    if (!forbidden(nextBoard, eyep)) {
+      trueThrees.push([[start, direction], row])
     }
   }
-  return trueNewThreeCount >= 2
+  if (trueThrees.length < 2) return false
+
+  // checking not open three
+  const distinctThrees: [Arrow, Row][] = []
+  for (let i = 0; i < trueThrees.length; i++) {
+    const three = trueThrees[i]
+    if (distinctThrees.findIndex(t => t[0][1] === three[0][1] && adjacent(t[0][0], three[0][0])) < 0) {
+      distinctThrees.push(three)
+    }
+  }
+  return distinctThrees.length >= 2
 }
 
 const along = (p: Point, [s, d]: [Point, Direction], l: number): boolean => {
@@ -167,9 +200,9 @@ const along = (p: Point, [s, d]: [Point, Direction], l: number): boolean => {
     case 'horizontal':
       return p[1] === s[1] && (s[0] <= p[0] && p[0] < (s[0] + l))
     case 'ascending':
-      return (s[0] <= p[0] && p[0] < (s[0] + l)) && (s[1] <= p[1] && p[1] < (s[1] + l))
+      return (s[0] <= p[0] && p[0] < (s[0] + l)) && (p[0] - s[0] === p[1] - s[1])
     case 'descending':
-      return (s[0] <= p[0] && p[0] < (s[0] + l)) && (s[1] >= p[1] && p[1] > (s[1] + l))
+      return (s[0] <= p[0] && p[0] < (s[0] + l)) && (p[0] - s[0] === s[1] - p[1])
   }
 }
 
@@ -185,3 +218,7 @@ export const slide = (p: Point, d: Direction, i: number): Point => {
       return [p[0] + i, p[1] - i]
   }
 }
+
+const equal = (a: Point, b: Point): boolean => a[0] === b[0] && a[1] === b[1]
+
+const adjacent = (a: Point, b: Point): boolean => Math.abs(a[0] - b[0]) <= 1 && Math.abs(a[1] - b[1]) <= 1
