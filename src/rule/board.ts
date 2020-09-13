@@ -54,6 +54,10 @@ export class Board {
   getRows (black: boolean, kind: RowKind): [Segment, Row][] {
     return this.square.getRows(black, kind)
   }
+
+  toString (): string {
+    return this.square.toString()
+  }
 }
 
 const equal = (a: Point, b: Point): boolean => a[0] === b[0] && a[1] === b[1]

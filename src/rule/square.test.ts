@@ -1,15 +1,15 @@
-import { Board } from './board'
+import { Square } from './square'
 
-test('newBoard', () => {
-  const board = new Board({ size: 15 })
-  expect(board.facets[0].direction).toBe('vertical')
-  expect(board.facets[0].lines).toMatchObject(orthogonalLines)
-  expect(board.facets[1].direction).toBe('horizontal')
-  expect(board.facets[1].lines).toMatchObject(orthogonalLines)
-  expect(board.facets[2].direction).toBe('ascending')
-  expect(board.facets[2].lines).toMatchObject(diagonalLines)
-  expect(board.facets[3].direction).toBe('descending')
-  expect(board.facets[3].lines).toMatchObject(diagonalLines)
+test('new', () => {
+  const s = new Square({ size: 15 })
+  expect(s.facets[0][0]).toBe('vertical')
+  expect(s.facets[0][1]).toMatchObject(orthogonalLines)
+  expect(s.facets[1][0]).toBe('horizontal')
+  expect(s.facets[1][1]).toMatchObject(orthogonalLines)
+  expect(s.facets[2][0]).toBe('ascending')
+  expect(s.facets[2][1]).toMatchObject(diagonalLines)
+  expect(s.facets[3][0]).toBe('descending')
+  expect(s.facets[3][1]).toMatchObject(diagonalLines)
 })
 
 const orthogonalLines = [
