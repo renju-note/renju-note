@@ -19,7 +19,7 @@ const overline = (square: Square, point: Point): boolean => {
 }
 
 const doubleFour = (square: Square, point: Point): boolean => {
-  const newFours = square.put(true, point).getRows(true, 'four').filter(([s, _]) => on(point, s))
+  const newFours = square.put(true, point).getRows(true, 'four').filter(([s, _]) => onSegment(point, s))
   if (newFours.length < 2) return false
 
   // checking not open four
@@ -28,7 +28,7 @@ const doubleFour = (square: Square, point: Point): boolean => {
 
 const doubleThree = (square: Square, point: Point): boolean => {
   const nextSquare = square.put(true, point)
-  const newThrees = nextSquare.getRows(true, 'three').filter(([s, _]) => on(point, s))
+  const newThrees = nextSquare.getRows(true, 'three').filter(([s, _]) => onSegment(point, s))
   if (newThrees.length < 2) return false
 
   // checking not fake three
@@ -46,7 +46,7 @@ const doubleThree = (square: Square, point: Point): boolean => {
   return distinct(newThrees.map(([seg, _]) => seg)).length >= 2
 }
 
-const on = (p: Point, segment: Segment): boolean => {
+const onSegment = (p: Point, segment: Segment): boolean => {
   const [s, l] = [segment.start, segment.size]
   switch (segment.direction) {
     case 'vertical':
