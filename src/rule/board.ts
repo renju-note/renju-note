@@ -31,6 +31,18 @@ export class Board {
     })
   }
 
+  remove (p: Point): Board {
+    if (!this.hasStone(p)) return this
+    const bi = this.blacks.findIndex(q => equal(p, q))
+    const wi = this.whites.findIndex(q => equal(p, q))
+    return new Board({
+      size: this.size,
+      blacks: bi >= 0 ? remove(this.blacks, bi) : this.blacks,
+      whites: wi >= 0 ? remove(this.whites, wi) : this.whites,
+      square: this.square.remove(p),
+    })
+  }
+
   hasStone (p: Point): boolean {
     return (
       (this.blacks.findIndex(q => equal(p, q)) >= 0) ||
@@ -61,3 +73,5 @@ export class Board {
 }
 
 const equal = (a: Point, b: Point): boolean => a[0] === b[0] && a[1] === b[1]
+
+const remove = <T>(a: Array<T>, i: number): Array<T> => [...a.slice(0, i - 1), ...a.slice(i + 1, a.length)]

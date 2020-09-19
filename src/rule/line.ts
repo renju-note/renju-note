@@ -42,17 +42,11 @@ export class Line {
     }
   }
 
-  remove (black: boolean, i: number): Line {
+  remove (i: number): Line {
     const mask = ~(0b1 << i)
-    if (black) {
-      const blacks = this.blacks & mask
-      if (blacks === this.blacks) return this
-      return new Line({ size: this.size, blacks: blacks, whites: this.whites })
-    } else {
-      const whites = this.whites & mask
-      if (whites === this.whites) return this
-      return new Line({ size: this.size, blacks: this.blacks, whites: whites })
-    }
+    const [blacks, whites] = [this.blacks & mask, this.whites & mask]
+    if (blacks === this.blacks && whites === this.whites) return this
+    return new Line({ size: this.size, blacks: blacks, whites: whites })
   }
 
   getRows (black: boolean, kind: RowKind): [number, Row][] {

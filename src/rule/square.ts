@@ -44,6 +44,19 @@ export class Square {
     return new Square({ size: this.size, facets: facets })
   }
 
+  remove (p: Point): Square {
+    const bsize = this.size
+    const facets = this.facets.map(
+      ([direction, lines]) => {
+        const [i, j] = toIndex(p, direction, bsize)
+        const newLine = lines[i].remove(j)
+        const newLines = [...lines.slice(0, i), newLine, ...lines.slice(i + 1, lines.length)]
+        return [direction, newLines] as [Direction, Line[]]
+      }
+    )
+    return new Square({ size: this.size, facets: facets })
+  }
+
   getRows (black: boolean, kind: RowKind): [Segment, Row][] {
     const bsize = this.size
     return this.facets.flatMap(
