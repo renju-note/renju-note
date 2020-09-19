@@ -1,7 +1,7 @@
+import { Point } from '../foundation'
 import { Line } from './line'
 import { Row, RowKind } from './row'
 
-export type Point = [number, number]
 export type Segment = {
   start: Point
   direction: Direction

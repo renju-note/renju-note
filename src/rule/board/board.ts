@@ -1,4 +1,5 @@
-import { Point, Segment, Square } from './square'
+import { Point } from '../foundation'
+import { Segment, Square } from './square'
 import { forbidden } from './forbidden'
 import { Row, RowKind } from './row'
 

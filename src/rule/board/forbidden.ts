@@ -1,4 +1,5 @@
-import { Point, Segment, Square, ithPoint } from './square'
+import { Point } from '../foundation'
+import { Segment, Square, ithPoint } from './square'
 import { Row } from './row'
 
 export const forbiddenKinds = ['doubleThree', 'doubleFour', 'overline'] as const
