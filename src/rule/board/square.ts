@@ -44,6 +44,26 @@ export class Square {
     return new Square({ size: this.size, facets: facets })
   }
 
+  putMulti (black: boolean, ps: Point[]): Square {
+    const bsize = this.size
+    const facets = this.facets.map(
+      ([direction, lines]) => {
+        const m = new Map<number, number[]>()
+        for (let n = 0; n < ps.length; n++) {
+          const [i, j] = toIndex(ps[n], direction, bsize)
+          if (m.has(i)) {
+            m.get(i)!.push(j)
+          } else {
+            m.set(i, [j])
+          }
+        }
+        const newLines = lines.map((l, i) => m.has(i) ? l.putMulti(black, m.get(i)!) : l)
+        return [direction, newLines] as [Direction, Line[]]
+      }
+    )
+    return new Square({ size: this.size, facets: facets })
+  }
+
   remove (p: Point): Square {
     const bsize = this.size
     const facets = this.facets.map(

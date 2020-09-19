@@ -30,16 +30,15 @@ export class Line {
   }
 
   put (black: boolean, i: number): Line {
-    const stones = 0b1 << i
-    if (black) {
-      const blacks = this.blacks | stones
-      if (blacks === this.blacks) return this
-      return new Line({ size: this.size, blacks: blacks, whites: this.whites })
-    } else {
-      const whites = this.whites | stones
-      if (whites === this.whites) return this
-      return new Line({ size: this.size, blacks: this.blacks, whites: whites })
+    return this.overlay(black, 0b1 << i)
+  }
+
+  putMulti (black: boolean, is: number[]): Line {
+    let stones = 0b0
+    for (let n = 0; n < is.length; n++) {
+      stones |= 0b1 << is[n]
     }
+    return this.overlay(black, stones)
   }
 
   remove (i: number): Line {
@@ -61,6 +60,18 @@ export class Line {
     }
     rowsCache[kind] = rows
     return rows
+  }
+
+  private overlay (black: boolean, stones: Stones): Line {
+    if (black) {
+      const blacks = this.blacks | stones
+      if (blacks === this.blacks) return this
+      return new Line({ size: this.size, blacks: blacks, whites: this.whites })
+    } else {
+      const whites = this.whites | stones
+      if (whites === this.whites) return this
+      return new Line({ size: this.size, blacks: this.blacks, whites: whites })
+    }
   }
 
   toSting (): string {

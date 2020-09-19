@@ -17,6 +17,12 @@ export class Game {
     })
   }
 
+  moveMulti (ps: Point[]): Game {
+    return new Game({
+      moves: [...this.moves, ...ps],
+    })
+  }
+
   undo (): Game {
     return new Game({
       moves: this.moves.slice(0, this.moves.length - 1),

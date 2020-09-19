@@ -9,16 +9,19 @@ export class Board {
   readonly whites: Point[]
   readonly square: Square
 
-  constructor (init: Pick<Board, 'size'> | Pick<Board, 'size' | 'blacks' | 'whites' | 'square'>) {
+  constructor (init: Pick<Board, 'size'> | Pick<Board, 'size' | 'blacks' | 'whites'> | Pick<Board, 'size' | 'blacks' | 'whites' | 'square'>) {
     this.size = init.size
-    if ('blacks' in init && 'whites' in init && 'square' in init) {
+    if ('blacks' in init && 'whites' in init) {
       this.blacks = init.blacks
       this.whites = init.whites
-      this.square = init.square
     } else {
       this.blacks = []
       this.whites = []
-      this.square = new Square({ size: this.size })
+    }
+    if ('square' in init) {
+      this.square = init.square
+    } else {
+      this.square = new Square({ size: this.size }).putMulti(true, this.blacks).putMulti(false, this.whites)
     }
   }
 
