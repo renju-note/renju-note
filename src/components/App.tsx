@@ -1,65 +1,51 @@
 import React, { FC, useState, useEffect } from 'react'
 import './App.css'
 
+import { State } from '../state'
 import { BOARD_SIZE, Board, Point, Segment, Row, ithPoint } from '../rule'
 
 const C = 40
 const WIDTH = (BOARD_SIZE + 1) * C
 
+const opening: Point[] = [[8, 8], [8, 9], [10, 10]] // D3
+
 const App: FC = () => {
-  const [turn, setTurn] = useState<boolean>(true)
-  const [board, setBoard] = useState<Board>(new Board({ size: BOARD_SIZE }))
+  const [state, setState] = useState<State>(new State({}))
   useEffect(
     () => {
-      const blacks: Point[] = [
-        [2, 13], [3, 12], [3, 14], [4, 13], // dowble three
-        [2, 7], [3, 6], [3, 8], [4, 7], // fake dowble three
-        [12, 11], [12, 12], [13, 12], [13, 14], [14, 11], [14, 14], [15, 11], // dowble three
-        [11, 7], [12, 6], [12, 5], [14, 4], [14, 5], [15, 5], // dowble four
-        [1, 2], [2, 2], [4, 2], [7, 2], [8, 2], // dowble four
-        [1, 1], [3, 1], [5, 1], [7, 1], // dowble four
-        [10, 1], [11, 1], [13, 1], [14, 1], [15, 1], // overline
-      ]
-      const whites: Point[] = [
-        [6, 7],
-        [8, 1],
-        [12, 13],
-      ]
-      let b = board
-      for (let i = 0; i < blacks.length; i++) {
-        b = b.put(true, blacks[i])
+      let s = state
+      for (let i = 0; i < opening.length; i++) {
+        s = s.move(opening[i])
       }
-      for (let i = 0; i < whites.length; i++) {
-        b = b.put(false, whites[i])
-      }
-      setBoard(b)
+      setState(s)
     },
     []
   )
-  const onClick = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+  const onClickBoard = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
     const base = e.currentTarget.getBoundingClientRect()
     const [x, y] = [e.clientX - base.x, e.clientY - base.y]
     const p: Point = [adjust(x / C), adjust((WIDTH - y) / C)]
-    const newBoard = board.put(turn, p)
-    setBoard(newBoard)
-    console.log(newBoard.toString())
-    setTurn(!turn)
+    setState(state.move(p))
   }
   return (
     <div className="App">
-      <svg width={WIDTH} height={WIDTH} onClick={onClick}>
+      <svg width={WIDTH} height={WIDTH} onClick={onClickBoard}>
         <Ruler cellSize={C} />
-        <Stones cellSize={C} points={board.blacks} black={true} />
-        <Stones cellSize={C} points={board.whites} black={false} />
-        <Forbiddens cellSize={C} points={board.forbiddens()} />
-        <Rows cellSize={C} rows={board.getRows(true, 'three')} stroke="yellow" />
-        <Rows cellSize={C} rows={board.getRows(true, 'four')} stroke="purple" />
-        <Rows cellSize={C} rows={board.getRows(true, 'five')} stroke="blue" />
-        <Rows cellSize={C} rows={board.getRows(true, 'overline')} stroke="red" />
-        <Rows cellSize={C} rows={board.getRows(false, 'five')} stroke="green" />
+        <Stones cellSize={C} points={state.board.blacks} black={true} />
+        <Stones cellSize={C} points={state.board.whites} black={false} />
+        <Forbiddens cellSize={C} points={state.board.forbiddens()} />
+        <Rows cellSize={C} rows={state.board.getRows(true, 'three')} stroke="yellow" />
+        <Rows cellSize={C} rows={state.board.getRows(true, 'four')} stroke="purple" />
+        <Rows cellSize={C} rows={state.board.getRows(true, 'five')} stroke="blue" />
+        <Rows cellSize={C} rows={state.board.getRows(true, 'overline')} stroke="red" />
+        <Rows cellSize={C} rows={state.board.getRows(false, 'five')} stroke="green" />
       </svg>
       <div>
-        <RowsTable board={board} />
+        <button onClick={() => setState(state.backward())}>←</button>
+        <button onClick={() => setState(state.forward())}>→</button>
+      </div>
+      <div>
+        <RowsTable board={state.board} />
       </div>
     </div>
   )
