@@ -23,7 +23,7 @@ export class State {
     if (game === undefined) return this
     return new State({
       game: game,
-      board: this.lastBoard(),
+      board: generateBoard(game),
       cursor: this.cursor + 1,
     })
   }
@@ -34,7 +34,7 @@ export class State {
     if (game === undefined) return this
     return new State({
       game: game,
-      board: this.lastBoard(),
+      board: generateBoard(game),
       cursor: this.cursor - 1,
     })
   }
@@ -60,12 +60,10 @@ export class State {
   get last (): boolean {
     return this.cursor === this.game.moves.length
   }
-
-  private lastBoard (): Board {
-    return new Board({
-      size: BOARD_SIZE,
-      blacks: this.game.blacks,
-      whites: this.game.whites,
-    })
-  }
 }
+
+const generateBoard = (g: Game): Board => new Board({
+  size: BOARD_SIZE,
+  blacks: g.blacks,
+  whites: g.whites,
+})
