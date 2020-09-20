@@ -61,7 +61,9 @@ export class Square {
             m.set(i, [j])
           }
         }
-        const newLines = lines.map((l, i) => m.has(i) ? l.putMulti(black, m.get(i)!) : l)
+        const newLines = lines.map(
+          (l, i) => m.has(i) ? l.putMulti(black, m.get(i)!) : l
+        )
         return [direction, newLines] as Facet
       }
     )

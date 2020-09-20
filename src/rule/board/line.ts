@@ -109,7 +109,12 @@ class RowsProxy {
     return patterns.flatMap(
       p => find(self, opponent, this.size, p)
     ).map(
-      ([i, row]) => ({ kind: row.kind, start: i, size: row.size, eyes: row.eyes.map(e => e + i) })
+      ([i, row]) => ({
+        kind: row.kind,
+        start: i,
+        size: row.size,
+        eyes: row.eyes.map(e => e + i)
+      })
     )
   }
 }

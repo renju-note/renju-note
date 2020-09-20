@@ -120,14 +120,14 @@ class PropertiesProxy {
   }
 
   private compute (black: boolean, kind: RowKind): Property[] {
-    return this.square.rows.get(black, kind).map(srow => {
-      return {
+    return this.square.rows.get(black, kind).map(
+      srow => ({
         kind: srow.kind,
         start: srow.start,
         end: srow.end,
         eyes: srow.eyes,
-      }
-    })
+      })
+    )
   }
 }
 
