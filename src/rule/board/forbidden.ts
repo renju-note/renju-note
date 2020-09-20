@@ -16,11 +16,11 @@ export const forbidden = (square: Square, point: Point): ForbiddenKind | undefin
 }
 
 const overline = (square: Square, point: Point): boolean => {
-  return square.put(true, point).getRows(true, 'overline').length > 0
+  return square.put(true, point).rows.get(true, 'overline').length > 0
 }
 
 const doubleFour = (square: Square, point: Point): boolean => {
-  const newFours = square.put(true, point).getRows(true, 'four').filter(([s, _]) => onSegment(point, s))
+  const newFours = square.put(true, point).rows.get(true, 'four').filter(([s, _]) => onSegment(point, s))
   if (newFours.length < 2) return false
 
   // checking not open four
@@ -28,16 +28,16 @@ const doubleFour = (square: Square, point: Point): boolean => {
 }
 
 const doubleThree = (square: Square, point: Point): boolean => {
-  const nextSquare = square.put(true, point)
-  const newThrees = nextSquare.getRows(true, 'three').filter(([s, _]) => onSegment(point, s))
+  const next = square.put(true, point)
+  const newThrees = next.rows.get(true, 'three').filter(([s, _]) => onSegment(point, s))
   if (newThrees.length < 2) return false
 
   // checking not fake three
   const trueThrees: [Segment, Row][] = []
   for (let i = 0; i < newThrees.length; i++) {
     const [seg, row] = newThrees[i]
-    const eyep = ithPoint(seg, row.eyes[0])
-    if (!forbidden(nextSquare, eyep)) {
+    const eye = ithPoint(seg, row.eyes[0])
+    if (!forbidden(next, eye)) {
       trueThrees.push([seg, row])
     }
   }

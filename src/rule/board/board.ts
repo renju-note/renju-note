@@ -1,16 +1,33 @@
 import { Point, equal } from '../foundation'
-import { Segment, Square } from './square'
+import { Square, ithPoint } from './square'
 import { forbidden } from './forbidden'
-import { Row, RowKind } from './row'
+import { RowKind, emptyRowsCache } from './row'
+
+export type Property = {
+  kind: RowKind
+  start: Point
+  end: Point // inclusive
+  eyes: Point[]
+}
 
 export class Board {
   readonly size: number
   readonly blacks: Point[]
   readonly whites: Point[]
-  readonly square: Square
+  readonly properties: PropertiesProxy
 
-  constructor (init: Pick<Board, 'size'> | Pick<Board, 'size' | 'blacks' | 'whites'> | Pick<Board, 'size' | 'blacks' | 'whites' | 'square'>) {
+  private readonly square: Square
+
+  private forbiddensCache: Point[] | undefined
+
+  constructor (
+    init:
+      | Pick<Board, 'size'>
+      | Pick<Board, 'size' | 'blacks' | 'whites'>
+      | Pick<Board, 'size' | 'blacks' | 'whites'> & { square: Square }
+  ) {
     this.size = init.size
+
     if ('blacks' in init && 'whites' in init) {
       this.blacks = init.blacks
       this.whites = init.whites
@@ -18,11 +35,14 @@ export class Board {
       this.blacks = []
       this.whites = []
     }
+
     if ('square' in init) {
       this.square = init.square
     } else {
       this.square = new Square({ size: this.size }).putMulti(true, this.blacks).putMulti(false, this.whites)
     }
+
+    this.properties = new PropertiesProxy(this.square)
   }
 
   put (black: boolean, p: Point): Board {
@@ -54,7 +74,14 @@ export class Board {
     )
   }
 
-  forbiddens (): Point[] {
+  get forbiddens (): Point[] {
+    if (this.forbiddensCache === undefined) {
+      this.forbiddensCache = this.computeForbiddens()
+    }
+    return this.forbiddensCache
+  }
+
+  private computeForbiddens (): Point[] {
     const result: Point[] = []
     for (let x = 1; x <= this.size; x++) {
       for (let y = 1; y <= this.size; y++) {
@@ -67,12 +94,40 @@ export class Board {
     return result
   }
 
-  getRows (black: boolean, kind: RowKind): [Segment, Row][] {
-    return this.square.getRows(black, kind)
-  }
-
   toString (): string {
     return this.square.toString()
+  }
+}
+
+class PropertiesProxy {
+  private readonly square: Square
+  private readonly blackCache: Record<RowKind, Property[] | undefined>
+  private readonly whiteCache: Record<RowKind, Property[] | undefined>
+
+  constructor (square: Square) {
+    this.square = square
+
+    this.blackCache = emptyRowsCache()
+    this.whiteCache = emptyRowsCache()
+  }
+
+  get (black: boolean, kind: RowKind): Property[] {
+    const cache = black ? this.blackCache : this.whiteCache
+    if (cache[kind] === undefined) {
+      cache[kind] = this.compute(black, kind)
+    }
+    return cache[kind]!
+  }
+
+  private compute (black: boolean, kind: RowKind): Property[] {
+    return this.square.rows.get(black, kind).map(([seg, row]) => {
+      return {
+        kind: row.kind,
+        start: seg.start,
+        end: ithPoint(seg, row.size - 1),
+        eyes: row.eyes.map(i => ithPoint(seg, i))
+      }
+    })
   }
 }
 

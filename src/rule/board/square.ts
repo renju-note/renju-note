@@ -1,6 +1,13 @@
 import { Point } from '../foundation'
 import { Line } from './line'
-import { Row, RowKind } from './row'
+import { Row, RowKind, emptyRowsCache } from './row'
+
+const directions = ['vertical', 'horizontal', 'ascending', 'descending'] as const
+type Direction = typeof directions[number]
+
+type Index = [number, number]
+
+type Facet = [Direction, Line[]]
 
 export type Segment = {
   start: Point
@@ -8,17 +15,18 @@ export type Segment = {
   size: number
 }
 
-const directions = ['vertical', 'horizontal', 'ascending', 'descending'] as const
-type Direction = typeof directions[number]
-
-type Index = [number, number]
-
 export class Square {
   readonly size: number
-  readonly facets: [Direction, Line[]][]
+  readonly facets: Facet[]
+  readonly rows: RowsProxy
 
-  constructor (init: Pick<Square, 'size'> | Pick<Square, 'size' | 'facets'>) {
+  constructor (
+    init:
+      | Pick<Square, 'size'>
+      | Pick<Square, 'size' | 'facets'>
+  ) {
     this.size = init.size
+
     if ('facets' in init) {
       this.facets = init.facets
     } else {
@@ -29,6 +37,8 @@ export class Square {
         ['descending', newDiagonalLines(this.size)],
       ]
     }
+
+    this.rows = new RowsProxy(this.size, this.facets)
   }
 
   put (black: boolean, p: Point): Square {
@@ -38,7 +48,7 @@ export class Square {
         const [i, j] = toIndex(p, direction, bsize)
         const newLine = lines[i].put(black, j)
         const newLines = [...lines.slice(0, i), newLine, ...lines.slice(i + 1, lines.length)]
-        return [direction, newLines] as [Direction, Line[]]
+        return [direction, newLines] as Facet
       }
     )
     return new Square({ size: this.size, facets: facets })
@@ -58,7 +68,7 @@ export class Square {
           }
         }
         const newLines = lines.map((l, i) => m.has(i) ? l.putMulti(black, m.get(i)!) : l)
-        return [direction, newLines] as [Direction, Line[]]
+        return [direction, newLines] as Facet
       }
     )
     return new Square({ size: this.size, facets: facets })
@@ -71,28 +81,10 @@ export class Square {
         const [i, j] = toIndex(p, direction, bsize)
         const newLine = lines[i].remove(j)
         const newLines = [...lines.slice(0, i), newLine, ...lines.slice(i + 1, lines.length)]
-        return [direction, newLines] as [Direction, Line[]]
+        return [direction, newLines] as Facet
       }
     )
     return new Square({ size: this.size, facets: facets })
-  }
-
-  getRows (black: boolean, kind: RowKind): [Segment, Row][] {
-    const bsize = this.size
-    return this.facets.flatMap(
-      ([direction, lines]) => lines.flatMap(
-        (l, i) => l.getRows(black, kind).map(
-          ([j, row]) => [
-            {
-              start: toPoint([i, j], direction, bsize),
-              direction: direction,
-              size: row.size,
-            },
-            row,
-          ] as [Segment, Row]
-        )
-      )
-    )
   }
 
   toString (): string {
@@ -156,3 +148,46 @@ const newOrthogonalLines = (size: number): Line[] => new Array(size).fill(null).
 const newDiagonalLines = (size: number): Line[] => new Array(size * 2 - 1).fill(null).map(
   (_, i) => new Line({ size: i < size ? i + 1 : size * 2 - 1 - i })
 )
+
+type Rows = [Segment, Row][]
+
+class RowsProxy {
+  private readonly size: number
+  private readonly facets: Facet[]
+  private readonly blackCache: Record<RowKind, Rows | undefined>
+  private readonly whiteCache: Record<RowKind, Rows | undefined>
+
+  constructor (size: number, facets: Facet[]) {
+    this.size = size
+    this.facets = facets
+
+    this.blackCache = emptyRowsCache()
+    this.whiteCache = emptyRowsCache()
+  }
+
+  get (black: boolean, kind: RowKind): Rows {
+    const cache = black ? this.blackCache : this.whiteCache
+    if (cache[kind] === undefined) {
+      cache[kind] = this.compute(black, kind)
+    }
+    return cache[kind]!
+  }
+
+  private compute (black: boolean, kind: RowKind): Rows {
+    const bsize = this.size
+    return this.facets.flatMap(
+      ([direction, lines]) => lines.flatMap(
+        (l, i) => l.rows.get(black, kind).map(
+          ([j, row]) => [
+            {
+              start: toPoint([i, j], direction, bsize),
+              direction: direction,
+              size: row.size,
+            },
+            row,
+          ] as [Segment, Row]
+        )
+      )
+    )
+  }
+}

@@ -36,6 +36,15 @@ export const find = (self: Stones, opponent: Stones, within: number, pattern: Ro
   return result
 }
 
+export const emptyRowsCache = (): Record<RowKind, undefined> => {
+  return {
+    three: undefined,
+    four: undefined,
+    five: undefined,
+    overline: undefined,
+  }
+}
+
 const BLACK_THREE_PATTERNS: RowPattern[] = [
   {
     row: { kind: 'three', size: 6, eyes: [4] },

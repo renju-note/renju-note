@@ -2,7 +2,7 @@ import React, { FC, useState, useEffect } from 'react'
 import './App.css'
 
 import { State } from '../state'
-import { BOARD_SIZE, Board, Point, Segment, Row, ithPoint } from '../rule'
+import { BOARD_SIZE, Point, Board, Property } from '../rule'
 
 const C = 40
 const WIDTH = (BOARD_SIZE + 1) * C
@@ -33,15 +33,15 @@ const App: FC = () => {
         <Ruler cellSize={C} />
         <Stones cellSize={C} points={state.board.blacks} black={true} />
         <Stones cellSize={C} points={state.board.whites} black={false} />
-        <Forbiddens cellSize={C} points={state.board.forbiddens()} />
-        <Rows cellSize={C} rows={state.board.getRows(true, 'three')} stroke="yellow" />
-        <Rows cellSize={C} rows={state.board.getRows(true, 'four')} stroke="purple" />
-        <Rows cellSize={C} rows={state.board.getRows(true, 'five')} stroke="blue" />
-        <Rows cellSize={C} rows={state.board.getRows(true, 'overline')} stroke="red" />
-        <Rows cellSize={C} rows={state.board.getRows(false, 'five')} stroke="green" />
+        <Forbiddens cellSize={C} points={state.board.forbiddens} />
+        <Properties cellSize={C} properties={state.board.properties.get(true, 'three')} stroke="yellow" />
+        <Properties cellSize={C} properties={state.board.properties.get(true, 'four')} stroke="purple" />
+        <Properties cellSize={C} properties={state.board.properties.get(true, 'five')} stroke="blue" />
+        <Properties cellSize={C} properties={state.board.properties.get(true, 'overline')} stroke="red" />
+        <Properties cellSize={C} properties={state.board.properties.get(false, 'five')} stroke="green" />
       </svg>
       <div>
-        <span>{score(state.game.moves)}</span>
+        <span>{state.game.moves.map(toStr).join(' ')}</span>
         <br/>
         <button onClick={() => setState(state.undo())}>undo</button>
         <button onClick={() => setState(state.backward())}>←</button>
@@ -103,15 +103,15 @@ const Forbiddens: FC<{cellSize: number, points: Point[]}> = ({
   </>
 }
 
-const Rows: FC<{cellSize: number, rows: [Segment, Row][], stroke: string}> = ({
+const Properties: FC<{cellSize: number, properties: Property[], stroke: string}> = ({
   cellSize,
-  rows,
+  properties,
   stroke,
 }) => {
-  const lines = rows.map(
-    ([seg, row], key) => {
-      const [p1x, p1y] = seg.start
-      const [p2x, p2y] = ithPoint(seg, row.size - 1)
+  const lines = properties.map(
+    (prop, key) => {
+      const [p1x, p1y] = prop.start
+      const [p2x, p2y] = prop.end
       const [x1, y1] = [p1x * cellSize, (BOARD_SIZE - p1y + 1) * cellSize]
       const [x2, y2] = [p2x * cellSize, (BOARD_SIZE - p2y + 1) * cellSize]
       return <line
@@ -157,44 +157,44 @@ const RowsTable: FC<{board: Board}> = ({
     <tbody>
       <tr>
         <td>
-          <SegmentTexts segments={board.getRows(true, 'five').map(([seg, _]) => seg)}/>
+          <PropertyTexts properties={board.properties.get(true, 'five')}/>
         </td>
         <th>Five</th>
         <td>
-          <SegmentTexts segments={board.getRows(false, 'five').map(([seg, _]) => seg)}/>
+          <PropertyTexts properties={board.properties.get(false, 'five')}/>
         </td>
       </tr>
       <tr>
         <td>
-          <SegmentTexts segments={board.getRows(true, 'four').map(([seg, _]) => seg)}/>
+          <PropertyTexts properties={board.properties.get(true, 'four')}/>
         </td>
         <th>Four</th>
         <td>
-          <SegmentTexts segments={board.getRows(false, 'four').map(([seg, _]) => seg)}/>
+          <PropertyTexts properties={board.properties.get(false, 'four')}/>
         </td>
       </tr>
       <tr>
         <td>
-          <SegmentTexts segments={board.getRows(true, 'three').map(([seg, _]) => seg)}/>
+          <PropertyTexts properties={board.properties.get(true, 'three')}/>
         </td>
         <th>Three</th>
         <td>
-          <SegmentTexts segments={board.getRows(false, 'three').map(([seg, _]) => seg)}/>
+          <PropertyTexts properties={board.properties.get(false, 'three')}/>
         </td>
       </tr>
     </tbody>
   </table>
 }
 
-const SegmentTexts: FC<{ segments: Segment[]}> = ({
-  segments
+const PropertyTexts: FC<{ properties: Property[]}> = ({
+  properties
 }) => {
   return <>
     {
-      segments.map(
-        (s, key) => <span key={key}>
+      properties.map(
+        (prop, key) => <span key={key}>
           { key !== 0 && <br /> }
-          {`(${s.start[0]}, ${s.start[1]})-${s.direction}`}
+          {`${toStr(prop.start)}-${toStr(prop.end)}`}
         </span>
       )
     }
@@ -205,9 +205,7 @@ const indices = (): number[] => new Array(BOARD_SIZE).fill(null).map((_, i) => i
 
 const adjust = (n: number): number => Math.min(Math.max(1, Math.round(n)), BOARD_SIZE)
 
-const score = (ps: Point[]): string => {
-  const names = 'ABCDEFGHIJKLMNO'
-  return ps.map(([x, y]) => `${names.charAt(x - 1)}${y}`).join(' ')
-}
+const VERTICAL_LINE_NAMES = 'ABCDEFGHIJKLMNO'
+const toStr = ([x, y]: Point): string => `${VERTICAL_LINE_NAMES.charAt(x - 1)}${y}`
 
 export default App

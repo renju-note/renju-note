@@ -1,19 +1,21 @@
 import {
-  Stones, Row, RowKind, find,
+  Stones, Row, RowKind, find, emptyRowsCache,
   BLACK_PATTERNS, WHITE_PATTERNS,
 } from './row'
 
 const INT_SIZE = 32
 
-type RowsRecord = Record<RowKind, [number, Row][] | undefined>
-
 export class Line {
   readonly size: number
   readonly blacks: Stones
   readonly whites: Stones
-  private readonly cache: [RowsRecord, RowsRecord]
+  readonly rows: RowsProxy
 
-  constructor (init: Pick<Line, 'size'> | Pick<Line, 'size' | 'blacks' | 'whites'>) {
+  constructor (
+    init:
+      | Pick<Line, 'size'>
+      | Pick<Line, 'size' | 'blacks' | 'whites'>
+  ) {
     this.size = init.size
     if (this.size < 1 || this.size > INT_SIZE) throw new Error('Wrong size')
 
@@ -26,7 +28,7 @@ export class Line {
       this.whites = 0b0
     }
 
-    this.cache = [emptyRowsRecord(), emptyRowsRecord()]
+    this.rows = new RowsProxy(this.size, this.blacks, this.whites)
   }
 
   put (black: boolean, i: number): Line {
@@ -46,20 +48,6 @@ export class Line {
     const [blacks, whites] = [this.blacks & mask, this.whites & mask]
     if (blacks === this.blacks && whites === this.whites) return this
     return new Line({ size: this.size, blacks: blacks, whites: whites })
-  }
-
-  getRows (black: boolean, kind: RowKind): [number, Row][] {
-    const rowsCache = this.cache[black ? 0 : 1]
-    let rows = rowsCache[kind]
-    if (rows !== undefined) return rows
-
-    if (black) {
-      rows = BLACK_PATTERNS[kind].flatMap(p => find(this.blacks, this.whites, this.size, p))
-    } else {
-      rows = WHITE_PATTERNS[kind].flatMap(p => find(this.whites, this.blacks, this.size, p))
-    }
-    rowsCache[kind] = rows
-    return rows
   }
 
   private overlay (black: boolean, stones: Stones): Line {
@@ -84,11 +72,37 @@ export class Line {
   }
 }
 
-const emptyRowsRecord = (): RowsRecord => {
-  return {
-    three: undefined,
-    four: undefined,
-    five: undefined,
-    overline: undefined,
+type Rows = [number, Row][]
+
+class RowsProxy {
+  private readonly size: number
+  private readonly blacks: Stones
+  private readonly whites: Stones
+  private readonly blackCache: Record<RowKind, Rows | undefined>
+  private readonly whiteCache: Record<RowKind, Rows | undefined>
+
+  constructor (size: number, blacks: Stones, whites: Stones) {
+    this.size = size
+    this.blacks = blacks
+    this.whites = whites
+
+    this.blackCache = emptyRowsCache()
+    this.whiteCache = emptyRowsCache()
+  }
+
+  get (black: boolean, kind: RowKind): Rows {
+    const cache = black ? this.blackCache : this.whiteCache
+    if (cache[kind] === undefined) {
+      cache[kind] = this.compute(black, kind)
+    }
+    return cache[kind]!
+  }
+
+  private compute (black: boolean, kind: RowKind): Rows {
+    if (black) {
+      return BLACK_PATTERNS[kind].flatMap(p => find(this.blacks, this.whites, this.size, p))
+    } else {
+      return WHITE_PATTERNS[kind].flatMap(p => find(this.whites, this.blacks, this.size, p))
+    }
   }
 }
