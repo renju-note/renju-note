@@ -1,6 +1,6 @@
 export type Stones = number // stones as bits, e.g. 0b00111010
 
-export const rowKinds = ['two', 'three', 'four', 'five', 'overline'] as const
+export const rowKinds = ['two', 'closedThree', 'three', 'four', 'five', 'overline'] as const
 export type RowKind = typeof rowKinds[number]
 
 export type Row = {
@@ -38,11 +38,76 @@ export const find = (self: Stones, opponent: Stones, within: number, pattern: Ro
 
 export const emptyRowsCache = (): Record<RowKind, undefined> => ({
   two: undefined,
+  closedThree: undefined,
   three: undefined,
   four: undefined,
   five: undefined,
   overline: undefined,
 })
+
+// NOT COMPLETE: consider end margins and overlines
+const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
+  {
+    row: { kind: 'closedThree', size: 5, eyes: [2, 3] },
+    margin: 1,
+    self: 0b10011,
+    opponent: 0b00000,
+  },
+  {
+    row: { kind: 'closedThree', size: 5, eyes: [1, 3] },
+    margin: 1,
+    self: 0b10101,
+    opponent: 0b00000,
+  },
+  {
+    row: { kind: 'closedThree', size: 5, eyes: [1, 2] },
+    margin: 1,
+    self: 0b11001,
+    opponent: 0b00000,
+  },
+  {
+    row: { kind: 'closedThree', size: 6, eyes: [4, 5] },
+    margin: 1,
+    self: 0b001110,
+    opponent: 0b000001,
+  },
+  {
+    row: { kind: 'closedThree', size: 6, eyes: [3, 5] },
+    margin: 1,
+    self: 0b010110,
+    opponent: 0b000001,
+  },
+  {
+    row: { kind: 'closedThree', size: 6, eyes: [2, 5] },
+    margin: 1,
+    self: 0b011010,
+    opponent: 0b000001,
+  },
+  {
+    row: { kind: 'closedThree', size: 6, eyes: [0, 3] },
+    margin: 1,
+    self: 0b010110,
+    opponent: 0b100000,
+  },
+  {
+    row: { kind: 'closedThree', size: 6, eyes: [0, 2] },
+    margin: 1,
+    self: 0b011010,
+    opponent: 0b100000,
+  },
+  {
+    row: { kind: 'closedThree', size: 6, eyes: [0, 1] },
+    margin: 1,
+    self: 0b011100,
+    opponent: 0b100000,
+  },
+  {
+    row: { kind: 'closedThree', size: 7, eyes: [1, 5] },
+    margin: 1,
+    self: 0b0011100,
+    opponent: 0b1000001,
+  },
+]
 
 const BLACK_TWO_PATTERNS: RowPattern[] = [
   {
@@ -200,6 +265,70 @@ const WHITE_TWO_PATTERNS: RowPattern[] = [
   },
 ]
 
+// NOT COMPLETE: consider end margins
+const WHITE_CLOSED_THREE_PATTERNS: RowPattern[] = [
+  {
+    row: { kind: 'closedThree', size: 5, eyes: [2, 3] },
+    margin: 0,
+    self: 0b10011,
+    opponent: 0b00000,
+  },
+  {
+    row: { kind: 'closedThree', size: 5, eyes: [1, 3] },
+    margin: 0,
+    self: 0b10101,
+    opponent: 0b00000,
+  },
+  {
+    row: { kind: 'closedThree', size: 5, eyes: [1, 2] },
+    margin: 0,
+    self: 0b11001,
+    opponent: 0b00000,
+  },
+  {
+    row: { kind: 'closedThree', size: 6, eyes: [4, 5] },
+    margin: 0,
+    self: 0b001110,
+    opponent: 0b000001,
+  },
+  {
+    row: { kind: 'closedThree', size: 6, eyes: [3, 5] },
+    margin: 0,
+    self: 0b010110,
+    opponent: 0b000001,
+  },
+  {
+    row: { kind: 'closedThree', size: 6, eyes: [2, 5] },
+    margin: 0,
+    self: 0b011010,
+    opponent: 0b000001,
+  },
+  {
+    row: { kind: 'closedThree', size: 6, eyes: [0, 3] },
+    margin: 0,
+    self: 0b010110,
+    opponent: 0b100000,
+  },
+  {
+    row: { kind: 'closedThree', size: 6, eyes: [0, 2] },
+    margin: 0,
+    self: 0b011010,
+    opponent: 0b100000,
+  },
+  {
+    row: { kind: 'closedThree', size: 6, eyes: [0, 1] },
+    margin: 0,
+    self: 0b011100,
+    opponent: 0b100000,
+  },
+  {
+    row: { kind: 'closedThree', size: 7, eyes: [1, 5] },
+    margin: 0,
+    self: 0b0011100,
+    opponent: 0b1000001,
+  },
+]
+
 const WHITE_THREE_PATTERNS: RowPattern[] = [
   {
     row: { kind: 'three', size: 6, eyes: [4] },
@@ -271,6 +400,7 @@ const WHITE_FIVE_PATTERNS: RowPattern[] = [
 
 export const BLACK_PATTERNS: Record<RowKind, RowPattern[]> = {
   two: BLACK_TWO_PATTERNS,
+  closedThree: BLACK_CLOSED_THREE_PATTERNS,
   three: BLACK_THREE_PATTERNS,
   four: BLACK_FOUR_PATTERNS,
   five: BLACK_FIVE_PATTERNS,
@@ -279,6 +409,7 @@ export const BLACK_PATTERNS: Record<RowKind, RowPattern[]> = {
 
 export const WHITE_PATTERNS: Record<RowKind, RowPattern[]> = {
   two: WHITE_TWO_PATTERNS,
+  closedThree: WHITE_CLOSED_THREE_PATTERNS,
   three: WHITE_THREE_PATTERNS,
   four: WHITE_FOUR_PATTERNS,
   five: WHITE_FIVE_PATTERNS,

@@ -184,6 +184,15 @@ const RowsTable: FC<{board: Board}> = ({
       </tr>
       <tr>
         <td>
+          <PropertyTexts properties={board.properties.get(true, 'closedThree')}/>
+        </td>
+        <th>Closed Three</th>
+        <td>
+          <PropertyTexts properties={board.properties.get(false, 'closedThree')}/>
+        </td>
+      </tr>
+      <tr>
+        <td>
           <PropertyTexts properties={board.properties.get(true, 'two')}/>
         </td>
         <th>Two</th>
