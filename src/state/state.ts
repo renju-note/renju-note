@@ -18,6 +18,7 @@ export class State {
   }
 
   move (p: Point): State {
+    if (!this.last) return this
     const game = this.game.move(p)
     if (game === undefined) return this
     return new State({
@@ -28,6 +29,7 @@ export class State {
   }
 
   undo (): State {
+    if (!this.last) return this
     const game = this.game.undo()
     if (game === undefined) return this
     return new State({
@@ -37,9 +39,8 @@ export class State {
     })
   }
 
-  // BUG
   forward (): State {
-    if (this.cursor === this.game.moves.length) return this
+    if (this.last) return this
     return new State({
       game: this.game,
       board: this.board.put(this.cursor % 2 === 0, this.game.moves[this.cursor]),
@@ -47,7 +48,6 @@ export class State {
     })
   }
 
-  // BUG
   backward (): State {
     if (this.cursor === 0) return this
     return new State({
@@ -56,6 +56,14 @@ export class State {
       cursor: this.cursor - 1,
     })
   }
+
+  get last (): boolean {
+    return this.cursor === this.game.moves.length
+  }
 }
 
-const generateBoard = (g: Game): Board => new Board({ size: BOARD_SIZE, blacks: g.blacks, whites: g.whites })
+const generateBoard = (g: Game): Board => new Board({
+  size: BOARD_SIZE,
+  blacks: g.blacks,
+  whites: g.whites,
+})

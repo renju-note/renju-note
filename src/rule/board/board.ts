@@ -76,4 +76,4 @@ export class Board {
   }
 }
 
-const remove = <T>(a: Array<T>, i: number): Array<T> => [...a.slice(0, i - 1), ...a.slice(i + 1, a.length)]
+const remove = <T>(a: Array<T>, i: number): Array<T> => [...a.slice(0, i), ...a.slice(i + 1, a.length)]

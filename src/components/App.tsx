@@ -41,6 +41,7 @@ const App: FC = () => {
         <Rows cellSize={C} rows={state.board.getRows(false, 'five')} stroke="green" />
       </svg>
       <div>
+        <button onClick={() => setState(state.undo())}>undo</button>
         <button onClick={() => setState(state.backward())}>←</button>
         <button onClick={() => setState(state.forward())}>→</button>
       </div>
