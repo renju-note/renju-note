@@ -1,14 +1,7 @@
 import { Point, equal } from '../foundation'
-import { Square, ithPoint } from './square'
+import { Square } from './square'
 import { forbidden } from './forbidden'
 import { RowKind, emptyRowsCache } from './row'
-
-export type Property = {
-  kind: RowKind
-  start: Point
-  end: Point // inclusive
-  eyes: Point[]
-}
 
 export class Board {
   readonly size: number
@@ -99,6 +92,13 @@ export class Board {
   }
 }
 
+export type Property = {
+  kind: RowKind
+  start: Point
+  end: Point // inclusive
+  eyes: Point[]
+}
+
 class PropertiesProxy {
   private readonly square: Square
   private readonly blackCache: Record<RowKind, Property[] | undefined>
@@ -120,12 +120,12 @@ class PropertiesProxy {
   }
 
   private compute (black: boolean, kind: RowKind): Property[] {
-    return this.square.rows.get(black, kind).map(([seg, row]) => {
+    return this.square.rows.get(black, kind).map(srow => {
       return {
-        kind: row.kind,
-        start: seg.start,
-        end: ithPoint(seg, row.size - 1),
-        eyes: row.eyes.map(i => ithPoint(seg, i))
+        kind: srow.kind,
+        start: srow.start,
+        end: srow.end,
+        eyes: srow.eyes,
       }
     })
   }

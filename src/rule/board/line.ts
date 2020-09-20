@@ -1,5 +1,5 @@
 import {
-  Stones, Row, RowKind, find, emptyRowsCache,
+  Stones, RowKind, find, emptyRowsCache,
   BLACK_PATTERNS, WHITE_PATTERNS,
 } from './row'
 
@@ -72,14 +72,19 @@ export class Line {
   }
 }
 
-type Rows = [number, Row][]
+type LineRow = {
+  readonly kind: RowKind
+  readonly start: number
+  readonly size: number
+  readonly eyes: number[]
+}
 
 class RowsProxy {
   private readonly size: number
   private readonly blacks: Stones
   private readonly whites: Stones
-  private readonly blackCache: Record<RowKind, Rows | undefined>
-  private readonly whiteCache: Record<RowKind, Rows | undefined>
+  private readonly blackCache: Record<RowKind, LineRow[] | undefined>
+  private readonly whiteCache: Record<RowKind, LineRow[] | undefined>
 
   constructor (size: number, blacks: Stones, whites: Stones) {
     this.size = size
@@ -90,7 +95,7 @@ class RowsProxy {
     this.whiteCache = emptyRowsCache()
   }
 
-  get (black: boolean, kind: RowKind): Rows {
+  get (black: boolean, kind: RowKind): LineRow[] {
     const cache = black ? this.blackCache : this.whiteCache
     if (cache[kind] === undefined) {
       cache[kind] = this.compute(black, kind)
@@ -98,11 +103,13 @@ class RowsProxy {
     return cache[kind]!
   }
 
-  private compute (black: boolean, kind: RowKind): Rows {
-    if (black) {
-      return BLACK_PATTERNS[kind].flatMap(p => find(this.blacks, this.whites, this.size, p))
-    } else {
-      return WHITE_PATTERNS[kind].flatMap(p => find(this.whites, this.blacks, this.size, p))
-    }
+  private compute (black: boolean, kind: RowKind): LineRow[] {
+    const patterns = black ? BLACK_PATTERNS[kind] : WHITE_PATTERNS[kind]
+    const [self, opponent] = black ? [this.blacks, this.whites] : [this.whites, this.blacks]
+    return patterns.flatMap(
+      p => find(self, opponent, this.size, p)
+    ).map(
+      ([i, row]) => ({ kind: row.kind, start: i, size: row.size, eyes: row.eyes.map(e => e + i) })
+    )
   }
 }

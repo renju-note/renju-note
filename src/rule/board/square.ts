@@ -1,6 +1,6 @@
 import { Point } from '../foundation'
 import { Line } from './line'
-import { Row, RowKind, emptyRowsCache } from './row'
+import { RowKind, emptyRowsCache } from './row'
 
 const directions = ['vertical', 'horizontal', 'ascending', 'descending'] as const
 type Direction = typeof directions[number]
@@ -8,12 +8,6 @@ type Direction = typeof directions[number]
 type Index = [number, number]
 
 type Facet = [Direction, Line[]]
-
-export type Segment = {
-  start: Point
-  direction: Direction
-  size: number
-}
 
 export class Square {
   readonly size: number
@@ -92,19 +86,6 @@ export class Square {
   }
 }
 
-export const ithPoint = (s: Segment, i: number): Point => {
-  switch (s.direction) {
-    case 'vertical':
-      return [s.start[0], s.start[1] + i]
-    case 'horizontal':
-      return [s.start[0] + i, s.start[1]]
-    case 'ascending':
-      return [s.start[0] + i, s.start[1] + i]
-    case 'descending':
-      return [s.start[0] + i, s.start[1] - i]
-  }
-}
-
 const toIndex = ([x, y]: Point, direction: Direction, bsize: number): Index => {
   let i: number, j: number
   switch (direction) {
@@ -149,13 +130,19 @@ const newDiagonalLines = (size: number): Line[] => new Array(size * 2 - 1).fill(
   (_, i) => new Line({ size: i < size ? i + 1 : size * 2 - 1 - i })
 )
 
-type Rows = [Segment, Row][]
+export type SquareRow = {
+  readonly kind: RowKind
+  readonly direction: Direction
+  readonly start: Point
+  readonly end: Point
+  readonly eyes: Point[]
+}
 
 class RowsProxy {
   private readonly size: number
   private readonly facets: Facet[]
-  private readonly blackCache: Record<RowKind, Rows | undefined>
-  private readonly whiteCache: Record<RowKind, Rows | undefined>
+  private readonly blackCache: Record<RowKind, SquareRow[] | undefined>
+  private readonly whiteCache: Record<RowKind, SquareRow[] | undefined>
 
   constructor (size: number, facets: Facet[]) {
     this.size = size
@@ -165,7 +152,7 @@ class RowsProxy {
     this.whiteCache = emptyRowsCache()
   }
 
-  get (black: boolean, kind: RowKind): Rows {
+  get (black: boolean, kind: RowKind): SquareRow[] {
     const cache = black ? this.blackCache : this.whiteCache
     if (cache[kind] === undefined) {
       cache[kind] = this.compute(black, kind)
@@ -173,19 +160,18 @@ class RowsProxy {
     return cache[kind]!
   }
 
-  private compute (black: boolean, kind: RowKind): Rows {
+  private compute (black: boolean, kind: RowKind): SquareRow[] {
     const bsize = this.size
     return this.facets.flatMap(
       ([direction, lines]) => lines.flatMap(
         (l, i) => l.rows.get(black, kind).map(
-          ([j, row]) => [
-            {
-              start: toPoint([i, j], direction, bsize),
-              direction: direction,
-              size: row.size,
-            },
-            row,
-          ] as [Segment, Row]
+          lrow => ({
+            kind: lrow.kind,
+            direction: direction,
+            start: toPoint([i, lrow.start], direction, bsize),
+            end: toPoint([i, lrow.start + lrow.size - 1], direction, bsize),
+            eyes: lrow.eyes.map(j => toPoint([i, j], direction, bsize)),
+          })
         )
       )
     )
