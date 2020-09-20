@@ -44,8 +44,8 @@ export class Line {
   }
 
   remove (i: number): Line {
-    const mask = ~(0b1 << i)
-    const [blacks, whites] = [this.blacks & mask, this.whites & mask]
+    const mask = 0b1 << i
+    const [blacks, whites] = [this.blacks & ~mask, this.whites & ~mask]
     if (blacks === this.blacks && whites === this.whites) return this
     return new Line({ size: this.size, blacks: blacks, whites: whites })
   }

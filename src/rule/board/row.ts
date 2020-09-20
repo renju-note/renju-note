@@ -45,6 +45,45 @@ export const emptyRowsCache = (): Record<RowKind, undefined> => ({
   overline: undefined,
 })
 
+const BLACK_TWO_PATTERNS: RowPattern[] = [
+  {
+    row: { kind: 'two', size: 6, eyes: [3, 4] },
+    margin: 1,
+    self: 0b000110,
+    opponent: 0b000000,
+  },
+  {
+    row: { kind: 'two', size: 6, eyes: [2, 4] },
+    margin: 1,
+    self: 0b001010,
+    opponent: 0b000000,
+  },
+  {
+    row: { kind: 'two', size: 6, eyes: [1, 4] },
+    margin: 1,
+    self: 0b001100,
+    opponent: 0b000000,
+  },
+  {
+    row: { kind: 'two', size: 6, eyes: [2, 3] },
+    margin: 1,
+    self: 0b010010,
+    opponent: 0b000000,
+  },
+  {
+    row: { kind: 'two', size: 6, eyes: [1, 3] },
+    margin: 1,
+    self: 0b010100,
+    opponent: 0b000000,
+  },
+  {
+    row: { kind: 'two', size: 6, eyes: [1, 2] },
+    margin: 1,
+    self: 0b011000,
+    opponent: 0b000000,
+  },
+]
+
 // NOT COMPLETE: consider end margins and overlines
 const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
   {
@@ -106,45 +145,6 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
     margin: 1,
     self: 0b0011100,
     opponent: 0b1000001,
-  },
-]
-
-const BLACK_TWO_PATTERNS: RowPattern[] = [
-  {
-    row: { kind: 'two', size: 6, eyes: [3, 4] },
-    margin: 1,
-    self: 0b000110,
-    opponent: 0b000000,
-  },
-  {
-    row: { kind: 'two', size: 6, eyes: [2, 4] },
-    margin: 1,
-    self: 0b001010,
-    opponent: 0b000000,
-  },
-  {
-    row: { kind: 'two', size: 6, eyes: [1, 4] },
-    margin: 1,
-    self: 0b001100,
-    opponent: 0b000000,
-  },
-  {
-    row: { kind: 'two', size: 6, eyes: [2, 3] },
-    margin: 1,
-    self: 0b010010,
-    opponent: 0b000000,
-  },
-  {
-    row: { kind: 'two', size: 6, eyes: [1, 3] },
-    margin: 1,
-    self: 0b010100,
-    opponent: 0b000000,
-  },
-  {
-    row: { kind: 'two', size: 6, eyes: [1, 2] },
-    margin: 1,
-    self: 0b011000,
-    opponent: 0b000000,
   },
 ]
 
