@@ -32,13 +32,7 @@ const doubleThree = (square: Square, point: Point): boolean => {
   if (newThrees.length < 2) return false
 
   // checking not fake three
-  const trueThrees: SquareRow[] = []
-  for (let i = 0; i < newThrees.length; i++) {
-    const three = newThrees[i]
-    if (!forbidden(next, three.eyes[0])) {
-      trueThrees.push(three)
-    }
-  }
+  const trueThrees = newThrees.filter(t => !forbidden(next, t.eyes[0]))
   if (trueThrees.length < 2) return false
 
   // checking not open three
