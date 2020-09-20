@@ -41,6 +41,8 @@ const App: FC = () => {
         <Rows cellSize={C} rows={state.board.getRows(false, 'five')} stroke="green" />
       </svg>
       <div>
+        <span>{score(state.game.moves)}</span>
+        <br/>
         <button onClick={() => setState(state.undo())}>undo</button>
         <button onClick={() => setState(state.backward())}>←</button>
         <button onClick={() => setState(state.forward())}>→</button>
@@ -147,35 +149,35 @@ const RowsTable: FC<{board: Board}> = ({
   return <table style={{ marginRight: 'auto', marginLeft: 'auto' }}>
     <thead>
       <tr>
-        <th></th>
         <th>Black</th>
+        <th></th>
         <th>White</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <th>Five</th>
         <td>
           <SegmentTexts segments={board.getRows(true, 'five').map(([seg, _]) => seg)}/>
         </td>
+        <th>Five</th>
         <td>
           <SegmentTexts segments={board.getRows(false, 'five').map(([seg, _]) => seg)}/>
         </td>
       </tr>
       <tr>
-        <th>Four</th>
         <td>
           <SegmentTexts segments={board.getRows(true, 'four').map(([seg, _]) => seg)}/>
         </td>
+        <th>Four</th>
         <td>
           <SegmentTexts segments={board.getRows(false, 'four').map(([seg, _]) => seg)}/>
         </td>
       </tr>
       <tr>
-        <th>Three</th>
         <td>
           <SegmentTexts segments={board.getRows(true, 'three').map(([seg, _]) => seg)}/>
         </td>
+        <th>Three</th>
         <td>
           <SegmentTexts segments={board.getRows(false, 'three').map(([seg, _]) => seg)}/>
         </td>
@@ -202,5 +204,10 @@ const SegmentTexts: FC<{ segments: Segment[]}> = ({
 const indices = (): number[] => new Array(BOARD_SIZE).fill(null).map((_, i) => i + 1)
 
 const adjust = (n: number): number => Math.min(Math.max(1, Math.round(n)), BOARD_SIZE)
+
+const score = (ps: Point[]): string => {
+  const names = 'ABCDEFGHIJKLMNO'
+  return ps.map(([x, y]) => `${names.charAt(x - 1)}${y}`).join(' ')
+}
 
 export default App
