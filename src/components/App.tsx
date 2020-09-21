@@ -1,8 +1,11 @@
 import React, { FC, useState, useEffect } from 'react'
 import './App.css'
 
-import { State } from '../state'
 import { BOARD_SIZE, Point, Board, Property } from '../rule'
+import { State } from '../state'
+
+import Base from './Base'
+import Stones from './Stones'
 
 const C = 40
 const WIDTH = (BOARD_SIZE + 1) * C
@@ -30,9 +33,8 @@ const App: FC = () => {
   return (
     <div className="App">
       <svg width={WIDTH} height={WIDTH} onClick={onClickBoard}>
-        <Ruler cellSize={C} />
-        <Stones cellSize={C} points={state.board.blacks} black={true} />
-        <Stones cellSize={C} points={state.board.whites} black={false} />
+        <Base showIndices={true} />
+        <Stones moves={state.game.moves} showOrders={true} emphasizeLast={true} />
         <Forbiddens cellSize={C} points={state.board.forbiddens} />
         <Properties cellSize={C} properties={state.board.properties.get(true, 'three')} stroke="yellow" />
         <Properties cellSize={C} properties={state.board.properties.get(true, 'four')} stroke="purple" />
@@ -52,23 +54,6 @@ const App: FC = () => {
       </div>
     </div>
   )
-}
-
-const Stones: FC<{cellSize: number, points: Point[], black: boolean}> = ({
-  cellSize,
-  points,
-  black,
-}) => {
-  const fill = black ? 'black' : 'white'
-  const circles = points.map(
-    ([x, y], key) => {
-      const [cx, cy] = [x * cellSize, (BOARD_SIZE - y + 1) * cellSize]
-      return <circle key={key} cx={cx} cy={cy} r={C / 2 - 2} fill={fill} stroke="black" />
-    }
-  )
-  return <>
-    { circles }
-  </>
 }
 
 const Forbiddens: FC<{cellSize: number, points: Point[]}> = ({
@@ -123,23 +108,6 @@ const Properties: FC<{cellSize: number, properties: Property[], stroke: string}>
   )
   return <>
     { lines }
-  </>
-}
-
-const Ruler: FC<{cellSize: number}> = ({
-  cellSize
-}) => {
-  const verticalLines = indices().map((i, key) => {
-    const x = i * cellSize
-    return <line key={key} x1={x} y1={1 * cellSize} x2={x} y2={BOARD_SIZE * cellSize} stroke="black" />
-  })
-  const horizontalLines = indices().map((i, key) => {
-    const y = (BOARD_SIZE - i + 1) * cellSize
-    return <line key={key} x1={1 * cellSize} y1={y} x2={BOARD_SIZE * cellSize} y2={y} stroke="black" />
-  })
-  return <>
-    {verticalLines}
-    {horizontalLines}
   </>
 }
 
@@ -218,8 +186,6 @@ const PropertyTexts: FC<{ properties: Property[]}> = ({
     }
   </>
 }
-
-const indices = (): number[] => new Array(BOARD_SIZE).fill(null).map((_, i) => i + 1)
 
 const adjust = (n: number): number => Math.min(Math.max(1, Math.round(n)), BOARD_SIZE)
 
