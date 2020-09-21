@@ -1,5 +1,5 @@
 import {
-  Stones, RowKind, find, emptyRowsCache,
+  Stones, RowKind, search, emptyRowsCache,
   BLACK_PATTERNS, WHITE_PATTERNS,
 } from './row'
 
@@ -105,16 +105,28 @@ class RowsProxy {
 
   private compute (black: boolean, kind: RowKind): LineRow[] {
     const patterns = black ? BLACK_PATTERNS[kind] : WHITE_PATTERNS[kind]
-    const [self, opponent] = black ? [this.blacks, this.whites] : [this.whites, this.blacks]
+
+    // append dummy opponent stones to both line ends
+    const blacks_ = black ? this.blacks << 1 : appendDummies(this.blacks, this.size)
+    const whites_ = black ? appendDummies(this.whites, this.size) : this.whites << 1
+    const size_ = this.size + 2
+
     return patterns.flatMap(
-      p => find(self, opponent, this.size, p)
-    ).map(
-      ([i, row]) => ({
-        kind: row.kind,
-        start: i,
-        size: row.size,
-        eyes: row.eyes.map(e => e + i)
-      })
+      p => search(blacks_, whites_, size_, p).map(
+        i => {
+          // fix index with dummy
+          const start = i - 1
+          return {
+            kind: p.row.kind,
+            start: start,
+            size: p.row.size,
+            eyes: p.row.eyes.map(e => e + start)
+          }
+        }
+      )
     )
   }
 }
+
+// e.g. (0b001110, 6) => 0b10011101
+const appendDummies = (stones: Stones, size: number): Stones => (stones << 1) | 0b1 | (0b1 << (size + 1))
