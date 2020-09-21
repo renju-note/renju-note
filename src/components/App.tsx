@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useState } from 'react'
 import './App.css'
 
 import { BOARD_SIZE, Point, Board, Property } from '../rule'
@@ -6,24 +6,13 @@ import { State } from '../state'
 
 import Base from './Base'
 import Stones from './Stones'
+import Properties from './Properties'
 
 const C = 40
 const WIDTH = (BOARD_SIZE + 1) * C
 
-const opening: Point[] = [[8, 8], [8, 9], [10, 10]] // D3
-
 const App: FC = () => {
   const [state, setState] = useState<State>(new State({}))
-  useEffect(
-    () => {
-      let s = state
-      for (let i = 0; i < opening.length; i++) {
-        s = s.move(opening[i])
-      }
-      setState(s)
-    },
-    []
-  )
   const onClickBoard = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
     const base = e.currentTarget.getBoundingClientRect()
     const [x, y] = [e.clientX - base.x, e.clientY - base.y]
@@ -34,13 +23,8 @@ const App: FC = () => {
     <div className="App">
       <svg width={WIDTH} height={WIDTH} onClick={onClickBoard}>
         <Base showIndices={true} />
+        <Properties board={state.board} />
         <Stones moves={state.game.moves} showOrders={true} emphasizeLast={true} />
-        <Forbiddens cellSize={C} points={state.board.forbiddens} />
-        <Properties cellSize={C} properties={state.board.properties.get(true, 'three')} stroke="yellow" />
-        <Properties cellSize={C} properties={state.board.properties.get(true, 'four')} stroke="purple" />
-        <Properties cellSize={C} properties={state.board.properties.get(true, 'five')} stroke="blue" />
-        <Properties cellSize={C} properties={state.board.properties.get(true, 'overline')} stroke="red" />
-        <Properties cellSize={C} properties={state.board.properties.get(false, 'five')} stroke="green" />
       </svg>
       <div>
         <span>{state.game.moves.map(toStr).join(' ')}</span>
@@ -54,61 +38,6 @@ const App: FC = () => {
       </div>
     </div>
   )
-}
-
-const Forbiddens: FC<{cellSize: number, points: Point[]}> = ({
-  cellSize,
-  points,
-}) => {
-  const crosses = points.map(
-    ([x, y], key) => {
-      const [cx, cy] = [x * cellSize, (BOARD_SIZE - y + 1) * cellSize]
-      const [x1, x2, y1, y2] = [
-        cx - cellSize * 0.3,
-        cx + cellSize * 0.3,
-        cy + cellSize * 0.3,
-        cy - cellSize * 0.3,
-      ]
-      return <g key={key} >
-        <line
-          x1={x1} y1={y1} x2={x2} y2={y2}
-          stroke="red"
-          strokeWidth={4} opacity={0.5}
-        />
-        <line
-          x1={x1} y1={y2} x2={x2} y2={y1}
-          stroke="red"
-          strokeWidth={4} opacity={0.5}
-        />
-      </g>
-    }
-  )
-  return <>
-    { crosses }
-  </>
-}
-
-const Properties: FC<{cellSize: number, properties: Property[], stroke: string}> = ({
-  cellSize,
-  properties,
-  stroke,
-}) => {
-  const lines = properties.map(
-    (prop, key) => {
-      const [p1x, p1y] = prop.start
-      const [p2x, p2y] = prop.end
-      const [x1, y1] = [p1x * cellSize, (BOARD_SIZE - p1y + 1) * cellSize]
-      const [x2, y2] = [p2x * cellSize, (BOARD_SIZE - p2y + 1) * cellSize]
-      return <line
-        key={key}
-        x1={x1} y1={y1} x2={x2} y2={y2}
-        stroke={stroke} strokeLinecap="round" strokeWidth={4} opacity={0.3} strokeDasharray={'3,5'}
-      />
-    }
-  )
-  return <>
-    { lines }
-  </>
 }
 
 const RowsTable: FC<{board: Board}> = ({

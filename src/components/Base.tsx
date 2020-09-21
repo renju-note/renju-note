@@ -1,7 +1,8 @@
 import React, { FC } from 'react'
 
-import { N, C, INDICES, xChar } from './foundation'
 import { Point } from '../rule'
+
+import { N, C, INDICES, xChar } from './foundation'
 
 type DefaultProps = {
   showIndices: boolean

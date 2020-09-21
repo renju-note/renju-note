@@ -1,7 +1,8 @@
 import React, { FC } from 'react'
 
-import { N, C } from './foundation'
 import { Point } from '../rule'
+
+import { N, C } from './foundation'
 
 type DefaultProps = {
   moves?: Point[] | undefined
