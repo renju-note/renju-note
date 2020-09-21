@@ -15,11 +15,14 @@ export const forbidden = (square: Square, point: Point): ForbiddenKind | undefin
 }
 
 const overline = (square: Square, point: Point): boolean => {
-  return square.put(true, point).rows.get(true, 'overline').length > 0
+  const next = square.put(true, point)
+  const newOverlines = next.rows.get(true, 'overline').filter(r => between(point, r))
+  return newOverlines.length > 0
 }
 
 const doubleFour = (square: Square, point: Point): boolean => {
-  const newFours = square.put(true, point).rows.get(true, 'four').filter(r => between(point, r))
+  const next = square.put(true, point)
+  const newFours = next.rows.get(true, 'four').filter(r => between(point, r))
   if (newFours.length < 2) return false
 
   // checking not open four
