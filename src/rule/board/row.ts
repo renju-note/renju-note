@@ -345,7 +345,7 @@ const WHITE_TWO_PATTERNS: RowPattern[] = [
     whmask: 0b000000,
   },
   {
-    row: { kind: 'two', size: 6, eyes: [0, 1] },
+    row: { kind: 'two', size: 4, eyes: [0, 1] },
     size: 6,
     rowStart: 1,
     blacks: 0b000000,
