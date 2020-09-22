@@ -49,14 +49,8 @@ const Stones: FC<StonesProps> = ({
   points,
 }) => {
   const circles = points.map(
-    ([x, y], key) => {
-      return <circle
-        key={key}
-        cx={x * C} cy={(N - y + 1) * C}
-        r={C / 2 - 2}
-        fill={black ? 'black' : 'white'}
-        stroke={black ? undefined : 'black'}
-      />
+    (p, key) => {
+      return <Stone key={key} black={black} point={p} />
     }
   )
   return <g>
@@ -76,7 +70,10 @@ const Orders: FC<OrdersProps> = ({
       const fill = key % 2 === 0 ? 'whitesmoke' : 'dimgray'
       return <text
         key={key}
-        x={x * C - 5} y={(N - y + 1) * C + 5}
+        x={x * C} y={(N - y + 1) * C}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontFamily="Noto Serif"
         fontSize="16px"
         fill={fill}
       >
@@ -87,6 +84,24 @@ const Orders: FC<OrdersProps> = ({
   return <g>
     { texts }
   </g>
+}
+
+type StoneProps = {
+  black: boolean
+  point: Point
+}
+
+const Stone: FC<StoneProps> = ({
+  black,
+  point,
+}) => {
+  const [x, y] = point
+  return <circle
+    cx={x * C} cy={(N - y + 1) * C}
+    r={C / 2 - 2}
+    fill={black ? 'black' : 'white'}
+    stroke="black" strokeWidth={1.5} strokeOpacity={black ? 0.3 : 0.7}
+  />
 }
 
 type LastMarkerProps = {

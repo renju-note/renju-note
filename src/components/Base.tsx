@@ -67,7 +67,9 @@ const Indices: FC = () => {
   const xIndices = INDICES.map(
     (x, key) => <text
       key={key}
-      x={x * C - 6} y={(N + 1) * C}
+      x={x * C} y={(N + 1) * C}
+      textAnchor="middle"
+      fontFamily="Noto Sans"
       fontSize="16px"
       fill="gray"
     >
@@ -77,7 +79,11 @@ const Indices: FC = () => {
   const yIndices = INDICES.map(
     (y, key) => <text
       key={key}
-      x={0} y={(N - y + 1) * C + 6}
+      x={8} y={(N - y + 1) * C}
+      textAnchor="middle"
+      dominantBaseline="central"
+      fontFamily="Noto Sans"
+      fontSize="16px"
       fill="gray"
     >
       {y}

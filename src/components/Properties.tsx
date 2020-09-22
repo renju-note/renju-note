@@ -12,7 +12,6 @@ const Default: FC<DefaultProps> = ({
   board,
 }) => {
   return <g>
-    <Forbiddens points={board.forbiddens}/>
     <PropertyRows black={true} properties={board.properties.get(true, 'two')} />
     <PropertyRows black={true} properties={board.properties.get(true, 'closedThree')} />
     <PropertyRows black={true} properties={board.properties.get(true, 'three')} />
@@ -25,6 +24,7 @@ const Default: FC<DefaultProps> = ({
     <PropertyEyes black={true} properties={board.properties.get(true, 'four')} emphasize />
     <PropertyEyes black={false} properties={board.properties.get(false, 'three')} />
     <PropertyEyes black={false} properties={board.properties.get(false, 'four')} emphasize />
+    <Forbiddens points={board.forbiddens}/>
   </g>
 }
 
@@ -75,21 +75,31 @@ const PropertyRows: FC<PropertiesProps> = ({
   black,
   properties,
 }) => {
-  const stroke = black ? 'blue' : 'green'
+  const stroke = black ? 'blue' : 'darkgreen'
   const lines = properties.map(
     (prop, key) => {
       const [p1x, p1y] = prop.start
       const [p2x, p2y] = prop.end
       const [x1, y1] = [p1x * C, (N - p1y + 1) * C]
       const [x2, y2] = [p2x * C, (N - p2y + 1) * C]
-      return <line
-        key={key}
-        x1={x1} y1={y1}
-        x2={x2} y2={y2}
-        stroke={stroke}
-        strokeLinecap="round" strokeWidth={4}
-        opacity={0.3} strokeDasharray={'3,5'}
-      />
+      return <g key={key}>
+        { (x1 === x2 || y1 === y2) &&
+          <line
+            x1={x1} y1={y1}
+            x2={x2} y2={y2}
+            stroke="white"
+            strokeLinecap="butt" strokeWidth={4}
+            opacity={0.6}
+          />
+        }
+        <line
+          x1={x1} y1={y1}
+          x2={x2} y2={y2}
+          stroke={stroke}
+          strokeLinecap="round" strokeWidth={4}
+          opacity={0.4} strokeDasharray={'3,5'}
+        />
+      </g>
     }
   )
   return <g>
@@ -102,7 +112,7 @@ const PropertyEyes: FC<PropertiesProps> = ({
   properties,
   emphasize,
 }) => {
-  const fill = black ? 'blue' : 'green'
+  const fill = black ? 'blue' : 'darkgreen'
   const gs = properties.map(
     (prop, m) => {
       const rects = prop.eyes.map(
@@ -111,7 +121,7 @@ const PropertyEyes: FC<PropertiesProps> = ({
           return (
             emphasize
               ? <Diamond key={n} cx={cx} cy={cy} fill={fill} r={8} />
-              : <circle key={n} cx={cx} cy={cy} r={6} fill={fill} stroke={undefined} fillOpacity={0.5}/>
+              : <circle key={n} cx={cx} cy={cy} r={8} fill={fill} stroke={undefined} fillOpacity={0.4}/>
           )
         }
       )
