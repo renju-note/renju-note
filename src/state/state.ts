@@ -1,4 +1,4 @@
-import { Game, Board, BOARD_SIZE, Point } from '../rule'
+import { Game, Board, N_LINES, Point } from '../rule'
 
 export class State {
   readonly game: Game
@@ -12,7 +12,7 @@ export class State {
       this.cursor = init.cursor
     } else {
       this.game = new Game({})
-      this.board = new Board({ size: BOARD_SIZE })
+      this.board = new Board({ size: N_LINES })
       this.cursor = 0
     }
   }
@@ -63,7 +63,7 @@ export class State {
 }
 
 const generateBoard = (g: Game): Board => new Board({
-  size: BOARD_SIZE,
+  size: N_LINES,
   blacks: g.blacks,
   whites: g.whites,
 })

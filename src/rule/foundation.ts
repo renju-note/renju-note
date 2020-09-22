@@ -1,4 +1,4 @@
-export const BOARD_SIZE = 15
+export const N_LINES = 15
 
 export type Point = [number, number]
 

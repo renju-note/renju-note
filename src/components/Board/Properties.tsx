@@ -1,8 +1,8 @@
 import React, { FC } from 'react'
 
-import { Board, Point, Property } from '../rule'
+import { Board, Point, Property } from '../../rule'
 
-import { N, C } from './foundation'
+import { N, C } from './coordinate'
 
 type DefaultProps = {
   board: Board
