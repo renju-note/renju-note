@@ -98,8 +98,8 @@ const Stone: FC<StoneProps> = ({
   return <circle
     cx={x * C} cy={(N - y + 1) * C}
     r={C / 2 - 2}
-    fill={black ? 'black' : 'white'}
-    stroke="black" strokeWidth={1.5} strokeOpacity={black ? 0.3 : 0.7}
+    fill={black ? '#333333' : 'white'}
+    stroke="black" strokeWidth={1.5} strokeOpacity={black ? 0.3 : 0.6}
   />
 }
 
