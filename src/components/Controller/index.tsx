@@ -18,7 +18,7 @@ const Default: FC<DefaultProps> = ({
       <IconButton
         onClick={() => setState(state.undo())}
         icon="settings" aria-label="preference"
-        variant="ghost" color="gray.600"
+        variant="ghost" color="gray.500"
       />
     </Flex>
     <Flex justifyContent="center" alignItems="center">
