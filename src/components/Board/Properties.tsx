@@ -6,25 +6,44 @@ import { N, C } from './coordinate'
 
 type DefaultProps = {
   board: Board
+  showForbiddens: boolean
+  showPropertyRows: boolean
+  showPropertyEyes: boolean
 }
 
 const Default: FC<DefaultProps> = ({
   board,
+  showForbiddens,
+  showPropertyRows,
+  showPropertyEyes,
 }) => {
   return <g>
-    <PropertyRows black={true} properties={board.properties.get(true, 'two')} />
-    <PropertyRows black={true} properties={board.properties.get(true, 'closedThree')} />
-    <PropertyRows black={true} properties={board.properties.get(true, 'three')} />
-    <PropertyRows black={true} properties={board.properties.get(true, 'four')} />
-    <PropertyRows black={false} properties={board.properties.get(false, 'two')} />
-    <PropertyRows black={false} properties={board.properties.get(false, 'closedThree')} />
-    <PropertyRows black={false} properties={board.properties.get(false, 'three')} />
-    <PropertyRows black={false} properties={board.properties.get(false, 'four')} />
-    <PropertyEyes black={true} properties={board.properties.get(true, 'three')} />
-    <PropertyEyes black={true} properties={board.properties.get(true, 'four')} emphasize />
-    <PropertyEyes black={false} properties={board.properties.get(false, 'three')} />
-    <PropertyEyes black={false} properties={board.properties.get(false, 'four')} emphasize />
-    <Forbiddens points={board.forbiddens}/>
+    {
+      showPropertyRows &&
+      <>
+        <PropertyRows black={true} properties={board.properties.get(true, 'two')} />
+        <PropertyRows black={true} properties={board.properties.get(true, 'closedThree')} />
+        <PropertyRows black={false} properties={board.properties.get(false, 'two')} />
+        <PropertyRows black={false} properties={board.properties.get(false, 'closedThree')} />
+        <PropertyRows black={true} properties={board.properties.get(true, 'three')} />
+        <PropertyRows black={true} properties={board.properties.get(true, 'four')} />
+        <PropertyRows black={false} properties={board.properties.get(false, 'three')} />
+        <PropertyRows black={false} properties={board.properties.get(false, 'four')} />
+      </>
+    }
+    {
+      showPropertyEyes &&
+      <>
+        <PropertyEyes black={true} properties={board.properties.get(true, 'three')} />
+        <PropertyEyes black={true} properties={board.properties.get(true, 'four')} emphasize />
+        <PropertyEyes black={false} properties={board.properties.get(false, 'three')} />
+        <PropertyEyes black={false} properties={board.properties.get(false, 'four')} emphasize />
+      </>
+    }
+    {
+      showForbiddens &&
+      <Forbiddens points={board.forbiddens}/>
+    }
   </g>
 }
 

@@ -1,16 +1,12 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import {
   Flex,
-  Box,
   Button,
   IconButton,
-  Link,
-  Text,
   Popover,
   PopoverTrigger,
   PopoverContent,
   PopoverArrow,
-  PopoverBody,
 } from '@chakra-ui/core'
 import {
   FiChevronLeft,
@@ -19,28 +15,35 @@ import {
   FiChevronsRight,
   FiX,
   FiShare,
-  FiToggleRight,
   FiLoader,
 } from 'react-icons/fi'
 
 import { State } from '../../state'
-import { code } from '../code'
+import { Preference } from '../preference'
+import PreferencePopover from './PreferencePopover'
 
 type DefaultProps = {
   state: State
   setState: (s: State) => void
+  preference: Preference,
+  setPreference: (p: Preference) => void,
 }
 
 const Default: FC<DefaultProps> = ({
   state,
   setState,
+  preference,
+  setPreference,
 }) => {
   return <Flex width={640} justifyContent="space-around" alignItems="center">
-    <IconButton
-      icon={FiToggleRight} aria-label="preference"
-      variant="ghost"
+    <PreferencePopover
+      preference={preference}
+      setPreference={setPreference}
     />
-    <ResetPopover state={state} setState={setState}/>
+    <ResetPopover
+      state={state}
+      setState={setState}
+    />
     <Flex justifyContent="center" alignItems="center">
       <IconButton
         onClick={() => setState(state.toStart())}
@@ -86,7 +89,12 @@ const Default: FC<DefaultProps> = ({
   </Flex>
 }
 
-const ResetPopover: FC<DefaultProps> = ({
+type ResetPopoverProps = {
+  state: State
+  setState: (s: State) => void
+}
+
+const ResetPopover: FC<ResetPopoverProps> = ({
   state,
   setState,
 }) => {
@@ -94,29 +102,38 @@ const ResetPopover: FC<DefaultProps> = ({
     <Popover
       placement="bottom"
     >
-      <PopoverTrigger>
-        <IconButton
-          icon={FiLoader} aria-label="reset"
-          variant="ghost"
-          isDisabled={!state.canReset}
-        />
-      </PopoverTrigger>
-      <PopoverContent
-        zIndex={4}
-        width={16}
-      >
-        <PopoverArrow />
-        <Button
-          as="button"
-          size="sm"
-          variant="ghost"
-          variantColor="red"
-          fontFamily="Noto Sans" fontWeight="normal"
-          onClick={() => setState(state.reset())}
-        >
-          RESET
-        </Button>
-      </PopoverContent>
+      {
+        ({ onClose }) => (
+          <>
+            <PopoverTrigger>
+              <IconButton
+                icon={FiLoader} aria-label="reset"
+                variant="ghost"
+                isDisabled={!state.canReset}
+              />
+            </PopoverTrigger>
+            <PopoverContent
+              zIndex={4}
+              width={16}
+            >
+              <PopoverArrow />
+              <Button
+                as="button"
+                size="sm"
+                variant="ghost"
+                variantColor="red"
+                fontFamily="Noto Sans" fontWeight="normal"
+                onClick={() => {
+                  setState(state.reset())
+                  if (onClose) onClose()
+                }}
+              >
+                RESET
+              </Button>
+            </PopoverContent>
+          </>
+        )
+      }
     </Popover>
   )
 }

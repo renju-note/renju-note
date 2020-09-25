@@ -10,22 +10,22 @@ type DefaultProps = {
     whites: Point[]
   } | undefined
   showOrders?: boolean | undefined
-  emphasizeLast?: boolean | undefined
+  emphasizeLastMove?: boolean | undefined
 }
 
 const Default: FC<DefaultProps> = ({
   moves,
   stones,
   showOrders,
-  emphasizeLast,
+  emphasizeLastMove,
 }) => {
   if (moves === undefined && stones === undefined) throw new Error('moves or stones required')
   if (moves === undefined && showOrders) throw new Error('moves required to show orders')
-  if (moves === undefined && emphasizeLast) throw new Error('moves required to emphasize last')
+  if (moves === undefined && emphasizeLastMove) throw new Error('moves required to emphasize last')
   const blacks = stones ? stones.blacks : moves!.filter((_, i) => i % 2 === 0)
   const whites = stones ? stones.whites : moves!.filter((_, i) => i % 2 === 1)
   return <g>
-    { moves && moves.length >= 1 && emphasizeLast && <LastMarker point={moves[moves.length - 1]} />}
+    { moves && moves.length >= 1 && emphasizeLastMove && <LastMarker point={moves[moves.length - 1]} />}
     <Stones
       black={true}
       points={blacks}
