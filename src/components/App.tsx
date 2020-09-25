@@ -4,7 +4,6 @@ import { ThemeProvider, CSSReset, SimpleGrid, Box } from '@chakra-ui/core'
 import { State } from '../state'
 import Board from './Board'
 import Controller from './Controller'
-import Scores from './Scores'
 
 const App: FC = () => {
   return <ThemeProvider>
@@ -17,15 +16,12 @@ const Main: FC = () => {
   const [state, setState] = useState<State>(new State({}))
   return <ThemeProvider>
     <CSSReset />
-    <SimpleGrid columns={1} justifyItems="center" spacingY={4}>
+    <SimpleGrid columns={1} justifyItems="center" spacingY={5}>
       <Box>
         <Board state={state} setState={setState} />
       </Box>
       <Box>
         <Controller state={state} setState={setState}/>
-      </Box>
-      <Box>
-        <Scores state={state} setState={setState} />
       </Box>
     </SimpleGrid>
   </ThemeProvider>

@@ -1,7 +1,30 @@
-import React, { FC } from 'react'
-import { SimpleGrid, Flex, Button, IconButton } from '@chakra-ui/core'
+import React, { FC, useState } from 'react'
+import {
+  Flex,
+  Box,
+  Button,
+  IconButton,
+  Link,
+  Text,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverBody,
+} from '@chakra-ui/core'
+import {
+  FiChevronLeft,
+  FiChevronRight,
+  FiChevronsLeft,
+  FiChevronsRight,
+  FiX,
+  FiShare,
+  FiToggleRight,
+  FiLoader,
+} from 'react-icons/fi'
 
 import { State } from '../../state'
+import { code } from '../code'
 
 type DefaultProps = {
   state: State
@@ -12,63 +35,90 @@ const Default: FC<DefaultProps> = ({
   state,
   setState,
 }) => {
-  return <SimpleGrid width={640} columns={3} justifyContent="space-between" alignItems="center">
-    <Flex justifyContent="space-around" alignItems="center">
-      <IconButton
-        icon="settings" aria-label="preference"
-        variant="ghost" color="gray.500"
-      />
-      <IconButton
-        onClick={() => setState(state.reset())}
-        icon="close" aria-label="reset"
-        variant="ghost" color="gray.600"
-        isDisabled={!state.canReset}
-      />
-    </Flex>
+  return <Flex width={640} justifyContent="space-around" alignItems="center">
+    <IconButton
+      icon={FiToggleRight} aria-label="preference"
+      variant="ghost"
+    />
+    <ResetPopover state={state} setState={setState}/>
     <Flex justifyContent="center" alignItems="center">
       <IconButton
         onClick={() => setState(state.toStart())}
-        icon="arrow-left" aria-label="to start"
-        size="sm" variant="ghost" color="gray.600"
+        icon={FiChevronsLeft} aria-label="to start"
+        variant="ghost"
         isDisabled={state.isStart}
       />
       <IconButton
         onClick={() => setState(state.backward())}
-        icon="arrow-back" aria-label="backward"
+        icon={FiChevronLeft} aria-label="backward"
         variant="ghost"
         isDisabled={state.isStart}
       />
-      <Button
+      <Button width={6}
         variant="ghost" fontFamily="Noto Serif" fontWeight="normal"
+        isDisabled={true}
       >
         {state.cursor}
       </Button>
       <IconButton
         onClick={() => setState(state.forward())}
-        icon="arrow-forward" aria-label="forward"
+        icon={FiChevronRight} aria-label="forward"
         variant="ghost"
         isDisabled={state.isLast}
       />
       <IconButton
         onClick={() => setState(state.toLast())}
-        icon="arrow-right" aria-label="to last"
-        size="sm" variant="ghost" color="gray.600"
+        icon={FiChevronsRight} aria-label="to last"
+        variant="ghost"
         isDisabled={state.isLast}
       />
     </Flex>
-    <Flex justifyContent="space-around" alignItems="center">
-      <IconButton
-        onClick={() => setState(state.undo())}
-        icon="small-close" aria-label="undo"
-        variant="ghost" color="gray.600"
-        isDisabled={!state.canUndo}
-      />
-      <IconButton
-        icon="download" aria-label="download"
-        variant="ghost" color="gray.600"
-      />
-    </Flex>
-  </SimpleGrid>
+    <IconButton
+      onClick={() => setState(state.undo())}
+      icon={FiX} aria-label="undo"
+      variant="ghost"
+      isDisabled={!state.canUndo}
+    />
+    <IconButton
+      icon={FiShare} aria-label="share"
+      variant="ghost"
+    />
+  </Flex>
+}
+
+const ResetPopover: FC<DefaultProps> = ({
+  state,
+  setState,
+}) => {
+  return (
+    <Popover
+      placement="bottom"
+    >
+      <PopoverTrigger>
+        <IconButton
+          icon={FiLoader} aria-label="reset"
+          variant="ghost"
+          isDisabled={!state.canReset}
+        />
+      </PopoverTrigger>
+      <PopoverContent
+        zIndex={4}
+        width={16}
+      >
+        <PopoverArrow />
+        <Button
+          as="button"
+          size="sm"
+          variant="ghost"
+          variantColor="red"
+          fontFamily="Noto Sans" fontWeight="normal"
+          onClick={() => setState(state.reset())}
+        >
+          RESET
+        </Button>
+      </PopoverContent>
+    </Popover>
+  )
 }
 
 export default Default
