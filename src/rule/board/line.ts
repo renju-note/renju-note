@@ -52,13 +52,13 @@ export class Line {
 
   private overlay (black: boolean, stones: Stones): Line {
     if (black) {
-      const blacks = this.blacks | stones
+      const [blacks, whites] = [this.blacks | stones, this.whites & ~stones]
       if (blacks === this.blacks) return this
-      return new Line({ size: this.size, blacks: blacks, whites: this.whites })
+      return new Line({ size: this.size, blacks: blacks, whites: whites })
     } else {
-      const whites = this.whites | stones
+      const [whites, blacks] = [this.whites | stones, this.blacks & ~stones]
       if (whites === this.whites) return this
-      return new Line({ size: this.size, blacks: this.blacks, whites: whites })
+      return new Line({ size: this.size, blacks: blacks, whites: whites })
     }
   }
 

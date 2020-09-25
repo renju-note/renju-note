@@ -68,7 +68,7 @@ export class Board {
   }
 
   forbidden (p: Point): boolean {
-    return forbidden(this.square, p) !== undefined
+    return !this.hasStone(p) && forbidden(this.square, p) !== undefined
   }
 
   get forbiddens (): Point[] {
