@@ -12,16 +12,9 @@ export class Game {
   }
 
   move (p: Point): Game | undefined {
-    if (this.moves.findIndex(q => equal(p, q)) >= 0) return undefined
+    if (!this.movable(p)) return undefined
     return new Game({
       moves: [...this.moves, p],
-    })
-  }
-
-  moveMulti (ps: Point[]): Game | undefined {
-    if (this.moves.findIndex(q => ps.findIndex(p => equal(p, q)) >= 0) >= 0) return undefined
-    return new Game({
-      moves: [...this.moves, ...ps],
     })
   }
 
@@ -30,6 +23,14 @@ export class Game {
     return new Game({
       moves: this.moves.slice(0, this.moves.length - 1),
     })
+  }
+
+  movable (p: Point): boolean {
+    return this.moves.findIndex(q => equal(p, q)) < 0
+  }
+
+  fork (i: number): Game {
+    return new Game({ moves: this.moves.slice(0, i) })
   }
 
   get blacks (): Point[] {

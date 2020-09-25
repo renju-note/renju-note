@@ -25,7 +25,7 @@ const Default: FC<DefaultProps> = ({
   return <svg width={WIDTH} height={WIDTH} onClick={onClickBoard}>
     <Base showIndices={true} />
     <Properties board={state.board} />
-    <Stones moves={state.game.moves} showOrders={true} emphasizeLast={true} />
+    <Stones moves={state.moves} showOrders={true} emphasizeLast={true} />
   </svg>
 }
 

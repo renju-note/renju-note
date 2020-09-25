@@ -67,6 +67,10 @@ export class Board {
     )
   }
 
+  forbidden (p: Point): boolean {
+    return forbidden(this.square, p) !== undefined
+  }
+
   get forbiddens (): Point[] {
     if (this.forbiddensCache === undefined) {
       this.forbiddensCache = this.computeForbiddens()
