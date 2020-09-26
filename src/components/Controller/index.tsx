@@ -23,6 +23,7 @@ import { Preference } from '../preference'
 import PreferencePopover from './PreferencePopover'
 
 type DefaultProps = {
+  width: number
   state: State
   setState: (s: State) => void
   preference: Preference,
@@ -30,12 +31,13 @@ type DefaultProps = {
 }
 
 const Default: FC<DefaultProps> = ({
+  width,
   state,
   setState,
   preference,
   setPreference,
 }) => {
-  return <Flex width={640} justifyContent="space-around" alignItems="center">
+  return <Flex width={width} justifyContent="space-around" alignItems="center">
     <PreferencePopover
       preference={preference}
       setPreference={setPreference}

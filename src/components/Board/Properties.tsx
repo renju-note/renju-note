@@ -2,9 +2,10 @@ import React, { FC } from 'react'
 
 import { Board, Point, Property } from '../../rule'
 
-import { N, C } from './coordinate'
+import { N } from './coordinate'
 
 type DefaultProps = {
+  C: number
   board: Board
   showForbiddens: boolean
   showPropertyRows: boolean
@@ -12,6 +13,7 @@ type DefaultProps = {
 }
 
 const Default: FC<DefaultProps> = ({
+  C,
   board,
   showForbiddens,
   showPropertyRows,
@@ -21,47 +23,99 @@ const Default: FC<DefaultProps> = ({
     {
       showPropertyRows &&
       <>
-        <PropertyRows black={true} properties={board.properties.get(true, 'two')} />
-        <PropertyRows black={true} properties={board.properties.get(true, 'closedThree')} />
-        <PropertyRows black={false} properties={board.properties.get(false, 'two')} />
-        <PropertyRows black={false} properties={board.properties.get(false, 'closedThree')} />
-        <PropertyRows black={true} properties={board.properties.get(true, 'three')} />
-        <PropertyRows black={true} properties={board.properties.get(true, 'four')} />
-        <PropertyRows black={false} properties={board.properties.get(false, 'three')} />
-        <PropertyRows black={false} properties={board.properties.get(false, 'four')} />
+        <PropertyRows
+          C={C}
+          black={true}
+          properties={board.properties.get(true, 'two')}
+        />
+        <PropertyRows
+          C={C}
+          black={true}
+          properties={board.properties.get(true, 'closedThree')}
+        />
+        <PropertyRows
+          C={C}
+          black={false} properties={board.properties.get(false, 'two')}
+        />
+        <PropertyRows
+          C={C}
+          black={false}
+          properties={board.properties.get(false, 'closedThree')}
+        />
+        <PropertyRows
+          C={C}
+          black={true}
+          properties={board.properties.get(true, 'three')}
+        />
+        <PropertyRows
+          C={C}
+          black={true}
+          properties={board.properties.get(true, 'four')}
+        />
+        <PropertyRows
+          C={C}
+          black={false} properties={board.properties.get(false, 'three')}
+        />
+        <PropertyRows
+          C={C}
+          black={false} properties={board.properties.get(false, 'four')}
+        />
       </>
     }
     {
       showPropertyEyes &&
       <>
-        <PropertyEyes black={true} properties={board.properties.get(true, 'three')} />
-        <PropertyEyes black={true} properties={board.properties.get(true, 'four')} emphasize />
-        <PropertyEyes black={false} properties={board.properties.get(false, 'three')} />
-        <PropertyEyes black={false} properties={board.properties.get(false, 'four')} emphasize />
+        <PropertyEyes
+          C={C}
+          black={true}
+          properties={board.properties.get(true, 'three')}
+        />
+        <PropertyEyes
+          C={C}
+          emphasize
+          black={true}
+          properties={board.properties.get(true, 'four')}
+        />
+        <PropertyEyes
+          C={C}
+          black={false}
+          properties={board.properties.get(false, 'three')}
+        />
+        <PropertyEyes
+          C={C}
+          black={false}
+          properties={board.properties.get(false, 'four')}
+          emphasize
+        />
       </>
     }
     {
       showForbiddens &&
-      <Forbiddens points={board.forbiddens}/>
+      <Forbiddens
+        C={C}
+        points={board.forbiddens}
+      />
     }
   </g>
 }
 
 type ForbiddensProps = {
+  C: number
   points: Point[]
 }
 
 const Forbiddens: FC<ForbiddensProps> = ({
+  C,
   points,
 }) => {
   const crosses = points.map(
     ([x, y], key) => {
       const [cx, cy] = [x * C, (N - y + 1) * C]
       const [x1, x2, y1, y2] = [
-        cx - C * 0.2,
-        cx + C * 0.2,
-        cy + C * 0.2,
-        cy - C * 0.2,
+        cx - C * 2 / 10,
+        cx + C * 2 / 10,
+        cy + C * 2 / 10,
+        cy - C * 2 / 10,
       ]
       return <g key={key} >
         <line
@@ -85,12 +139,14 @@ const Forbiddens: FC<ForbiddensProps> = ({
 }
 
 type PropertiesProps = {
+  C: number
   black: boolean
   properties: Property[]
   emphasize?: boolean | undefined
 }
 
 const PropertyRows: FC<PropertiesProps> = ({
+  C,
   black,
   properties,
 }) => {
@@ -127,6 +183,7 @@ const PropertyRows: FC<PropertiesProps> = ({
 }
 
 const PropertyEyes: FC<PropertiesProps> = ({
+  C,
   black,
   properties,
   emphasize,

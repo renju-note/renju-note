@@ -2,34 +2,36 @@ import React, { FC } from 'react'
 
 import { Point } from '../../rule'
 import { xCode, yCode } from '../code'
-import { N, C, INDICES, cx, cy } from './coordinate'
+import { N, INDICES, cx, cy } from './coordinate'
 
 type DefaultProps = {
+  C: number
   showIndices: boolean
 }
 
 const Default: FC<DefaultProps> = ({
+  C,
   showIndices,
 }) => {
   return <g>
-    <Rulers />
-    <Stars />
-    {showIndices && <Indices />}
+    <Rulers C={C} />
+    <Stars C={C} />
+    {showIndices && <Indices C={C} />}
   </g>
 }
 
-const Rulers: FC = () => {
+const Rulers: FC<{C: number}> = ({ C }) => {
   const verticalLines = INDICES.map(
     (x, key) => <line
       key={key}
-      x1={cx(x)} y1={cy(1)} x2={cx(x)} y2={cy(N)}
+      x1={cx(x, C)} y1={cy(1, C)} x2={cx(x, C)} y2={cy(N, C)}
       stroke="darkgray" strokeWidth={2}
     />
   )
   const horizontalLines = INDICES.map(
     (y, key) => <line
       key={key}
-      x1={cx(1)} y1={cy(y)} x2={cx(N)} y2={cy(y)}
+      x1={cx(1, C)} y1={cy(y, C)} x2={cx(N, C)} y2={cy(y, C)}
       stroke="darkgray" strokeWidth={2}
     />
   )
@@ -40,8 +42,10 @@ const Rulers: FC = () => {
 }
 
 const Stars: FC<{
+  C: number
   points?: Point[] | undefined
 }> = ({
+  C,
   points = [[4, 4], [4, 12], [8, 8], [12, 4], [12, 12]],
 }) => {
   return <g>
@@ -49,7 +53,7 @@ const Stars: FC<{
       points.map(
         ([x, y], key) => <circle
           key={key}
-          cx={cx(x)} cy={cy(y)} r={C * 0.1}
+          cx={cx(x, C)} cy={cy(y, C)} r={C * 1 / 10}
           fill="gray"
         />
       )
@@ -57,14 +61,14 @@ const Stars: FC<{
   </g>
 }
 
-const Indices: FC = () => {
+const Indices: FC<{C: number}> = ({ C }) => {
   const fill = 'gray'
-  const fontSize = `${Math.round(C * 0.4)}px`
+  const fontSize = `${C * 4 / 10}px`
   const fontFamily = 'Noto Sans'
   const xIndices = INDICES.map(
     (x, key) => <text
       key={key}
-      x={cx(x)} y={cy(1) + C}
+      x={cx(x, C)} y={cy(1, C) + C}
       textAnchor="middle"
       fontFamily={fontFamily} fontSize={fontSize}
       fill={fill}
@@ -75,7 +79,7 @@ const Indices: FC = () => {
   const yIndices = INDICES.map(
     (y, key) => <text
       key={key}
-      x={cx(1) - C * 0.8} y={cy(y)}
+      x={cx(1, C) - C * 0.8} y={cy(y, C)}
       textAnchor="middle" dominantBaseline="central"
       fontFamily={fontFamily} fontSize={fontSize}
       fill={fill}
