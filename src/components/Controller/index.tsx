@@ -87,6 +87,7 @@ const Default: FC<DefaultProps> = ({
     <IconButton
       icon={FiShare} aria-label="share"
       variant="ghost"
+      isDisabled={true}
     />
   </Flex>
 }
