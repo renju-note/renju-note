@@ -3,6 +3,8 @@ import { ThemeProvider, CSSReset } from '@chakra-ui/core'
 
 import Main from './Main'
 
+import './App.css'
+
 const App: FC = () => {
   const width = window.innerWidth >= 640 ? 640 : 320
   return <ThemeProvider>
