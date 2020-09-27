@@ -1,3 +1,7 @@
 body {
-    touch-action: manipulation;
+  touch-action: manipulation;
+}
+
+button:disabled {
+  touch-action: manipulation;
 }
