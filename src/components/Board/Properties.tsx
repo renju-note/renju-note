@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 
 import { Board, Point, Property } from '../../rule'
 
-import { N } from './coordinate'
+import { N, toClassName } from './coordinate'
 
 type DefaultProps = {
   C: number
@@ -72,7 +72,7 @@ const Default: FC<DefaultProps> = ({
         />
         <PropertyEyes
           C={C}
-          emphasize
+          emphasized
           black={true}
           properties={board.properties.get(true, 'four')}
         />
@@ -85,7 +85,7 @@ const Default: FC<DefaultProps> = ({
           C={C}
           black={false}
           properties={board.properties.get(false, 'four')}
-          emphasize
+          emphasized
         />
       </>
     }
@@ -119,16 +119,14 @@ const Forbiddens: FC<ForbiddensProps> = ({
       ]
       return <g key={key} >
         <line
+          className="forbidden"
           x1={x1} y1={y1}
           x2={x2} y2={y2}
-          stroke="red"
-          strokeWidth={4} opacity={0.5}
         />
         <line
+          className="forbidden"
           x1={x1} y1={y2}
           x2={x2} y2={y1}
-          stroke="red"
-          strokeWidth={4} opacity={0.5}
         />
       </g>
     }
@@ -142,7 +140,7 @@ type PropertiesProps = {
   C: number
   black: boolean
   properties: Property[]
-  emphasize?: boolean | undefined
+  emphasized?: boolean | undefined
 }
 
 const PropertyRows: FC<PropertiesProps> = ({
@@ -150,7 +148,6 @@ const PropertyRows: FC<PropertiesProps> = ({
   black,
   properties,
 }) => {
-  const stroke = black ? 'blue' : 'darkgreen'
   const lines = properties.map(
     (prop, key) => {
       const [p1x, p1y] = prop.start
@@ -160,19 +157,15 @@ const PropertyRows: FC<PropertiesProps> = ({
       return <g key={key}>
         { (x1 === x2 || y1 === y2) &&
           <line
+            className="propertyRowUnderlay"
             x1={x1} y1={y1}
             x2={x2} y2={y2}
-            stroke="white"
-            strokeLinecap="butt" strokeWidth={4}
-            opacity={0.6}
           />
         }
         <line
+          className={`propertyRow ${toClassName(black)}`}
           x1={x1} y1={y1}
           x2={x2} y2={y2}
-          stroke={stroke}
-          strokeLinecap="round" strokeWidth={4}
-          opacity={0.4} strokeDasharray={'3,5'}
         />
       </g>
     }
@@ -186,18 +179,25 @@ const PropertyEyes: FC<PropertiesProps> = ({
   C,
   black,
   properties,
-  emphasize,
+  emphasized,
 }) => {
-  const fill = black ? 'blue' : 'darkgreen'
   const gs = properties.map(
     (prop, m) => {
       const rects = prop.eyes.map(
         ([x, y], n) => {
           const [cx, cy] = [x * C, (N - y + 1) * C]
           return (
-            emphasize
-              ? <Diamond key={n} cx={cx} cy={cy} fill={fill} r={8} />
-              : <circle key={n} cx={cx} cy={cy} r={8} fill={fill} stroke={undefined} fillOpacity={0.4}/>
+            emphasized
+              ? <Diamond
+                key={n}
+                className={`propertyEye ${toClassName(black)} emphasized`}
+                cx={cx} cy={cy} r={C * 2 / 10}
+              />
+              : <circle
+                key={n}
+                className={`propertyEye ${toClassName(black)}`}
+                cx={cx} cy={cy} r={C * 2 / 10}
+              />
           )
         }
       )
@@ -211,17 +211,16 @@ const PropertyEyes: FC<PropertiesProps> = ({
   </g>
 }
 
-const Diamond: FC<{cx: number, cy: number, r: number, fill: string}> = ({
+const Diamond: FC<{className: string; cx: number, cy: number, r: number}> = ({
+  className,
   cx,
   cy,
   r,
-  fill,
 }) => <g transform={`rotate(45, ${cx}, ${cy})`}>
   <rect
+    className={className}
     x={cx - r} y={cy - r}
     width={r * 2} height={r * 2}
-    stroke={undefined}
-    fill={fill} fillOpacity={0.7}
   />
 </g>
 

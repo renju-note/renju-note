@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 
 import { Point } from '../../rule'
-import { N } from './coordinate'
+import { N, toClassName } from './coordinate'
 
 type DefaultProps = {
   C: number
@@ -86,15 +86,11 @@ const Orders: FC<OrdersProps> = ({
 }) => {
   const texts = moves.map(
     ([x, y], key) => {
-      const fill = key % 2 === 0 ? 'whitesmoke' : 'dimgray'
       return <text
         key={key}
-        x={x * C} y={(N - y + 1) * C}
-        textAnchor="middle"
+        className={`order ${toClassName(key % 2 === 0)}`}
         dominantBaseline="central"
-        fontFamily="Noto Serif"
-        fontSize="16px"
-        fill={fill}
+        x={x * C} y={(N - y + 1) * C}
       >
         {key + 1}
       </text>
@@ -118,10 +114,9 @@ const Stone: FC<StoneProps> = ({
 }) => {
   const [x, y] = point
   return <circle
+    className={`stone ${toClassName(black)}`}
     cx={x * C} cy={(N - y + 1) * C}
     r={(C / 2) * 9 / 10}
-    fill={black ? '#333333' : 'white'}
-    stroke="black" strokeWidth={1.5} strokeOpacity={black ? 0.3 : 0.6}
   />
 }
 
@@ -136,9 +131,9 @@ const LastMarker: FC<LastMarkerProps> = ({
 }) => {
   const [x, y] = point
   return <circle
+    className="lastMarker"
     cx={x * C} cy={(N - y + 1) * C}
     r={(C / 2) * 21 / 20}
-    fill="violet"
   />
 }
 

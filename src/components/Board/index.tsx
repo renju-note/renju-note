@@ -27,7 +27,7 @@ const Default: FC<DefaultProps> = ({
     const p: Point = [adjust(bx / C), adjust((W - by) / C)]
     setState(state.move(p))
   }
-  return <svg width={W} height={W} onClick={onClickBoard}>
+  return <svg className="rjn-board" width={W} height={W} onClick={onClickBoard}>
     <Base
       C={C}
       showIndices={preference.showIndices}

@@ -24,15 +24,15 @@ const Rulers: FC<{C: number}> = ({ C }) => {
   const verticalLines = INDICES.map(
     (x, key) => <line
       key={key}
+      className="ruler"
       x1={cx(x, C)} y1={cy(1, C)} x2={cx(x, C)} y2={cy(N, C)}
-      stroke="darkgray" strokeWidth={2}
     />
   )
   const horizontalLines = INDICES.map(
     (y, key) => <line
       key={key}
+      className="ruler"
       x1={cx(1, C)} y1={cy(y, C)} x2={cx(N, C)} y2={cy(y, C)}
-      stroke="darkgray" strokeWidth={2}
     />
   )
   return <g>
@@ -53,8 +53,8 @@ const Stars: FC<{
       points.map(
         ([x, y], key) => <circle
           key={key}
+          className="star"
           cx={cx(x, C)} cy={cy(y, C)} r={C * 1 / 10}
-          fill="gray"
         />
       )
     }
@@ -62,27 +62,19 @@ const Stars: FC<{
 }
 
 const Indices: FC<{C: number}> = ({ C }) => {
-  const fill = 'gray'
-  const fontSize = `${C * 4 / 10}px`
-  const fontFamily = 'Noto Sans'
   const xIndices = INDICES.map(
-    (x, key) => <text
+    (x, key) => <text className="index"
       key={key}
       x={cx(x, C)} y={cy(1, C) + C}
-      textAnchor="middle"
-      fontFamily={fontFamily} fontSize={fontSize}
-      fill={fill}
     >
       {xCode(x)}
     </text>
   )
   const yIndices = INDICES.map(
-    (y, key) => <text
+    (y, key) => <text className="index"
       key={key}
       x={cx(1, C) - C * 0.8} y={cy(y, C)}
-      textAnchor="middle" dominantBaseline="central"
-      fontFamily={fontFamily} fontSize={fontSize}
-      fill={fill}
+      dominantBaseline="central"
     >
       {yCode(y)}
     </text>

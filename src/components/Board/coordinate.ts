@@ -18,3 +18,5 @@ export const square = ([x, y]: Point, C: number): [[number, number], [number, nu
     [cx + C / 2, cy + C / 2],
   ]
 }
+
+export const toClassName = (black :boolean) => black ? 'black' : 'white'

@@ -5,3 +5,182 @@ body {
 button:disabled {
   touch-action: manipulation;
 }
+
+svg.rjn-board line.ruler {
+  stroke: darkgray;
+}
+
+svg.rjn-board circle.star {
+  stroke: none;
+  fill: gray;
+}
+
+svg.rjn-board circle.stone {
+  stroke: #333333;
+  stroke-opacity: 0.7;
+}
+
+svg.rjn-board circle.stone.black {
+  fill: #333333;
+}
+
+svg.rjn-board circle.stone.white {
+  fill: white;
+}
+
+svg.rjn-board text.index {
+  fill: gray;
+  text-anchor: middle;
+  font-family: 'Noto Sans';
+}
+
+svg.rjn-board text.order {
+  text-anchor: middle;
+  font-family: 'Noto Serif';
+}
+
+svg.rjn-board text.order.black {
+  fill: whitesmoke;
+}
+
+svg.rjn-board text.order.white {
+  fill: dimgray;
+}
+
+svg.rjn-board circle.lastMarker {
+  fill: violet;
+}
+
+svg.rjn-board line.forbidden {
+  stroke: red;
+  opacity: 0.5;
+}
+
+svg.rjn-board line.propertyRow {
+  stroke-linecap: round;
+  opacity: 0.4;
+}
+
+svg.rjn-board line.propertyRow.black {
+  stroke: blue;
+}
+
+svg.rjn-board line.propertyRow.white {
+  stroke: darkgreen;
+}
+
+svg.rjn-board line.propertyRowUnderlay {
+  stroke: white;
+  stroke-linecap: butt;
+  opacity: 0.6;
+}
+
+svg.rjn-board .propertyEye {
+  stroke: none;
+  fill-opacity: 0.4;
+}
+
+svg.rjn-board .propertyEye.black {
+  fill: blue;
+}
+
+svg.rjn-board .propertyEye.white {
+  fill: darkgreen;
+}
+
+svg.rjn-board .propertyEye.emphasized {
+  fill-opacity: 0.7;
+}
+
+@media screen and (min-width: 320px) {
+  svg.rjn-board line.ruler {
+    stroke-width: 1;
+  }
+
+  svg.rjn-board text.index {
+    font-size: 8px;
+  }
+
+  svg.rjn-board circle.stone {
+    stroke-width: 1;
+  }
+
+  svg.rjn-board text.order {
+    font-size: 10px;
+  }
+
+  svg.rjn-board line.forbidden {
+    stroke-width: 3;
+  }
+
+  svg.rjn-board line.propertyRow {
+    stroke-width: 2;
+    stroke-dasharray: 1 3;
+  }
+
+  svg.rjn-board line.propertyRowUnderlay {
+    stroke-width: 2;
+  }
+}
+
+@media screen and (min-width: 360px) {
+  svg.rjn-board line.ruler {
+    stroke-width: 1;
+  }
+
+  svg.rjn-board circle.stone {
+    stroke-width: 1;
+  }
+
+  svg.rjn-board text.index {
+    font-size: 8px;
+  }
+
+  svg.rjn-board text.order {
+    font-size: 10px;
+  }
+
+  svg.rjn-board line.forbidden {
+    stroke-width: 3;
+  }
+
+  svg.rjn-board line.propertyRow {
+    stroke-width: 2;
+    stroke-dasharray: 1 3;
+  }
+
+  svg.rjn-board line.propertyRowUnderlay {
+    stroke-width: 2;
+  }
+}
+
+@media screen and (min-width: 640px) {
+  svg.rjn-board line.ruler {
+    stroke-width: 2;
+  }
+
+  svg.rjn-board circle.stone {
+    stroke-width: 2;
+  }
+
+  svg.rjn-board text.index {
+    font-size: 16px;
+  }
+
+  svg.rjn-board text.order {
+    font-size: 16px;
+  }
+
+  svg.rjn-board line.forbidden {
+    stroke-width: 5;
+  }
+
+  svg.rjn-board line.propertyRow {
+    stroke-width: 4;
+    stroke-dasharray: 3 5;
+  }
+
+  svg.rjn-board line.propertyRowUnderlay {
+    stroke-width: 4;
+  }
+}
