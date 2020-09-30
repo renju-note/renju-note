@@ -6,13 +6,7 @@ import Board from './Board'
 import Controller from './Controller'
 import { Preference } from './preference'
 
-type DefaultProps = {
-  width: number
-}
-
-const Default: FC<DefaultProps> = ({
-  width,
-}) => {
+const Default: FC = () => {
   const [state, setState] = useState<State>(new State({}))
   const [preference, setPreference] = useState<Preference>({
     showIndices: false,
@@ -35,7 +29,6 @@ const Default: FC<DefaultProps> = ({
         </Flex>
         <Flex justify="center" align="center">
           <Board
-            width={width}
             state={state}
             setState={setState}
             preference={preference}
@@ -43,7 +36,6 @@ const Default: FC<DefaultProps> = ({
         </Flex>
         <Flex justify="center" align="center">
           <Controller
-            width={width}
             state={state}
             setState={setState}
             preference={preference}

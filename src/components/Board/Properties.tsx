@@ -1,11 +1,11 @@
-import React, { FC } from 'react'
+import React, { FC, useContext } from 'react'
 
 import { Board, Point, Property } from '../../rule'
 
-import { N, toClassName } from './coordinate'
+import { toClassName } from './coordinate'
+import { SystemContext } from '../system'
 
 type DefaultProps = {
-  C: number
   board: Board
   showForbiddens: boolean
   showPropertyRows: boolean
@@ -13,7 +13,6 @@ type DefaultProps = {
 }
 
 const Default: FC<DefaultProps> = ({
-  C,
   board,
   showForbiddens,
   showPropertyRows,
@@ -24,40 +23,32 @@ const Default: FC<DefaultProps> = ({
       showPropertyRows &&
       <>
         <PropertyRows
-          C={C}
           black={true}
           properties={board.properties.get(true, 'two')}
         />
         <PropertyRows
-          C={C}
           black={true}
           properties={board.properties.get(true, 'closedThree')}
         />
         <PropertyRows
-          C={C}
           black={false} properties={board.properties.get(false, 'two')}
         />
         <PropertyRows
-          C={C}
           black={false}
           properties={board.properties.get(false, 'closedThree')}
         />
         <PropertyRows
-          C={C}
           black={true}
           properties={board.properties.get(true, 'three')}
         />
         <PropertyRows
-          C={C}
           black={true}
           properties={board.properties.get(true, 'four')}
         />
         <PropertyRows
-          C={C}
           black={false} properties={board.properties.get(false, 'three')}
         />
         <PropertyRows
-          C={C}
           black={false} properties={board.properties.get(false, 'four')}
         />
       </>
@@ -66,23 +57,19 @@ const Default: FC<DefaultProps> = ({
       showPropertyEyes &&
       <>
         <PropertyEyes
-          C={C}
           black={true}
           properties={board.properties.get(true, 'three')}
         />
         <PropertyEyes
-          C={C}
-          emphasized
           black={true}
           properties={board.properties.get(true, 'four')}
+          emphasized
         />
         <PropertyEyes
-          C={C}
           black={false}
           properties={board.properties.get(false, 'three')}
         />
         <PropertyEyes
-          C={C}
           black={false}
           properties={board.properties.get(false, 'four')}
           emphasized
@@ -92,7 +79,6 @@ const Default: FC<DefaultProps> = ({
     {
       showForbiddens &&
       <Forbiddens
-        C={C}
         points={board.forbiddens}
       />
     }
@@ -100,33 +86,26 @@ const Default: FC<DefaultProps> = ({
 }
 
 type ForbiddensProps = {
-  C: number
   points: Point[]
 }
 
 const Forbiddens: FC<ForbiddensProps> = ({
-  C,
   points,
 }) => {
+  const system = useContext(SystemContext)
   const crosses = points.map(
-    ([x, y], key) => {
-      const [cx, cy] = [x * C, (N - y + 1) * C]
-      const [x1, x2, y1, y2] = [
-        cx - C * 2 / 10,
-        cx + C * 2 / 10,
-        cy + C * 2 / 10,
-        cy - C * 2 / 10,
-      ]
+    (p, key) => {
+      const [cx, cy] = system.c(p)
+      const r = system.C * 2 / 10
+      const [x1, x2, y1, y2] = [cx - r, cx + r, cy + r, cy - r]
       return <g key={key} >
         <line
           className="forbidden"
-          x1={x1} y1={y1}
-          x2={x2} y2={y2}
+          x1={x1} y1={y1} x2={x2} y2={y2}
         />
         <line
           className="forbidden"
-          x1={x1} y1={y2}
-          x2={x2} y2={y1}
+          x1={x1} y1={y2} x2={x2} y2={y1}
         />
       </g>
     }
@@ -137,35 +116,30 @@ const Forbiddens: FC<ForbiddensProps> = ({
 }
 
 type PropertiesProps = {
-  C: number
   black: boolean
   properties: Property[]
   emphasized?: boolean | undefined
 }
 
 const PropertyRows: FC<PropertiesProps> = ({
-  C,
   black,
   properties,
 }) => {
+  const system = useContext(SystemContext)
   const lines = properties.map(
     (prop, key) => {
-      const [p1x, p1y] = prop.start
-      const [p2x, p2y] = prop.end
-      const [x1, y1] = [p1x * C, (N - p1y + 1) * C]
-      const [x2, y2] = [p2x * C, (N - p2y + 1) * C]
+      const [x1, y1] = system.c(prop.start)
+      const [x2, y2] = system.c(prop.end)
       return <g key={key}>
         { (x1 === x2 || y1 === y2) &&
           <line
             className="propertyRowUnderlay"
-            x1={x1} y1={y1}
-            x2={x2} y2={y2}
+            x1={x1} y1={y1} x2={x2} y2={y2}
           />
         }
         <line
           className={`propertyRow ${toClassName(black)}`}
-          x1={x1} y1={y1}
-          x2={x2} y2={y2}
+          x1={x1} y1={y1} x2={x2} y2={y2}
         />
       </g>
     }
@@ -176,27 +150,28 @@ const PropertyRows: FC<PropertiesProps> = ({
 }
 
 const PropertyEyes: FC<PropertiesProps> = ({
-  C,
   black,
   properties,
   emphasized,
 }) => {
+  const system = useContext(SystemContext)
   const gs = properties.map(
     (prop, m) => {
       const rects = prop.eyes.map(
-        ([x, y], n) => {
-          const [cx, cy] = [x * C, (N - y + 1) * C]
+        (e, n) => {
+          const [cx, cy] = system.c(e)
+          const r = system.C * 2 / 10
           return (
             emphasized
               ? <Diamond
                 key={n}
                 className={`propertyEye ${toClassName(black)} emphasized`}
-                cx={cx} cy={cy} r={C * 2 / 10}
+                cx={cx} cy={cy} r={r}
               />
               : <circle
                 key={n}
                 className={`propertyEye ${toClassName(black)}`}
-                cx={cx} cy={cy} r={C * 2 / 10}
+                cx={cx} cy={cy} r={r}
               />
           )
         }

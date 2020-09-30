@@ -1,10 +1,10 @@
-import React, { FC } from 'react'
+import React, { FC, useContext } from 'react'
 
 import { Point } from '../../rule'
-import { N, toClassName } from './coordinate'
+import { toClassName } from './coordinate'
+import { SystemContext } from '../system'
 
 type DefaultProps = {
-  C: number
   moves?: Point[] | undefined
   stones?: {
     blacks: Point[]
@@ -15,7 +15,6 @@ type DefaultProps = {
 }
 
 const Default: FC<DefaultProps> = ({
-  C,
   moves,
   stones,
   showOrders,
@@ -30,24 +29,20 @@ const Default: FC<DefaultProps> = ({
     {
       emphasizeLastMove && moves && moves.length >= 1 &&
       <LastMarker
-        C={C}
         point={moves[moves.length - 1]}
       />
     }
     <Stones
-      C={C}
       black={true}
       points={blacks}
     />
     <Stones
-      C={C}
       black={false}
       points={whites}
     />
     {
       moves && showOrders &&
       <Orders
-        C={C}
         moves={moves}
       />
     }
@@ -55,46 +50,39 @@ const Default: FC<DefaultProps> = ({
 }
 
 type StonesProps = {
-  C: number
   black: boolean
   points: Point[]
 }
 
 const Stones: FC<StonesProps> = ({
-  C,
   black,
   points,
 }) => {
-  const circles = points.map(
-    (p, key) => {
-      return <Stone C={C} key={key} black={black} point={p} />
-    }
+  const stones = points.map(
+    (p, key) => <Stone key={key} black={black} point={p} />
   )
   return <g>
-    { circles }
+    { stones }
   </g>
 }
 
 type OrdersProps = {
-  C: number
   moves: Point[]
 }
 
 const Orders: FC<OrdersProps> = ({
-  C,
   moves,
 }) => {
+  const system = useContext(SystemContext)
   const texts = moves.map(
-    ([x, y], key) => {
-      return <text
-        key={key}
-        className={`order ${toClassName(key % 2 === 0)}`}
-        dominantBaseline="central"
-        x={x * C} y={(N - y + 1) * C}
-      >
-        {key + 1}
-      </text>
-    }
+    ([x, y], key) => <text
+      key={key}
+      className={`order ${toClassName(key % 2 === 0)}`}
+      x={system.cx(x)} y={system.cy(y)}
+      dominantBaseline="central"
+    >
+      {key + 1}
+    </text>
   )
   return <g>
     { texts }
@@ -102,38 +90,36 @@ const Orders: FC<OrdersProps> = ({
 }
 
 type StoneProps = {
-  C: number
   black: boolean
   point: Point
 }
 
 const Stone: FC<StoneProps> = ({
-  C,
   black,
   point,
 }) => {
-  const [x, y] = point
+  const system = useContext(SystemContext)
+  const [cx, cy] = system.c(point)
+  const r = system.C / 2 * 9 / 10
   return <circle
     className={`stone ${toClassName(black)}`}
-    cx={x * C} cy={(N - y + 1) * C}
-    r={(C / 2) * 9 / 10}
+    cx={cx} cy={cy} r={r}
   />
 }
 
 type LastMarkerProps = {
-  C: number
   point: Point
 }
 
 const LastMarker: FC<LastMarkerProps> = ({
-  C,
   point,
 }) => {
-  const [x, y] = point
+  const system = useContext(SystemContext)
+  const [cx, cy] = system.c(point)
+  const r = system.C / 2 * 21 / 20
   return <circle
     className="lastMarker"
-    cx={x * C} cy={(N - y + 1) * C}
-    r={(C / 2) * 21 / 20}
+    cx={cx} cy={cy} r={r}
   />
 }
 

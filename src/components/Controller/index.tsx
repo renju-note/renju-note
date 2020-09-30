@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useContext } from 'react'
 import {
   Flex,
   Button,
@@ -18,12 +18,12 @@ import {
   FiLoader,
 } from 'react-icons/fi'
 
+import { SystemContext } from '../system'
 import { State } from '../../state'
 import { Preference } from '../preference'
 import PreferencePopover from './PreferencePopover'
 
 type DefaultProps = {
-  width: number
   state: State
   setState: (s: State) => void
   preference: Preference,
@@ -31,13 +31,13 @@ type DefaultProps = {
 }
 
 const Default: FC<DefaultProps> = ({
-  width,
   state,
   setState,
   preference,
   setPreference,
 }) => {
-  return <Flex width={width} justifyContent="space-around" alignItems="center">
+  const system = useContext(SystemContext)
+  return <Flex width={system.W} justifyContent="space-around" alignItems="center">
     <PreferencePopover
       preference={preference}
       setPreference={setPreference}
