@@ -9,6 +9,7 @@ import {
   PopoverContent,
   PopoverArrow,
   PopoverBody,
+  ButtonProps,
 } from '@chakra-ui/core'
 import { FiToggleRight } from 'react-icons/fi'
 
@@ -17,18 +18,21 @@ import { Preference } from '../preference'
 type DefaultProps = {
   preference: Preference,
   setPreference: (p: Preference) => void,
+  buttonSize: ButtonProps['size']
 }
 
 const Default: FC<DefaultProps> = ({
   preference,
   setPreference,
+  buttonSize,
 }) => {
-  const isAllChecked = (preference.showIndices &&
-  preference.showOrders &&
-  preference.emphasizeLastMove &&
-  preference.showForbiddens &&
-  preference.showPropertyRows &&
-  preference.showPropertyEyes
+  const isAllChecked = (
+    preference.showIndices &&
+    preference.showOrders &&
+    preference.emphasizeLastMove &&
+    preference.showForbiddens &&
+    preference.showPropertyRows &&
+    preference.showPropertyEyes
   )
   return (
     <Popover
@@ -36,6 +40,7 @@ const Default: FC<DefaultProps> = ({
     >
       <PopoverTrigger>
         <IconButton
+          size={buttonSize}
           icon={FiToggleRight} aria-label="preference"
           variant="ghost"
         />

@@ -7,6 +7,7 @@ import {
   PopoverTrigger,
   PopoverContent,
   PopoverArrow,
+  ButtonProps,
 } from '@chakra-ui/core'
 import {
   FiChevronLeft,
@@ -41,26 +42,31 @@ const Default: FC<DefaultProps> = ({
     <PreferencePopover
       preference={preference}
       setPreference={setPreference}
+      buttonSize={system.buttonSize}
     />
     <ResetPopover
       state={state}
       setState={setState}
+      buttonSize={system.buttonSize}
     />
     <Flex justifyContent="center" alignItems="center">
       <IconButton
         onClick={() => setState(state.toStart())}
         icon={FiChevronsLeft} aria-label="to start"
+        size={system.buttonSize}
         variant="ghost"
         isDisabled={state.isStart}
       />
       <IconButton
         onClick={() => setState(state.backward())}
         icon={FiChevronLeft} aria-label="backward"
+        size={system.buttonSize}
         variant="ghost"
         isDisabled={state.isStart}
       />
       <Button
-        width={6}
+        width={6} // do not resize according to text
+        size={system.buttonSize}
         variant="ghost" fontFamily="Noto Serif" fontWeight="normal"
         isDisabled={true}
       >
@@ -69,12 +75,14 @@ const Default: FC<DefaultProps> = ({
       <IconButton
         onClick={() => setState(state.forward())}
         icon={FiChevronRight} aria-label="forward"
+        size={system.buttonSize}
         variant="ghost"
         isDisabled={state.isLast}
       />
       <IconButton
         onClick={() => setState(state.toLast())}
         icon={FiChevronsRight} aria-label="to last"
+        size={system.buttonSize}
         variant="ghost"
         isDisabled={state.isLast}
       />
@@ -82,11 +90,13 @@ const Default: FC<DefaultProps> = ({
     <IconButton
       onClick={() => setState(state.undo())}
       icon={FiX} aria-label="undo"
+      size={system.buttonSize}
       variant="ghost"
       isDisabled={!state.canUndo}
     />
     <IconButton
       icon={FiShare} aria-label="share"
+      size={system.buttonSize}
       variant="ghost"
       isDisabled={true}
     />
@@ -96,11 +106,13 @@ const Default: FC<DefaultProps> = ({
 type ResetPopoverProps = {
   state: State
   setState: (s: State) => void
+  buttonSize: ButtonProps['size']
 }
 
 const ResetPopover: FC<ResetPopoverProps> = ({
   state,
   setState,
+  buttonSize,
 }) => {
   return (
     <Popover
@@ -112,6 +124,7 @@ const ResetPopover: FC<ResetPopoverProps> = ({
             <PopoverTrigger>
               <IconButton
                 icon={FiLoader} aria-label="reset"
+                size={buttonSize}
                 variant="ghost"
                 isDisabled={!state.canReset}
               />

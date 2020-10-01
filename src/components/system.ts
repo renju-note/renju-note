@@ -1,4 +1,5 @@
 import { createContext } from 'react'
+import { ButtonProps } from '@chakra-ui/core'
 
 import { Point, N_LINES } from '../rule'
 
@@ -46,6 +47,17 @@ export class System {
       adjust((bx - this.P) / this.C + 1),
       adjust((this.W - by - this.P) / this.C + 1),
     ]
+  }
+
+  get buttonSize (): ButtonProps['size'] {
+    switch (this.W) {
+      case 320:
+        return 'sm'
+      case 360:
+        return 'sm'
+      case 640:
+        return 'lg'
+    }
   }
 }
 
