@@ -59,7 +59,8 @@ const Default: FC<DefaultProps> = ({
         variant="ghost"
         isDisabled={state.isStart}
       />
-      <Button width={6}
+      <Button
+        width={6}
         variant="ghost" fontFamily="Noto Serif" fontWeight="normal"
         isDisabled={true}
       >
