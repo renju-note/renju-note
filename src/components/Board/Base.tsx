@@ -69,7 +69,7 @@ const Indices: FC = () => {
   const yIndices = INDICES.map(
     (y, key) => <text className="index"
       key={key}
-      x={system.P * 2 / 10} y={system.cy(y)}
+      x={system.P * 3 / 10} y={system.cy(y)}
       dominantBaseline="central"
     >
       {yCode(y)}
