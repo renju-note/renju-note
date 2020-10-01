@@ -40,6 +40,15 @@ export class System {
   c ([x, y]: Point): BoardCoordinate {
     return [this.cx(x), this.cy(y)]
   }
+
+  p ([bx, by]: [number, number]): Point {
+    return [
+      adjust((bx - this.P) / this.C + 1),
+      adjust((this.W - by - this.P) / this.C + 1),
+    ]
+  }
 }
+
+const adjust = (n: number): number => Math.min(Math.max(1, Math.round(n)), N_LINES)
 
 export const SystemContext = createContext<System>(new System(640))

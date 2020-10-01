@@ -1,12 +1,11 @@
 import React, { FC, useContext } from 'react'
 
-import { Point, N_LINES } from '../../rule'
 import { State } from '../../state'
+import { Preference } from '../preference'
+import { SystemContext } from '../system'
 import Base from './Base'
 import Stones from './Stones'
 import Properties from './Properties'
-import { Preference } from '../preference'
-import { SystemContext } from '../system'
 
 type DefaultProps = {
   state: State
@@ -23,8 +22,7 @@ const Default: FC<DefaultProps> = ({
   const onClickBoard = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
     const base = e.currentTarget.getBoundingClientRect()
     const [bx, by] = [e.clientX - base.x, e.clientY - base.y]
-    const p: Point = [adjust(bx / system.C), adjust((system.W - by) / system.C)]
-    setState(state.move(p))
+    setState(state.move(system.p([bx, by])))
   }
   return <svg className="rjn-board" width={system.W} height={system.W} onClick={onClickBoard}>
     <Base
@@ -43,7 +41,5 @@ const Default: FC<DefaultProps> = ({
     />
   </svg>
 }
-
-const adjust = (n: number): number => Math.min(Math.max(1, Math.round(n)), N_LINES)
 
 export default Default
