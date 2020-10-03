@@ -1,11 +1,10 @@
 import React, { FC, useContext } from 'react'
-
 import { State } from '../../state'
 import { Preference } from '../preference'
 import { SystemContext } from '../system'
 import Base from './Base'
-import Stones from './Stones'
 import Properties from './Properties'
+import Stones from './Stones'
 
 type DefaultProps = {
   state: State

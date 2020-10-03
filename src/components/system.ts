@@ -1,15 +1,13 @@
-import { createContext } from 'react'
 import { ButtonProps } from '@chakra-ui/core'
-
-import { Point, N_LINES } from '../rule'
-
-const N = N_LINES
+import { createContext } from 'react'
+import { N_LINES, Point } from '../rule'
 
 export type BoardWidth = 640 | 360 | 320
 
 export type BoardCoordinate = [number, number]
 
 export class System {
+  readonly N: number = N_LINES
   readonly W: BoardWidth
   readonly C: number // cell size
   readonly P: number // padding
@@ -35,7 +33,7 @@ export class System {
   }
 
   cy (y: number): number {
-    return this.P + (N - y) * this.C
+    return this.P + (this.N - y) * this.C
   }
 
   c ([x, y]: Point): BoardCoordinate {
@@ -47,6 +45,14 @@ export class System {
       adjust((bx - this.P) / this.C + 1),
       adjust((this.W - by - this.P) / this.C + 1),
     ]
+  }
+
+  className (black: boolean): string {
+    return black ? 'black' : 'white'
+  }
+
+  get indices (): number[] {
+    return new Array(this.N).fill(null).map((_, i) => i + 1)
   }
 
   get buttonSize (): ButtonProps['size'] {

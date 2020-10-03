@@ -1,6 +1,5 @@
+import { Flex, Stack, Text } from '@chakra-ui/core'
 import React, { FC, useState } from 'react'
-import { Stack, Text, Flex } from '@chakra-ui/core'
-
 import { State } from '../state'
 import Board from './Board'
 import Controller from './Controller'

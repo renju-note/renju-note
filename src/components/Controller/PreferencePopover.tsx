@@ -1,18 +1,10 @@
-import React, { FC } from 'react'
 import {
-  Flex,
-  IconButton,
-  Switch,
-  FormLabel,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverArrow,
-  PopoverBody,
-  ButtonProps,
+  ButtonProps, Flex, FormLabel, IconButton,
+  Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger,
+  Switch
 } from '@chakra-ui/core'
+import React, { FC } from 'react'
 import { FiToggleRight } from 'react-icons/fi'
-
 import { Preference } from '../preference'
 
 type DefaultProps = {

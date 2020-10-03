@@ -1,8 +1,5 @@
 import React, { FC, useContext } from 'react'
-
 import { Board, Point, Property } from '../../rule'
-
-import { toClassName } from './coordinate'
 import { SystemContext } from '../system'
 
 type DefaultProps = {
@@ -138,7 +135,7 @@ const PropertyRows: FC<PropertiesProps> = ({
           />
         }
         <line
-          className={`propertyRow ${toClassName(black)}`}
+          className={`propertyRow ${system.className(black)}`}
           x1={x1} y1={y1} x2={x2} y2={y2}
         />
       </g>
@@ -165,12 +162,12 @@ const PropertyEyes: FC<PropertiesProps> = ({
             emphasized
               ? <Diamond
                 key={n}
-                className={`propertyEye ${toClassName(black)} emphasized`}
+                className={`propertyEye ${system.className(black)} emphasized`}
                 cx={cx} cy={cy} r={r}
               />
               : <circle
                 key={n}
-                className={`propertyEye ${toClassName(black)}`}
+                className={`propertyEye ${system.className(black)}`}
                 cx={cx} cy={cy} r={r}
               />
           )

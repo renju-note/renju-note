@@ -1,7 +1,5 @@
 import React, { FC, useContext } from 'react'
-
 import { Point } from '../../rule'
-import { toClassName } from './coordinate'
 import { SystemContext } from '../system'
 
 type DefaultProps = {
@@ -77,7 +75,7 @@ const Orders: FC<OrdersProps> = ({
   const texts = moves.map(
     ([x, y], key) => <text
       key={key}
-      className={`order ${toClassName(key % 2 === 0)}`}
+      className={`order ${system.className(key % 2 === 0)}`}
       x={system.cx(x)} y={system.cy(y)}
       dominantBaseline="central"
     >
@@ -102,7 +100,7 @@ const Stone: FC<StoneProps> = ({
   const [cx, cy] = system.c(point)
   const r = system.C / 2 * 9 / 10
   return <circle
-    className={`stone ${toClassName(black)}`}
+    className={`stone ${system.className(black)}`}
     cx={cx} cy={cy} r={r}
   />
 }

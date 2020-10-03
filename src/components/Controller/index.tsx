@@ -1,27 +1,15 @@
+import {
+  Button, ButtonProps, Flex, IconButton,
+  Popover, PopoverArrow, PopoverContent, PopoverTrigger
+} from '@chakra-ui/core'
 import React, { FC, useContext } from 'react'
 import {
-  Flex,
-  Button,
-  IconButton,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverArrow,
-  ButtonProps,
-} from '@chakra-ui/core'
-import {
-  FiChevronLeft,
-  FiChevronRight,
-  FiChevronsLeft,
-  FiChevronsRight,
-  FiX,
-  FiShare,
-  FiLoader,
+  FiChevronLeft, FiChevronRight, FiChevronsLeft, FiChevronsRight,
+  FiLoader, FiShare, FiX
 } from 'react-icons/fi'
-
-import { SystemContext } from '../system'
 import { State } from '../../state'
 import { Preference } from '../preference'
+import { SystemContext } from '../system'
 import PreferencePopover from './PreferencePopover'
 
 type DefaultProps = {

@@ -1,7 +1,5 @@
 import React, { FC, useContext } from 'react'
-
 import { xCode, yCode } from '../code'
-import { N, INDICES } from './coordinate'
 import { SystemContext } from '../system'
 
 type DefaultProps = {
@@ -20,18 +18,18 @@ const Default: FC<DefaultProps> = ({
 
 const Rulers: FC = () => {
   const system = useContext(SystemContext)
-  const verticalLines = INDICES.map(
+  const verticalLines = system.indices.map(
     (x, key) => <line
       key={key}
       className="ruler"
-      x1={system.cx(x)} y1={system.cy(1)} x2={system.cx(x)} y2={system.cy(N)}
+      x1={system.cx(x)} y1={system.cy(1)} x2={system.cx(x)} y2={system.cy(system.N)}
     />
   )
-  const horizontalLines = INDICES.map(
+  const horizontalLines = system.indices.map(
     (y, key) => <line
       key={key}
       className="ruler"
-      x1={system.cx(1)} y1={system.cy(y)} x2={system.cx(N)} y2={system.cy(y)}
+      x1={system.cx(1)} y1={system.cy(y)} x2={system.cx(system.N)} y2={system.cy(y)}
     />
   )
   return <g>
@@ -58,7 +56,7 @@ const Stars: FC = () => {
 
 const Indices: FC = () => {
   const system = useContext(SystemContext)
-  const xIndices = INDICES.map(
+  const xIndices = system.indices.map(
     (x, key) => <text className="index"
       key={key}
       x={system.cx(x)} y={system.cy(1) + system.P}
@@ -66,7 +64,7 @@ const Indices: FC = () => {
       {xCode(x)}
     </text>
   )
-  const yIndices = INDICES.map(
+  const yIndices = system.indices.map(
     (y, key) => <text className="index"
       key={key}
       x={system.P * 3 / 10} y={system.cy(y)}

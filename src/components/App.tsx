@@ -1,10 +1,8 @@
+import { CSSReset, ThemeProvider } from '@chakra-ui/core'
 import React, { FC } from 'react'
-import { ThemeProvider, CSSReset } from '@chakra-ui/core'
-
+import './App.css'
 import Main from './Main'
 import { System, SystemContext } from './system'
-
-import './App.css'
 
 const App: FC = () => {
   return <ThemeProvider>
