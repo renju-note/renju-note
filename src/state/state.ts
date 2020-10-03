@@ -1,15 +1,22 @@
-import { Game, Board, N_LINES, Point } from '../rule'
+import { Board, Game, N_LINES, Point } from '../rule'
 
 export class State {
   readonly game: Game
   readonly cursor: number
   readonly board: Board
 
-  constructor (init: {} | Pick<State, 'game' | 'cursor' | 'board'>) {
+  constructor (init: {} | {code: string} | Pick<State, 'game' | 'cursor' | 'board'>) {
     if ('game' in init) {
       this.game = init.game
       this.cursor = init.cursor
       this.board = init.board
+    } else if ('code' in init) {
+      const codes = init.code.split('/')
+      if (codes.length !== 2) throw new Error('invalid code')
+      const [gameCode, cursorCode] = codes
+      this.game = new Game({ code: gameCode })
+      this.cursor = parseInt(cursorCode)
+      this.board = new Board({ size: N_LINES, blacks: this.game.blacks, whites: this.game.whites })
     } else {
       this.game = new Game({})
       this.cursor = 0
@@ -109,5 +116,9 @@ export class State {
 
   get moves (): Point[] {
     return this.game.moves.slice(0, this.cursor)
+  }
+
+  get code (): string {
+    return `${this.game.code}/${this.cursor}`
   }
 }

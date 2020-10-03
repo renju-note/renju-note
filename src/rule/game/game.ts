@@ -1,11 +1,19 @@
-import { Point, equal } from '../foundation'
+import { code, equal, Point, point } from '../foundation'
 
 export class Game {
   readonly moves: Point[]
 
-  constructor (init: {} | Pick<Game, 'moves'>) {
+  constructor (init: {} | { code: string } | Pick<Game, 'moves'>) {
     if ('moves' in init) {
       this.moves = init.moves
+    } else if ('code' in init) {
+      this.moves = []
+      const codes = Array.from(init.code.matchAll(/[a-zA-Z][0-9]+/g)).map(m => m[0])
+      for (let i = 0; i < codes.length; i++) {
+        const p = point(codes[i])
+        if (p === undefined) throw new Error(`invalid code: ${codes[i]}`)
+        this.moves.push(p)
+      }
     } else {
       this.moves = []
     }
@@ -31,6 +39,10 @@ export class Game {
 
   fork (i: number): Game {
     return new Game({ moves: this.moves.slice(0, i) })
+  }
+
+  get code (): string {
+    return this.moves.map(code).join('')
   }
 
   get blacks (): Point[] {

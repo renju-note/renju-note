@@ -1,6 +1,6 @@
 import { ButtonProps } from '@chakra-ui/core'
 import { createContext } from 'react'
-import { N_LINES, Point } from '../rule'
+import { code, N_LINES, Point, xCode, yCode } from '../rule'
 
 export type BoardWidth = 640 | 360 | 320
 
@@ -52,16 +52,15 @@ export class System {
   }
 
   xCode (x: number): string {
-    return 'ABCDEFGHIJKLMNO'.charAt(x - 1)
+    return xCode(x)
   }
 
-  yCode (x: number, padZero: boolean = false): string {
-    const s = x.toString()
-    return padZero ? s.padStart(2, '0') : s
+  yCode (y: number): string {
+    return yCode(y)
   }
 
-  code ([x, y]: Point, padZero: boolean = false): string {
-    return `${this.xCode(x)}${this.yCode(y, padZero)}`
+  code ([x, y]: Point): string {
+    return code([x, y])
   }
 
   get indices (): number[] {
