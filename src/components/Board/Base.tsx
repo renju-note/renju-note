@@ -1,5 +1,4 @@
 import React, { FC, useContext } from 'react'
-import { xCode, yCode } from '../code'
 import { SystemContext } from '../system'
 
 type DefaultProps = {
@@ -61,7 +60,7 @@ const Indices: FC = () => {
       key={key}
       x={system.cx(x)} y={system.cy(1) + system.P}
     >
-      {xCode(x)}
+      {system.xCode(x)}
     </text>
   )
   const yIndices = system.indices.map(
@@ -70,7 +69,7 @@ const Indices: FC = () => {
       x={system.P * 3 / 10} y={system.cy(y)}
       dominantBaseline="central"
     >
-      {yCode(y)}
+      {system.yCode(y)}
     </text>
   )
   return <g>

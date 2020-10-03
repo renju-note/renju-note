@@ -51,6 +51,19 @@ export class System {
     return black ? 'black' : 'white'
   }
 
+  xCode (x: number): string {
+    return 'ABCDEFGHIJKLMNO'.charAt(x - 1)
+  }
+
+  yCode (x: number, padZero: boolean = false): string {
+    const s = x.toString()
+    return padZero ? s.padStart(2, '0') : s
+  }
+
+  code ([x, y]: Point, padZero: boolean = false): string {
+    return `${this.xCode(x)}${this.yCode(y, padZero)}`
+  }
+
   get indices (): number[] {
     return new Array(this.N).fill(null).map((_, i) => i + 1)
   }
