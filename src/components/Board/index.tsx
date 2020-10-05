@@ -1,6 +1,6 @@
 import React, { FC, useContext } from 'react'
-import { State } from '../../state'
 import { Preference } from '../preference'
+import { State } from '../state'
 import { SystemContext } from '../system'
 import Base from './Base'
 import Properties from './Properties'

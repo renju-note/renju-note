@@ -1,9 +1,9 @@
 import { Flex, Stack, Text } from '@chakra-ui/core'
 import React, { FC, useEffect, useState } from 'react'
-import { State } from '../state'
 import Board from './Board'
 import Controller from './Controller'
 import { Preference } from './preference'
+import { State } from './state'
 import { System, SystemContext } from './system'
 
 const Default: FC = () => {

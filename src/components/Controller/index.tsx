@@ -7,8 +7,8 @@ import {
   FiChevronLeft, FiChevronRight, FiChevronsLeft, FiChevronsRight,
   FiLoader, FiShare, FiX
 } from 'react-icons/fi'
-import { State } from '../../state'
 import { Preference } from '../preference'
+import { State } from '../state'
 import { SystemContext } from '../system'
 import PreferencePopover from './PreferencePopover'
 
