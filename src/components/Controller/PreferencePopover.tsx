@@ -3,21 +3,18 @@ import {
   Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger,
   Switch
 } from '@chakra-ui/core'
-import React, { FC } from 'react'
+import React, { FC, useContext } from 'react'
 import { FiToggleRight } from 'react-icons/fi'
-import { Preference } from '../preference'
+import { PreferenceContext } from '../preference'
 
 type DefaultProps = {
-  preference: Preference,
-  setPreference: (p: Preference) => void,
   buttonSize: ButtonProps['size']
 }
 
 const Default: FC<DefaultProps> = ({
-  preference,
-  setPreference,
   buttonSize,
 }) => {
+  const [preference, setPreference] = useContext(PreferenceContext)
   const isAllChecked = (
     preference.showIndices &&
     preference.showOrders &&

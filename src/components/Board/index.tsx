@@ -1,5 +1,5 @@
 import React, { FC, useContext } from 'react'
-import { Preference } from '../preference'
+import { PreferenceContext } from '../preference'
 import { State } from '../state'
 import { SystemContext } from '../system'
 import Base from './Base'
@@ -9,15 +9,14 @@ import Stones from './Stones'
 type DefaultProps = {
   state: State
   setState: (s: State) => void
-  preference: Preference
 }
 
 const Default: FC<DefaultProps> = ({
   state,
   setState,
-  preference,
 }) => {
   const system = useContext(SystemContext)
+  const preference = useContext(PreferenceContext)[0]
   const onClickBoard = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
     const base = e.currentTarget.getBoundingClientRect()
     const [bx, by] = [e.clientX - base.x, e.clientY - base.y]

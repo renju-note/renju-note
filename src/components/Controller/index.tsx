@@ -7,7 +7,6 @@ import {
   FiChevronLeft, FiChevronRight, FiChevronsLeft, FiChevronsRight,
   FiLoader, FiShare, FiX
 } from 'react-icons/fi'
-import { Preference } from '../preference'
 import { State } from '../state'
 import { SystemContext } from '../system'
 import PreferencePopover from './PreferencePopover'
@@ -15,21 +14,15 @@ import PreferencePopover from './PreferencePopover'
 type DefaultProps = {
   state: State
   setState: (s: State) => void
-  preference: Preference,
-  setPreference: (p: Preference) => void,
 }
 
 const Default: FC<DefaultProps> = ({
   state,
   setState,
-  preference,
-  setPreference,
 }) => {
   const system = useContext(SystemContext)
   return <Flex width={system.W} justifyContent="space-around" alignItems="center">
     <PreferencePopover
-      preference={preference}
-      setPreference={setPreference}
       buttonSize={system.buttonSize}
     />
     <ResetPopover

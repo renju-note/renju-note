@@ -1,3 +1,5 @@
+import { createContext, useState } from 'react'
+
 export class Preference {
   readonly showIndices: boolean = false
   readonly showOrders: boolean = false
@@ -13,5 +15,29 @@ export class Preference {
     if (init.showForbiddens !== undefined) this.showForbiddens = init.showForbiddens
     if (init.showPropertyRows !== undefined) this.showPropertyRows = init.showPropertyRows
     if (init.showPropertyEyes !== undefined) this.showPropertyEyes = init.showPropertyEyes
+  }
+}
+
+export type SetPreference = (p: Preference) => void
+
+export const usePreference = (): [Preference, SetPreference] => {
+  const initialPreference = loadPreference(localStorage.getItem('preference') || '{}')
+  const [preference, setPreference] = useState<Preference>(initialPreference)
+  const setAndSavePreference = (p: Preference) => {
+    setPreference(p)
+    localStorage.setItem('preference', JSON.stringify(p))
+  }
+  return [preference, setAndSavePreference]
+}
+
+export const PreferenceContext = createContext<[Preference, SetPreference]>([new Preference({}), () => {}])
+
+const loadPreference = (localStoragePreference: string): Preference => {
+  try {
+    const partial = JSON.parse(localStoragePreference) as Partial<Preference>
+    return new Preference(partial)
+  } catch (e) {
+    console.log(`Invalid preference: '${localStoragePreference}'`)
+    return new Preference({})
   }
 }
