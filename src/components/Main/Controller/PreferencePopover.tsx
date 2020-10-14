@@ -5,7 +5,7 @@ import {
 } from '@chakra-ui/core'
 import React, { FC, useContext } from 'react'
 import { FiToggleRight } from 'react-icons/fi'
-import { PreferenceContext } from '../preference'
+import { PreferenceContext } from '../../preference'
 
 type DefaultProps = {
   buttonSize: ButtonProps['size']

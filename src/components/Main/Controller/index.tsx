@@ -7,8 +7,8 @@ import {
   FiChevronLeft, FiChevronRight, FiChevronsLeft, FiChevronsRight,
   FiLoader, FiShare, FiX
 } from 'react-icons/fi'
-import { AppStateContext } from '../appState'
-import { SystemContext } from '../system'
+import { AppStateContext } from '../../appState'
+import { SystemContext } from '../../system'
 import PreferencePopover from './PreferencePopover'
 
 const Default: FC = () => {
