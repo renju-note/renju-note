@@ -185,6 +185,24 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
     blmask: 0b0000000,
     whmask: 0b0000000,
   },
+  {
+    row: { kind: 'closedThree', size: 5, eyes: [1, 4] },
+    size: 8,
+    rowStart: 2,
+    blacks: 0b00110101,
+    whites: 0b00000000,
+    blmask: 0b00000000,
+    whmask: 0b10000000,
+  },
+  {
+    row: { kind: 'closedThree', size: 5, eyes: [0, 3] },
+    size: 8,
+    rowStart: 1,
+    blacks: 0b10101100,
+    whites: 0b00000000,
+    blmask: 0b00000000,
+    whmask: 0b00000001,
+  },
 ]
 
 const BLACK_THREE_PATTERNS: RowPattern[] = [
