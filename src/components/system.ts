@@ -82,3 +82,5 @@ export class System {
 const adjust = (n: number): number => Math.min(Math.max(1, Math.round(n)), N_LINES)
 
 export const SystemContext = createContext<System>(new System(640))
+
+export const setupSystem = (): System => new System(window.innerWidth)

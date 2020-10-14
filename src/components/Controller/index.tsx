@@ -7,18 +7,18 @@ import {
   FiChevronLeft, FiChevronRight, FiChevronsLeft, FiChevronsRight,
   FiLoader, FiShare, FiX
 } from 'react-icons/fi'
-import { State } from '../state'
+import { AppState } from '../appState'
 import { SystemContext } from '../system'
 import PreferencePopover from './PreferencePopover'
 
 type DefaultProps = {
-  state: State
-  setState: (s: State) => void
+  state: AppState
+  setAppState: (s: AppState) => void
 }
 
 const Default: FC<DefaultProps> = ({
   state,
-  setState,
+  setAppState,
 }) => {
   const system = useContext(SystemContext)
   return <Flex width={system.W} justifyContent="space-around" alignItems="center">
@@ -27,19 +27,19 @@ const Default: FC<DefaultProps> = ({
     />
     <ResetPopover
       state={state}
-      setState={setState}
+      setAppState={setAppState}
       buttonSize={system.buttonSize}
     />
     <Flex justifyContent="center" alignItems="center">
       <IconButton
-        onClick={() => setState(state.toStart())}
+        onClick={() => setAppState(state.toStart())}
         icon={FiChevronsLeft} aria-label="to start"
         size={system.buttonSize}
         variant="ghost"
         isDisabled={state.isStart}
       />
       <IconButton
-        onClick={() => setState(state.backward())}
+        onClick={() => setAppState(state.backward())}
         icon={FiChevronLeft} aria-label="backward"
         size={system.buttonSize}
         variant="ghost"
@@ -54,14 +54,14 @@ const Default: FC<DefaultProps> = ({
         {state.cursor}
       </Button>
       <IconButton
-        onClick={() => setState(state.forward())}
+        onClick={() => setAppState(state.forward())}
         icon={FiChevronRight} aria-label="forward"
         size={system.buttonSize}
         variant="ghost"
         isDisabled={state.isLast}
       />
       <IconButton
-        onClick={() => setState(state.toLast())}
+        onClick={() => setAppState(state.toLast())}
         icon={FiChevronsRight} aria-label="to last"
         size={system.buttonSize}
         variant="ghost"
@@ -69,7 +69,7 @@ const Default: FC<DefaultProps> = ({
       />
     </Flex>
     <IconButton
-      onClick={() => setState(state.undo())}
+      onClick={() => setAppState(state.undo())}
       icon={FiX} aria-label="undo"
       size={system.buttonSize}
       variant="ghost"
@@ -85,14 +85,14 @@ const Default: FC<DefaultProps> = ({
 }
 
 type ResetPopoverProps = {
-  state: State
-  setState: (s: State) => void
+  state: AppState
+  setAppState: (s: AppState) => void
   buttonSize: ButtonProps['size']
 }
 
 const ResetPopover: FC<ResetPopoverProps> = ({
   state,
-  setState,
+  setAppState,
   buttonSize,
 }) => {
   return (
@@ -122,7 +122,7 @@ const ResetPopover: FC<ResetPopoverProps> = ({
                 variantColor="red"
                 fontFamily="Noto Sans" fontWeight="normal"
                 onClick={() => {
-                  setState(state.reset())
+                  setAppState(state.reset())
                   if (onClose) onClose()
                 }}
               >

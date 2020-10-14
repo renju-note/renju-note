@@ -1,26 +1,26 @@
 import React, { FC, useContext } from 'react'
+import { AppState } from '../appState'
 import { PreferenceContext } from '../preference'
-import { State } from '../state'
 import { SystemContext } from '../system'
 import Base from './Base'
 import Properties from './Properties'
 import Stones from './Stones'
 
 type DefaultProps = {
-  state: State
-  setState: (s: State) => void
+  state: AppState
+  setAppState: (s: AppState) => void
 }
 
 const Default: FC<DefaultProps> = ({
   state,
-  setState,
+  setAppState,
 }) => {
   const system = useContext(SystemContext)
   const preference = useContext(PreferenceContext)[0]
   const onClickBoard = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
     const base = e.currentTarget.getBoundingClientRect()
     const [bx, by] = [e.clientX - base.x, e.clientY - base.y]
-    setState(state.move(system.p([bx, by])))
+    setAppState(state.move(system.p([bx, by])))
   }
   return <svg className="rjn-board" width={system.W} height={system.W} onClick={onClickBoard}>
     <Base

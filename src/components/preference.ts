@@ -21,8 +21,8 @@ export class Preference {
 export type SetPreference = (p: Preference) => void
 
 export const usePreference = (): [Preference, SetPreference] => {
-  const initialPreference = loadPreference(localStorage.getItem('preference') || '{}')
-  const [preference, setPreference] = useState<Preference>(initialPreference)
+  const init = loadPreference(localStorage.getItem('preference') || '{}') || new Preference({})
+  const [preference, setPreference] = useState<Preference>(init)
   const setAndSavePreference = (p: Preference) => {
     setPreference(p)
     localStorage.setItem('preference', JSON.stringify(p))
@@ -32,12 +32,11 @@ export const usePreference = (): [Preference, SetPreference] => {
 
 export const PreferenceContext = createContext<[Preference, SetPreference]>([new Preference({}), () => {}])
 
-const loadPreference = (localStoragePreference: string): Preference => {
+const loadPreference = (localStoragePreference: string): Preference | undefined => {
   try {
     const partial = JSON.parse(localStoragePreference) as Partial<Preference>
     return new Preference(partial)
   } catch (e) {
     console.log(`Invalid preference: '${localStoragePreference}'`)
-    return new Preference({})
   }
 }
