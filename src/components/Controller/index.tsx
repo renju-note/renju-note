@@ -7,43 +7,34 @@ import {
   FiChevronLeft, FiChevronRight, FiChevronsLeft, FiChevronsRight,
   FiLoader, FiShare, FiX
 } from 'react-icons/fi'
-import { AppState } from '../appState'
+import { AppStateContext } from '../appState'
 import { SystemContext } from '../system'
 import PreferencePopover from './PreferencePopover'
 
-type DefaultProps = {
-  state: AppState
-  setAppState: (s: AppState) => void
-}
-
-const Default: FC<DefaultProps> = ({
-  state,
-  setAppState,
-}) => {
+const Default: FC = () => {
   const system = useContext(SystemContext)
+  const [appState, setAppState] = useContext(AppStateContext)
   return <Flex width={system.W} justifyContent="space-around" alignItems="center">
     <PreferencePopover
       buttonSize={system.buttonSize}
     />
     <ResetPopover
-      state={state}
-      setAppState={setAppState}
       buttonSize={system.buttonSize}
     />
     <Flex justifyContent="center" alignItems="center">
       <IconButton
-        onClick={() => setAppState(state.toStart())}
+        onClick={() => setAppState(appState.toStart())}
         icon={FiChevronsLeft} aria-label="to start"
         size={system.buttonSize}
         variant="ghost"
-        isDisabled={state.isStart}
+        isDisabled={appState.isStart}
       />
       <IconButton
-        onClick={() => setAppState(state.backward())}
+        onClick={() => setAppState(appState.backward())}
         icon={FiChevronLeft} aria-label="backward"
         size={system.buttonSize}
         variant="ghost"
-        isDisabled={state.isStart}
+        isDisabled={appState.isStart}
       />
       <Button
         width={6} // do not resize according to text
@@ -51,29 +42,29 @@ const Default: FC<DefaultProps> = ({
         variant="ghost" fontFamily="Noto Serif" fontWeight="normal"
         isDisabled={true}
       >
-        {state.cursor}
+        {appState.cursor}
       </Button>
       <IconButton
-        onClick={() => setAppState(state.forward())}
+        onClick={() => setAppState(appState.forward())}
         icon={FiChevronRight} aria-label="forward"
         size={system.buttonSize}
         variant="ghost"
-        isDisabled={state.isLast}
+        isDisabled={appState.isLast}
       />
       <IconButton
-        onClick={() => setAppState(state.toLast())}
+        onClick={() => setAppState(appState.toLast())}
         icon={FiChevronsRight} aria-label="to last"
         size={system.buttonSize}
         variant="ghost"
-        isDisabled={state.isLast}
+        isDisabled={appState.isLast}
       />
     </Flex>
     <IconButton
-      onClick={() => setAppState(state.undo())}
+      onClick={() => setAppState(appState.undo())}
       icon={FiX} aria-label="undo"
       size={system.buttonSize}
       variant="ghost"
-      isDisabled={!state.canUndo}
+      isDisabled={!appState.canUndo}
     />
     <IconButton
       icon={FiShare} aria-label="share"
@@ -85,16 +76,13 @@ const Default: FC<DefaultProps> = ({
 }
 
 type ResetPopoverProps = {
-  state: AppState
-  setAppState: (s: AppState) => void
   buttonSize: ButtonProps['size']
 }
 
 const ResetPopover: FC<ResetPopoverProps> = ({
-  state,
-  setAppState,
   buttonSize,
 }) => {
+  const [appState, setAppState] = useContext(AppStateContext)
   return (
     <Popover
       placement="bottom"
@@ -107,7 +95,7 @@ const ResetPopover: FC<ResetPopoverProps> = ({
                 icon={FiLoader} aria-label="reset"
                 size={buttonSize}
                 variant="ghost"
-                isDisabled={!state.canReset}
+                isDisabled={!appState.canReset}
               />
             </PopoverTrigger>
             <PopoverContent
@@ -122,7 +110,7 @@ const ResetPopover: FC<ResetPopoverProps> = ({
                 variantColor="red"
                 fontFamily="Noto Sans" fontWeight="normal"
                 onClick={() => {
-                  setAppState(state.reset())
+                  setAppState(appState.reset())
                   if (onClose) onClose()
                 }}
               >
