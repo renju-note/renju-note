@@ -32,11 +32,13 @@ svg.rjn-board text.index {
   fill: gray;
   text-anchor: middle;
   font-family: 'Noto Sans';
+  user-select: none;
 }
 
 svg.rjn-board text.order {
   text-anchor: middle;
   font-family: 'Noto Serif';
+  user-select: none;
 }
 
 svg.rjn-board text.order.black {
