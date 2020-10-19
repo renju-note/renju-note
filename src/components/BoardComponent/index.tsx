@@ -7,15 +7,17 @@ import Properties from './Properties'
 import Stones from './Stones'
 
 type DefaultProps = {
-  onClickPoint: ([x, y]: Point) => void | undefined
+  id: string
   board: Board
   moves: Point[]
+  onClickPoint?: ([x, y]: Point) => void
 }
 
 const Default: FC<DefaultProps> = ({
-  onClickPoint,
+  id,
   board,
   moves,
+  onClickPoint,
 }) => {
   const system = useContext(SystemContext)
   const preference = useContext(PreferenceContext)[0]
@@ -27,7 +29,7 @@ const Default: FC<DefaultProps> = ({
       onClickPoint(system.p([bx, by]))
     }
   )
-  return <svg className="rjn-board" width={system.W} height={system.W} onClick={onClick}>
+  return <svg id={id} className="rjn-board" width={system.W} height={system.W} onClick={onClick}>
     <Base
       showIndices={preference.showIndices}
     />

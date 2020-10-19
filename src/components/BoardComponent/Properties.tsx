@@ -97,12 +97,16 @@ const Forbiddens: FC<ForbiddensProps> = ({
       const [x1, x2, y1, y2] = [cx - r, cx + r, cy + r, cy - r]
       return <g key={key} >
         <line
-          className="forbidden"
           x1={x1} y1={y1} x2={x2} y2={y2}
+          stroke="red"
+          strokeWidth={system.forbiddenStrokeWidth}
+          opacity="0.5"
         />
         <line
-          className="forbidden"
           x1={x1} y1={y2} x2={x2} y2={y1}
+          stroke="red"
+          strokeWidth={system.forbiddenStrokeWidth}
+          opacity="0.5"
         />
       </g>
     }
@@ -130,13 +134,20 @@ const PropertyRows: FC<PropertiesProps> = ({
       return <g key={key}>
         { (x1 === x2 || y1 === y2) &&
           <line
-            className="propertyRowUnderlay"
             x1={x1} y1={y1} x2={x2} y2={y2}
+            stroke="white"
+            strokeWidth={system.propertyRowStrokeWidth}
+            strokeLinecap="butt"
+            opacity="0.6"
           />
         }
         <line
-          className={`propertyRow ${system.className(black)}`}
           x1={x1} y1={y1} x2={x2} y2={y2}
+          stroke={black ? 'blue' : 'darkgreen'}
+          strokeWidth={system.propertyRowStrokeWidth}
+          strokeLinecap="round"
+          strokeDasharray={system.propertyRowStrokeDasharray}
+          opacity="0.4"
         />
       </g>
     }
@@ -162,13 +173,15 @@ const PropertyEyes: FC<PropertiesProps> = ({
             emphasized
               ? <Diamond
                 key={n}
-                className={`propertyEye ${system.className(black)} emphasized`}
                 cx={cx} cy={cy} r={r}
+                fill={black ? 'blue' : 'darkgreen'}
               />
               : <circle
                 key={n}
-                className={`propertyEye ${system.className(black)}`}
                 cx={cx} cy={cy} r={r}
+                stroke="none"
+                fillOpacity="0.4"
+                fill={black ? 'blue' : 'darkgreen'}
               />
           )
         }
@@ -183,16 +196,18 @@ const PropertyEyes: FC<PropertiesProps> = ({
   </g>
 }
 
-const Diamond: FC<{className: string; cx: number, cy: number, r: number}> = ({
-  className,
+const Diamond: FC<{fill: string; cx: number, cy: number, r: number}> = ({
+  fill,
   cx,
   cy,
   r,
 }) => <g transform={`rotate(45, ${cx}, ${cy})`}>
   <rect
-    className={className}
     x={cx - r} y={cy - r}
     width={r * 2} height={r * 2}
+    fill={fill}
+    stroke="none"
+    fillOpacity="0.7"
   />
 </g>
 

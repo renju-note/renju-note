@@ -73,14 +73,20 @@ const Orders: FC<OrdersProps> = ({
 }) => {
   const system = useContext(SystemContext)
   const texts = moves.map(
-    ([x, y], key) => <text
-      key={key}
-      className={`order ${system.className(key % 2 === 0)}`}
-      x={system.cx(x)} y={system.cy(y)}
-      dominantBaseline="central"
-    >
-      {key + 1}
-    </text>
+    ([x, y], key) => {
+      const black = key % 2 === 0
+      return <text
+        key={key}
+        x={system.cx(x)} y={system.cy(y)}
+        fill={black ? 'whitesmoke' : 'dimgray'}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontSize={system.orderFontSize}
+        fontFamily="Noto Serif"
+      >
+        {key + 1}
+      </text>
+    }
   )
   return <g>
     { texts }
@@ -100,8 +106,11 @@ const Stone: FC<StoneProps> = ({
   const [cx, cy] = system.c(point)
   const r = system.C / 2 * 9 / 10
   return <circle
-    className={`stone ${system.className(black)}`}
     cx={cx} cy={cy} r={r}
+    strokeWidth={system.stoneStrokeWidth}
+    stroke="#333333"
+    strokeOpacity="0.7"
+    fill={black ? '#333333' : 'white'}
   />
 }
 
@@ -116,8 +125,8 @@ const LastMarker: FC<LastMarkerProps> = ({
   const [cx, cy] = system.c(point)
   const r = system.C / 2 * 21 / 20
   return <circle
-    className="lastMarker"
     cx={cx} cy={cy} r={r}
+    fill="violet"
   />
 }
 

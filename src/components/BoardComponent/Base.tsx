@@ -20,15 +20,17 @@ const Rulers: FC = () => {
   const verticalLines = system.indices.map(
     (x, key) => <line
       key={key}
-      className="ruler"
       x1={system.cx(x)} y1={system.cy(1)} x2={system.cx(x)} y2={system.cy(system.N)}
+      stroke="darkgray"
+      strokeWidth={system.rulerStrokeWidth}
     />
   )
   const horizontalLines = system.indices.map(
     (y, key) => <line
       key={key}
-      className="ruler"
       x1={system.cx(1)} y1={system.cy(y)} x2={system.cx(system.N)} y2={system.cy(y)}
+      stroke="darkgray"
+      strokeWidth={system.rulerStrokeWidth}
     />
   )
   return <g>
@@ -45,8 +47,9 @@ const Stars: FC = () => {
       points.map(
         ([x, y], key) => <circle
           key={key}
-          className="star"
           cx={system.cx(x)} cy={system.cy(y)} r={system.C / 10}
+          stroke="none"
+          fill="gray"
         />
       )
     }
@@ -56,18 +59,26 @@ const Stars: FC = () => {
 const Indices: FC = () => {
   const system = useContext(SystemContext)
   const xIndices = system.indices.map(
-    (x, key) => <text className="index"
+    (x, key) => <text
       key={key}
-      x={system.cx(x)} y={system.cy(1) + system.P}
+      x={system.cx(x)} y={system.cy(1) + system.P - system.indexPadding}
+      textAnchor="middle"
+      fill="gray"
+      fontSize={system.indexFontSize}
+      fontFamily="Noto Sans"
     >
       {system.xCode(x)}
     </text>
   )
   const yIndices = system.indices.map(
-    (y, key) => <text className="index"
+    (y, key) => <text
       key={key}
-      x={system.P * 3 / 10} y={system.cy(y)}
+      x={system.P * 3 / 10 + system.indexPadding} y={system.cy(y)}
+      textAnchor="middle"
       dominantBaseline="central"
+      fill="gray"
+      fontSize={system.indexFontSize}
+      fontFamily="Noto Sans"
     >
       {system.yCode(y)}
     </text>

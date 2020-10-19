@@ -47,10 +47,6 @@ export class System {
     ]
   }
 
-  className (black: boolean): string {
-    return black ? 'black' : 'white'
-  }
-
   xCode (x: number): string {
     return xCode(x)
   }
@@ -75,6 +71,94 @@ export class System {
         return 'sm'
       case 640:
         return 'lg'
+    }
+  }
+
+  get rulerStrokeWidth (): number {
+    switch (this.W) {
+      case 320:
+        return 1
+      case 360:
+        return 1
+      case 640:
+        return 2
+    }
+  }
+
+  get stoneStrokeWidth (): number {
+    switch (this.W) {
+      case 320:
+        return 1.5
+      case 360:
+        return 2
+      case 640:
+        return 2
+    }
+  }
+
+  get indexFontSize (): string {
+    switch (this.W) {
+      case 320:
+        return '8px'
+      case 360:
+        return '8px'
+      case 640:
+        return '16px'
+    }
+  }
+
+  get indexPadding (): number {
+    switch (this.W) {
+      case 320:
+        return 1
+      case 360:
+        return 1
+      case 640:
+        return 2
+    }
+  }
+
+  get orderFontSize (): string {
+    switch (this.W) {
+      case 320:
+        return '12px'
+      case 360:
+        return '12px'
+      case 640:
+        return '16px'
+    }
+  }
+
+  get forbiddenStrokeWidth (): number {
+    switch (this.W) {
+      case 320:
+        return 4
+      case 360:
+        return 4
+      case 640:
+        return 5
+    }
+  }
+
+  get propertyRowStrokeWidth (): number {
+    switch (this.W) {
+      case 320:
+        return 3
+      case 360:
+        return 3
+      case 640:
+        return 4
+    }
+  }
+
+  get propertyRowStrokeDasharray (): string {
+    switch (this.W) {
+      case 320:
+        return '1 4'
+      case 360:
+        return '1 4'
+      case 640:
+        return '3 5'
     }
   }
 }
