@@ -22,6 +22,7 @@ const Rulers: FC = () => {
       key={key}
       x1={system.cx(x)} y1={system.cy(1)} x2={system.cx(x)} y2={system.cy(system.N)}
       stroke="darkgray"
+      strokeLinecap="round"
       strokeWidth={system.rulerStrokeWidth}
     />
   )
@@ -30,6 +31,7 @@ const Rulers: FC = () => {
       key={key}
       x1={system.cx(1)} y1={system.cy(y)} x2={system.cx(system.N)} y2={system.cy(y)}
       stroke="darkgray"
+      strokeLinecap="round"
       strokeWidth={system.rulerStrokeWidth}
     />
   )
