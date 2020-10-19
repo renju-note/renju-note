@@ -17,7 +17,8 @@ export class AppState {
       const [gameCode, cursorCode] = codes
       this.game = new Game({ code: gameCode })
       this.cursor = parseInt(cursorCode)
-      this.board = new Board({ size: N_LINES, blacks: this.game.blacks, whites: this.game.whites })
+      const current = this.game.fork(this.cursor)
+      this.board = new Board({ size: N_LINES, blacks: current.blacks, whites: current.whites })
     } else {
       this.game = new Game({})
       this.cursor = 0
