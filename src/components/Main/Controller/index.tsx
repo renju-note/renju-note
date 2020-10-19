@@ -5,10 +5,11 @@ import {
 import React, { FC, useContext } from 'react'
 import {
   FiChevronLeft, FiChevronRight, FiChevronsLeft, FiChevronsRight,
-  FiLoader, FiShare, FiX
+  FiLoader, FiX
 } from 'react-icons/fi'
 import { AppStateContext } from '../../appState'
 import { SystemContext } from '../../system'
+import DownloadButton from './DownloadButton'
 import PreferencePopover from './PreferencePopover'
 
 const Default: FC = () => {
@@ -66,11 +67,8 @@ const Default: FC = () => {
       variant="ghost"
       isDisabled={!appState.canUndo}
     />
-    <IconButton
-      icon={FiShare} aria-label="share"
-      size={system.buttonSize}
-      variant="ghost"
-      isDisabled={true}
+    <DownloadButton
+      buttonSize={system.buttonSize}
     />
   </Flex>
 }
