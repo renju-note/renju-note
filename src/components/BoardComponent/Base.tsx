@@ -67,7 +67,7 @@ const Indices: FC = () => {
       textAnchor="middle"
       fill="gray"
       fontSize={system.indexFontSize}
-      fontFamily="Noto Sans"
+      fontFamily="Roboto"
     >
       {system.xCode(x)}
     </text>
@@ -80,7 +80,7 @@ const Indices: FC = () => {
       dominantBaseline="central"
       fill="gray"
       fontSize={system.indexFontSize}
-      fontFamily="Noto Sans"
+      fontFamily="Roboto"
     >
       {system.yCode(y)}
     </text>

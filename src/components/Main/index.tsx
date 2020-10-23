@@ -9,7 +9,7 @@ const Default: FC = () => {
       <Flex justify="center" align="center">
         <Text
           as="h1" textAlign="center"
-          fontFamily="Noto Sans" fontWeight="normal" color="gray.500"
+          fontWeight="normal" color="gray.500"
         >
             Renju Note BETA
         </Text>
