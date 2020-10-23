@@ -4,49 +4,40 @@ import { Board, Game, N_LINES, Point } from '../rule'
 export class AppState {
   readonly game: Game
   readonly cursor: number
-  readonly board: Board
 
-  constructor (init: {} | {code: string} | Pick<AppState, 'game' | 'cursor' | 'board'>) {
+  constructor (init: {} | {code: string} | Pick<AppState, 'game' | 'cursor'>) {
     if ('game' in init) {
       this.game = init.game
       this.cursor = init.cursor
-      this.board = init.board
     } else if ('code' in init) {
       const codes = init.code.split('/')
       if (codes.length !== 2) throw new Error('invalid code')
       const [gameCode, cursorCode] = codes
       this.game = new Game({ code: gameCode })
       this.cursor = parseInt(cursorCode)
-      const current = this.game.fork(this.cursor)
-      this.board = new Board({ size: N_LINES, blacks: current.blacks, whites: current.whites })
     } else {
       this.game = new Game({})
       this.cursor = 0
-      this.board = new Board({ size: N_LINES })
     }
   }
 
   move (p: Point): AppState {
     if (!this.canMove) return this
     if (this.game.isBlackTurn && this.board.forbidden(p)) return this
-
     const game = this.game.move(p)
     if (game === undefined) return this
     return new AppState({
       game: game,
-      board: this.board.put(this.game.isBlackTurn, p),
       cursor: this.cursor + 1,
     })
   }
 
   undo (): AppState {
     if (!this.canUndo) return this
-
     const game = this.game.undo()
     if (game === undefined) return this
     return new AppState({
       game: game,
-      board: this.board.remove(this.game.moves[this.game.moves.length - 1]),
       cursor: this.cursor - 1,
     })
   }
@@ -60,7 +51,6 @@ export class AppState {
     if (this.isLast) return this
     return new AppState({
       game: this.game,
-      board: this.board.put(this.cursor % 2 === 0, this.game.moves[this.cursor]),
       cursor: this.cursor + 1,
     })
   }
@@ -69,21 +59,14 @@ export class AppState {
     if (this.isStart) return this
     return new AppState({
       game: this.game,
-      board: this.board.remove(this.game.moves[this.cursor - 1]),
       cursor: this.cursor - 1,
     })
   }
 
   jump (i: number): AppState {
     if (i < 0 || this.game.moves.length < i) return this
-    const forked = this.game.fork(i)
     return new AppState({
       game: this.game,
-      board: new Board({
-        size: this.board.size,
-        blacks: forked.blacks,
-        whites: forked.whites,
-      }),
       cursor: i,
     })
   }
@@ -94,6 +77,15 @@ export class AppState {
 
   toLast (): AppState {
     return this.jump(this.game.moves.length)
+  }
+
+  get board (): Board {
+    const forked = this.game.fork(this.cursor)
+    return new Board({
+      size: N_LINES,
+      blacks: forked.blacks,
+      whites: forked.whites,
+    })
   }
 
   get isStart (): boolean {
