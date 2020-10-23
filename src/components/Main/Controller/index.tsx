@@ -1,25 +1,32 @@
 import {
-  Button, ButtonProps, Flex, IconButton,
-  Popover, PopoverArrow, PopoverContent, PopoverTrigger
+  Button, ButtonProps, Flex, IconButton, Text,
+  Menu,
+  MenuButton,
+  MenuDivider,
+  MenuList,
+  MenuItem,
+  Icon,
+  Box, useDisclosure
 } from '@chakra-ui/core'
 import React, { FC, useContext } from 'react'
 import {
+  FiInfo, FiTrash2,
   FiChevronLeft, FiChevronRight, FiChevronsLeft, FiChevronsRight,
-  FiLoader, FiX
+  FiX, FiMenu, FiCamera, FiToggleRight, FiEdit, FiMoreVertical,
 } from 'react-icons/fi'
 import { AppStateContext } from '../../appState'
 import { SystemContext } from '../../system'
-import DownloadButton from './DownloadButton'
-import PreferencePopover from './PreferencePopover'
+import PreferenceModal from './PreferenceModal'
+import DownloadHidden, { onDownload } from './DownloadHidden'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
   const [appState, setAppState] = useContext(AppStateContext)
   return <Flex width={system.W} justifyContent="space-around" alignItems="center">
-    <PreferencePopover
+    <LeftMenu
       buttonSize={system.buttonSize}
     />
-    <ResetPopover
+    <EditMenu
       buttonSize={system.buttonSize}
     />
     <Flex justifyContent="center" alignItems="center">
@@ -67,59 +74,91 @@ const Default: FC = () => {
       variant="ghost"
       isDisabled={!appState.canUndo}
     />
-    <DownloadButton
+    <RightMenu
       buttonSize={system.buttonSize}
     />
   </Flex>
 }
 
-type ResetPopoverProps = {
+type MenuProps = {
   buttonSize: ButtonProps['size']
 }
 
-const ResetPopover: FC<ResetPopoverProps> = ({
+const LeftMenu: FC<MenuProps> = ({
+  buttonSize,
+}) => {
+  const aboutDisclosure = useDisclosure()
+  return <>
+    <Menu>
+      <MenuButton as={Box}>
+        <IconButton
+          icon={FiMenu} aria-label="menu"
+          size={buttonSize}
+          variant="ghost"
+        />
+      </MenuButton>
+      <MenuList>
+        <MenuItem onClick={aboutDisclosure.onOpen}>
+          <Icon size="small" as={FiInfo} />
+          <Text ml={2}>About</Text>
+        </MenuItem>
+      </MenuList>
+    </Menu>
+  </>
+}
+
+const EditMenu: FC<MenuProps> = ({
   buttonSize,
 }) => {
   const [appState, setAppState] = useContext(AppStateContext)
-  return (
-    <Popover
-      placement="bottom"
-    >
-      {
-        ({ onClose }) => (
-          <>
-            <PopoverTrigger>
-              <IconButton
-                icon={FiLoader} aria-label="reset"
-                size={buttonSize}
-                variant="ghost"
-                isDisabled={!appState.canReset}
-              />
-            </PopoverTrigger>
-            <PopoverContent
-              zIndex={4}
-              width={16}
-            >
-              <PopoverArrow />
-              <Button
-                as="button"
-                size="sm"
-                variant="ghost"
-                variantColor="red"
-                fontFamily="Noto Sans" fontWeight="normal"
-                onClick={() => {
-                  setAppState(appState.reset())
-                  if (onClose) onClose()
-                }}
-              >
-                RESET
-              </Button>
-            </PopoverContent>
-          </>
-        )
-      }
-    </Popover>
-  )
+  return <>
+    <Menu>
+      <MenuButton as={Box}>
+        <IconButton
+          icon={FiEdit} aria-label="edit"
+          size={buttonSize}
+          variant="ghost"
+        />
+      </MenuButton>
+      <MenuList>
+        <MenuItem onClick={() => setAppState(appState.reset())}>
+          <Icon size="small" as={FiTrash2} color="red.500" />
+          <Text ml={2} color="red.500">Reset</Text>
+        </MenuItem>
+      </MenuList>
+    </Menu>
+  </>
+}
+
+const RightMenu: FC<MenuProps> = ({
+  buttonSize,
+}) => {
+  const preferenceDisclosure = useDisclosure()
+  const downloadHiddenId = 'download-hidden'
+  return <>
+    <Menu>
+      <MenuButton as={Box}>
+        <IconButton
+          icon={FiMoreVertical} aria-label="more"
+          size={buttonSize}
+          variant="ghost"
+        />
+      </MenuButton>
+      <MenuList>
+        <MenuItem onClick={() => onDownload(downloadHiddenId)}>
+          <Icon size="small" as={FiCamera} />
+          <Text ml={2}>Download picture</Text>
+        </MenuItem>
+        <MenuDivider />
+        <MenuItem onClick={preferenceDisclosure.onOpen}>
+          <Icon size="small" as={FiToggleRight} />
+          <Text ml={2}>Preference</Text>
+        </MenuItem>
+      </MenuList>
+    </Menu>
+    <PreferenceModal isOpen={preferenceDisclosure.isOpen} onClose={preferenceDisclosure.onClose} />
+    <DownloadHidden id={downloadHiddenId} />
+  </>
 }
 
 export default Default

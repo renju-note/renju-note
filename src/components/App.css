@@ -1,5 +1,7 @@
 body {
   touch-action: manipulation;
+  font-family: 'Noto Sans';
+  font-weight: normal;
 }
 
 button:disabled {
