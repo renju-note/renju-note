@@ -16,6 +16,7 @@ import {
 } from 'react-icons/fi'
 import { AppStateContext } from '../../appState'
 import { SystemContext } from '../../system'
+import AboutModal from './AboutModal'
 import PreferenceModal from './PreferenceModal'
 import DownloadHidden, { onDownload } from './DownloadHidden'
 
@@ -104,6 +105,7 @@ const LeftMenu: FC<MenuProps> = ({
         </MenuItem>
       </MenuList>
     </Menu>
+    <AboutModal isOpen={aboutDisclosure.isOpen} onClose={aboutDisclosure.onClose} />
   </>
 }
 
