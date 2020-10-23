@@ -88,6 +88,7 @@ type MenuProps = {
 const LeftMenu: FC<MenuProps> = ({
   buttonSize,
 }) => {
+  const preferenceDisclosure = useDisclosure()
   const aboutDisclosure = useDisclosure()
   return <>
     <Menu>
@@ -99,12 +100,18 @@ const LeftMenu: FC<MenuProps> = ({
         />
       </MenuButton>
       <MenuList>
+        <MenuItem onClick={preferenceDisclosure.onOpen}>
+          <Icon size="small" as={FiToggleRight} />
+          <Text ml={2}>Preference</Text>
+        </MenuItem>
+        <MenuDivider />
         <MenuItem onClick={aboutDisclosure.onOpen}>
           <Icon size="small" as={FiInfo} />
           <Text ml={2}>About</Text>
         </MenuItem>
       </MenuList>
     </Menu>
+    <PreferenceModal isOpen={preferenceDisclosure.isOpen} onClose={preferenceDisclosure.onClose} />
     <AboutModal isOpen={aboutDisclosure.isOpen} onClose={aboutDisclosure.onClose} />
   </>
 }
@@ -135,7 +142,6 @@ const EditMenu: FC<MenuProps> = ({
 const RightMenu: FC<MenuProps> = ({
   buttonSize,
 }) => {
-  const preferenceDisclosure = useDisclosure()
   const downloadHiddenId = 'download-hidden'
   return <>
     <Menu>
@@ -151,14 +157,8 @@ const RightMenu: FC<MenuProps> = ({
           <Icon size="small" as={FiCamera} />
           <Text ml={2}>Download picture</Text>
         </MenuItem>
-        <MenuDivider />
-        <MenuItem onClick={preferenceDisclosure.onOpen}>
-          <Icon size="small" as={FiToggleRight} />
-          <Text ml={2}>Preference</Text>
-        </MenuItem>
       </MenuList>
     </Menu>
-    <PreferenceModal isOpen={preferenceDisclosure.isOpen} onClose={preferenceDisclosure.onClose} />
     <DownloadHidden id={downloadHiddenId} />
   </>
 }
