@@ -15,6 +15,7 @@ export class AppState {
   readonly mode: EditMode
   readonly gameState: GameState
   readonly freeState: FreeState
+  private boardCache: Board | undefined
 
   constructor (
     init:
@@ -104,11 +105,15 @@ export class AppState {
   }
 
   get board (): Board {
-    return new Board({
-      size: N_LINES,
-      blacks: this.blacks,
-      whites: this.whites,
-    })
+    if (this.boardCache === undefined) {
+      console.log('computed board')
+      this.boardCache = new Board({
+        size: N_LINES,
+        blacks: this.blacks,
+        whites: this.whites,
+      })
+    }
+    return this.boardCache
   }
 
   get canUndo (): boolean {
