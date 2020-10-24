@@ -17,8 +17,8 @@ import {
   FiInfo,
   FiDisc,
   FiXSquare,
-  FiEye,
-  FiMoreHorizontal,
+  FiTarget,
+  FiGitCommit,
 } from 'react-icons/fi'
 import React, { FC, useContext } from 'react'
 import { PreferenceContext } from '../../contexts'
@@ -100,7 +100,7 @@ const Default: FC<DefaultProps> = ({
           <Flex justify="space-between" align="center">
             <PreferenceSwitch
               id="controller-preference-emphasize-last-move"
-              icon={FiDisc}
+              icon={FiTarget}
               labelText="Last Move"
               isChecked={preference.emphasizeLastMove}
               onChange={() => setPreference({ ...preference, emphasizeLastMove: !preference.emphasizeLastMove })}
@@ -118,7 +118,7 @@ const Default: FC<DefaultProps> = ({
           <Flex justify="space-between" align="center">
             <PreferenceSwitch
               id="controller-preference-show-property-eyes"
-              icon={FiEye}
+              icon={FiDisc}
               labelText="Threes and Fours Eyes"
               isChecked={preference.showPropertyEyes}
               onChange={() => setPreference({ ...preference, showPropertyEyes: !preference.showPropertyEyes })}
@@ -127,7 +127,7 @@ const Default: FC<DefaultProps> = ({
           <Flex justify="space-between" align="center">
             <PreferenceSwitch
               id="controller-preference-show-property-rows"
-              icon={FiMoreHorizontal}
+              icon={FiGitCommit}
               labelText="Twos and Closed-Threes Rows"
               isChecked={preference.showPropertyRows}
               onChange={() => setPreference({ ...preference, showPropertyRows: !preference.showPropertyRows })}

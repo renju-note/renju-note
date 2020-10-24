@@ -131,10 +131,11 @@ const EditMenu: FC<MenuProps> = ({
 }) => {
   const [appState, setAppState] = useContext(AppStateContext)
   return <>
-    <Menu closeOnSelect={false}>
+    <Menu>
       <MenuButton as={Box}>
         <IconButton
-          icon={FiEdit} aria-label="edit"
+          icon={FiEdit}
+          aria-label="edit"
           size={buttonSize}
           variant="ghost"
         />
@@ -188,7 +189,7 @@ const EditMenu: FC<MenuProps> = ({
         <MenuItem
           onClick={
             () => {
-              const message = 'Going to reset all moves, free stones, and markers. Sure?'
+              const message = 'Going to reset all moves, free stones and markers. Sure?'
               if (window.confirm(message)) setAppState(new AppState({}))
             }
           }>
