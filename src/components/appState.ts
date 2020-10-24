@@ -1,11 +1,31 @@
 import { createContext, useState } from 'react'
 import { Board, Game, N_LINES, Point } from '../rule'
 
+export const EditMode = {
+  orderedMoves: 'orderedMoves',
+  freeWhites: 'freeWhites',
+  freeBlacks: 'freeBlacks',
+  markerLines: 'markerLines',
+  markerChars: 'markerChars',
+} as const
+export type EditMode = typeof EditMode[keyof typeof EditMode]
+
 export class AppState {
+  readonly mode: EditMode
   readonly game: Game
   readonly cursor: number
+  readonly free: {
+    blacks: Point[]
+    whites: Point[]
+  }
 
-  constructor (init: {} | {code: string} | Pick<AppState, 'game' | 'cursor'>) {
+  constructor (
+    init:
+      | {}
+      | {code: string}
+      | Pick<AppState, 'mode' | 'game' | 'cursor' | 'free'>
+  ) {
+    this.mode = 'mode' in init ? init.mode : 'orderedMoves'
     if ('game' in init) {
       this.game = init.game
       this.cursor = init.cursor
@@ -19,6 +39,15 @@ export class AppState {
       this.game = new Game({})
       this.cursor = 0
     }
+    this.free = 'free' in init ? init.free : { blacks: [], whites: [] }
+  }
+
+  setMode (mode: EditMode): AppState {
+    return new AppState({
+      mode: mode,
+      game: this.game,
+      cursor: this.cursor,
+    })
   }
 
   move (p: Point): AppState {
@@ -27,6 +56,7 @@ export class AppState {
     const game = this.game.move(p)
     if (game === undefined) return this
     return new AppState({
+      mode: this.mode,
       game: game,
       cursor: this.cursor + 1,
     })
@@ -37,6 +67,7 @@ export class AppState {
     const game = this.game.undo()
     if (game === undefined) return this
     return new AppState({
+      mode: this.mode,
       game: game,
       cursor: this.cursor - 1,
     })
@@ -50,6 +81,7 @@ export class AppState {
   forward (): AppState {
     if (this.isLast) return this
     return new AppState({
+      mode: this.mode,
       game: this.game,
       cursor: this.cursor + 1,
     })
@@ -58,6 +90,7 @@ export class AppState {
   backward (): AppState {
     if (this.isStart) return this
     return new AppState({
+      mode: this.mode,
       game: this.game,
       cursor: this.cursor - 1,
     })
@@ -66,6 +99,7 @@ export class AppState {
   jump (i: number): AppState {
     if (i < 0 || this.game.moves.length < i) return this
     return new AppState({
+      mode: this.mode,
       game: this.game,
       cursor: i,
     })

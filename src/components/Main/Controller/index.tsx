@@ -5,16 +5,19 @@ import {
   MenuDivider,
   MenuList,
   MenuItem,
+  MenuOptionGroup,
+  MenuItemOption,
   Icon,
-  Box, useDisclosure
+  Box, useDisclosure,
 } from '@chakra-ui/core'
 import React, { FC, useContext } from 'react'
 import {
-  FiInfo, FiTrash2,
+  FiInfo,
+  FiTrash2,
   FiChevronLeft, FiChevronRight, FiChevronsLeft, FiChevronsRight,
-  FiX, FiMenu, FiCamera, FiToggleRight, FiEdit, FiMoreVertical,
+  FiX, FiMenu, FiCamera, FiToggleRight, FiEdit, FiMoreVertical, FiCircle, FiPlayCircle, FiEdit2, FiType
 } from 'react-icons/fi'
-import { AppStateContext } from '../../appState'
+import { AppStateContext, EditMode } from '../../appState'
 import { SystemContext } from '../../system'
 import AboutModal from './AboutModal'
 import PreferenceModal from './PreferenceModal'
@@ -121,7 +124,7 @@ const EditMenu: FC<MenuProps> = ({
 }) => {
   const [appState, setAppState] = useContext(AppStateContext)
   return <>
-    <Menu>
+    <Menu closeOnSelect={false}>
       <MenuButton as={Box}>
         <IconButton
           icon={FiEdit} aria-label="edit"
@@ -130,9 +133,55 @@ const EditMenu: FC<MenuProps> = ({
         />
       </MenuButton>
       <MenuList>
+        <MenuOptionGroup defaultValue={appState.mode} title="Mode" type="radio" onChange={
+          (value: any) => setAppState(appState.setMode(value as EditMode))
+        }>
+          <MenuItemOption value={EditMode.orderedMoves}>
+            <Flex alignItems="center">
+              <Icon size="small" as={FiPlayCircle}/>
+              <Text ml={2}>Ordered moves</Text>
+            </Flex>
+          </MenuItemOption>
+          <MenuItemOption value={EditMode.freeBlacks}>
+            <Flex alignItems="center">
+              <Icon size="small" as={FiCircle} fill="black" />
+              <Text ml={2}>Free blacks</Text>
+            </Flex>
+          </MenuItemOption>
+          <MenuItemOption value={EditMode.freeWhites}>
+            <Flex alignItems="center">
+              <Icon size="small" as={FiCircle}/>
+              <Text ml={2}>Free whites</Text>
+            </Flex>
+          </MenuItemOption>
+          <MenuDivider />
+          <MenuItemOption value={EditMode.markerChars}>
+            <Flex alignItems="center">
+              <Icon size="small" as={FiType}/>
+              <Text ml={2}>Marker chars</Text>
+            </Flex>
+          </MenuItemOption>
+          <MenuItemOption value={EditMode.markerLines}>
+            <Flex alignItems="center">
+              <Icon size="small" as={FiEdit2}/>
+              <Text ml={2}>Marker lines</Text>
+            </Flex>
+          </MenuItemOption>
+        </MenuOptionGroup>
+        <MenuDivider />
         <MenuItem onClick={() => setAppState(appState.reset())}>
+          <Icon size="small" as={FiTrash2} />
+          <Text ml={2}>Reset Markers</Text>
+        </MenuItem>
+        <MenuItem onClick={
+          () => {
+            if (window.confirm('Going to reset all moves, free stones, and markers. Sure?')) {
+              setAppState(appState.reset())
+            }
+          }
+        }>
           <Icon size="small" as={FiTrash2} color="red.500" />
-          <Text ml={2} color="red.500">Reset</Text>
+          <Text ml={2} color="red.500">Reset All</Text>
         </MenuItem>
       </MenuList>
     </Menu>
