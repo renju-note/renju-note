@@ -12,20 +12,94 @@ export type EditMode = typeof EditMode[keyof typeof EditMode]
 
 export class AppState {
   readonly mode: EditMode
-  readonly game: Game
-  readonly cursor: number
-  readonly free: {
-    blacks: Point[]
-    whites: Point[]
-  }
+  readonly gameState: GameState
 
   constructor (
     init:
       | {}
       | {code: string}
-      | Pick<AppState, 'mode' | 'game' | 'cursor' | 'free'>
+      | Pick<AppState, 'mode' | 'gameState'>
   ) {
     this.mode = 'mode' in init ? init.mode : 'orderedMoves'
+    this.gameState = 'gameState' in init ? init.gameState : new GameState(init)
+  }
+
+  setMode (mode: EditMode): AppState {
+    return new AppState({
+      mode: mode,
+      gameState: this.gameState,
+    })
+  }
+
+  move (p: Point): AppState {
+    return new AppState({
+      mode: this.mode,
+      gameState: this.gameState.move(p)
+    })
+  }
+
+  undo (): AppState {
+    return new AppState({
+      mode: this.mode,
+      gameState: this.gameState.undo()
+    })
+  }
+
+  forward (): AppState {
+    return new AppState({
+      mode: this.mode,
+      gameState: this.gameState.forward()
+    })
+  }
+
+  backward (): AppState {
+    return new AppState({
+      mode: this.mode,
+      gameState: this.gameState.backward()
+    })
+  }
+
+  toStart (): AppState {
+    return new AppState({
+      mode: this.mode,
+      gameState: this.gameState.toStart()
+    })
+  }
+
+  toLast (): AppState {
+    return new AppState({
+      mode: this.mode,
+      gameState: this.gameState.toLast()
+    })
+  }
+
+  get board (): Board {
+    return new Board({
+      size: N_LINES,
+      blacks: this.gameState.blacks,
+      whites: this.gameState.whites,
+    })
+  }
+
+  get canUndo (): boolean {
+    return this.gameState.isLast && !this.gameState.isStart
+  }
+
+  get code (): string {
+    return this.gameState.code
+  }
+}
+
+export class GameState {
+  readonly game: Game
+  readonly cursor: number
+
+  constructor (
+    init:
+      | {}
+      | {code: string}
+      | Pick<GameState, 'game' | 'cursor'>
+  ) {
     if ('game' in init) {
       this.game = init.game
       this.cursor = init.cursor
@@ -39,87 +113,62 @@ export class AppState {
       this.game = new Game({})
       this.cursor = 0
     }
-    this.free = 'free' in init ? init.free : { blacks: [], whites: [] }
   }
 
-  setMode (mode: EditMode): AppState {
-    return new AppState({
-      mode: mode,
-      game: this.game,
-      cursor: this.cursor,
-    })
-  }
-
-  move (p: Point): AppState {
-    if (!this.canMove) return this
-    if (this.game.isBlackTurn && this.board.forbidden(p)) return this
+  move (p: Point): GameState {
+    if (!this.isLast) return this
     const game = this.game.move(p)
     if (game === undefined) return this
-    return new AppState({
-      mode: this.mode,
+    return new GameState({
       game: game,
       cursor: this.cursor + 1,
     })
   }
 
-  undo (): AppState {
-    if (!this.canUndo) return this
+  undo (): GameState {
+    if (!this.isLast || this.isStart) return this
     const game = this.game.undo()
     if (game === undefined) return this
-    return new AppState({
-      mode: this.mode,
+    return new GameState({
       game: game,
       cursor: this.cursor - 1,
     })
   }
 
-  reset (): AppState {
-    if (!this.canReset) return this
-    return new AppState({})
+  forward (): GameState {
+    return this.jump(this.cursor + 1)
   }
 
-  forward (): AppState {
-    if (this.isLast) return this
-    return new AppState({
-      mode: this.mode,
-      game: this.game,
-      cursor: this.cursor + 1,
-    })
+  backward (): GameState {
+    return this.jump(this.cursor - 1)
   }
 
-  backward (): AppState {
-    if (this.isStart) return this
-    return new AppState({
-      mode: this.mode,
-      game: this.game,
-      cursor: this.cursor - 1,
-    })
+  toStart (): GameState {
+    return this.jump(0)
   }
 
-  jump (i: number): AppState {
+  toLast (): GameState {
+    return this.jump(this.game.moves.length)
+  }
+
+  jump (i: number): GameState {
     if (i < 0 || this.game.moves.length < i) return this
-    return new AppState({
-      mode: this.mode,
+    return new GameState({
       game: this.game,
       cursor: i,
     })
   }
 
-  toStart (): AppState {
-    return this.jump(0)
+  get moves (): Point[] {
+    return this.game.fork(this.cursor).moves
   }
 
-  toLast (): AppState {
-    return this.jump(this.game.moves.length)
+  get blacks (): Point[] {
+    return this.game.fork(this.cursor).blacks
   }
 
-  get board (): Board {
-    const forked = this.game.fork(this.cursor)
-    return new Board({
-      size: N_LINES,
-      blacks: forked.blacks,
-      whites: forked.whites,
-    })
+  get whites (): Point[] {
+    return this.game.fork(this.cursor).whites
   }
 
   get isStart (): boolean {
@@ -128,22 +177,6 @@ export class AppState {
 
   get isLast (): boolean {
     return this.cursor === this.game.moves.length
-  }
-
-  get canMove (): boolean {
-    return this.isLast
-  }
-
-  get canUndo (): boolean {
-    return this.isLast && !this.isStart
-  }
-
-  get canReset (): boolean {
-    return this.game.moves.length > 0
-  }
-
-  get moves (): Point[] {
-    return this.game.moves.slice(0, this.cursor)
   }
 
   get code (): string {

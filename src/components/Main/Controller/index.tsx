@@ -17,7 +17,7 @@ import {
   FiChevronLeft, FiChevronRight, FiChevronsLeft, FiChevronsRight,
   FiX, FiMenu, FiCamera, FiToggleRight, FiEdit, FiMoreVertical, FiCircle, FiPlayCircle, FiEdit2, FiType
 } from 'react-icons/fi'
-import { AppStateContext, EditMode } from '../../appState'
+import { AppState, AppStateContext, EditMode } from '../../appState'
 import { SystemContext } from '../../system'
 import AboutModal from './AboutModal'
 import PreferenceModal from './PreferenceModal'
@@ -39,14 +39,14 @@ const Default: FC = () => {
         icon={FiChevronsLeft} aria-label="to start"
         size={system.buttonSize}
         variant="ghost"
-        isDisabled={appState.isStart}
+        isDisabled={appState.gameState.isStart}
       />
       <IconButton
         onClick={() => setAppState(appState.backward())}
         icon={FiChevronLeft} aria-label="backward"
         size={system.buttonSize}
         variant="ghost"
-        isDisabled={appState.isStart}
+        isDisabled={appState.gameState.isStart}
       />
       <Button
         width={6} // do not resize according to text
@@ -54,21 +54,21 @@ const Default: FC = () => {
         variant="ghost" fontFamily="Noto Serif" fontWeight="normal"
         isDisabled={true}
       >
-        {appState.cursor}
+        {appState.gameState.cursor}
       </Button>
       <IconButton
         onClick={() => setAppState(appState.forward())}
         icon={FiChevronRight} aria-label="forward"
         size={system.buttonSize}
         variant="ghost"
-        isDisabled={appState.isLast}
+        isDisabled={appState.gameState.isLast}
       />
       <IconButton
         onClick={() => setAppState(appState.toLast())}
         icon={FiChevronsRight} aria-label="to last"
         size={system.buttonSize}
         variant="ghost"
-        isDisabled={appState.isLast}
+        isDisabled={appState.gameState.isLast}
       />
     </Flex>
     <IconButton
@@ -105,7 +105,7 @@ const LeftMenu: FC<MenuProps> = ({
       <MenuList>
         <MenuItem onClick={preferenceDisclosure.onOpen}>
           <Icon size="small" as={FiToggleRight} />
-          <Text ml={2}>Preference</Text>
+          <Text ml={2}>Preferences</Text>
         </MenuItem>
         <MenuDivider />
         <MenuItem onClick={aboutDisclosure.onOpen}>
@@ -139,44 +139,44 @@ const EditMenu: FC<MenuProps> = ({
           <MenuItemOption value={EditMode.orderedMoves}>
             <Flex alignItems="center">
               <Icon size="small" as={FiPlayCircle}/>
-              <Text ml={2}>Ordered moves</Text>
+              <Text ml={2}>Ordered Moves</Text>
             </Flex>
           </MenuItemOption>
           <MenuItemOption value={EditMode.freeBlacks}>
             <Flex alignItems="center">
               <Icon size="small" as={FiCircle} fill="black" />
-              <Text ml={2}>Free blacks</Text>
+              <Text ml={2}>Free Blacks</Text>
             </Flex>
           </MenuItemOption>
           <MenuItemOption value={EditMode.freeWhites}>
             <Flex alignItems="center">
               <Icon size="small" as={FiCircle}/>
-              <Text ml={2}>Free whites</Text>
+              <Text ml={2}>Free Whites</Text>
             </Flex>
           </MenuItemOption>
           <MenuDivider />
           <MenuItemOption value={EditMode.markerChars}>
             <Flex alignItems="center">
               <Icon size="small" as={FiType}/>
-              <Text ml={2}>Marker chars</Text>
+              <Text ml={2}>Marker Chars</Text>
             </Flex>
           </MenuItemOption>
           <MenuItemOption value={EditMode.markerLines}>
             <Flex alignItems="center">
               <Icon size="small" as={FiEdit2}/>
-              <Text ml={2}>Marker lines</Text>
+              <Text ml={2}>Marker Lines</Text>
             </Flex>
           </MenuItemOption>
         </MenuOptionGroup>
         <MenuDivider />
-        <MenuItem onClick={() => setAppState(appState.reset())}>
+        <MenuItem>
           <Icon size="small" as={FiTrash2} />
           <Text ml={2}>Reset Markers</Text>
         </MenuItem>
         <MenuItem onClick={
           () => {
             if (window.confirm('Going to reset all moves, free stones, and markers. Sure?')) {
-              setAppState(appState.reset())
+              setAppState(new AppState({}))
             }
           }
         }>
@@ -204,7 +204,7 @@ const RightMenu: FC<MenuProps> = ({
       <MenuList>
         <MenuItem onClick={() => onDownload(downloadHiddenId)}>
           <Icon size="small" as={FiCamera} />
-          <Text ml={2}>Download picture</Text>
+          <Text ml={2}>Download Picture</Text>
         </MenuItem>
       </MenuList>
     </Menu>

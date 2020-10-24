@@ -12,7 +12,7 @@ const Default: FC = () => {
     id={MAIN_BOARD_ID}
     onClickPoint={onClickPoint}
     board={appState.board}
-    moves={appState.moves}
+    moves={appState.gameState.moves}
   />
 }
 

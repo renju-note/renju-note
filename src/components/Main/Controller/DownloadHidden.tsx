@@ -17,7 +17,7 @@ const Default: FC<DefaultProps> = ({
       <BoardComponent
         id={id}
         board={appState.board}
-        moves={appState.moves}
+        moves={appState.gameState.moves}
       />
     </SystemContext.Provider>
   </Box>
