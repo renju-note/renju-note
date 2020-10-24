@@ -12,6 +12,7 @@ import {
 } from '@chakra-ui/core'
 import React, { FC, useContext } from 'react'
 import {
+  FiLoader,
   FiInfo,
   FiTrash2,
   FiChevronLeft, FiChevronRight, FiChevronsLeft, FiChevronsRight,
@@ -136,10 +137,10 @@ const EditMenu: FC<MenuProps> = ({
         <MenuOptionGroup defaultValue={appState.mode} title="Mode" type="radio" onChange={
           (value: any) => setAppState(appState.setMode(value as EditMode))
         }>
-          <MenuItemOption value={EditMode.orderedMoves}>
+          <MenuItemOption value={EditMode.mainMoves}>
             <Flex alignItems="center">
               <Icon size="small" as={FiPlayCircle}/>
-              <Text ml={2}>Ordered Moves</Text>
+              <Text ml={2}>Main Moves</Text>
             </Flex>
           </MenuItemOption>
           <MenuItemOption value={EditMode.freeBlacks}>
@@ -155,10 +156,10 @@ const EditMenu: FC<MenuProps> = ({
             </Flex>
           </MenuItemOption>
           <MenuDivider />
-          <MenuItemOption value={EditMode.markerChars}>
+          <MenuItemOption value={EditMode.markerAlphabets}>
             <Flex alignItems="center">
               <Icon size="small" as={FiType}/>
-              <Text ml={2}>Marker Chars</Text>
+              <Text ml={2}>Marker Alphabets</Text>
             </Flex>
           </MenuItemOption>
           <MenuItemOption value={EditMode.markerLines}>
@@ -180,7 +181,7 @@ const EditMenu: FC<MenuProps> = ({
             }
           }
         }>
-          <Icon size="small" as={FiTrash2} color="red.500" />
+          <Icon size="small" as={FiLoader} color="red.500" />
           <Text ml={2} color="red.500">Reset All</Text>
         </MenuItem>
       </MenuList>

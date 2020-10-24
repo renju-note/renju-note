@@ -2,11 +2,11 @@ import { Board, N_LINES, Point } from '../rule'
 import { GameState } from './gameState'
 
 export const EditMode = {
-  orderedMoves: 'orderedMoves',
+  mainMoves: 'mainMoves',
   freeWhites: 'freeWhites',
   freeBlacks: 'freeBlacks',
+  markerAlphabets: 'markerAlphabets',
   markerLines: 'markerLines',
-  markerChars: 'markerChars',
 } as const
 export type EditMode = typeof EditMode[keyof typeof EditMode]
 
@@ -20,7 +20,7 @@ export class AppState {
       | {code: string}
       | Pick<AppState, 'mode' | 'gameState'>
   ) {
-    this.mode = 'mode' in init ? init.mode : 'orderedMoves'
+    this.mode = 'mode' in init ? init.mode : 'mainMoves'
     this.gameState = 'gameState' in init ? init.gameState : new GameState(init)
   }
 
