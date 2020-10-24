@@ -61,6 +61,10 @@ export class AppState {
     }
   }
 
+  resetFreeState (): AppState {
+    return this.replace({ freeState: new FreeState({}) })
+  }
+
   forward (): AppState {
     return this.replace({ gameState: this.gameState.forward() })
   }

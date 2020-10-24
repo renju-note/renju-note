@@ -1,28 +1,34 @@
 import {
-  Button, ButtonProps, Flex, IconButton, Text,
-  Menu,
-  MenuButton,
-  MenuDivider,
-  MenuList,
-  MenuItem,
-  MenuOptionGroup,
-  MenuItemOption,
-  Icon,
-  Box, useDisclosure,
+  Box,
+  Button, ButtonProps,
+  Flex,
+  Icon, IconButton,
+  Menu, MenuButton, MenuDivider, MenuItem, MenuItemOption, MenuList, MenuOptionGroup,
+  Text,
+  useDisclosure,
 } from '@chakra-ui/core'
 import React, { FC, useContext } from 'react'
 import {
-  FiLoader,
-  FiInfo,
-  FiTrash2,
+  FiCamera,
   FiChevronLeft, FiChevronRight, FiChevronsLeft, FiChevronsRight,
-  FiX, FiMenu, FiCamera, FiToggleRight, FiEdit, FiMoreVertical, FiCircle, FiPlayCircle, FiEdit2, FiType
+  FiCircle,
+  FiEdit,
+  FiEdit2,
+  FiInfo,
+  FiLoader,
+  FiMenu,
+  FiMoreVertical,
+  FiPlayCircle,
+  FiToggleRight,
+  FiTrash2,
+  FiType,
+  FiX
 } from 'react-icons/fi'
 import { AppState, EditMode } from '../../../state'
 import { AppStateContext, SystemContext } from '../../contexts'
 import AboutModal from './AboutModal'
-import PreferenceModal from './PreferenceModal'
 import DownloadHidden, { onDownload } from './DownloadHidden'
+import PreferenceModal from './PreferenceModal'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
@@ -143,6 +149,7 @@ const EditMenu: FC<MenuProps> = ({
               <Text ml={2}>Main Moves</Text>
             </Flex>
           </MenuItemOption>
+          <MenuDivider />
           <MenuItemOption value={EditMode.freeBlacks}>
             <Flex alignItems="center">
               <Icon size="small" as={FiCircle} fill="black" />
@@ -170,17 +177,21 @@ const EditMenu: FC<MenuProps> = ({
           </MenuItemOption>
         </MenuOptionGroup>
         <MenuDivider />
+        <MenuItem onClick={() => setAppState(appState.resetFreeState())}>
+          <Icon size="small" as={FiTrash2} />
+          <Text ml={2}>Reset Free Stones</Text>
+        </MenuItem>
         <MenuItem>
           <Icon size="small" as={FiTrash2} />
           <Text ml={2}>Reset Markers</Text>
         </MenuItem>
-        <MenuItem onClick={
-          () => {
-            if (window.confirm('Going to reset all moves, free stones, and markers. Sure?')) {
-              setAppState(new AppState({}))
+        <MenuItem
+          onClick={
+            () => {
+              const message = 'Going to reset all moves, free stones, and markers. Sure?'
+              if (window.confirm(message)) setAppState(new AppState({}))
             }
-          }
-        }>
+          }>
           <Icon size="small" as={FiLoader} color="red.500" />
           <Text ml={2} color="red.500">Reset All</Text>
         </MenuItem>
