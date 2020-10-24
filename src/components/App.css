@@ -8,6 +8,6 @@ button:disabled {
   touch-action: manipulation;
 }
 
-svg.rjn-board text {
+svg text {
   user-select: none;
 }

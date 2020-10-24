@@ -1,17 +1,12 @@
 import React, { FC, useContext } from 'react'
-import { SystemContext } from '../contexts'
+import { PreferenceContext, SystemContext } from '../contexts'
 
-type DefaultProps = {
-  showIndices: boolean
-}
-
-const Default: FC<DefaultProps> = ({
-  showIndices,
-}) => {
+const Default: FC = () => {
+  const preference = useContext(PreferenceContext)[0]
   return <g>
     <Rulers />
     <Stars />
-    {showIndices && <Indices />}
+    {preference.showIndices && <Indices />}
   </g>
 }
 

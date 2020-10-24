@@ -1,23 +1,13 @@
 import React, { FC, useContext } from 'react'
-import { Board, Point, Property } from '../../rule'
-import { SystemContext } from '../contexts'
+import { Point, Property } from '../../rule'
+import { AppStateContext, PreferenceContext, SystemContext } from '../contexts'
 
-type DefaultProps = {
-  board: Board
-  showForbiddens: boolean
-  showPropertyRows: boolean
-  showPropertyEyes: boolean
-}
-
-const Default: FC<DefaultProps> = ({
-  board,
-  showForbiddens,
-  showPropertyRows,
-  showPropertyEyes,
-}) => {
+const Default: FC = () => {
+  const board = useContext(AppStateContext)[0].board
+  const preference = useContext(PreferenceContext)[0]
   return <g>
     {
-      showPropertyRows &&
+      preference.showPropertyRows &&
       <>
         <PropertyRows
           black={true}
@@ -51,7 +41,7 @@ const Default: FC<DefaultProps> = ({
       </>
     }
     {
-      showPropertyEyes &&
+      preference.showPropertyEyes &&
       <>
         <PropertyEyes
           black={true}
@@ -74,7 +64,7 @@ const Default: FC<DefaultProps> = ({
       </>
     }
     {
-      showForbiddens &&
+      preference.showForbiddens &&
       <Forbiddens
         points={board.forbiddens}
       />

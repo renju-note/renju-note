@@ -36,7 +36,7 @@ export class GameState {
   }
 
   undo (): GameState {
-    if (!this.isLast || this.isStart) return this
+    if (!this.canUndo) return this
     const game = this.game.undo()
     if (game === undefined) return this
     return new GameState({
@@ -87,6 +87,10 @@ export class GameState {
 
   get isLast (): boolean {
     return this.cursor === this.game.moves.length
+  }
+
+  get canUndo (): boolean {
+    return this.isLast && !this.isStart
   }
 
   get code (): string {

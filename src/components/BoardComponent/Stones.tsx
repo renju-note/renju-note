@@ -1,47 +1,30 @@
 import React, { FC, useContext } from 'react'
 import { Point } from '../../rule'
-import { SystemContext } from '../contexts'
+import { SystemContext, PreferenceContext, AppStateContext } from '../contexts'
 
-type DefaultProps = {
-  moves?: Point[] | undefined
-  stones?: {
-    blacks: Point[]
-    whites: Point[]
-  } | undefined
-  showOrders?: boolean | undefined
-  emphasizeLastMove?: boolean | undefined
-}
-
-const Default: FC<DefaultProps> = ({
-  moves,
-  stones,
-  showOrders,
-  emphasizeLastMove,
-}) => {
-  if (moves === undefined && stones === undefined) throw new Error('moves or stones required')
-  if (moves === undefined && showOrders) throw new Error('moves required to show orders')
-  if (moves === undefined && emphasizeLastMove) throw new Error('moves required to emphasize last')
-  const blacks = stones ? stones.blacks : moves!.filter((_, i) => i % 2 === 0)
-  const whites = stones ? stones.whites : moves!.filter((_, i) => i % 2 === 1)
+const Default: FC = () => {
+  const preference = useContext(PreferenceContext)[0]
+  const appState = useContext(AppStateContext)[0]
+  const moves = appState.gameState.moves
   return <g>
     {
-      emphasizeLastMove && moves && moves.length >= 1 &&
+      preference.emphasizeLastMove && moves.length >= 1 &&
       <LastMarker
         point={moves[moves.length - 1]}
       />
     }
     <Stones
       black={true}
-      points={blacks}
+      points={appState.blacks}
     />
     <Stones
       black={false}
-      points={whites}
+      points={appState.whites}
     />
     {
-      moves && showOrders &&
+      preference.showOrders &&
       <Orders
-        moves={moves}
+        moves={appState.gameState.moves}
       />
     }
   </g>

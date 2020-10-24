@@ -1,5 +1,6 @@
-import { Board, N_LINES, Point } from '../rule'
+import { Board, equal, N_LINES, Point } from '../rule'
 import { GameState } from './gameState'
+import { FreeState } from './freeState'
 
 export const EditMode = {
   mainMoves: 'mainMoves',
@@ -13,76 +14,110 @@ export type EditMode = typeof EditMode[keyof typeof EditMode]
 export class AppState {
   readonly mode: EditMode
   readonly gameState: GameState
+  readonly freeState: FreeState
 
   constructor (
     init:
       | {}
       | {code: string}
-      | Pick<AppState, 'mode' | 'gameState'>
+      | Pick<AppState, 'mode' | 'gameState' | 'freeState'>
   ) {
     this.mode = 'mode' in init ? init.mode : 'mainMoves'
     this.gameState = 'gameState' in init ? init.gameState : new GameState(init)
+    this.freeState = 'freeState' in init ? init.freeState : new FreeState(init)
   }
 
   setMode (mode: EditMode): AppState {
-    return new AppState({
-      mode: mode,
-      gameState: this.gameState,
-    })
+    return this.replace({ mode: mode })
   }
 
   move (p: Point): AppState {
-    return new AppState({
-      mode: this.mode,
-      gameState: this.gameState.move(p)
-    })
+    switch (this.mode) {
+      case EditMode.mainMoves:
+        if (this.hasStone(p)) return this
+        if (this.gameState.game.isBlackTurn && this.board.forbidden(p)) return this
+        return this.replace({ gameState: this.gameState.move(p) })
+      case EditMode.freeBlacks:
+        if (this.hasStone(p)) return this
+        return this.replace({ freeState: this.freeState.put(true, p) })
+      case EditMode.freeWhites:
+        if (this.hasStone(p)) return this
+        return this.replace({ freeState: this.freeState.put(false, p) })
+      default:
+        return this
+    }
   }
 
   undo (): AppState {
-    return new AppState({
-      mode: this.mode,
-      gameState: this.gameState.undo()
-    })
+    switch (this.mode) {
+      case EditMode.mainMoves:
+        return this.replace({ gameState: this.gameState.undo() })
+      case EditMode.freeBlacks:
+        return this.replace({ freeState: this.freeState.undo(true) })
+      case EditMode.freeWhites:
+        return this.replace({ freeState: this.freeState.undo(false) })
+      default:
+        return this
+    }
   }
 
   forward (): AppState {
-    return new AppState({
-      mode: this.mode,
-      gameState: this.gameState.forward()
-    })
+    return this.replace({ gameState: this.gameState.forward() })
   }
 
   backward (): AppState {
-    return new AppState({
-      mode: this.mode,
-      gameState: this.gameState.backward()
-    })
+    return this.replace({ gameState: this.gameState.backward() })
   }
 
   toStart (): AppState {
-    return new AppState({
-      mode: this.mode,
-      gameState: this.gameState.toStart()
-    })
+    return this.replace({ gameState: this.gameState.toStart() })
   }
 
   toLast (): AppState {
+    return this.replace({ gameState: this.gameState.toLast() })
+  }
+
+  private replace (
+    fields: Partial<Pick<AppState, 'mode' | 'gameState' | 'freeState'>>
+  ): AppState {
     return new AppState({
-      mode: this.mode,
-      gameState: this.gameState.toLast()
+      mode: fields.mode ?? this.mode,
+      gameState: fields.gameState ?? this.gameState,
+      freeState: fields.freeState ?? this.freeState,
     })
+  }
+
+  private hasStone (p: Point): boolean {
+    return [...this.blacks, ...this.whites].findIndex(q => equal(p, q)) >= 0
+  }
+
+  get blacks (): Point[] {
+    return [...this.gameState.blacks, ...this.freeState.blacks]
+  }
+
+  get whites (): Point[] {
+    return [...this.gameState.whites, ...this.freeState.whites]
   }
 
   get board (): Board {
     return new Board({
       size: N_LINES,
-      blacks: this.gameState.blacks,
-      whites: this.gameState.whites,
+      blacks: this.blacks,
+      whites: this.whites,
     })
   }
 
   get canUndo (): boolean {
-    return this.gameState.isLast && !this.gameState.isStart
+    switch (this.mode) {
+      case EditMode.mainMoves:
+        return this.gameState.canUndo
+      case EditMode.freeBlacks:
+        return this.freeState.canUndo(true)
+      case EditMode.freeWhites:
+        return this.freeState.canUndo(false)
+      default:
+        return false
+    }
   }
 
   get code (): string {

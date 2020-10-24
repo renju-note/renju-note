@@ -1,7 +1,7 @@
 import { Box } from '@chakra-ui/core'
-import React, { FC, useContext } from 'react'
-import { AppStateContext, System, SystemContext } from '../../contexts'
+import React, { FC } from 'react'
 import BoardComponent from '../../BoardComponent'
+import { System, SystemContext } from '../../contexts'
 
 type DefaultProps = {
   id: string
@@ -10,14 +10,9 @@ type DefaultProps = {
 const Default: FC<DefaultProps> = ({
   id,
 }) => {
-  const appState = useContext(AppStateContext)[0]
   return <Box hidden>
     <SystemContext.Provider value={new System(640)}>
-      <BoardComponent
-        id={id}
-        board={appState.board}
-        moves={appState.gameState.moves}
-      />
+      <BoardComponent id={id} />
     </SystemContext.Provider>
   </Box>
 }

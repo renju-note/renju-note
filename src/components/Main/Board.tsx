@@ -11,8 +11,6 @@ const Default: FC = () => {
   return <BoardComponent
     id={MAIN_BOARD_ID}
     onClickPoint={onClickPoint}
-    board={appState.board}
-    moves={appState.gameState.moves}
   />
 }
 
