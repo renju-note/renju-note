@@ -17,8 +17,8 @@ import {
   FiChevronLeft, FiChevronRight, FiChevronsLeft, FiChevronsRight,
   FiX, FiMenu, FiCamera, FiToggleRight, FiEdit, FiMoreVertical, FiCircle, FiPlayCircle, FiEdit2, FiType
 } from 'react-icons/fi'
-import { AppState, AppStateContext, EditMode } from '../../appState'
-import { SystemContext } from '../../system'
+import { AppState, EditMode } from '../../../state'
+import { AppStateContext, SystemContext } from '../../contexts'
 import AboutModal from './AboutModal'
 import PreferenceModal from './PreferenceModal'
 import DownloadHidden, { onDownload } from './DownloadHidden'

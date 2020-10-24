@@ -1,10 +1,12 @@
 import { CSSReset, ThemeProvider } from '@chakra-ui/core'
 import React, { FC, useEffect } from 'react'
 import './App.css'
-import { AppStateContext, useAppState } from './appState'
+import {
+  AppStateContext, useAppState,
+  PreferenceContext, usePreference,
+  SystemContext, setupSystem,
+} from './contexts'
 import Main from './Main'
-import { PreferenceContext, usePreference } from './preference'
-import { setupSystem, SystemContext } from './system'
 
 const App: FC = () => {
   const system = setupSystem()

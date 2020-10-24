@@ -10,7 +10,7 @@ import {
   Switch,
 } from '@chakra-ui/core'
 import React, { FC, useContext } from 'react'
-import { PreferenceContext } from '../../preference'
+import { PreferenceContext } from '../../contexts'
 
 type DefaultProps = {
   isOpen: boolean

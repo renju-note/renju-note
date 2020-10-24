@@ -1,6 +1,6 @@
 import React, { FC, useContext } from 'react'
 import { Board, Point, Property } from '../../rule'
-import { SystemContext } from '../system'
+import { SystemContext } from '../contexts'
 
 type DefaultProps = {
   board: Board

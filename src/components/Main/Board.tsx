@@ -1,6 +1,6 @@
 import React, { FC, useContext } from 'react'
 import { Point } from '../../rule'
-import { AppStateContext } from '../appState'
+import { AppStateContext } from '../contexts'
 import BoardComponent from '../BoardComponent'
 
 const MAIN_BOARD_ID = 'main-board'

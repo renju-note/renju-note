@@ -1,7 +1,6 @@
 import React, { FC, useContext } from 'react'
 import { Board, Point } from '../../rule'
-import { PreferenceContext } from '../preference'
-import { SystemContext } from '../system'
+import { PreferenceContext, SystemContext } from '../contexts'
 import Base from './Base'
 import Properties from './Properties'
 import Stones from './Stones'

@@ -1,8 +1,7 @@
 import { Box } from '@chakra-ui/core'
 import React, { FC, useContext } from 'react'
-import { AppStateContext } from '../../appState'
+import { AppStateContext, System, SystemContext } from '../../contexts'
 import BoardComponent from '../../BoardComponent'
-import { System, SystemContext } from '../../system'
 
 type DefaultProps = {
   id: string

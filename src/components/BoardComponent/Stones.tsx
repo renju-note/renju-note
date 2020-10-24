@@ -1,6 +1,6 @@
 import React, { FC, useContext } from 'react'
 import { Point } from '../../rule'
-import { SystemContext } from '../system'
+import { SystemContext } from '../contexts'
 
 type DefaultProps = {
   moves?: Point[] | undefined
