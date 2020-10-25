@@ -7,6 +7,7 @@ import {
   ModalFooter,
   ModalOverlay,
   Text,
+  Link,
 } from '@chakra-ui/core'
 import React, { FC } from 'react'
 
@@ -23,10 +24,13 @@ const Default: FC<DefaultProps> = ({
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>About</ModalHeader>
+        <ModalHeader>Renju Note</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Text>Renju Note</Text>
+          <Text>
+            If you find any bugs or problems,
+            tell <Link href="https://twitter.com/renjunotecom" color="teal.500" isExternal>@renjunotecom</Link>.
+          </Text>
         </ModalBody>
         <ModalFooter></ModalFooter>
       </ModalContent>

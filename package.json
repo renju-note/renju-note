@@ -1,6 +1,6 @@
 {
-  "name": "renju",
-  "version": "0.1.0",
+  "name": "renju-note",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@chakra-ui/core": "^0.8.0",
