@@ -5,12 +5,12 @@ import { SystemContext, AppStateContext } from '../contexts'
 const Default: FC = () => {
   const appState = useContext(AppStateContext)[0]
   return <g>
-    <Points points={appState.markerPoints.points}/>
     <Lines lines={appState.markerLines.lines}/>
     {
       appState.markerLines.start !== 'empty' &&
       <LineStart point={appState.markerLines.start} />
     }
+    <Points points={appState.markerPoints.points}/>
   </g>
 }
 
