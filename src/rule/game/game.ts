@@ -1,22 +1,19 @@
-import { code, equal, Point, point } from '../foundation'
+import { code, equal, parsePoints, Point } from '../foundation'
 
 export class Game {
   readonly moves: Point[]
 
-  constructor (init: {} | { code: string } | Pick<Game, 'moves'>) {
+  constructor (init: {} | Pick<Game, 'moves'>) {
     if ('moves' in init) {
       this.moves = init.moves
-    } else if ('code' in init) {
-      this.moves = []
-      const codes = Array.from(init.code.matchAll(/[a-zA-Z][0-9]+/g)).map(m => m[0])
-      for (let i = 0; i < codes.length; i++) {
-        const p = point(codes[i])
-        if (p === undefined) throw new Error(`invalid code: ${codes[i]}`)
-        this.moves.push(p)
-      }
     } else {
       this.moves = []
     }
+  }
+
+  static fromCode (code: string): Game | undefined {
+    const points = parsePoints(code)
+    return points && new Game({ moves: points })
   }
 
   move (p: Point): Game {
@@ -45,10 +42,6 @@ export class Game {
     return this.moves.length > 0
   }
 
-  get code (): string {
-    return this.moves.map(code).join('')
-  }
-
   get blacks (): Point[] {
     return this.moves.filter((_, i) => i % 2 === 0)
   }
@@ -63,5 +56,13 @@ export class Game {
 
   get isFirstTurn (): boolean {
     return this.isBlackTurn
+  }
+
+  get empty (): boolean {
+    return this.moves.length === 0
+  }
+
+  get code (): string {
+    return this.moves.map(code).join('')
   }
 }

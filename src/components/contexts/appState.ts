@@ -5,7 +5,7 @@ import { AppState } from '../../state'
 export type SetAppState = (s: AppState) => void
 
 export const useAppState = (): [AppState, SetAppState] => {
-  const init = parseAppState(window.location.hash) || new AppState({})
+  const init = AppState.fromCode(window.location.hash.slice(1)) || new AppState({})
   const [appState, setAppState] = useState<AppState>(init)
 
   const setAppStateAndHash = (s: AppState) => {
@@ -16,11 +16,3 @@ export const useAppState = (): [AppState, SetAppState] => {
 }
 
 export const AppStateContext = createContext<[AppState, SetAppState]>([new AppState({}), () => {}])
-
-const parseAppState = (windowLocationHash: string): AppState | undefined => {
-  try {
-    return new AppState({ code: windowLocationHash.slice(1) })
-  } catch (e) {
-    console.log(`Invalid fragment: '${windowLocationHash}'`)
-  }
-}

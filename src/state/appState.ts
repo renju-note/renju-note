@@ -4,8 +4,8 @@ import { FreePointsState } from './freePointsState'
 
 export const EditMode = {
   mainMoves: 'mainMoves',
-  freeWhites: 'freeWhites',
   freeBlacks: 'freeBlacks',
+  freeWhites: 'freeWhites',
   markerPoints: 'markerPoints',
   markerLines: 'markerLines',
 } as const
@@ -24,7 +24,6 @@ export class AppState {
   constructor (
     init:
       | {}
-      | {code: string}
       | Pick<
           AppState,
           'mode' | 'game' | 'cursor' | 'freeBlacks' | 'freeWhites' | 'markerPoints' | 'markerLines'
@@ -38,18 +37,6 @@ export class AppState {
       this.freeWhites = init.freeWhites
       this.markerPoints = init.markerPoints
       this.markerLines = init.markerLines
-    } else if ('code' in init) {
-      const codes = init.code.split('/')
-      if (codes.length !== 2) throw new Error('invalid code')
-      const [gameCode, cursorCode] = codes
-
-      this.mode = EditMode.mainMoves
-      this.game = new Game({ code: gameCode })
-      this.cursor = parseInt(cursorCode)
-      this.freeBlacks = new FreePointsState({})
-      this.freeWhites = new FreePointsState({})
-      this.markerPoints = new FreePointsState({})
-      this.markerLines = new FreeLinesState({})
     } else {
       this.mode = EditMode.mainMoves
       this.game = new Game({})
@@ -59,6 +46,41 @@ export class AppState {
       this.markerPoints = new FreePointsState({})
       this.markerLines = new FreeLinesState({})
     }
+  }
+
+  static fromCode (code: string): AppState | undefined {
+    if (code.indexOf('/') >= 0) { // legacy format
+      const codes = code.split('/')
+      if (codes.length !== 2) return undefined
+      const [gameCode, cursorCode] = codes
+      return new AppState({
+        mode: EditMode.mainMoves,
+        game: Game.fromCode(gameCode) ?? new Game({}),
+        cursor: parseInt(cursorCode),
+        freeBlacks: new FreePointsState({}),
+        freeWhites: new FreePointsState({}),
+        markerPoints: new FreePointsState({}),
+        markerLines: new FreeLinesState({}),
+      })
+    }
+
+    const codes = code.split(',')
+    const findCode = (s: string) => codes.find(c => c.startsWith(s))?.replace(`${s}:`, '') ?? ''
+    const gameCode = findCode('g')
+    const cursorCode = findCode('c')
+    const freeBlacksCode = findCode('b')
+    const freeWhitesCode = findCode('w')
+    const markerPointsCode = findCode('p')
+    const markerLinesCode = findCode('l')
+    return new AppState({
+      mode: EditMode.mainMoves,
+      game: Game.fromCode(gameCode) ?? new Game({}),
+      cursor: parseInt(cursorCode) || 0,
+      freeBlacks: FreePointsState.fromCode(freeBlacksCode) ?? new FreePointsState({}),
+      freeWhites: FreePointsState.fromCode(freeWhitesCode) ?? new FreePointsState({}),
+      markerPoints: FreePointsState.fromCode(markerPointsCode) ?? new FreePointsState({}),
+      markerLines: FreeLinesState.fromCode(markerLinesCode) ?? new FreeLinesState({}),
+    })
   }
 
   setMode (mode: EditMode): AppState {
@@ -210,7 +232,14 @@ export class AppState {
   }
 
   get code (): string {
-    return `${this.game.code}/${this.cursor}`
+    const codes: string[] = []
+    if (!this.game.empty) codes.push(`g:${this.game.code}`)
+    if (this.cursor !== 0) codes.push(`c:${this.cursor}`)
+    if (!this.freeBlacks.empty) codes.push(`b:${this.freeBlacks.code}`)
+    if (!this.freeWhites.empty) codes.push(`w:${this.freeWhites.code}`)
+    if (!this.markerPoints.empty) codes.push(`p:${this.markerPoints.code}`)
+    if (!this.markerLines.empty) codes.push(`l:${this.markerLines.code}`)
+    return codes.join(',')
   }
 
   private update (

@@ -1,4 +1,4 @@
-import { Point, equal } from '../rule'
+import { code, equal, parsePoints, Point } from '../rule'
 
 export class FreePointsState {
   readonly points: Point[]
@@ -9,6 +9,11 @@ export class FreePointsState {
       | Pick<FreePointsState, 'points'>
   ) {
     this.points = 'points' in init ? init.points : []
+  }
+
+  static fromCode (code: string): FreePointsState | undefined {
+    const points = parsePoints(code)
+    return points && new FreePointsState({ points: points })
   }
 
   add (p: Point): FreePointsState {
@@ -28,6 +33,10 @@ export class FreePointsState {
     return this.points.length > 0
   }
 
+  get empty (): boolean {
+    return this.points.length === 0
+  }
+
   private update (
     fields: Partial<Pick<FreePointsState, 'points'>>
   ): FreePointsState {
@@ -38,5 +47,9 @@ export class FreePointsState {
 
   private has (p: Point): boolean {
     return this.points.findIndex(q => equal(p, q)) >= 0
+  }
+
+  get code (): string {
+    return this.points.map(code).join('')
   }
 }
