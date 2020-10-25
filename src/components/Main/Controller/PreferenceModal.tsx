@@ -19,6 +19,7 @@ import {
   FiXSquare,
   FiTarget,
   FiGitCommit,
+  FiType,
 } from 'react-icons/fi'
 import React, { FC, useContext } from 'react'
 import { PreferenceContext } from '../../contexts'
@@ -40,7 +41,8 @@ const Default: FC<DefaultProps> = ({
     preference.emphasizeLastMove &&
     preference.showForbiddens &&
     preference.showPropertyRows &&
-    preference.showPropertyEyes
+    preference.showPropertyEyes &&
+    preference.showMarkerAlphabets
   )
   const onChangedAll = () => {
     if (isCheckedAll) {
@@ -51,6 +53,7 @@ const Default: FC<DefaultProps> = ({
         showForbiddens: false,
         showPropertyRows: false,
         showPropertyEyes: false,
+        showMarkerAlphabets: false,
       })
     } else {
       setPreference({
@@ -60,6 +63,7 @@ const Default: FC<DefaultProps> = ({
         showForbiddens: true,
         showPropertyRows: true,
         showPropertyEyes: true,
+        showMarkerAlphabets: true,
       })
     }
   }
@@ -131,6 +135,15 @@ const Default: FC<DefaultProps> = ({
               labelText="Twos and Closed-Threes Rows"
               isChecked={preference.showPropertyRows}
               onChange={() => setPreference({ ...preference, showPropertyRows: !preference.showPropertyRows })}
+            />
+          </Flex>
+          <Flex justify="space-between" align="center">
+            <PreferenceSwitch
+              id="controller-preference-show-marker-alphabets"
+              icon={FiType}
+              labelText="Alphabets on Marker Points"
+              isChecked={preference.showMarkerAlphabets}
+              onChange={() => setPreference({ ...preference, showMarkerAlphabets: !preference.showMarkerAlphabets })}
             />
           </Flex>
         </ModalBody>

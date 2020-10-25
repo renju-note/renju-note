@@ -1,6 +1,6 @@
 import React, { FC, useContext } from 'react'
 import { Point } from '../../rule'
-import { SystemContext, AppStateContext } from '../contexts'
+import { SystemContext, AppStateContext, PreferenceContext } from '../contexts'
 
 const Default: FC = () => {
   const appState = useContext(AppStateContext)[0]
@@ -18,6 +18,7 @@ const Points: FC<{ points: Point[]}> = ({
   points,
 }) => {
   const system = useContext(SystemContext)
+  const preference = useContext(PreferenceContext)[0]
   const r = system.C * 3 / 8
   const markers = points.map(
     (p, key) => {
@@ -28,16 +29,19 @@ const Points: FC<{ points: Point[]}> = ({
           fill="silver"
           opacity="0.8"
         />
-        <text
-          x={cx} y={cy}
-          fill='#333333'
-          textAnchor="middle"
-          dominantBaseline="central"
-          fontSize={system.orderFontSize}
-          fontFamily="Noto Serif"
-        >
-          {'abcdefghijklmnopqrstuvwxyz'.charAt(key)}
-        </text>
+        {
+          preference.showMarkerAlphabets &&
+          <text
+            x={cx} y={cy}
+            fill='#333333'
+            textAnchor="middle"
+            dominantBaseline="central"
+            fontSize={system.orderFontSize}
+            fontFamily="Noto Serif"
+          >
+            {'abcdefghijklmnopqrstuvwxyz'.charAt(key)}
+          </text>
+        }
       </g>
     }
   )

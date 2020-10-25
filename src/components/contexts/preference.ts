@@ -1,20 +1,22 @@
 import { createContext, useState } from 'react'
 
 export class Preference {
-  readonly showIndices: boolean = false
-  readonly showOrders: boolean = false
-  readonly emphasizeLastMove: boolean = false
-  readonly showForbiddens: boolean = false
-  readonly showPropertyRows: boolean = false
-  readonly showPropertyEyes: boolean = false
+  readonly showIndices: boolean
+  readonly showOrders: boolean
+  readonly emphasizeLastMove: boolean
+  readonly showForbiddens: boolean
+  readonly showPropertyRows: boolean
+  readonly showPropertyEyes: boolean
+  readonly showMarkerAlphabets: boolean
 
   constructor (init: Partial<Preference>) {
-    if (init.showIndices !== undefined) this.showIndices = init.showIndices
-    if (init.showOrders !== undefined) this.showOrders = init.showOrders
-    if (init.emphasizeLastMove !== undefined) this.emphasizeLastMove = init.emphasizeLastMove
-    if (init.showForbiddens !== undefined) this.showForbiddens = init.showForbiddens
-    if (init.showPropertyRows !== undefined) this.showPropertyRows = init.showPropertyRows
-    if (init.showPropertyEyes !== undefined) this.showPropertyEyes = init.showPropertyEyes
+    this.showIndices = init.showIndices ?? false
+    this.showOrders = init.showOrders ?? false
+    this.emphasizeLastMove = init.emphasizeLastMove ?? false
+    this.showForbiddens = init.showForbiddens ?? false
+    this.showPropertyRows = init.showPropertyRows ?? false
+    this.showPropertyEyes = init.showPropertyEyes ?? false
+    this.showMarkerAlphabets = init.showMarkerAlphabets ?? false
   }
 }
 
