@@ -182,7 +182,7 @@ const EditMenu: FC<MenuProps> = ({
           <Icon size="small" as={FiTrash2} />
           <Text ml={2}>Clear Free Stones</Text>
         </MenuItem>
-        <MenuItem>
+        <MenuItem onClick={() => setAppState(appState.clearMarkers())}>
           <Icon size="small" as={FiTrash2} />
           <Text ml={2}>Clear Markers</Text>
         </MenuItem>

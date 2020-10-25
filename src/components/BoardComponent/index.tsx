@@ -4,6 +4,7 @@ import { SystemContext } from '../contexts'
 import Base from './Base'
 import Properties from './Properties'
 import Stones from './Stones'
+import Markers from './Markers'
 
 type DefaultProps = {
   id: string
@@ -30,6 +31,7 @@ const Default: FC<DefaultProps> = ({
   >
     <Base />
     <Properties />
+    <Markers />
     <Stones />
   </svg>
 }

@@ -4,7 +4,7 @@ type FreeLine = [Point, Point]
 
 export class FreeLinesState {
   readonly lines: FreeLine[]
-  readonly start: Point | undefined
+  readonly start: Point | 'empty'
 
   constructor (
     init:
@@ -12,27 +12,27 @@ export class FreeLinesState {
       | Pick<FreeLinesState, 'lines' | 'start'>
   ) {
     this.lines = 'lines' in init ? init.lines : []
-    this.start = 'start' in init ? init.start : undefined
+    this.start = 'start' in init ? init.start : 'empty'
   }
 
   draw (p: Point): FreeLinesState {
-    if (this.start === undefined) {
+    if (this.start === 'empty') {
       return this.update({ start: p })
     }
 
     const line: FreeLine = [this.start, p]
     if (this.has(line) || !this.valid(line)) {
-      return this.update({ start: undefined })
+      return this.update({ start: 'empty' })
     }
     return this.update({
       lines: [...this.lines, line],
-      start: undefined
+      start: 'empty',
     })
   }
 
   undo (): FreeLinesState {
-    if (this.start !== undefined) {
-      return this.update({ start: undefined })
+    if (this.start !== 'empty') {
+      return this.update({ start: 'empty' })
     }
     return this.update({
       lines: this.lines.slice(0, this.lines.length - 1),
@@ -40,7 +40,7 @@ export class FreeLinesState {
   }
 
   get canUndo (): boolean {
-    return this.start !== undefined || this.lines.length > 0
+    return this.start !== 'empty' || this.lines.length > 0
   }
 
   private update (
