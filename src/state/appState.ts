@@ -131,7 +131,8 @@ export class AppState {
 
   clearMarkers (): AppState {
     return this.update({
-      markerPoints: new FreePointsState({})
+      markerPoints: new FreePointsState({}),
+      markerLines: new FreeLinesState({})
     })
   }
 

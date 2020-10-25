@@ -20,7 +20,7 @@ import {
   FiMoreVertical,
   FiToggleRight,
   FiTrash2,
-  FiType,
+  FiCrosshair,
   FiX
 } from 'react-icons/fi'
 import { AppState, EditMode } from '../../../state'
@@ -138,33 +138,33 @@ const EditMenu: FC<MenuProps> = ({
         }>
           <MenuItemOption value={EditMode.mainMoves}>
             <Flex alignItems="center">
-              <Icon size="small" as={FiEdit}/>
+              <ModeIcon mode={EditMode.mainMoves} />
               <Text ml={2}>Main Moves</Text>
             </Flex>
           </MenuItemOption>
           <MenuDivider />
           <MenuItemOption value={EditMode.freeBlacks}>
             <Flex alignItems="center">
-              <Icon size="small" as={FiCircle} fill="black" />
+              <ModeIcon mode={EditMode.freeBlacks} />
               <Text ml={2}>Put Free Blacks</Text>
             </Flex>
           </MenuItemOption>
           <MenuItemOption value={EditMode.freeWhites}>
             <Flex alignItems="center">
-              <Icon size="small" as={FiCircle}/>
+              <ModeIcon mode={EditMode.freeWhites} />
               <Text ml={2}>Put Free Whites</Text>
             </Flex>
           </MenuItemOption>
           <MenuDivider />
           <MenuItemOption value={EditMode.markerPoints}>
             <Flex alignItems="center">
-              <Icon size="small" as={FiType}/>
+              <ModeIcon mode={EditMode.markerPoints} />
               <Text ml={2}>Mark Points</Text>
             </Flex>
           </MenuItemOption>
           <MenuItemOption value={EditMode.markerLines}>
             <Flex alignItems="center">
-              <Icon size="small" as={FiEdit3}/>
+              <ModeIcon mode={EditMode.markerLines} />
               <Text ml={2}>Mark Lines</Text>
             </Flex>
           </MenuItemOption>
@@ -235,7 +235,7 @@ const ModeIcon: FC<{mode: EditMode}> = ({
     case EditMode.freeWhites:
       return <Icon size="small" as={FiCircle}/>
     case EditMode.markerPoints:
-      return <Icon size="small" as={FiType}/>
+      return <Icon size="small" as={FiCrosshair}/>
     case EditMode.markerLines:
       return <Icon size="small" as={FiEdit3}/>
     default:
