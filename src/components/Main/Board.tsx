@@ -7,7 +7,7 @@ const MAIN_BOARD_ID = 'main-board'
 
 const Default: FC = () => {
   const [appState, setAppState] = useContext(AppStateContext)
-  const onClickPoint = (p: Point) => setAppState(appState.move(p))
+  const onClickPoint = (p: Point) => setAppState(appState.click(p))
   return <BoardComponent
     id={MAIN_BOARD_ID}
     onClickPoint={onClickPoint}

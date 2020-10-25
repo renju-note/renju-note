@@ -178,7 +178,7 @@ const EditMenu: FC<MenuProps> = ({
           </MenuItemOption>
         </MenuOptionGroup>
         <MenuDivider />
-        <MenuItem onClick={() => setAppState(appState.resetFreeState())}>
+        <MenuItem onClick={() => setAppState(appState.clearFreeStones())}>
           <Icon size="small" as={FiTrash2} />
           <Text ml={2}>Clear Free Stones</Text>
         </MenuItem>
