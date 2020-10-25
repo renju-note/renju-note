@@ -154,37 +154,37 @@ const EditMenu: FC<MenuProps> = ({
           <MenuItemOption value={EditMode.freeBlacks}>
             <Flex alignItems="center">
               <Icon size="small" as={FiCircle} fill="black" />
-              <Text ml={2}>Free Blacks</Text>
+              <Text ml={2}>Put Free Blacks</Text>
             </Flex>
           </MenuItemOption>
           <MenuItemOption value={EditMode.freeWhites}>
             <Flex alignItems="center">
               <Icon size="small" as={FiCircle}/>
-              <Text ml={2}>Free Whites</Text>
+              <Text ml={2}>Put Free Whites</Text>
             </Flex>
           </MenuItemOption>
           <MenuDivider />
-          <MenuItemOption value={EditMode.markerAlphabets}>
+          <MenuItemOption value={EditMode.markerPoints}>
             <Flex alignItems="center">
               <Icon size="small" as={FiType}/>
-              <Text ml={2}>Marker Alphabets</Text>
+              <Text ml={2}>Mark Points</Text>
             </Flex>
           </MenuItemOption>
           <MenuItemOption value={EditMode.markerLines}>
             <Flex alignItems="center">
               <Icon size="small" as={FiEdit2}/>
-              <Text ml={2}>Marker Lines</Text>
+              <Text ml={2}>Mark Lines</Text>
             </Flex>
           </MenuItemOption>
         </MenuOptionGroup>
         <MenuDivider />
         <MenuItem onClick={() => setAppState(appState.resetFreeState())}>
           <Icon size="small" as={FiTrash2} />
-          <Text ml={2}>Reset Free Stones</Text>
+          <Text ml={2}>Clear Free Stones</Text>
         </MenuItem>
         <MenuItem>
           <Icon size="small" as={FiTrash2} />
-          <Text ml={2}>Reset Markers</Text>
+          <Text ml={2}>Clear Markers</Text>
         </MenuItem>
         <MenuItem
           onClick={
