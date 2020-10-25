@@ -13,12 +13,11 @@ import {
   FiChevronLeft, FiChevronRight, FiChevronsLeft, FiChevronsRight,
   FiCircle,
   FiEdit,
-  FiEdit2,
+  FiEdit3,
   FiInfo,
   FiLoader,
   FiMenu,
   FiMoreVertical,
-  FiPlayCircle,
   FiToggleRight,
   FiTrash2,
   FiType,
@@ -98,7 +97,6 @@ type MenuProps = {
 const LeftMenu: FC<MenuProps> = ({
   buttonSize,
 }) => {
-  const preferenceDisclosure = useDisclosure()
   const aboutDisclosure = useDisclosure()
   return <>
     <Menu>
@@ -110,18 +108,12 @@ const LeftMenu: FC<MenuProps> = ({
         />
       </MenuButton>
       <MenuList>
-        <MenuItem onClick={preferenceDisclosure.onOpen}>
-          <Icon size="small" as={FiToggleRight} />
-          <Text ml={2}>Preferences</Text>
-        </MenuItem>
-        <MenuDivider />
         <MenuItem onClick={aboutDisclosure.onOpen}>
           <Icon size="small" as={FiInfo} />
           <Text ml={2}>About</Text>
         </MenuItem>
       </MenuList>
     </Menu>
-    <PreferenceModal isOpen={preferenceDisclosure.isOpen} onClose={preferenceDisclosure.onClose} />
     <AboutModal isOpen={aboutDisclosure.isOpen} onClose={aboutDisclosure.onClose} />
   </>
 }
@@ -134,7 +126,7 @@ const EditMenu: FC<MenuProps> = ({
     <Menu>
       <MenuButton as={Box}>
         <IconButton
-          icon={FiEdit}
+          icon={() => <ModeIcon mode={appState.mode} />}
           aria-label="edit"
           size={buttonSize}
           variant="ghost"
@@ -146,7 +138,7 @@ const EditMenu: FC<MenuProps> = ({
         }>
           <MenuItemOption value={EditMode.mainMoves}>
             <Flex alignItems="center">
-              <Icon size="small" as={FiPlayCircle}/>
+              <Icon size="small" as={FiEdit}/>
               <Text ml={2}>Main Moves</Text>
             </Flex>
           </MenuItemOption>
@@ -172,7 +164,7 @@ const EditMenu: FC<MenuProps> = ({
           </MenuItemOption>
           <MenuItemOption value={EditMode.markerLines}>
             <Flex alignItems="center">
-              <Icon size="small" as={FiEdit2}/>
+              <Icon size="small" as={FiEdit3}/>
               <Text ml={2}>Mark Lines</Text>
             </Flex>
           </MenuItemOption>
@@ -204,6 +196,7 @@ const EditMenu: FC<MenuProps> = ({
 const RightMenu: FC<MenuProps> = ({
   buttonSize,
 }) => {
+  const preferenceDisclosure = useDisclosure()
   const downloadHiddenId = 'download-hidden'
   return <>
     <Menu>
@@ -215,14 +208,39 @@ const RightMenu: FC<MenuProps> = ({
         />
       </MenuButton>
       <MenuList>
+        <MenuItem onClick={preferenceDisclosure.onOpen}>
+          <Icon size="small" as={FiToggleRight} />
+          <Text ml={2}>Preferences</Text>
+        </MenuItem>
+        <MenuDivider />
         <MenuItem onClick={() => onDownload(downloadHiddenId)}>
           <Icon size="small" as={FiCamera} />
           <Text ml={2}>Download Picture</Text>
         </MenuItem>
       </MenuList>
     </Menu>
+    <PreferenceModal isOpen={preferenceDisclosure.isOpen} onClose={preferenceDisclosure.onClose} />
     <DownloadHidden id={downloadHiddenId} />
   </>
+}
+
+const ModeIcon: FC<{mode: EditMode}> = ({
+  mode,
+}) => {
+  switch (mode) {
+    case EditMode.mainMoves:
+      return <Icon size="small" as={FiEdit}/>
+    case EditMode.freeBlacks:
+      return <Icon size="small" as={FiCircle} fill="black"/>
+    case EditMode.freeWhites:
+      return <Icon size="small" as={FiCircle}/>
+    case EditMode.markerPoints:
+      return <Icon size="small" as={FiType}/>
+    case EditMode.markerLines:
+      return <Icon size="small" as={FiEdit3}/>
+    default:
+      return <Icon size="small" as={FiEdit}/>
+  }
 }
 
 export default Default

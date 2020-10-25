@@ -12,10 +12,10 @@ import {
   Text,
 } from '@chakra-ui/core'
 import {
+  FiAlertCircle,
   FiToggleRight,
   FiHash,
   FiInfo,
-  FiDisc,
   FiXSquare,
   FiTarget,
   FiGitCommit,
@@ -67,7 +67,7 @@ const Default: FC<DefaultProps> = ({
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Preference</ModalHeader>
+        <ModalHeader>Preferences</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Flex justify="space-between" align="center" mb={4}>
@@ -118,7 +118,7 @@ const Default: FC<DefaultProps> = ({
           <Flex justify="space-between" align="center">
             <PreferenceSwitch
               id="controller-preference-show-property-eyes"
-              icon={FiDisc}
+              icon={FiAlertCircle}
               labelText="Threes and Fours Eyes"
               isChecked={preference.showPropertyEyes}
               onChange={() => setPreference({ ...preference, showPropertyEyes: !preference.showPropertyEyes })}
