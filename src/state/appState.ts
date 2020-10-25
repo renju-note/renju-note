@@ -1,5 +1,4 @@
-import { Board, equal, N_LINES, Point } from '../rule'
-import { GameState } from './gameState'
+import { Board, equal, Game, N_LINES, Point } from '../rule'
 import { FreeLinesState } from './freeLinesState'
 import { FreePointsState } from './freePointsState'
 
@@ -14,7 +13,8 @@ export type EditMode = typeof EditMode[keyof typeof EditMode]
 
 export class AppState {
   readonly mode: EditMode
-  readonly gameState: GameState
+  readonly game: Game
+  readonly cursor: number
   readonly freeBlacks: FreePointsState
   readonly freeWhites: FreePointsState
   readonly markerPoints: FreePointsState
@@ -25,34 +25,56 @@ export class AppState {
     init:
       | {}
       | {code: string}
-      | Pick<AppState, 'mode' | 'gameState' | 'freeBlacks' | 'freeWhites' | 'markerPoints' | 'markerLines'>
+      | Pick<
+          AppState,
+          'mode' | 'game' | 'cursor' | 'freeBlacks' | 'freeWhites' | 'markerPoints' | 'markerLines'
+        >
   ) {
-    this.mode = 'mode' in init ? init.mode : EditMode.mainMoves
-    this.gameState = 'gameState' in init ? init.gameState : new GameState(init)
-    this.freeBlacks = 'freeBlacks' in init ? init.freeBlacks : new FreePointsState({})
-    this.freeWhites = 'freeWhites' in init ? init.freeWhites : new FreePointsState({})
-    this.markerPoints = 'markerPoints' in init ? init.markerPoints : new FreePointsState({})
-    this.markerLines = 'markerLines' in init ? init.markerLines : new FreeLinesState({})
+    if ('mode' in init) {
+      this.mode = init.mode
+      this.game = init.game
+      this.cursor = init.cursor
+      this.freeBlacks = init.freeBlacks
+      this.freeWhites = init.freeWhites
+      this.markerPoints = init.markerPoints
+      this.markerLines = init.markerLines
+    } else if ('code' in init) {
+      const codes = init.code.split('/')
+      if (codes.length !== 2) throw new Error('invalid code')
+      const [gameCode, cursorCode] = codes
+
+      this.mode = EditMode.mainMoves
+      this.game = new Game({ code: gameCode })
+      this.cursor = parseInt(cursorCode)
+      this.freeBlacks = new FreePointsState({})
+      this.freeWhites = new FreePointsState({})
+      this.markerPoints = new FreePointsState({})
+      this.markerLines = new FreeLinesState({})
+    } else {
+      this.mode = EditMode.mainMoves
+      this.game = new Game({})
+      this.cursor = 0
+      this.freeBlacks = new FreePointsState({})
+      this.freeWhites = new FreePointsState({})
+      this.markerPoints = new FreePointsState({})
+      this.markerLines = new FreeLinesState({})
+    }
   }
 
   setMode (mode: EditMode): AppState {
     return this.update({ mode: mode })
   }
 
-  click (p: Point): AppState {
+  edit (p: Point): AppState {
+    if (!this.canEdit(p)) return this
     switch (this.mode) {
       case EditMode.mainMoves:
-        if (this.hasStone(p)) return this
-        if (this.gameState.game.isBlackTurn && this.board.forbidden(p)) return this
-        return this.update({ gameState: this.gameState.move(p) })
+        return this.update({ game: this.game.move(p) }).toLast()
       case EditMode.freeBlacks:
-        if (this.hasStone(p)) return this
         return this.update({ freeBlacks: this.freeBlacks.add(p) })
       case EditMode.freeWhites:
-        if (this.hasStone(p)) return this
         return this.update({ freeWhites: this.freeWhites.add(p) })
       case EditMode.markerPoints:
-        if (this.hasStone(p)) return this
         return this.update({ markerPoints: this.markerPoints.add(p) })
       case EditMode.markerLines:
         return this.update({ markerLines: this.markerLines.draw(p) })
@@ -62,9 +84,10 @@ export class AppState {
   }
 
   undo (): AppState {
+    if (!this.canUndo) return this
     switch (this.mode) {
       case EditMode.mainMoves:
-        return this.update({ gameState: this.gameState.undo() })
+        return this.update({ game: this.game.undo() }).toLast()
       case EditMode.freeBlacks:
         return this.update({ freeBlacks: this.freeBlacks.undo() })
       case EditMode.freeWhites:
@@ -79,19 +102,24 @@ export class AppState {
   }
 
   forward (): AppState {
-    return this.update({ gameState: this.gameState.forward() })
+    return this.navigate(this.cursor + 1)
   }
 
   backward (): AppState {
-    return this.update({ gameState: this.gameState.backward() })
+    return this.navigate(this.cursor - 1)
   }
 
   toStart (): AppState {
-    return this.update({ gameState: this.gameState.toStart() })
+    return this.navigate(0)
   }
 
   toLast (): AppState {
-    return this.update({ gameState: this.gameState.toLast() })
+    return this.navigate(this.game.moves.length)
+  }
+
+  navigate (i: number): AppState {
+    if (i < 0 || this.game.moves.length < i) return this
+    return this.update({ cursor: i })
   }
 
   clearFreeStones (): AppState {
@@ -107,29 +135,31 @@ export class AppState {
     })
   }
 
-  get blacks (): Point[] {
-    return [...this.gameState.blacks, ...this.freeBlacks.points]
-  }
-
-  get whites (): Point[] {
-    return [...this.gameState.whites, ...this.freeWhites.points]
-  }
-
-  get board (): Board {
-    if (this.boardCache === undefined) {
-      this.boardCache = new Board({
-        size: N_LINES,
-        blacks: this.blacks,
-        whites: this.whites,
-      })
+  canEdit (p: Point): boolean {
+    switch (this.mode) {
+      case EditMode.mainMoves:
+        return (
+          this.isLast &&
+          !this.hasStone(p) &&
+          !(this.game.isBlackTurn && this.board.forbidden(p))
+        )
+      case EditMode.freeBlacks:
+        return (this.isLast && !this.hasStone(p))
+      case EditMode.freeWhites:
+        return (this.isLast && !this.hasStone(p))
+      case EditMode.markerPoints:
+        return !this.hasStone(p)
+      case EditMode.markerLines:
+        return true
+      default:
+        return false
     }
-    return this.boardCache
   }
 
   get canUndo (): boolean {
     switch (this.mode) {
       case EditMode.mainMoves:
-        return this.gameState.canUndo
+        return this.isLast && this.game.canUndo
       case EditMode.freeBlacks:
         return this.freeBlacks.canUndo
       case EditMode.freeWhites:
@@ -143,8 +173,43 @@ export class AppState {
     }
   }
 
+  get board (): Board {
+    if (this.boardCache === undefined) {
+      this.boardCache = new Board({
+        size: N_LINES,
+        blacks: this.blacks,
+        whites: this.whites,
+      })
+    }
+    return this.boardCache
+  }
+
+  get moves (): Point[] {
+    return this.partial.moves
+  }
+
+  get blacks (): Point[] {
+    return [...this.partial.blacks, ...this.freeBlacks.points]
+  }
+
+  get whites (): Point[] {
+    return [...this.partial.whites, ...this.freeWhites.points]
+  }
+
+  get partial (): Game {
+    return this.game.fork(this.cursor)
+  }
+
+  get isStart (): boolean {
+    return this.cursor === 0
+  }
+
+  get isLast (): boolean {
+    return this.cursor === this.game.moves.length
+  }
+
   get code (): string {
-    return this.gameState.code
+    return `${this.game.code}/${this.cursor}`
   }
 
   private update (
@@ -152,13 +217,14 @@ export class AppState {
       Partial<
         Pick<
           AppState,
-          'mode' | 'gameState' | 'freeBlacks' | 'freeWhites' | 'markerPoints' | 'markerLines'
+          'mode' | 'game' | 'cursor' | 'freeBlacks' | 'freeWhites' | 'markerPoints' | 'markerLines'
         >
       >
   ): AppState {
     return new AppState({
       mode: fields.mode ?? this.mode,
-      gameState: fields.gameState ?? this.gameState,
+      game: fields.game ?? this.game,
+      cursor: fields.cursor ?? this.cursor,
       freeBlacks: fields.freeBlacks ?? this.freeBlacks,
       freeWhites: fields.freeWhites ?? this.freeWhites,
       markerPoints: fields.markerPoints ?? this.markerPoints,

@@ -45,14 +45,14 @@ const Default: FC = () => {
         icon={FiChevronsLeft} aria-label="to start"
         size={system.buttonSize}
         variant="ghost"
-        isDisabled={appState.gameState.isStart}
+        isDisabled={appState.isStart}
       />
       <IconButton
         onClick={() => setAppState(appState.backward())}
         icon={FiChevronLeft} aria-label="backward"
         size={system.buttonSize}
         variant="ghost"
-        isDisabled={appState.gameState.isStart}
+        isDisabled={appState.isStart}
       />
       <Button
         width={6} // do not resize according to text
@@ -60,21 +60,21 @@ const Default: FC = () => {
         variant="ghost" fontFamily="Noto Serif" fontWeight="normal"
         isDisabled={true}
       >
-        {appState.gameState.cursor}
+        {appState.cursor}
       </Button>
       <IconButton
         onClick={() => setAppState(appState.forward())}
         icon={FiChevronRight} aria-label="forward"
         size={system.buttonSize}
         variant="ghost"
-        isDisabled={appState.gameState.isLast}
+        isDisabled={appState.isLast}
       />
       <IconButton
         onClick={() => setAppState(appState.toLast())}
         icon={FiChevronsRight} aria-label="to last"
         size={system.buttonSize}
         variant="ghost"
-        isDisabled={appState.gameState.isLast}
+        isDisabled={appState.isLast}
       />
     </Flex>
     <IconButton

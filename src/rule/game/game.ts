@@ -19,15 +19,15 @@ export class Game {
     }
   }
 
-  move (p: Point): Game | undefined {
-    if (!this.movable(p)) return undefined
+  move (p: Point): Game {
+    if (!this.movable(p)) return this
     return new Game({
       moves: [...this.moves, p],
     })
   }
 
-  undo (): Game | undefined {
-    if (this.moves.length === 0) return undefined
+  undo (): Game {
+    if (this.moves.length === 0) return this
     return new Game({
       moves: this.moves.slice(0, this.moves.length - 1),
     })
@@ -39,6 +39,10 @@ export class Game {
 
   fork (i: number): Game {
     return new Game({ moves: this.moves.slice(0, i) })
+  }
+
+  get canUndo (): boolean {
+    return this.moves.length > 0
   }
 
   get code (): string {

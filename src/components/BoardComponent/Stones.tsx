@@ -5,7 +5,7 @@ import { SystemContext, PreferenceContext, AppStateContext } from '../contexts'
 const Default: FC = () => {
   const preference = useContext(PreferenceContext)[0]
   const appState = useContext(AppStateContext)[0]
-  const moves = appState.gameState.moves
+  const moves = appState.moves
   return <g>
     {
       preference.emphasizeLastMove && moves.length >= 1 &&
@@ -24,7 +24,7 @@ const Default: FC = () => {
     {
       preference.showOrders &&
       <Orders
-        moves={appState.gameState.moves}
+        moves={moves}
       />
     }
   </g>
