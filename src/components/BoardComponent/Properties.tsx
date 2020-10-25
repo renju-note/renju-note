@@ -72,11 +72,7 @@ const Default: FC = () => {
   </g>
 }
 
-type ForbiddensProps = {
-  points: Point[]
-}
-
-const Forbiddens: FC<ForbiddensProps> = ({
+const Forbiddens: FC<{ points: Point[] }> = ({
   points,
 }) => {
   const system = useContext(SystemContext)

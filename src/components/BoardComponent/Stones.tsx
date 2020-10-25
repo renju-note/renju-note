@@ -9,7 +9,7 @@ const Default: FC = () => {
   return <g>
     {
       preference.emphasizeLastMove && moves.length >= 1 &&
-      <LastMarker
+      <LastMove
         point={moves[moves.length - 1]}
       />
     }
@@ -30,12 +30,7 @@ const Default: FC = () => {
   </g>
 }
 
-type StonesProps = {
-  black: boolean
-  points: Point[]
-}
-
-const Stones: FC<StonesProps> = ({
+const Stones: FC<{ black: boolean, points: Point[]}> = ({
   black,
   points,
 }) => {
@@ -47,11 +42,7 @@ const Stones: FC<StonesProps> = ({
   </g>
 }
 
-type OrdersProps = {
-  moves: Point[]
-}
-
-const Orders: FC<OrdersProps> = ({
+const Orders: FC<{moves: Point[]}> = ({
   moves,
 }) => {
   const system = useContext(SystemContext)
@@ -76,12 +67,7 @@ const Orders: FC<OrdersProps> = ({
   </g>
 }
 
-type StoneProps = {
-  black: boolean
-  point: Point
-}
-
-const Stone: FC<StoneProps> = ({
+const Stone: FC<{black: boolean, point: Point}> = ({
   black,
   point,
 }) => {
@@ -97,11 +83,7 @@ const Stone: FC<StoneProps> = ({
   />
 }
 
-type LastMarkerProps = {
-  point: Point
-}
-
-const LastMarker: FC<LastMarkerProps> = ({
+const LastMove: FC<{ point: Point }> = ({
   point,
 }) => {
   const system = useContext(SystemContext)
