@@ -23,7 +23,8 @@ import {
   FiCrosshair,
   FiX
 } from 'react-icons/fi'
-import { analytics } from 'firebase'
+import * as firebase from 'firebase/app'
+import 'firebase/analytics'
 
 import { AppState, EditMode } from '../../../state'
 import { AppStateContext, SystemContext } from '../../contexts'
@@ -219,7 +220,7 @@ const RightMenu: FC<MenuProps> = ({
         <MenuItem onClick={
           () => {
             onDownload(downloadHiddenId)
-            analytics().logEvent('download_picture', { code: appState.code })
+            firebase.analytics().logEvent('download_picture', { code: appState.code })
           }
         }>
           <Icon size="small" as={FiCamera} />
