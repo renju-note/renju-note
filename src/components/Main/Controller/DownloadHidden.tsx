@@ -2,6 +2,7 @@ import { Box } from '@chakra-ui/core'
 import React, { FC } from 'react'
 import BoardComponent from '../../BoardComponent'
 import { System, SystemContext } from '../../contexts'
+import 'firebase/analytics'
 
 type DefaultProps = {
   id: string

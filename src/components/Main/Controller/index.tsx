@@ -23,6 +23,8 @@ import {
   FiCrosshair,
   FiX
 } from 'react-icons/fi'
+import { analytics } from 'firebase'
+
 import { AppState, EditMode } from '../../../state'
 import { AppStateContext, SystemContext } from '../../contexts'
 import AboutModal from './AboutModal'
@@ -198,6 +200,7 @@ const RightMenu: FC<MenuProps> = ({
 }) => {
   const preferenceDisclosure = useDisclosure()
   const downloadHiddenId = 'download-hidden'
+  const appState = useContext(AppStateContext)[0]
   return <>
     <Menu>
       <MenuButton as={Box}>
@@ -213,7 +216,12 @@ const RightMenu: FC<MenuProps> = ({
           <Text ml={2}>Preferences</Text>
         </MenuItem>
         <MenuDivider />
-        <MenuItem onClick={() => onDownload(downloadHiddenId)}>
+        <MenuItem onClick={
+          () => {
+            onDownload(downloadHiddenId)
+            analytics().logEvent('download_picture', { code: appState.code })
+          }
+        }>
           <Icon size="small" as={FiCamera} />
           <Text ml={2}>Download Picture</Text>
         </MenuItem>
@@ -224,22 +232,22 @@ const RightMenu: FC<MenuProps> = ({
   </>
 }
 
-const ModeIcon: FC<{mode: EditMode}> = ({
+const ModeIcon: FC<{ mode: EditMode }> = ({
   mode,
 }) => {
   switch (mode) {
     case EditMode.mainMoves:
-      return <Icon size="small" as={FiEdit}/>
+      return <Icon size="small" as={FiEdit} />
     case EditMode.freeBlacks:
-      return <Icon size="small" as={FiCircle} fill="black"/>
+      return <Icon size="small" as={FiCircle} fill="black" />
     case EditMode.freeWhites:
-      return <Icon size="small" as={FiCircle}/>
+      return <Icon size="small" as={FiCircle} />
     case EditMode.markerPoints:
-      return <Icon size="small" as={FiCrosshair}/>
+      return <Icon size="small" as={FiCrosshair} />
     case EditMode.markerLines:
-      return <Icon size="small" as={FiEdit3}/>
+      return <Icon size="small" as={FiEdit3} />
     default:
-      return <Icon size="small" as={FiEdit}/>
+      return <Icon size="small" as={FiEdit} />
   }
 }
 
