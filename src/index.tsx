@@ -3,6 +3,13 @@ import ReactDOM from 'react-dom'
 import './index.css'
 import App from './components/App'
 import * as serviceWorker from './serviceWorker'
+import * as firebase from 'firebase/app'
+import 'firebase/analytics'
+
+fetch('/__/firebase/init.json').then(async response => {
+  firebase.initializeApp(await response.json())
+  firebase.analytics()
+})
 
 ReactDOM.render(
   <React.StrictMode>
