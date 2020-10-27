@@ -90,7 +90,7 @@ export class System {
       case 320:
         return 1.5
       case 360:
-        return 2
+        return 1.5
       case 640:
         return 2
     }
