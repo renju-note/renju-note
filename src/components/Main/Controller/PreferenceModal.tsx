@@ -12,14 +12,14 @@ import {
   Text,
 } from '@chakra-ui/core'
 import {
-  FiAlertCircle,
-  FiToggleRight,
+  FiGitCommit,
   FiHash,
   FiInfo,
-  FiXSquare,
+  FiStopCircle,
   FiTarget,
-  FiGitCommit,
+  FiToggleRight,
   FiType,
+  FiXSquare,
 } from 'react-icons/fi'
 import React, { FC, useContext } from 'react'
 import { PreferenceContext } from '../../contexts'
@@ -122,7 +122,7 @@ const Default: FC<DefaultProps> = ({
           <Flex justify="space-between" align="center">
             <PreferenceSwitch
               id="controller-preference-show-property-eyes"
-              icon={FiAlertCircle}
+              icon={FiStopCircle}
               labelText="Threes and Fours Eyes"
               isChecked={preference.showPropertyEyes}
               onChange={() => setPreference({ ...preference, showPropertyEyes: !preference.showPropertyEyes })}
