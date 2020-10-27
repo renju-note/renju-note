@@ -11,8 +11,26 @@ export const EditMode = {
 } as const
 export type EditMode = typeof EditMode[keyof typeof EditMode]
 
+export const AppOption = {
+  invertMoves: 'invertMoves',
+} as const
+export type AppOption = typeof AppOption[keyof typeof AppOption]
+
+type AppStateFields = Pick<
+  AppState,
+  | 'mode'
+  | 'options'
+  | 'game'
+  | 'cursor'
+  | 'freeBlacks'
+  | 'freeWhites'
+  | 'markerPoints'
+  | 'markerLines'
+>
+
 export class AppState {
   readonly mode: EditMode
+  readonly options: AppOption[]
   readonly game: Game
   readonly cursor: number
   readonly freeBlacks: FreePointsState
@@ -21,16 +39,10 @@ export class AppState {
   readonly markerLines: FreeLinesState
   private boardCache: Board | undefined
 
-  constructor (
-    init:
-      | {}
-      | Pick<
-          AppState,
-          'mode' | 'game' | 'cursor' | 'freeBlacks' | 'freeWhites' | 'markerPoints' | 'markerLines'
-        >
-  ) {
+  constructor (init: {} | AppStateFields) {
     if ('mode' in init) {
       this.mode = init.mode
+      this.options = init.options
       this.game = init.game
       this.cursor = init.cursor
       this.freeBlacks = init.freeBlacks
@@ -39,6 +51,7 @@ export class AppState {
       this.markerLines = init.markerLines
     } else {
       this.mode = EditMode.mainMoves
+      this.options = []
       this.game = new Game({})
       this.cursor = 0
       this.freeBlacks = new FreePointsState({})
@@ -55,6 +68,7 @@ export class AppState {
       const [gameCode, cursorCode] = codes
       return new AppState({
         mode: EditMode.mainMoves,
+        options: [],
         game: Game.fromCode(gameCode) ?? new Game({}),
         cursor: parseInt(cursorCode),
         freeBlacks: new FreePointsState({}),
@@ -66,6 +80,7 @@ export class AppState {
 
     const codes = code.split(',')
     const findCode = (s: string) => codes.find(c => c.startsWith(s))?.replace(`${s}:`, '') ?? ''
+    const optionsCode = findCode('o')
     const gameCode = findCode('g')
     const cursorCode = findCode('c')
     const freeBlacksCode = findCode('b')
@@ -74,6 +89,7 @@ export class AppState {
     const markerLinesCode = findCode('l')
     return new AppState({
       mode: EditMode.mainMoves,
+      options: optionsCode.split('').map(longName).filter(o => o !== undefined) as AppOption[],
       game: Game.fromCode(gameCode) ?? new Game({}),
       cursor: parseInt(cursorCode) || 0,
       freeBlacks: FreePointsState.fromCode(freeBlacksCode) ?? new FreePointsState({}),
@@ -85,6 +101,14 @@ export class AppState {
 
   setMode (mode: EditMode): AppState {
     return this.update({ mode: mode })
+  }
+
+  setOptions (options: AppOption[]): AppState {
+    return this.update({ options: options })
+  }
+
+  hasOption (o: AppOption): boolean {
+    return this.options.indexOf(o) >= 0
   }
 
   edit (p: Point): AppState {
@@ -212,11 +236,13 @@ export class AppState {
   }
 
   get blacks (): Point[] {
-    return [...this.partial.blacks, ...this.freeBlacks.points]
+    const blackMoves = this.hasOption(AppOption.invertMoves) ? this.partial.whites : this.partial.blacks
+    return [...blackMoves, ...this.freeBlacks.points]
   }
 
   get whites (): Point[] {
-    return [...this.partial.whites, ...this.freeWhites.points]
+    const whiteMoves = this.hasOption(AppOption.invertMoves) ? this.partial.blacks : this.partial.whites
+    return [...whiteMoves, ...this.freeWhites.points]
   }
 
   get partial (): Game {
@@ -233,6 +259,7 @@ export class AppState {
 
   get code (): string {
     const codes: string[] = []
+    if (this.options.length > 0) codes.push(`o:${this.options.map(shortName).join('')}`)
     if (!this.game.empty) codes.push(`g:${this.game.code}`)
     if (this.cursor !== 0) codes.push(`c:${this.cursor}`)
     if (!this.freeBlacks.empty) codes.push(`b:${this.freeBlacks.code}`)
@@ -242,17 +269,10 @@ export class AppState {
     return codes.join(',')
   }
 
-  private update (
-    fields:
-      Partial<
-        Pick<
-          AppState,
-          'mode' | 'game' | 'cursor' | 'freeBlacks' | 'freeWhites' | 'markerPoints' | 'markerLines'
-        >
-      >
-  ): AppState {
+  private update (fields: Partial<AppStateFields>): AppState {
     return new AppState({
       mode: fields.mode ?? this.mode,
+      options: fields.options ?? this.options,
       game: fields.game ?? this.game,
       cursor: fields.cursor ?? this.cursor,
       freeBlacks: fields.freeBlacks ?? this.freeBlacks,
@@ -264,5 +284,19 @@ export class AppState {
 
   private hasStone (p: Point): boolean {
     return [...this.blacks, ...this.whites].findIndex(q => equal(p, q)) >= 0
+  }
+}
+
+const shortName = (o: AppOption): string => {
+  switch (o) {
+    case AppOption.invertMoves:
+      return 'i'
+  }
+}
+
+const longName = (s: string): AppOption | undefined => {
+  switch (s) {
+    case 'i':
+      return AppOption.invertMoves
   }
 }

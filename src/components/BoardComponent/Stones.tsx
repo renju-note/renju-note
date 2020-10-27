@@ -1,5 +1,6 @@
 import React, { FC, useContext } from 'react'
 import { Point } from '../../rule'
+import { AppOption } from '../../state'
 import { SystemContext, PreferenceContext, AppStateContext } from '../contexts'
 
 const Default: FC = () => {
@@ -25,6 +26,7 @@ const Default: FC = () => {
       preference.showOrders &&
       <Orders
         moves={moves}
+        invert={appState.hasOption(AppOption.invertMoves)}
       />
     }
   </g>
@@ -42,13 +44,14 @@ const Stones: FC<{ black: boolean, points: Point[]}> = ({
   </g>
 }
 
-const Orders: FC<{moves: Point[]}> = ({
+const Orders: FC<{moves: Point[], invert: boolean}> = ({
   moves,
+  invert,
 }) => {
   const system = useContext(SystemContext)
   const texts = moves.map(
     ([x, y], key) => {
-      const black = key % 2 === 0
+      const black = invert ? key % 2 !== 0 : key % 2 === 0
       return <text
         key={key}
         x={system.cx(x)} y={system.cy(y)}
