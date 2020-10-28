@@ -1,6 +1,7 @@
 import React, { FC, useContext } from 'react'
 import { Point } from '../../rule'
-import { SystemContext, AppStateContext, PreferenceContext } from '../contexts'
+import { AppOption } from '../../state'
+import { SystemContext, AppStateContext } from '../contexts'
 
 const Default: FC = () => {
   const appState = useContext(AppStateContext)[0]
@@ -10,15 +11,18 @@ const Default: FC = () => {
       appState.markerLines.start !== 'empty' &&
       <LineStart point={appState.markerLines.start} />
     }
-    <Points points={appState.markerPoints.points}/>
+    <Points
+      points={appState.markerPoints.points}
+      label={appState.options.includes(AppOption.labelMarkers)}
+    />
   </g>
 }
 
-const Points: FC<{ points: Point[]}> = ({
+const Points: FC<{ points: Point[], label: boolean }> = ({
   points,
+  label,
 }) => {
   const system = useContext(SystemContext)
-  const preference = useContext(PreferenceContext)[0]
   const r = system.C * 3 / 8
   const markers = points.map(
     (p, key) => {
@@ -30,7 +34,7 @@ const Points: FC<{ points: Point[]}> = ({
           opacity="0.8"
         />
         {
-          preference.showMarkerAlphabets &&
+          label &&
           <text
             x={cx} y={cy}
             fill='#333333'

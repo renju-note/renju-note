@@ -13,6 +13,7 @@ export type EditMode = typeof EditMode[keyof typeof EditMode]
 
 export const AppOption = {
   invertMoves: 'invertMoves',
+  labelMarkers: 'labelMarkers',
 } as const
 export type AppOption = typeof AppOption[keyof typeof AppOption]
 
@@ -298,6 +299,8 @@ const shortName = (o: AppOption): string => {
   switch (o) {
     case AppOption.invertMoves:
       return 'i'
+    case AppOption.labelMarkers:
+      return 'l'
   }
 }
 
@@ -305,5 +308,7 @@ const longName = (s: string): AppOption | undefined => {
   switch (s) {
     case 'i':
       return AppOption.invertMoves
+    case 'l':
+      return AppOption.labelMarkers
   }
 }

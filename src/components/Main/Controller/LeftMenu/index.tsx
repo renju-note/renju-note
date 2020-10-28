@@ -8,7 +8,7 @@ import {
 } from '@chakra-ui/core'
 import React, { FC, useContext } from 'react'
 import { FiHelpCircle, FiMenu } from 'react-icons/fi'
-import { RiAtLine, RiFocus2Fill, RiGridLine, RiInformationLine } from 'react-icons/ri'
+import { RiFocus2Fill, RiGridLine, RiInformationLine } from 'react-icons/ri'
 import { SystemContext, PreferenceContext, Preference } from '../../../contexts'
 import AboutModal from './AboutModal'
 
@@ -20,7 +20,6 @@ const Default: FC = () => {
     if (preference.showIndices) values.push('showIndices')
     if (preference.emphasizeLastMove) values.push('emphasizeLastMove')
     if (preference.showOrders) values.push('showOrders')
-    if (preference.showMarkerAlphabets) values.push('showMarkerAlphabets')
     return values
   })()
   const aboutDisclosure = useDisclosure()
@@ -46,7 +45,6 @@ const Default: FC = () => {
                 showIndices: values.includes('showIndices'),
                 emphasizeLastMove: values.includes('emphasizeLastMove'),
                 showOrders: values.includes('showOrders'),
-                showMarkerAlphabets: values.includes('showMarkerAlphabets'),
               })
             }
           }
@@ -67,12 +65,6 @@ const Default: FC = () => {
             <Flex alignItems="center">
               <Icon size="small" as={RiFocus2Fill} />
               <Text ml={2}>Last Move</Text>
-            </Flex>
-          </MenuItemOption>
-          <MenuItemOption value="showMarkerAlphabets">
-            <Flex alignItems="center">
-              <Icon size="small" as={RiAtLine} />
-              <Text ml={2}>Alphabets on Markers</Text>
             </Flex>
           </MenuItemOption>
         </MenuOptionGroup>
