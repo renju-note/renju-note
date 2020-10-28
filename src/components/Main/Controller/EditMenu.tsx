@@ -74,7 +74,7 @@ const Default: FC = () => {
         </MenuOptionGroup>
         <MenuDivider />
         <MenuOptionGroup
-          title="Options"
+          title="Transform"
           type="checkbox"
           defaultValue={appState.options}
           onChange={
