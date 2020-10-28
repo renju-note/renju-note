@@ -26,7 +26,7 @@ const Default: FC = () => {
     return values
   })()
   return <>
-    <Menu>
+    <Menu autoSelect={false}>
       <MenuButton as={Box}>
         <IconButton
           icon={FiMoreVertical} aria-label="more"

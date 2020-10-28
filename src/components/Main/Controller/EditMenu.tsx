@@ -27,7 +27,7 @@ const Default: FC = () => {
   const system = useContext(SystemContext)
   const [appState, setAppState] = useContext(AppStateContext)
   return <>
-    <Menu>
+    <Menu autoSelect={false}>
       <MenuButton as={Box}>
         <IconButton
           icon={() => <ModeIcon mode={appState.mode} />}

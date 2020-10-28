@@ -24,7 +24,7 @@ const Default: FC = () => {
   })()
   const aboutDisclosure = useDisclosure()
   return <>
-    <Menu>
+    <Menu autoSelect={false}>
       <MenuButton as={Box}>
         <IconButton
           icon={FiMenu} aria-label="menu"
