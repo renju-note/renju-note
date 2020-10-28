@@ -21,12 +21,13 @@ import {
   FiToggleRight,
   FiTrash2,
   FiCrosshair,
-  FiX
+  FiX,
+  FiRefreshCw
 } from 'react-icons/fi'
 import * as firebase from 'firebase/app'
 import 'firebase/analytics'
 
-import { AppState, EditMode } from '../../../state'
+import { AppState, EditMode, AppOption } from '../../../state'
 import { AppStateContext, SystemContext } from '../../contexts'
 import AboutModal from './AboutModal'
 import DownloadHidden, { onDownload } from './DownloadHidden'
@@ -169,6 +170,22 @@ const EditMenu: FC<MenuProps> = ({
             <Flex alignItems="center">
               <ModeIcon mode={EditMode.markerLines} />
               <Text ml={2}>Mark Lines</Text>
+            </Flex>
+          </MenuItemOption>
+        </MenuOptionGroup>
+        <MenuDivider />
+        <MenuOptionGroup
+          title="Options"
+          type="checkbox"
+          defaultValue={appState.options}
+          onChange={
+            (value: any) => setAppState(appState.setOptions(value as AppOption[]))
+          }
+        >
+          <MenuItemOption value={AppOption.invertMoves}>
+            <Flex alignItems="center">
+              <Icon size="small" as={FiRefreshCw} />
+              <Text ml={2}>Invert Moves</Text>
             </Flex>
           </MenuItemOption>
         </MenuOptionGroup>
