@@ -168,6 +168,13 @@ export class AppState {
     return this.update({ cursor: i })
   }
 
+  clearMoves (): AppState {
+    return this.update({
+      game: new Game({}),
+      cursor: 0,
+    })
+  }
+
   clearFreeStones (): AppState {
     return this.update({
       freeBlacks: new FreePointsState({}),
