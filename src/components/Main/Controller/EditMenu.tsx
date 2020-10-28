@@ -10,6 +10,7 @@ import React, { FC, useContext } from 'react'
 import {
   RiAddCircleFill,
   RiAddCircleLine,
+  RiAtLine,
   RiCloseCircleLine,
   RiContrastFill,
   RiDeleteBinFill,
@@ -74,7 +75,7 @@ const Default: FC = () => {
         </MenuOptionGroup>
         <MenuDivider />
         <MenuOptionGroup
-          title="Options"
+          title="Transform"
           type="checkbox"
           defaultValue={appState.options}
           onChange={
@@ -85,6 +86,12 @@ const Default: FC = () => {
             <Flex alignItems="center">
               <Icon size="small" as={RiContrastFill} />
               <Text ml={2}>Invert Moves</Text>
+            </Flex>
+          </MenuItemOption>
+          <MenuItemOption value={AppOption.labelMarkers}>
+            <Flex alignItems="center">
+              <Icon size="small" as={RiAtLine} />
+              <Text ml={2}>Label Markers</Text>
             </Flex>
           </MenuItemOption>
         </MenuOptionGroup>
