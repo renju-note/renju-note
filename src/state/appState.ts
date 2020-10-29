@@ -101,7 +101,10 @@ export class AppState {
   }
 
   setMode (mode: EditMode): AppState {
-    return this.update({ mode: mode })
+    return this.update({
+      mode: mode,
+      markerLines: mode === EditMode.markerPoints ? this.markerLines : this.markerLines.unstart(),
+    })
   }
 
   setOptions (options: AppOption[]): AppState {

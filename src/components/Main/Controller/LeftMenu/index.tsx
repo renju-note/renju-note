@@ -7,8 +7,13 @@ import {
   useDisclosure
 } from '@chakra-ui/core'
 import React, { FC, useContext } from 'react'
-import { FiHelpCircle, FiMenu } from 'react-icons/fi'
-import { RiFocus2Fill, RiGridLine, RiInformationLine } from 'react-icons/ri'
+import {
+  RiFocus2Fill,
+  RiGridLine,
+  RiInformationLine,
+  RiMenuLine,
+  RiQuestionLine
+} from 'react-icons/ri'
 import { SystemContext, PreferenceContext, Preference } from '../../../contexts'
 import AboutModal from './AboutModal'
 
@@ -27,7 +32,7 @@ const Default: FC = () => {
     <Menu autoSelect={false}>
       <MenuButton as={Box}>
         <IconButton
-          icon={FiMenu} aria-label="menu"
+          icon={RiMenuLine} aria-label="menu"
           size={system.buttonSize}
           variant="ghost"
         />
@@ -70,7 +75,7 @@ const Default: FC = () => {
         </MenuOptionGroup>
         <MenuDivider />
         <MenuItem onClick={aboutDisclosure.onOpen}>
-          <Icon size="small" as={FiHelpCircle} />
+          <Icon size="small" as={RiQuestionLine} />
           <Text ml={2}>About Renju Note</Text>
         </MenuItem>
       </MenuList>

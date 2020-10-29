@@ -51,6 +51,10 @@ export class FreeLinesState {
     })
   }
 
+  unstart (): FreeLinesState {
+    return this.update({ start: 'empty' })
+  }
+
   get canUndo (): boolean {
     return this.start !== 'empty' || this.lines.length > 0
   }

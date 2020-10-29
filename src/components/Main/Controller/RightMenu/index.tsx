@@ -8,10 +8,15 @@ import {
 import * as firebase from 'firebase/app'
 import 'firebase/analytics'
 import React, { FC, useContext } from 'react'
-import { FiCamera, FiMoreVertical } from 'react-icons/fi'
 import { AppStateContext, SystemContext, PreferenceContext, Preference } from '../../../contexts'
 import DownloadHidden, { onDownload } from './DownloadHidden'
-import { RiCloseLine, RiGitCommitFill, RiStopMiniFill } from 'react-icons/ri'
+import {
+  RiCloseLine,
+  RiDownload2Line,
+  RiGitCommitFill,
+  RiMore2Fill,
+  RiStopMiniFill,
+} from 'react-icons/ri'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
@@ -29,7 +34,7 @@ const Default: FC = () => {
     <Menu autoSelect={false}>
       <MenuButton as={Box}>
         <IconButton
-          icon={FiMoreVertical} aria-label="more"
+          icon={RiMore2Fill} aria-label="more"
           size={system.buttonSize}
           variant="ghost"
         />
@@ -77,7 +82,7 @@ const Default: FC = () => {
             firebase.analytics().logEvent('download_picture', { code: appState.code })
           }
         }>
-          <Icon size="small" as={FiCamera} />
+          <Icon size="small" as={RiDownload2Line} />
           <Text ml={2}>Download Picture</Text>
         </MenuItem>
       </MenuList>
