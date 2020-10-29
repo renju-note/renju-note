@@ -14,7 +14,7 @@ import {
   RiCloseCircleLine,
   RiContrastFill,
   RiDeleteBinFill,
-  RiEditCircleLine,
+  RiEditCircleFill,
   RiEditLine,
   RiEraserLine,
   RiIndeterminateCircleLine,
@@ -134,7 +134,7 @@ const ModeIcon: FC<{ mode: EditMode }> = ({
     case EditMode.freeWhites:
       return <Icon size="small" as={RiAddCircleLine} />
     case EditMode.markerPoints:
-      return <Icon size="small" as={RiEditCircleLine} />
+      return <Icon size="small" as={RiEditCircleFill} />
     case EditMode.markerLines:
       return <Icon size="small" as={RiEditLine} />
     default:
