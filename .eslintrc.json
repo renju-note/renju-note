@@ -1,44 +1,61 @@
 {
-    "env": {
-        "browser": true,
-        "es6": true
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "extends": [
+    "plugin:react/recommended",
+    "standard"
+  ],
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "overrides": [
+    {
+      "env": {
+        "jest": true
+      },
+      "files": [
+        "**/*.test.ts",
+        "**/*.test.tsx"
+      ]
+    }
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
     },
-    "extends": [
-        "plugin:react/recommended",
-        "standard"
+    "sourceType": "module"
+  },
+  "plugins": [
+    "react",
+    "@typescript-eslint"
+  ],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_$",
+        "varsIgnorePattern": "^_$"
+      }
     ],
-    "globals": {
-        "Atomics": "readonly",
-        "SharedArrayBuffer": "readonly"
-    },
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
-        "ecmaVersion": 2018,
-        "sourceType": "module"
-    },
-    "plugins": [
-        "react",
-        "@typescript-eslint"
+    "@typescript-eslint/no-useless-constructor": "error",
+    "comma-dangle": [
+      "error",
+      "only-multiline"
     ],
-    "rules": {
-        "no-useless-constructor": ["off"],
-        "comma-dangle": ["error", "only-multiline"],
-        "react/prop-types": ["off"],
-        "@typescript-eslint/no-unused-vars": ["error", { "varsIgnorePattern": "^_$", "argsIgnorePattern": "^_$" }],
-        "@typescript-eslint/no-useless-constructor": "error"
-    },
-    "overrides": [
-        {
-            "files": [
-                "**/*.test.ts",
-                "**/*.test.tsx"
-            ],
-            "env": {
-                "jest": true
-            }
-        }
+    "no-useless-constructor": [
+      "off"
+    ],
+    "react/prop-types": [
+      "off"
     ]
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  }
 }
