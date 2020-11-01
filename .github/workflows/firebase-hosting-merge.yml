@@ -12,7 +12,7 @@ jobs:
       with:
         node-version: '14.x'
     - run: |
-        yarn
+        yarn install --frozen-lockfile
         CI=false yarn build
     - uses: FirebaseExtended/action-hosting-deploy@v0
       with:
