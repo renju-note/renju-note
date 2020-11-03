@@ -2,6 +2,7 @@ import { Flex, Stack } from '@chakra-ui/core'
 import React, { FC } from 'react'
 import Board from './Board'
 import Controller from './Controller'
+import Searcher from './Searcher'
 
 const Default: FC = () => {
   return <Flex justify="center">
@@ -11,6 +12,9 @@ const Default: FC = () => {
       </Flex>
       <Flex justify="center" align="center">
         <Controller />
+      </Flex>
+      <Flex justify="center" align="center">
+        <Searcher />
       </Flex>
     </Stack>
   </Flex>

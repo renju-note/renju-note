@@ -2,6 +2,8 @@ export const N_LINES = 15
 
 export const X_CODES = 'ABCDEFGHIJKLMNO'
 
+export const CODE_REGEXP = /[a-oA-O](?:[1-9]|1[0-5])/g
+
 export type Point = [number, number]
 
 export const equal = (a: Point, b: Point): boolean => a[0] === b[0] && a[1] === b[1]
@@ -20,7 +22,8 @@ export const parsePoint = (code: string): Point | undefined => {
 }
 
 export const parsePoints = (code: string): Point[] | undefined => {
-  const codes = Array.from(code.matchAll(/[a-zA-Z][0-9]+/g)).map(m => m[0])
+  const codes = code.match(CODE_REGEXP)
+  if (!codes) return
   const points: Point[] = []
   for (let i = 0; i < codes.length; i++) {
     const p = parsePoint(codes[i])
