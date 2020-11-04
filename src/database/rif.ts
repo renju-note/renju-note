@@ -14,7 +14,7 @@ export const TableName = {
 } as const
 export type TableName = typeof TableName[keyof typeof TableName]
 
-const tableFields: Record<TableName, string | null> = {
+const indexedFields: Record<TableName, string | null> = {
   countries: null,
   cities: null,
   months: null,
@@ -36,32 +36,32 @@ type Named = Base & {
 export type Country = Named & {
   abbr: string
 }
-tableFields[TableName.countries] = '++id,name,abbr'
+indexedFields[TableName.countries] = 'id'
 
 export type City = Named & {
   country: Country['id']
 }
-tableFields[TableName.cities] = '++id,name,country'
+indexedFields[TableName.cities] = 'id'
 
 export type Month = Named
-tableFields[TableName.months] = '++id,name'
+indexedFields[TableName.months] = 'id'
 
 export type Rule = Named & {
   info: string
 }
-tableFields[TableName.rules] = '++id,name,info'
+indexedFields[TableName.rules] = 'id'
 
 export type Opening = Named & {
   abbr: string
 }
-tableFields[TableName.openings] = '++id,name,abbr'
+indexedFields[TableName.openings] = 'id'
 
 export type Player = Named & {
   surname: string
   country: Country['id']
   city: City['id']
 }
-tableFields[TableName.players] = '++id,name,surname,country,city'
+indexedFields[TableName.players] = 'id,name,surname,country'
 
 export type Tournament = Named & {
   country: Country['id']
@@ -73,7 +73,7 @@ export type Tournament = Named & {
   rule: Rule['id']
   rated: boolean
 }
-tableFields[TableName.tournaments] = '++id,name,country,city,year,month,start,end,rule,rated'
+indexedFields[TableName.tournaments] = 'id,name,country,year'
 
 export type Game = Base & {
   publisher: Player['id']
@@ -91,7 +91,7 @@ export type Game = Base & {
   move: string
   info: string
 }
-tableFields[TableName.games] = '++id,publisher,tournament,round,rule,black,white,bresult,btime,wtime,opening,alt,swap,move,info'
+indexedFields[TableName.games] = 'id,tournament,black,white,bresult'
 
 export class RIFDatabase extends Dexie {
   readonly countries: Table<Country, number>
@@ -109,7 +109,7 @@ export class RIFDatabase extends Dexie {
 
   constructor () {
     super(DBNAME)
-    this.version(1).stores(tableFields)
+    this.version(1).stores(indexedFields)
     this.countries = this.table(TableName.countries)
     this.cities = this.table(TableName.cities)
     this.months = this.table(TableName.months)
