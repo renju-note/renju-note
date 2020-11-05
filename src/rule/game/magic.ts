@@ -1,23 +1,27 @@
 import { Game, Point } from '..'
 
-export const magicCodes = (game: Game, nMoves: number): [number[], number[]] => {
+export const magicCodes = (game: Game, between: [number, number]): [number[], number[]] => {
+  const [s, e] = between
+  if (s < 1 || e < 1 || s > e) return [[], []]
+  const [bl, bo] = [~~((e + 1) / 2), ~~(s / 2)]
+  const [wl, wo] = [~~(e / 2), ~~((s - 2) / 2)]
   return [
-    magicCodesForPoints(game.blacks, ~~(nMoves / 2)),
-    magicCodesForPoints(game.whites, ~~(nMoves / 2) - nMoves % 2),
+    magicCodesForPoints(game.blacks, bl, bo),
+    magicCodesForPoints(game.whites, wl, wo),
   ]
 }
 
-export const magicCodesForPoints = (ps: Point[], until: number): number[] => {
-  if (until >= ps.length) return []
+export const magicCodesForPoints = (ps: Point[], limit: number, offset: number): number[] => {
+  if (limit > ps.length) return []
   const result: number[] = []
-  for (let i = 0; i <= until; i++) {
+  for (let i = 0; i < limit; i++) {
     const [x, y] = ps[i]
     const current = MAGIC_SQUARE[x - 1][y - 1]
     if (current > Number.MAX_SAFE_INTEGER) break
     const last = result[result.length - 1]
     result.push(last ? last * current : current)
   }
-  return result
+  return result.slice(offset)
 }
 
 export const MAGIC_SQUARE = [
