@@ -2,7 +2,7 @@ export const N_LINES = 15
 
 export const X_CODES = 'ABCDEFGHIJKLMNO'
 
-export const CODE_REGEXP = /[a-oA-O](?:[1-9]|1[0-5])/g
+export const CODE_REGEXP = /[a-oA-O][0-9]+/g
 
 export type Point = [number, number]
 
