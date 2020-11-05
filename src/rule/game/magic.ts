@@ -3,7 +3,7 @@ import { Game, Point } from '..'
 export const magicCodes = (game: Game, between: [number, number]): [number[], number[]] => {
   const [s, e] = between
   if (s < 1 || e < 1 || s > e) return [[], []]
-  const [bl, bo] = [~~((e + 1) / 2), ~~(s / 2)]
+  const [bl, bo] = [~~((e + 1) / 2), ~~((s - 1) / 2)]
   const [wl, wo] = [~~(e / 2), ~~((s - 2) / 2)]
   return [
     magicCodesForPoints(game.blacks, bl, bo),
@@ -23,6 +23,8 @@ export const magicCodesForPoints = (ps: Point[], limit: number, offset: number):
   }
   return result.slice(offset)
 }
+
+export const openingCode = (ps: Point[]): number => magicCodesForPoints(ps, 3, 2)[0] ?? 0
 
 export const MAGIC_SQUARE = [
   [1297, 1301, 1303, 1307, 1319, 1321, 1327, 1361, 1367, 1373, 1381, 1399, 1409, 1423, 1427],
