@@ -1,4 +1,24 @@
-import { Game, Point } from '../rule'
+import { Game, Point } from '..'
+
+export const magicCodes = (game: Game, nMoves: number): [number[], number[]] => {
+  return [
+    magicCodesForPoints(game.blacks, ~~(nMoves / 2)),
+    magicCodesForPoints(game.whites, ~~(nMoves / 2) - nMoves % 2),
+  ]
+}
+
+export const magicCodesForPoints = (ps: Point[], until: number): number[] => {
+  if (until >= ps.length) return []
+  const result: number[] = []
+  for (let i = 0; i <= until; i++) {
+    const [x, y] = ps[i]
+    const current = MAGIC_SQUARE[x - 1][y - 1]
+    if (current > Number.MAX_SAFE_INTEGER) break
+    const last = result[result.length - 1]
+    result.push(last ? last * current : current)
+  }
+  return result
+}
 
 export const MAGIC_SQUARE = [
   [1297, 1301, 1303, 1307, 1319, 1321, 1327, 1361, 1367, 1373, 1381, 1399, 1409, 1423, 1427],
@@ -17,29 +37,3 @@ export const MAGIC_SQUARE = [
   [1213, 829, 827, 823, 821, 811, 809, 797, 787, 773, 769, 761, 757, 751, 1091],
   [1201, 1193, 1187, 1181, 1171, 1163, 1153, 1151, 1129, 1123, 1117, 1109, 1103, 1097, 1093],
 ]
-
-export class GameEncoder {
-  readonly game: Game
-
-  constructor (init: Game) {
-    this.game = init
-  }
-
-  encode (at: number): [number, number] {
-    return [
-      encodePoints(this.game.blacks, ~~(at / 2) + at % 2),
-      encodePoints(this.game.whites, ~~(at / 2)),
-    ]
-  }
-}
-
-const encodePoints = (ps: Point[], at: number): number => {
-  if (at >= ps.length) return 0
-  let result = 1
-  for (let i = 0; i <= at; i++) {
-    const [x, y] = ps[i]
-    result *= MAGIC_SQUARE[x][y]
-    if (result > Number.MAX_SAFE_INTEGER) return 0
-  }
-  return result
-}

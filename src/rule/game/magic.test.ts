@@ -1,4 +1,4 @@
-import { MAGIC_SQUARE } from './encoder'
+import { MAGIC_SQUARE } from './magic'
 
 const genPrimes = (n: number): number[] => {
   const primes = []
