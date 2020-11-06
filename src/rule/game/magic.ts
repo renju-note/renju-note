@@ -1,30 +1,125 @@
-import { Game, Point } from '..'
+import { Point, N_LINES } from '..'
 
-export const magicCodes = (game: Game, between: [number, number]): [number[], number[]] => {
-  const [s, e] = between
-  if (s < 1 || e < 1 || s > e) return [[], []]
-  const [bl, bo] = [~~((e + 1) / 2), ~~((s - 1) / 2)]
-  const [wl, wo] = [~~(e / 2), ~~((s - 2) / 2)]
+export const magicCodes = (moves: Point[]): number[] => {
+  const movesVariants = variants(moves)
+  const codesVariants = []
+  for (let i = 0; i < movesVariants.length; i++) {
+    codesVariants[i] = mCodes(movesVariants[i])
+  }
+  const result = []
+  for (let j = 0; j < moves.length; j++) {
+    result[j] = Math.min(
+      codesVariants[0][j],
+      codesVariants[1][j],
+      codesVariants[2][j],
+      codesVariants[3][j],
+      codesVariants[4][j],
+      codesVariants[5][j],
+      codesVariants[6][j],
+      codesVariants[7][j],
+    )
+  }
+  return result
+}
+
+export const magicCode = (blacks: Point[], whites: Point[]): number => {
+  const blacksVariants = variants(blacks)
+  const whitesVariants = variants(whites)
+  return Math.min(
+    mCode(blacksVariants[0], whitesVariants[0]),
+    mCode(blacksVariants[1], whitesVariants[1]),
+    mCode(blacksVariants[2], whitesVariants[2]),
+    mCode(blacksVariants[3], whitesVariants[3]),
+    mCode(blacksVariants[4], whitesVariants[4]),
+    mCode(blacksVariants[5], whitesVariants[5]),
+    mCode(blacksVariants[6], whitesVariants[6]),
+    mCode(blacksVariants[7], whitesVariants[7]),
+  )
+}
+
+const variants = (ps: Point[]): Point[][] => {
   return [
-    magicCodesForPoints(game.blacks, bl, bo),
-    magicCodesForPoints(game.whites, wl, wo),
+    variantN(ps, 0),
+    variantN(ps, 1),
+    variantN(ps, 2),
+    variantN(ps, 3),
+    variantN(ps, 4),
+    variantN(ps, 5),
+    variantN(ps, 6),
+    variantN(ps, 7),
   ]
 }
 
-export const magicCodesForPoints = (ps: Point[], limit: number, offset: number): number[] => {
-  if (limit > ps.length) return []
-  const result: number[] = []
-  for (let i = 0; i < limit; i++) {
-    const [x, y] = ps[i]
-    const current = MAGIC_SQUARE[x - 1][y - 1]
-    if (current > Number.MAX_SAFE_INTEGER) break
-    const last = result[result.length - 1]
-    result.push(last ? last * current : current)
+const variantN = (ps: Point[], n: number) => {
+  switch (n) {
+    case 0:
+      return variant(ps, 0, false)
+    case 1:
+      return variant(ps, 0, true)
+    case 2:
+      return variant(ps, 90, false)
+    case 3:
+      return variant(ps, 90, true)
+    case 4:
+      return variant(ps, 180, false)
+    case 5:
+      return variant(ps, 180, true)
+    case 6:
+      return variant(ps, 270, false)
+    case 7:
+      return variant(ps, 270, true)
+    default:
+      return ps
   }
-  return result.slice(offset)
 }
 
-export const openingCode = (ps: Point[]): number => magicCodesForPoints(ps, 3, 2)[0] ?? 0
+const variant = (ps: Point[], degree: 0 | 90 | 180 | 270, mirror: boolean): Point[] => {
+  const result: Point[] = []
+  for (let i = 0; i < ps.length; i++) {
+    const p: Point = mirror ? [ps[i][1], ps[i][0]] : ps[i]
+    switch (degree) {
+      case 0:
+        result[i] = p
+        break
+      case 90:
+        result[i] = [p[1], N_LINES + 1 - p[0]]
+        break
+      case 180:
+        result[i] = [N_LINES + 1 - p[0], N_LINES + 1 - p[1]]
+        break
+      case 270:
+        result[i] = [N_LINES + 1 - p[1], p[0]]
+        break
+      default:
+        result[i] = p
+    }
+  }
+  return result
+}
+
+const mCodes = (moves: Point[]): number[] => {
+  const result: number[] = []
+  let last = 1
+  for (let i = 0; i < moves.length; i++) {
+    const current = mp(moves[i], i % 2 === 0)
+    result[i] = Math.min(last * current, Number.MAX_SAFE_INTEGER)
+    last = result[i]
+  }
+  return result
+}
+
+const mCode = (blacks: Point[], whites: Point[]): number => {
+  let ret = 1
+  for (let i = 0; i < blacks.length; i++) {
+    ret *= mp(blacks[i], true)
+  }
+  for (let i = 0; i < whites.length; i++) {
+    ret *= mp(whites[i], false)
+  }
+  return ret
+}
+
+const mp = ([x, y]: Point, black: boolean): number => black ? MAGIC_SQUARE[x - 1][y - 1] ** 2 : MAGIC_SQUARE[x - 1][y - 1]
 
 export const MAGIC_SQUARE = [
   [1297, 1301, 1303, 1307, 1319, 1321, 1327, 1361, 1367, 1373, 1381, 1399, 1409, 1423, 1427],
