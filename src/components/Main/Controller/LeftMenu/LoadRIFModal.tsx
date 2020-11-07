@@ -50,11 +50,11 @@ const Default: FC<DefaultProps> = ({
               The file can be downloaded from <Link href="http://www.renju.net/downloads/games.php" color="teal.500" isExternal>RenjuNet</Link>. Be sure to follow the rules presented on the site.
             </ListItem>
             <ListItem>
-              The data will be stored only in your browser&apos;s storage, and <b>never</b> uploaded to anywhere.
+              The data will be stored only in your browser&apos;s storage and <b>never</b> uploaded to anywhere.
             </ListItem>
             <ListItem>
-              Keep in mind that, once your browser&apos;s storage was resetted by some actions including deleting histories,
-              renju-note&apos;s data will be deleted at the same time.
+              Keep in mind that, once your browser&apos;s storage was cleared by some actions including deleting histories,
+              your loaded data will be also deleted as well.
             </ListItem>
           </List>
         </ModalBody>
