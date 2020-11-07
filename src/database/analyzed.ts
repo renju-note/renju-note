@@ -58,6 +58,8 @@ export class AnalyzedDatabase extends Dexie {
   }
 
   async search ([blacks, whites]: [Point[], Point[]], limit: number, offset: number): Promise<number[]> {
+    if (blacks.length + whites.length <= ENCODE_OFFSET) return []
+    if (blacks.length + whites.length > ENCODE_LIMIT) return []
     const boardCode = encodeBoard(blacks, whites)
     return this.gameCodes.where({
       board: boardCode

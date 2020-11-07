@@ -93,6 +93,15 @@ export type Game = Base & {
 }
 indexedFields[TableName.games] = 'id,tournament,black,white,bresult'
 
+export type GameView = Game & {
+  blackWon: boolean | null,
+  whiteWon: boolean | null,
+  blackShortName: string
+  whiteShortName: string
+  publisherShortName: string
+  tournamentName: string
+}
+
 export class RIFDatabase extends Dexie {
   readonly countries: Table<Country, number>
   readonly cities: Table<City, number>
@@ -118,6 +127,30 @@ export class RIFDatabase extends Dexie {
     this.players = this.table(TableName.players)
     this.tournaments = this.table(TableName.tournaments)
     this.games = this.table(TableName.games)
+  }
+
+  async getGameViews (ids: Game['id'][]): Promise<GameView[]> {
+    const games = await this.games.bulkGet(ids)
+    const [blacks, whites, publishers, tournaments] = await Promise.all([
+      this.players.bulkGet(games.map(g => g.black)),
+      this.players.bulkGet(games.map(g => g.white)),
+      this.players.bulkGet(games.map(g => g.publisher)),
+      this.tournaments.bulkGet(games.map(g => g.tournament)),
+    ])
+    return games.map((game, i) => {
+      const r = game.bresult
+      const blackWon = r === 1 ? true : r === 0 ? false : null
+      const whiteWon = r === 0 ? true : r === 1 ? false : null
+      return {
+        ...game,
+        blackWon,
+        whiteWon,
+        blackShortName: playerShortName(blacks[i]),
+        whiteShortName: playerShortName(whites[i]),
+        publisherShortName: playerShortName(publishers[i]),
+        tournamentName: tournaments[i].name.trim(),
+      }
+    })
   }
 
   async loadFromFile (file: File) {
@@ -324,3 +357,5 @@ export class RIFDatabase extends Dexie {
     })
   }
 }
+
+const playerShortName = (p: Player) => `${p.name.trim()[0] ?? '?'}. ${p.surname.trim()}`
