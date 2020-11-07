@@ -12,10 +12,12 @@ import {
   RiGridLine,
   RiInformationLine,
   RiMenuLine,
-  RiQuestionLine
+  RiQuestionLine,
+  RiDatabase2Line,
 } from 'react-icons/ri'
 import { SystemContext, PreferenceContext, Preference } from '../../../contexts'
 import AboutModal from './AboutModal'
+import LoadRIFModal from './LoadRIFModal'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
@@ -27,6 +29,7 @@ const Default: FC = () => {
     if (preference.showOrders) values.push('showOrders')
     return values
   })()
+  const loadRifDisclosure = useDisclosure()
   const aboutDisclosure = useDisclosure()
   return <>
     <Menu autoSelect={false}>
@@ -74,12 +77,18 @@ const Default: FC = () => {
           </MenuItemOption>
         </MenuOptionGroup>
         <MenuDivider />
+        <MenuItem onClick={loadRifDisclosure.onOpen}>
+          <Icon size="small" as={RiDatabase2Line} />
+          <Text ml={2}>Load RIF file</Text>
+        </MenuItem>
+        <MenuDivider />
         <MenuItem onClick={aboutDisclosure.onOpen}>
           <Icon size="small" as={RiQuestionLine} />
           <Text ml={2}>About Renju Note</Text>
         </MenuItem>
       </MenuList>
     </Menu>
+    <LoadRIFModal isOpen={loadRifDisclosure.isOpen} onClose={loadRifDisclosure.onClose} />
     <AboutModal isOpen={aboutDisclosure.isOpen} onClose={aboutDisclosure.onClose} />
   </>
 }
