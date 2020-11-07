@@ -1,2 +1,2 @@
 export * from './game'
-export * from './magic'
+export * from './encode'

@@ -27,7 +27,6 @@ const Default: FC = () => {
     const analyzed = new AnalyzedDatabase()
     const db = new RIFDatabase()
     const ids = await analyzed.search([appState.blacks, appState.whites], 10, 0)
-    console.log(ids)
     const games = await db.games.bulkGet(ids)
     setGames(games)
   }
