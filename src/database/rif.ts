@@ -1,4 +1,5 @@
 import Dexie, { Table } from 'dexie'
+import { Point, parsePoints } from '../rule'
 
 const DBNAME = 'rif'
 
@@ -93,13 +94,21 @@ export type Game = Base & {
 }
 indexedFields[TableName.games] = 'id,tournament,black,white,bresult'
 
-export type GameView = Game & {
+export type GameView = {
+  black: Player,
+  white: Player,
   blackWon: boolean | null,
   whiteWon: boolean | null,
-  blackShortName: string
-  whiteShortName: string
-  publisherShortName: string
-  tournamentName: string
+  moves: Point[],
+  btime: number,
+  wtime: number,
+  rule: Rule,
+  opening: Opening,
+  alt: Point[],
+  swap: string,
+  info: string,
+  tournament: Tournament,
+  publisher: Player,
 }
 
 export class RIFDatabase extends Dexie {
@@ -131,24 +140,33 @@ export class RIFDatabase extends Dexie {
 
   async getGameViews (ids: Game['id'][]): Promise<GameView[]> {
     const games = await this.games.bulkGet(ids)
-    const [blacks, whites, publishers, tournaments] = await Promise.all([
+    const [blacks, whites, publishers, tournaments, rules, openings] = await Promise.all([
       this.players.bulkGet(games.map(g => g.black)),
       this.players.bulkGet(games.map(g => g.white)),
       this.players.bulkGet(games.map(g => g.publisher)),
       this.tournaments.bulkGet(games.map(g => g.tournament)),
+      this.rules.bulkGet(games.map(g => g.rule)),
+      this.openings.bulkGet(games.map(g => g.opening)),
     ])
     return games.map((game, i) => {
       const r = game.bresult
       const blackWon = r === 1 ? true : r === 0 ? false : null
       const whiteWon = r === 0 ? true : r === 1 ? false : null
       return {
-        ...game,
+        black: blacks[i],
+        white: whites[i],
         blackWon,
         whiteWon,
-        blackShortName: playerShortName(blacks[i]),
-        whiteShortName: playerShortName(whites[i]),
-        publisherShortName: playerShortName(publishers[i]),
-        tournamentName: tournaments[i].name.trim(),
+        moves: parsePoints(game.move) ?? [],
+        btime: game.btime,
+        wtime: game.wtime,
+        opening: openings[i],
+        rule: rules[i],
+        alt: [], // TODO
+        swap: game.swap,
+        info: game.info,
+        publisher: publishers[i],
+        tournament: tournaments[i],
       }
     })
   }
@@ -357,5 +375,3 @@ export class RIFDatabase extends Dexie {
     })
   }
 }
-
-const playerShortName = (p: Player) => `${p.name.trim()[0] ?? '?'}. ${p.surname.trim()}`

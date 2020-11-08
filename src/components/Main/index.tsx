@@ -1,6 +1,6 @@
 import {
   Box, Flex, Stack,
-  Tab, TabList, TabPanel, TabPanels, Tabs
+  Tab, TabList, TabPanel, TabPanels, Tabs,
 } from '@chakra-ui/core'
 import React, { FC } from 'react'
 import Board from './Board'
@@ -21,17 +21,13 @@ const Default: FC = () => {
       <Tabs>
         <TabList>
           <Tab>Search</Tab>
-          <Tab>Info</Tab>
-          <Tab>Stats</Tab>
+          <Tab>Game Info</Tab>
         </TabList>
         <TabPanels>
-          <TabPanel>
+          <TabPanel pt="1rem">
             <Searcher />
           </TabPanel>
-          <TabPanel>
-            <p>Under construction</p>
-          </TabPanel>
-          <TabPanel>
+          <TabPanel pt="1rem">
             <p>Under construction</p>
           </TabPanel>
         </TabPanels>

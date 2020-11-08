@@ -11,3 +11,7 @@ button:disabled {
 svg text {
   user-select: none;
 }
+
+.search-result tr:hover td {
+  background-color: whitesmoke;
+}
