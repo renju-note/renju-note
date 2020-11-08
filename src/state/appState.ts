@@ -182,10 +182,9 @@ export class AppState {
     return this.update({ cursor: i })
   }
 
-  clearMoves (): AppState {
+  clearFollowingMoves (): AppState {
     return this.update({
-      game: new Game({}),
-      cursor: 0,
+      game: this.partial,
     })
   }
 
