@@ -4,28 +4,27 @@ import { Point, parsePoints } from '../rule'
 const DBNAME = 'rif'
 const CHUNK_SIZE = 1000
 
-export const TableName = {
-  countries: 'countries',
-  cities: 'cities',
-  months: 'months',
-  rules: 'rules',
-  openings: 'openings',
-  players: 'players',
-  tournaments: 'tournaments',
-  games: 'games',
+const tableNames = [
+  'countries',
+  'cities',
+  'months',
+  'rules',
+  'openings',
+  'players',
+  'tournaments',
+  'games',
+] as const
+type TableName = typeof tableNames[number]
+const TableName: Record<TableName, TableName> = {
+  countries: tableNames[0],
+  cities: tableNames[1],
+  months: tableNames[2],
+  rules: tableNames[3],
+  openings: tableNames[4],
+  players: tableNames[5],
+  tournaments: tableNames[6],
+  games: tableNames[7],
 } as const
-export type TableName = typeof TableName[keyof typeof TableName]
-
-const indexedFields: Record<TableName, string | null> = {
-  countries: null,
-  cities: null,
-  months: null,
-  rules: null,
-  openings: null,
-  players: null,
-  tournaments: null,
-  games: null,
-}
 
 type Base = {
   id: number
@@ -35,92 +34,95 @@ type Named = Base & {
   name: string
 }
 
-export type Country = Named & {
+export type RIFCountry = Named & {
   abbr: string
 }
-indexedFields[TableName.countries] = 'id'
 
-export type City = Named & {
-  country: Country['id']
+export type RIFCity = Named & {
+  country: RIFCountry['id']
 }
-indexedFields[TableName.cities] = 'id'
 
-export type Month = Named
-indexedFields[TableName.months] = 'id'
+export type RIFMonth = Named
 
-export type Rule = Named & {
+export type RIFRule = Named & {
   info: string
 }
-indexedFields[TableName.rules] = 'id'
 
-export type Opening = Named & {
+export type RIFOpening = Named & {
   abbr: string
 }
-indexedFields[TableName.openings] = 'id'
 
-export type Player = Named & {
+export type RIFPlayer = Named & {
   surname: string
-  country: Country['id']
-  city: City['id']
+  country: RIFCountry['id']
+  city: RIFCity['id']
 }
-indexedFields[TableName.players] = 'id,name,surname,country'
 
-export type Tournament = Named & {
-  country: Country['id']
-  city: City['id']
+export type RIFTournament = Named & {
+  country: RIFCountry['id']
+  city: RIFCity['id']
   year: number
-  month: Month['id']
+  month: RIFMonth['id']
   start: string
   end: string
-  rule: Rule['id']
+  rule: RIFRule['id']
   rated: boolean
 }
-indexedFields[TableName.tournaments] = 'id,name,country,year'
 
-export type Game = Base & {
-  publisher: Player['id']
-  tournament: Tournament['id']
+export type RIFGame = Base & {
+  publisher: RIFPlayer['id']
+  tournament: RIFTournament['id']
   round: string
-  rule: Rule['id']
-  black: Player['id']
-  white: Player['id']
+  rule: RIFRule['id']
+  black: RIFPlayer['id']
+  white: RIFPlayer['id']
   bresult: number
   btime: number
   wtime: number
-  opening: Opening['id']
+  opening: RIFOpening['id']
   alt: string
   swap: string
   move: string
   info: string
 }
-indexedFields[TableName.games] = 'id,tournament,black,white,bresult'
+
+const indexedFields: Record<TableName, string> = {
+  countries: 'id',
+  cities: 'id',
+  months: 'id',
+  rules: 'id',
+  openings: 'id',
+  players: 'id,name,surname,country',
+  tournaments: 'id,name,country,year',
+  games: 'id,tournament,black,white,bresult',
+}
 
 export type GameView = {
-  black: Player,
-  white: Player,
+  black: RIFPlayer,
+  white: RIFPlayer,
   blackWon: boolean | null,
   whiteWon: boolean | null,
   moves: Point[],
   btime: number,
   wtime: number,
-  rule: Rule,
-  opening: Opening,
+  rule: RIFRule,
+  opening: RIFOpening,
   alt: Point[],
   swap: string,
   info: string,
-  tournament: Tournament,
-  publisher: Player,
+  tournament: RIFTournament,
+  publisher: RIFPlayer,
 }
 
 export class RIFDatabase extends Dexie {
-  readonly countries: Table<Country, number>
-  readonly cities: Table<City, number>
-  readonly months: Table<Month, number>
-  readonly rules: Table<Rule, number>
-  readonly openings: Table<Opening, number>
-  readonly players: Table<Player, number>
-  readonly tournaments: Table<Tournament, number>
-  readonly games: Table<Game, number>
+  private readonly countries: Table<RIFCountry, number>
+  private readonly cities: Table<RIFCity, number>
+  private readonly months: Table<RIFMonth, number>
+  private readonly rules: Table<RIFRule, number>
+  private readonly openings: Table<RIFOpening, number>
+  private readonly players: Table<RIFPlayer, number>
+  private readonly tournaments: Table<RIFTournament, number>
+  private readonly games: Table<RIFGame, number>
 
   static reset () {
     indexedDB.deleteDatabase(DBNAME)
@@ -139,8 +141,8 @@ export class RIFDatabase extends Dexie {
     this.games = this.table(TableName.games)
   }
 
-  async getGameViews (ids: Game['id'][]): Promise<GameView[]> {
-    const games = await this.games.bulkGet(ids)
+  async getGameViews (gameIds: RIFGame['id'][]): Promise<GameView[]> {
+    const games = await this.games.bulkGet(gameIds)
     const [blacks, whites, publishers, tournaments, rules, openings] = await Promise.all([
       this.players.bulkGet(games.map(g => g.black)),
       this.players.bulkGet(games.map(g => g.white)),
@@ -170,6 +172,31 @@ export class RIFDatabase extends Dexie {
         tournament: tournaments[i],
       }
     })
+  }
+
+  async getGamesByIdRange (start: RIFGame['id'], end: RIFGame['id']): Promise<RIFGame[]> {
+    return await this.games.where('id').between(start, end).toArray()
+  }
+
+  async getMaxGameId (): Promise<RIFGame['id']> {
+    const maxGame = await this.games.orderBy('id').last()
+    return maxGame?.id ?? 0
+  }
+
+  async getTournamentsStartDateNumberMap (): Promise<Map<RIFTournament['id'], number>> {
+    const ts = await this.tournaments.toArray()
+    const result = new Map<RIFTournament['id'], number>()
+    for (let i = 0; i < ts.length; i++) {
+      const t = ts[i]
+      const m = t.start.match(/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/)
+      if (m) {
+        const [yyyy, mm, dd] = [m[1], m[2], m[3]]
+        result.set(t.id, parseInt(yyyy + mm + dd))
+      } else {
+        result.set(t.id, 0)
+      }
+    }
+    return result
   }
 
   async loadFromFile (file: File, progress: (percentile: number) => void = () => {}) {
@@ -213,11 +240,10 @@ export class RIFDatabase extends Dexie {
   }
 
   private async addCountries (elems: HTMLCollection) {
-    const items: Country[] = []
+    const items: RIFCountry[] = []
     for (let i = 0; i < elems.length; i++) {
-      const e = elems[i]
-      const id = parseInt(e.id)
-      if (isNaN(id) || id < 0) continue
+      const [e, id] = getElemWithId(elems, i) ?? []
+      if (!e || !id) continue
       items.push({
         id: id,
         name: e.getAttribute('name') ?? '',
@@ -230,11 +256,10 @@ export class RIFDatabase extends Dexie {
   }
 
   private async addCities (elems: HTMLCollection) {
-    const items: City[] = []
+    const items: RIFCity[] = []
     for (let i = 0; i < elems.length; i++) {
-      const e = elems[i]
-      const id = parseInt(e.id)
-      if (isNaN(id) || id < 0) continue
+      const [e, id] = getElemWithId(elems, i) ?? []
+      if (!e || !id) continue
       items.push({
         id: id,
         name: e.getAttribute('name') ?? '',
@@ -247,11 +272,10 @@ export class RIFDatabase extends Dexie {
   }
 
   private async addMonths (elems: HTMLCollection) {
-    const items: Month[] = []
+    const items: RIFMonth[] = []
     for (let i = 0; i < elems.length; i++) {
-      const e = elems[i]
-      const id = parseInt(e.id)
-      if (isNaN(id) || id < 0) continue
+      const [e, id] = getElemWithId(elems, i) ?? []
+      if (!e || !id) continue
       items.push({
         id: id,
         name: e.getAttribute('name') ?? '',
@@ -263,11 +287,10 @@ export class RIFDatabase extends Dexie {
   }
 
   private async addRules (elems: HTMLCollection) {
-    const items: Rule[] = []
+    const items: RIFRule[] = []
     for (let i = 0; i < elems.length; i++) {
-      const e = elems[i]
-      const id = parseInt(e.id)
-      if (isNaN(id) || id < 0) continue
+      const [e, id] = getElemWithId(elems, i) ?? []
+      if (!e || !id) continue
       items.push({
         id: id,
         name: e.getAttribute('name') ?? '',
@@ -280,11 +303,10 @@ export class RIFDatabase extends Dexie {
   }
 
   private async addOpenings (elems: HTMLCollection) {
-    const items: Opening[] = []
+    const items: RIFOpening[] = []
     for (let i = 0; i < elems.length; i++) {
-      const e = elems[i]
-      const id = parseInt(e.id)
-      if (isNaN(id) || id < 0) continue
+      const [e, id] = getElemWithId(elems, i) ?? []
+      if (!e || !id) continue
       items.push({
         id: id,
         name: e.getAttribute('name') ?? '',
@@ -298,11 +320,10 @@ export class RIFDatabase extends Dexie {
   }
 
   private async addPlayers (elems: HTMLCollection) {
-    const items: Player[] = []
+    const items: RIFPlayer[] = []
     for (let i = 0; i < elems.length; i++) {
-      const e = elems[i]
-      const id = parseInt(e.id)
-      if (isNaN(id) || id < 0) continue
+      const [e, id] = getElemWithId(elems, i) ?? []
+      if (!e || !id) continue
       items.push({
         id: id,
         name: e.getAttribute('name') ?? '',
@@ -317,11 +338,10 @@ export class RIFDatabase extends Dexie {
   }
 
   private async addTournaments (elems: HTMLCollection) {
-    const items: Tournament[] = []
+    const items: RIFTournament[] = []
     for (let i = 0; i < elems.length; i++) {
-      const e = elems[i]
-      const id = parseInt(e.id)
-      if (isNaN(id) || id < 0) continue
+      const [e, id] = getElemWithId(elems, i) ?? []
+      if (!e || !id) continue
       items.push({
         id: id,
         name: e.getAttribute('name') ?? '',
@@ -342,12 +362,10 @@ export class RIFDatabase extends Dexie {
 
   private async addGames (elems: HTMLCollection, progress: (percentile: number) => void = () => {}) {
     for (let c = 0; c < elems.length; c += CHUNK_SIZE) {
-      const items: Game[] = []
+      const items: RIFGame[] = []
       for (let i = 0; i < CHUNK_SIZE; i++) {
-        const e = elems.item(c + i)
-        if (!e) break
-        const id = parseInt(e.id)
-        if (isNaN(id) || id < 0) continue
+        const [e, id] = getElemWithId(elems, c + i) ?? []
+        if (!e || !id) continue
         items[i] = {
           id: id,
           publisher: parseInt(e.getAttribute('publisher') ?? ''),
@@ -373,4 +391,12 @@ export class RIFDatabase extends Dexie {
     }
     progress(100)
   }
+}
+
+const getElemWithId = (elems: HTMLCollection, i: number): [Element, number] | undefined => {
+  const e = elems.item(i)
+  if (!e) return
+  const id = parseInt(e.id)
+  if (isNaN(id)) return
+  return [e, id]
 }

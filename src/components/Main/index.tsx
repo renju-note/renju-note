@@ -1,15 +1,14 @@
-import {
-  Box, Flex, Stack,
-  Tab, TabList, TabPanel, TabPanels, Tabs,
-} from '@chakra-ui/core'
-import React, { FC } from 'react'
+import { Box, Flex, Stack } from '@chakra-ui/core'
+import React, { FC, useContext } from 'react'
+import { SystemContext } from '../contexts'
 import Board from './Board'
 import Controller from './Controller'
-import Searcher from './Searcher'
+import Tabs from './Tabs'
 
 const Default: FC = () => {
+  const system = useContext(SystemContext)
   return <Flex justify="center" align="top" wrap="wrap">
-    <Stack width={640} spacing={4}>
+    <Stack width={system.W} spacing="1rem">
       <Box>
         <Board />
       </Box>
@@ -17,21 +16,8 @@ const Default: FC = () => {
         <Controller />
       </Box>
     </Stack>
-    <Box width={640} mt="1rem">
-      <Tabs>
-        <TabList>
-          <Tab>Search</Tab>
-          <Tab>Information</Tab>
-        </TabList>
-        <TabPanels>
-          <TabPanel pt="1rem">
-            <Searcher />
-          </TabPanel>
-          <TabPanel pt="1rem">
-            <p>Under construction</p>
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+    <Box width={system.W} mt="1rem">
+      <Tabs />
     </Box>
   </Flex>
 }

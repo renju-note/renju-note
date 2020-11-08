@@ -1,45 +1,12 @@
-import { Stack, Icon, IconButton, Text } from '@chakra-ui/core'
-import React, { FC, useContext, useEffect, useState } from 'react'
-import { RiArrowDownLine, RiArrowUpLine, RiCheckboxCircleFill, RiCloseLine, RiSubtractFill } from 'react-icons/ri'
-import { AnalyzedDatabase, GameView, RIFDatabase, Player } from '../../database'
-import { Game, Point } from '../../rule'
-import { AppStateContext, SystemContext } from '../contexts'
+import { Icon, Text } from '@chakra-ui/core'
+import React, { FC, useContext } from 'react'
+import { RiCheckboxCircleFill, RiCloseLine, RiSubtractFill } from 'react-icons/ri'
+import { GameView, RIFPlayer } from '../../../../database'
+import { Game } from '../../../../rule'
+import { AppStateContext, SystemContext } from '../../../contexts'
 
-const Default: FC = () => {
-  const system = useContext(SystemContext)
-  const appState = useContext(AppStateContext)[0]
-  const [gameViews, setGameViews] = useState<GameView[]>([])
-  const [reverse, setReverse] = useState<boolean>(true)
-  const onSearch = async (blacks: Point[], whites: Point[]) => {
-    const analyzed = new AnalyzedDatabase()
-    const db = new RIFDatabase()
-    const ids = await analyzed.search([blacks, whites], 10, 0, reverse)
-    if (ids.length === 0) {
-      setGameViews([])
-      return
-    }
-    const gameViews = await db.getGameViews(ids)
-    setGameViews(gameViews)
-  }
-  useEffect(
-    () => {
-      onSearch(appState.blacks, appState.whites)
-    },
-    [appState.blacks.length + appState.whites.length, reverse]
-  )
-  return <Stack width={system.W} justify="center" align="center">
-    <IconButton
-      size="sm"
-      icon={reverse ? RiArrowDownLine : RiArrowUpLine }
-      aria-label="reverse"
-      onClick={() => setReverse(!reverse)}
-    />
-    <GamesTable gameViews={gameViews} />
-  </Stack>
-}
-
-const GamesTable: FC<{gameViews: GameView[]}> = ({
-  gameViews,
+const Default: FC<{items: GameView[]}> = ({
+  items,
 }) => {
   const system = useContext(SystemContext)
   const [appState, setAppstate] = useContext(AppStateContext)
@@ -69,7 +36,7 @@ const GamesTable: FC<{gameViews: GameView[]}> = ({
     </thead>
     <tbody>
       {
-        gameViews.map((g, key) => {
+        items.map((g, key) => {
           return <tr
             key={key}
             onClick={() => onGameViewClick(g)}
@@ -132,7 +99,7 @@ const WonIcon: FC<{won: boolean | null }> = ({
   }
 }
 
-const playerShortName = (p: Player): string => `${p.name.trim()[0] ?? '?'}. ${p.surname.trim()}`
+const playerShortName = (p: RIFPlayer): string => `${p.name.trim()[0] ?? '?'}. ${p.surname.trim()}`
 
 const ruleShortName = (name: string): string => {
   if (name === 'RIF') {

@@ -1,6 +1,6 @@
 import { Game, Point, encodeMoves, encodeBoard } from '../rule'
 import Dexie, { Table } from 'dexie'
-import { RIFDatabase } from './rif'
+import { RIFDatabase, RIFGame } from './rif'
 
 const DBNAME = 'analyzed'
 const CHUNK_SIZE = 1000
@@ -14,7 +14,7 @@ const TableName: Record<TableName, TableName> = {
 }
 
 export type GameCode = {
-  id: number
+  id: RIFGame['id']
   date: number
   board: string[]
 }
@@ -24,7 +24,7 @@ const indexedFields: Record<TableName, string> = {
 }
 
 export class AnalyzedDatabase extends Dexie {
-  readonly gameCodes: Table<GameCode, number>
+  private readonly gameCodes: Table<GameCode, number>
 
   static reset () {
     indexedDB.deleteDatabase(DBNAME)
@@ -38,32 +38,17 @@ export class AnalyzedDatabase extends Dexie {
 
   async loadFromRIFDatabase (progress: (percentile: number) => void = () => {}) {
     const rif = new RIFDatabase()
-
-    const tournaments = await rif.tournaments.toArray()
-    const tournamentStartDateNumbers = new Map<number, number>()
-    for (let i = 0; i < tournaments.length; i++) {
-      const t = tournaments[i]
-      const m = t.start.match(/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/)
-      if (m) {
-        const [yyyy, mm, dd] = [m[1], m[2], m[3]]
-        tournamentStartDateNumbers.set(t.id, parseInt(yyyy + mm + dd))
-      } else {
-        tournamentStartDateNumbers.set(t.id, 0)
-      }
-    }
-
-    const maxGame = await rif.games.orderBy('id').last()
-    if (!maxGame) return
-    const maxId = maxGame.id
+    const dateMap = await rif.getTournamentsStartDateNumberMap()
+    const maxId = await rif.getMaxGameId()
     progress(0)
     for (let startId = 0; startId <= maxId; startId += CHUNK_SIZE) {
-      const items = await rif.games.where('id').between(startId, startId + CHUNK_SIZE).toArray()
+      const items = await rif.getGamesByIdRange(startId, startId + CHUNK_SIZE)
       const gameCodes = items.map(item => {
         const game = Game.fromCode(item.move) ?? new Game({})
         const boardCodes = encodeMoves(game.moves.slice(0, ENCODE_LIMIT)).slice(ENCODE_OFFSET)
         return {
           id: item.id,
-          date: tournamentStartDateNumbers.get(item.tournament) ?? 0,
+          date: dateMap.get(item.tournament) ?? 0,
           board: boardCodes,
         }
       })
