@@ -1,6 +1,6 @@
 import { Flex, Icon, IconButton } from '@chakra-ui/core'
 import React, { FC, useContext, useEffect, useState } from 'react'
-import { RiCheckboxCircleFill, RiCloseLine, RiPlayFill, RiSubtractFill } from 'react-icons/ri'
+import { RiCheckboxCircleFill, RiCloseLine, RiPlayLine, RiSubtractFill } from 'react-icons/ri'
 import { AnalyzedDatabase, GameView, RIFDatabase } from '../../database'
 import { Game, Point } from '../../rule'
 import { AppStateContext, SystemContext } from '../contexts'
@@ -39,13 +39,15 @@ const GamesTable: FC<{gameViews: GameView[]}> = ({
     setAppstate(appState.setGame(game))
   }
   return <table>
-    <colgroup span={1} style={{ width: system.W / 8 }} />
-    <colgroup span={1} style={{ width: system.W / 4 }} />
-    <colgroup span={1} style={{ width: system.W / 32 }} />
-    <colgroup span={1} style={{ width: system.W / 16 }} />
-    <colgroup span={1} style={{ width: system.W / 32 }} />
-    <colgroup span={1} style={{ width: system.W / 4 }} />
-    <colgroup span={1} style={{ width: system.W / 8 }} />
+    <colgroup span={1} style={{ width: system.W * 1 / 20 }} />
+    <colgroup span={1} style={{ width: system.W * 3 / 20 }} />
+    <colgroup span={1} style={{ width: system.W * 5 / 20 }} />
+    <colgroup span={1} style={{ width: system.W * 1 / 40 }} />
+    <colgroup span={1} style={{ width: system.W * 1 / 20 }} />
+    <colgroup span={1} style={{ width: system.W * 1 / 40 }} />
+    <colgroup span={1} style={{ width: system.W * 5 / 20 }} />
+    <colgroup span={1} style={{ width: system.W * 2 / 20 }} />
+    <colgroup span={1} style={{ width: system.W * 2 / 20 }} />
     <tbody>
       {
         gameViews.map((g, key) => {
@@ -53,18 +55,21 @@ const GamesTable: FC<{gameViews: GameView[]}> = ({
             key={key}
           >
             <td>
-            </td>
-            <td style={{ textAlign: 'center' }}><u>{g.blackShortName}</u></td>
-            <td style={{ textAlign: 'center' }}><WonIcon won={g.blackWon} /></td>
-            <td></td>
-            <td style={{ textAlign: 'center' }}><WonIcon won={g.whiteWon} /></td>
-            <td style={{ textAlign: 'center' }}>{g.whiteShortName}</td>
-            <td style={{ textAlign: 'right' }}>
               <IconButton
                 onClick={() => onGameViewClick(g)}
-                size="xs" icon={RiPlayFill} aria-label="play"
+                size="xs" icon={RiPlayLine} aria-label="play"
               />
             </td>
+            <td>2020/04</td>
+            <td style={{ textAlign: 'center' }}>
+              <u>{g.blackShortName}</u>
+            </td>
+            <td style={{ textAlign: 'center' }}><WonIcon won={g.blackWon} /></td>
+            <td style={{ textAlign: 'center', fontFamily: 'Noto Serif' }}>10</td>
+            <td style={{ textAlign: 'center' }}><WonIcon won={g.whiteWon} /></td>
+            <td style={{ textAlign: 'center' }}>{g.whiteShortName}</td>
+            <td>D3</td>
+            <td>T-8</td>
           </tr>
         })
       }
