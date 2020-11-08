@@ -5,8 +5,11 @@ import {
   List, ListItem,
   Input, Button,
   Flex,
+  Progress,
+  Stack,
+  useDisclosure,
 } from '@chakra-ui/core'
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { RIFDatabase, AnalyzedDatabase } from '../../../../database'
 
 type DefaultProps = {
@@ -18,30 +21,52 @@ const Default: FC<DefaultProps> = ({
   isOpen,
   onClose,
 }) => {
+  const analyzingDisclosure = useDisclosure()
+  const [fileIsInvalid, setFileIsInvalid] = useState<boolean>(false)
+  const [parsingProgress, setParsingProgress] = useState<number>(0)
+  const [analyzingProgress, setAnalyzingProgress] = useState<number>(0)
+  const [completed, setCompleted] = useState<boolean>(false)
+
   const onLoadFile = async () => {
     const elem = document.getElementById('rif-file') as HTMLInputElement
     const files = elem?.files
     if (files === null || files.length === 0) {
-      console.log('No file')
+      setFileIsInvalid(true)
       return
     }
 
+    onClose()
+    analyzingDisclosure.onOpen()
+
     RIFDatabase.reset()
-    const db = new RIFDatabase()
-    await db.loadFromFile(files[0])
+    const rifDB = new RIFDatabase()
+    await rifDB.loadFromFile(files[0], (p) => setParsingProgress(p))
+
     AnalyzedDatabase.reset()
-    const analyzed = new AnalyzedDatabase()
-    await analyzed.loadFromRIFDatabase()
+    const analyzedDB = new AnalyzedDatabase()
+    await analyzedDB.loadFromRIFDatabase((p) => setAnalyzingProgress(p))
+
+    setCompleted(true)
   }
-  return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+  return <>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      isCentered
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader as="h1">Load RIF file</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Flex alignItems="center" mb="1rem">
-            <Input id="rif-file" type="file" mr="1rem"/>
+            <Input
+              id="rif-file"
+              type="file"
+              isInvalid={fileIsInvalid}
+              onChange={() => setFileIsInvalid(false)}
+              mr="1rem"
+            />
             <Button onClick={onLoadFile}>Load</Button>
           </Flex>
           <Heading as="h2" size="sm" mb="1rem">Remarks</Heading>
@@ -61,7 +86,32 @@ const Default: FC<DefaultProps> = ({
         <ModalFooter></ModalFooter>
       </ModalContent>
     </Modal>
-  )
+
+    <Modal
+      isOpen={analyzingDisclosure.isOpen}
+      onClose={analyzingDisclosure.onClose}
+      isCentered
+      closeOnOverlayClick={false}
+    >
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader as="h1">
+          { completed ? 'Completed!' : 'Loading...'}
+        </ModalHeader>
+        <ModalBody>
+          <Stack spacing="1rem">
+            <Heading as="h2" size="sm" mb="1rem">Parsing content...</Heading>
+            <Progress value={parsingProgress} />
+            <Heading as="h2" size="sm" mb="1rem">Analyzing games...</Heading>
+            <Progress value={analyzingProgress} />
+          </Stack>
+        </ModalBody>
+        <ModalFooter>
+          <Button onClick={analyzingDisclosure.onClose} isDisabled={!completed}>OK</Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  </>
 }
 
 export default Default

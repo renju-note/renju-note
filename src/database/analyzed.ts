@@ -7,10 +7,11 @@ const CHUNK_SIZE = 1000
 const ENCODE_OFFSET = 2
 const ENCODE_LIMIT = 10
 
-const TableName = {
-  gameCodes: 'gameCodes',
-} as const
-type TableName = typeof TableName[keyof typeof TableName]
+const tableNames = ['gameCodes'] as const
+type TableName = typeof tableNames[number]
+const TableName: Record<TableName, TableName> = {
+  gameCodes: tableNames[0],
+}
 
 export type GameCode = {
   id: number
@@ -35,11 +36,12 @@ export class AnalyzedDatabase extends Dexie {
     this.gameCodes = this.table(TableName.gameCodes)
   }
 
-  async loadFromRIFDatabase () {
+  async loadFromRIFDatabase (progress: (percentile: number) => void = () => {}) {
     const rif = new RIFDatabase()
     const maxGame = await rif.games.orderBy('id').last()
     if (!maxGame) return
     const maxId = maxGame.id
+    progress(0)
     for (let startId = 0; startId <= maxId; startId += CHUNK_SIZE) {
       const items = await rif.games.where('id').between(startId, startId + CHUNK_SIZE).toArray()
       const gameCodes = items.map(item => {
@@ -52,9 +54,9 @@ export class AnalyzedDatabase extends Dexie {
         }
       })
       await this.gameCodes.bulkAdd(gameCodes)
-      console.log(startId + CHUNK_SIZE)
+      progress(Math.floor((startId + CHUNK_SIZE) * 100 / maxId))
     }
-    console.log('done')
+    progress(100)
   }
 
   async search ([blacks, whites]: [Point[], Point[]], limit: number, offset: number, reverse: boolean = false): Promise<number[]> {

@@ -2,6 +2,7 @@ import Dexie, { Table } from 'dexie'
 import { Point, parsePoints } from '../rule'
 
 const DBNAME = 'rif'
+const CHUNK_SIZE = 1000
 
 export const TableName = {
   countries: 'countries',
@@ -171,51 +172,44 @@ export class RIFDatabase extends Dexie {
     })
   }
 
-  async loadFromFile (file: File) {
+  async loadFromFile (file: File, progress: (percentile: number) => void = () => {}) {
     const text = await file.text()
     const dom = new DOMParser().parseFromString(text, 'application/xml')
 
     const countries = dom.querySelector(TableName.countries)
+    const promises = []
     if (countries !== null) {
-      console.log(`Adding: ${TableName.countries}`)
-      await this.addCountries(countries.children)
+      promises.push(this.addCountries(countries.children))
     }
     const cities = dom.querySelector(TableName.cities)
     if (cities !== null) {
-      console.log(`Adding: ${TableName.cities}`)
-      await this.addCities(cities.children)
+      promises.push(this.addCities(cities.children))
     }
     const months = dom.querySelector(TableName.months)
     if (months !== null) {
-      console.log(`Adding: ${TableName.months}`)
-      await this.addMonths(months.children)
+      promises.push(this.addMonths(months.children))
     }
     const openings = dom.querySelector(TableName.openings)
     if (openings !== null) {
-      console.log(`Adding: ${TableName.openings}`)
-      await this.addOpenings(openings.children)
+      promises.push(this.addOpenings(openings.children))
     }
     const rules = dom.querySelector(TableName.rules)
     if (rules !== null) {
-      console.log(`Adding: ${TableName.rules}`)
-      await this.addRules(rules.children)
+      promises.push(this.addRules(rules.children))
     }
     const players = dom.querySelector(TableName.players)
     if (players !== null) {
-      console.log(`Adding: ${TableName.players}`)
-      await this.addPlayers(players.children)
+      promises.push(this.addPlayers(players.children))
     }
     const tournaments = dom.querySelector(TableName.tournaments)
     if (tournaments !== null) {
-      console.log(`Adding: ${TableName.tournaments}`)
-      await this.addTournaments(tournaments.children)
+      promises.push(this.addTournaments(tournaments.children))
     }
     const games = dom.querySelector(TableName.games)
     if (games !== null) {
-      console.log(`Adding: ${TableName.games}`)
-      await this.addGames(games.children)
+      promises.push(this.addGames(games.children, progress))
     }
-    console.log('Done')
+    await Promise.all(promises)
   }
 
   private async addCountries (elems: HTMLCollection) {
@@ -346,32 +340,37 @@ export class RIFDatabase extends Dexie {
     })
   }
 
-  private async addGames (elems: HTMLCollection) {
-    const items: Game[] = []
-    for (let i = 0; i < elems.length; i++) {
-      const e = elems[i]
-      const id = parseInt(e.id)
-      if (isNaN(id) || id < 0) continue
-      items.push({
-        id: id,
-        publisher: parseInt(e.getAttribute('publisher') ?? ''),
-        tournament: parseInt(e.getAttribute('tournament') ?? ''),
-        round: e.getAttribute('round') ?? '',
-        rule: parseInt(e.getAttribute('rule') ?? ''),
-        black: parseInt(e.getAttribute('black') ?? ''),
-        white: parseInt(e.getAttribute('white') ?? ''),
-        bresult: parseFloat(e.getAttribute('bresult') ?? ''),
-        btime: parseInt(e.getAttribute('btime') ?? ''),
-        wtime: parseInt(e.getAttribute('wtime') ?? ''),
-        opening: parseInt(e.getAttribute('opening') ?? ''),
-        alt: e.getAttribute('alt') ?? '',
-        swap: e.getAttribute('swap') ?? '',
-        move: e.getElementsByTagName('move').item(0)?.innerHTML ?? '',
-        info: e.getElementsByTagName('info').item(0)?.innerHTML ?? '',
+  private async addGames (elems: HTMLCollection, progress: (percentile: number) => void = () => {}) {
+    for (let c = 0; c < elems.length; c += CHUNK_SIZE) {
+      const items: Game[] = []
+      for (let i = 0; i < CHUNK_SIZE; i++) {
+        const e = elems.item(c + i)
+        if (!e) break
+        const id = parseInt(e.id)
+        if (isNaN(id) || id < 0) continue
+        items[i] = {
+          id: id,
+          publisher: parseInt(e.getAttribute('publisher') ?? ''),
+          tournament: parseInt(e.getAttribute('tournament') ?? ''),
+          round: e.getAttribute('round') ?? '',
+          rule: parseInt(e.getAttribute('rule') ?? ''),
+          black: parseInt(e.getAttribute('black') ?? ''),
+          white: parseInt(e.getAttribute('white') ?? ''),
+          bresult: parseFloat(e.getAttribute('bresult') ?? ''),
+          btime: parseInt(e.getAttribute('btime') ?? ''),
+          wtime: parseInt(e.getAttribute('wtime') ?? ''),
+          opening: parseInt(e.getAttribute('opening') ?? ''),
+          alt: e.getAttribute('alt') ?? '',
+          swap: e.getAttribute('swap') ?? '',
+          move: e.getElementsByTagName('move').item(0)?.innerHTML ?? '',
+          info: e.getElementsByTagName('info').item(0)?.innerHTML ?? '',
+        }
+      }
+      await this.transaction('rw', this.games, async () => {
+        await this.games.bulkAdd(items)
       })
+      progress(Math.floor((c + CHUNK_SIZE) * 100 / elems.length))
     }
-    await this.transaction('rw', this.games, async () => {
-      await this.games.bulkAdd(items)
-    })
+    progress(100)
   }
 }

@@ -1,4 +1,4 @@
-import { Box, Stack, Icon, IconButton, Text } from '@chakra-ui/core'
+import { Stack, Icon, IconButton, Text } from '@chakra-ui/core'
 import React, { FC, useContext, useEffect, useState } from 'react'
 import { RiArrowDownLine, RiArrowUpLine, RiCheckboxCircleFill, RiCloseLine, RiSubtractFill } from 'react-icons/ri'
 import { AnalyzedDatabase, GameView, RIFDatabase, Player } from '../../database'
@@ -59,36 +59,12 @@ const GamesTable: FC<{gameViews: GameView[]}> = ({
     <colgroup span={1} style={{ width: system.W * 2 / 20 }} />
     <thead>
       <tr>
-        <th>
-          <Text textAlign="center" color="gray.500" fontFamily="Roboto" fontWeight="medium">
-            Date
-          </Text>
-        </th>
-        <th>
-          <Text textAlign="center" color="gray.500" fontFamily="Roboto" fontWeight="medium">
-            Black
-          </Text>
-        </th>
-        <th colSpan={3}>
-          <Text textAlign="center" color="gray.500" fontFamily="Roboto" fontWeight="medium">
-            Result
-          </Text>
-        </th>
-        <th>
-          <Text textAlign="center" color="gray.500" fontFamily="Roboto" fontWeight="medium">
-            White
-          </Text>
-        </th>
-        <th>
-          <Text textAlign="center" color="gray.500" fontFamily="Roboto" fontWeight="medium">
-            Rule
-          </Text>
-        </th>
-        <th>
-          <Text textAlign="center" color="gray.500" fontFamily="Roboto" fontWeight="medium">
-            Op.
-          </Text>
-        </th>
+        <th>Date</th>
+        <th>Black</th>
+        <th colSpan={3}>Result</th>
+        <th>White</th>
+        <th>Rule</th>
+        <th>Op.</th>
       </tr>
     </thead>
     <tbody>
@@ -99,42 +75,38 @@ const GamesTable: FC<{gameViews: GameView[]}> = ({
             onClick={() => onGameViewClick(g)}
           >
             <td>
-              <Text textAlign="center" fontFamily="Courier Prime" color="gray.600">
+              <Text fontFamily="Courier Prime" color="gray.600">
                 {g.tournament.start}
               </Text>
             </td>
             <td>
-              <Text textAlign="center" fontFamily="Noto Serif" color="gray.800">
+              <Text fontFamily="Noto Serif" color="gray.800">
                 {playerShortName(g.black)}
               </Text>
             </td>
             <td>
-              <Box alignItems="center">
-                <WonIcon won={g.blackWon} />
-              </Box>
+              <WonIcon won={g.blackWon} />
             </td>
             <td>
-              <Text textAlign="center" fontFamily="Noto Serif" color="gray.800">
+              <Text fontFamily="Noto Serif" color="gray.800">
                 {g.moves.length.toString()}
               </Text>
             </td>
             <td>
-              <Box alignItems="center">
-                <WonIcon won={g.whiteWon} />
-              </Box>
+              <WonIcon won={g.whiteWon} />
             </td>
             <td>
-              <Text textAlign="center" fontFamily="Noto Serif" color="gray.800">
+              <Text fontFamily="Noto Serif" color="gray.800">
                 {playerShortName(g.white)}
               </Text>
             </td>
             <td>
-              <Text textAlign="center" fontFamily="Courier Prime" color="gray.600">
+              <Text fontFamily="Courier Prime" color="gray.600">
                 {ruleShortName(g.rule.name)}
               </Text>
             </td>
             <td>
-              <Text textAlign="center" fontFamily="Courier Prime" color="gray.600">
+              <Text fontFamily="Courier Prime" color="gray.600">
                 {g.opening.abbr.toUpperCase()}
               </Text>
             </td>

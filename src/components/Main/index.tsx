@@ -21,7 +21,7 @@ const Default: FC = () => {
       <Tabs>
         <TabList>
           <Tab>Search</Tab>
-          <Tab>Game Info</Tab>
+          <Tab>Information</Tab>
         </TabList>
         <TabPanels>
           <TabPanel pt="1rem">
