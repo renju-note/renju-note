@@ -111,7 +111,7 @@ export class AppState {
     return this.update({
       game: game,
       options: this.options.filter(o => o !== AppOption.invertMoves),
-      cursor: Math.min(this.cursor, game.moves.length),
+      cursor: game.moves.length,
       freeBlacks: new FreePointsState({}),
       freeWhites: new FreePointsState({}),
     })

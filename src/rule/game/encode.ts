@@ -1,23 +1,25 @@
-import { Point, N_LINES } from '..'
+import { Point, N_LINES } from '../foundation'
+
+type BitBoard = [number[], number[]]
 
 export const encodeMoves = (moves: Point[]): string[] => {
   const movesVariants = variants(moves)
-  const boardVariants = [
-    prepare(),
-    prepare(),
-    prepare(),
-    prepare(),
-    prepare(),
-    prepare(),
-    prepare(),
-    prepare(),
+  const boardVariants: BitBoard[] = [
+    [prepareHalf(), prepareHalf()],
+    [prepareHalf(), prepareHalf()],
+    [prepareHalf(), prepareHalf()],
+    [prepareHalf(), prepareHalf()],
+    [prepareHalf(), prepareHalf()],
+    [prepareHalf(), prepareHalf()],
+    [prepareHalf(), prepareHalf()],
+    [prepareHalf(), prepareHalf()],
   ]
   const result: string[] = []
   for (let i = 0; i < moves.length; i++) {
     const candidates: string[] = []
     for (let v = 0; v < movesVariants.length; v++) {
       const [x, y] = movesVariants[v][i]
-      boardVariants[v][x - 1][y - 1] = i % 2 + 1
+      boardVariants[v][i % 2][x - 1] += 2 ** (y - 1)
       candidates[v] = encode(boardVariants[v])
     }
     result[i] = stringMin(candidates)
@@ -31,49 +33,46 @@ export const encodeBoard = (blacks: Point[], whites: Point[]): string => {
   const candidates: string[] = []
   for (let v = 0; v < blacksVariants.length; v++) {
     const blacksVariant = blacksVariants[v]
-    const whitesVariant = whitesVariants[v]
-    const board = prepare()
+    const blacksBoard = prepareHalf()
     for (let i = 0; i < blacksVariant.length; i++) {
       const [x, y] = blacksVariant[i]
-      board[x - 1][y - 1] = 1
+      blacksBoard[x - 1] += 2 ** (y - 1)
     }
+    const whitesVariant = whitesVariants[v]
+    const whitesBoard = prepareHalf()
     for (let i = 0; i < whitesVariant.length; i++) {
       const [x, y] = whitesVariant[i]
-      board[x - 1][y - 1] = 2
+      whitesBoard[x - 1] += 2 ** (y - 1)
     }
-    candidates[v] = encode(board)
+    candidates[v] = encode([blacksBoard, whitesBoard])
   }
   return stringMin(candidates)
 }
 
-const encode = (board: number[][]): string => {
-  let code = ''
-  let last = -1
-  let count = 0
-  for (let i = 0; i < N_LINES; i++) {
-    for (let j = 0; j < N_LINES; j++) {
-      const current = board[i][j]
-      if (current !== last) {
-        if (count > 1) code += count.toString()
-        code += current === 0 ? '-' : current === 1 ? 'o' : 'x'
-        last = current
-        count = 1
-      } else {
-        count++
-      }
-    }
-  }
-  if (count > 1) code += count.toString()
-  return code
+const encode = (board: BitBoard): string => {
+  return '+' + encodeHalf(board[0]) + '-' + encodeHalf(board[1])
 }
 
-const prepare = (): number[][] => {
-  const board: number[][] = []
-  for (let i = 0; i < N_LINES; i++) {
-    board[i] = new Array(N_LINES).fill(0)
+const encodeHalf = (a: number[]): string => {
+  let result = ''
+  let skip = 0
+  for (let i = 0; i < a.length; i++) {
+    const l = a[i]
+    if (l === 0) {
+      skip++
+    } else {
+      if (skip !== 0) {
+        result += skip.toString(16) + '.'
+        skip = 0
+      }
+      result += a[i].toString(16) + '/'
+      skip = 0
+    }
   }
-  return board
+  return result
 }
+
+const prepareHalf = (): number[] => new Array(N_LINES).fill(0)
 
 const variants = (ps: Point[]): Point[][] => {
   return [
@@ -114,22 +113,22 @@ const variantN = (ps: Point[], n: number) => {
 const variant = (ps: Point[], degree: 0 | 90 | 180 | 270, mirror: boolean): Point[] => {
   const result: Point[] = []
   for (let i = 0; i < ps.length; i++) {
-    const p: Point = mirror ? [ps[i][1], ps[i][0]] : ps[i]
+    const [x, y] = mirror ? [ps[i][1], ps[i][0]] : ps[i]
     switch (degree) {
       case 0:
-        result[i] = p
+        result[i] = [x, y]
         break
       case 90:
-        result[i] = [p[1], N_LINES + 1 - p[0]]
+        result[i] = [y, N_PLUS_1 - x]
         break
       case 180:
-        result[i] = [N_LINES + 1 - p[0], N_LINES + 1 - p[1]]
+        result[i] = [N_PLUS_1 - x, N_PLUS_1 - y]
         break
       case 270:
-        result[i] = [N_LINES + 1 - p[1], p[0]]
+        result[i] = [N_PLUS_1 - y, x]
         break
       default:
-        result[i] = p
+        result[i] = [x, y]
     }
   }
   return result
@@ -142,3 +141,5 @@ const stringMin = (ss: string[]): string => {
   }
   return min
 }
+
+const N_PLUS_1 = N_LINES + 1
