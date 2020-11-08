@@ -15,12 +15,12 @@ const TableName: Record<TableName, TableName> = {
 
 export type GameCode = {
   id: number
+  date: number
   board: string[]
-  rect: string[]
 }
 
 const indexedFields: Record<TableName, string> = {
-  gameCodes: 'id,*board,*rect',
+  gameCodes: 'id,date,*board',
 }
 
 export class AnalyzedDatabase extends Dexie {
@@ -38,6 +38,20 @@ export class AnalyzedDatabase extends Dexie {
 
   async loadFromRIFDatabase (progress: (percentile: number) => void = () => {}) {
     const rif = new RIFDatabase()
+
+    const tournaments = await rif.tournaments.toArray()
+    const tournamentStartDateNumbers = new Map<number, number>()
+    for (let i = 0; i < tournaments.length; i++) {
+      const t = tournaments[i]
+      const m = t.start.match(/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/)
+      if (m) {
+        const [yyyy, mm, dd] = [m[1], m[2], m[3]]
+        tournamentStartDateNumbers.set(t.id, parseInt(yyyy + mm + dd))
+      } else {
+        tournamentStartDateNumbers.set(t.id, 0)
+      }
+    }
+
     const maxGame = await rif.games.orderBy('id').last()
     if (!maxGame) return
     const maxId = maxGame.id
@@ -49,8 +63,8 @@ export class AnalyzedDatabase extends Dexie {
         const boardCodes = encodeMoves(game.moves.slice(0, ENCODE_LIMIT)).slice(ENCODE_OFFSET)
         return {
           id: item.id,
+          date: tournamentStartDateNumbers.get(item.tournament) ?? 0,
           board: boardCodes,
-          rect: [],
         }
       })
       await this.gameCodes.bulkAdd(gameCodes)
@@ -65,6 +79,7 @@ export class AnalyzedDatabase extends Dexie {
     const boardCode = encodeBoard(blacks, whites)
     let collection = this.gameCodes.where({ board: boardCode }).distinct()
     if (reverse) collection = collection.reverse()
-    return collection.limit(limit).offset(offset).primaryKeys()
+    // 'sortBy' is not efficient.
+    return (await collection.sortBy('date')).slice(offset, offset + limit).map(gv => gv.id)
   }
 }
