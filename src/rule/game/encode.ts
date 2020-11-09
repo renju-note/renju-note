@@ -27,28 +27,6 @@ export const encodeMoves = (moves: Point[]): string[] => {
   return result
 }
 
-export const encodeBoard = (blacks: Point[], whites: Point[]): string => {
-  const blacksVariants = variants(blacks)
-  const whitesVariants = variants(whites)
-  const candidates: string[] = []
-  for (let v = 0; v < blacksVariants.length; v++) {
-    const blacksVariant = blacksVariants[v]
-    const blacksBoard = prepareHalf()
-    for (let i = 0; i < blacksVariant.length; i++) {
-      const [x, y] = blacksVariant[i]
-      blacksBoard[x - 1] += 2 ** (y - 1)
-    }
-    const whitesVariant = whitesVariants[v]
-    const whitesBoard = prepareHalf()
-    for (let i = 0; i < whitesVariant.length; i++) {
-      const [x, y] = whitesVariant[i]
-      whitesBoard[x - 1] += 2 ** (y - 1)
-    }
-    candidates[v] = encode([blacksBoard, whitesBoard])
-  }
-  return stringMin(candidates)
-}
-
 const encode = (board: BitBoard): string => {
   return '+' + encodeHalf(board[0]) + '-' + encodeHalf(board[1])
 }

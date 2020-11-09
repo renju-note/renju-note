@@ -199,6 +199,16 @@ export class RIFDatabase extends Dexie {
     return result
   }
 
+  async getTournamentsRatedMap (): Promise<Map<RIFTournament['id'], boolean>> {
+    const ts = await this.tournaments.toArray()
+    const result = new Map<RIFTournament['id'], boolean>()
+    for (let i = 0; i < ts.length; i++) {
+      const t = ts[i]
+      result.set(t.id, t.rated)
+    }
+    return result
+  }
+
   async loadFromFile (file: File, progress: (percentile: number) => void = () => {}) {
     const text = await file.text()
     const dom = new DOMParser().parseFromString(text, 'application/xml')

@@ -1,4 +1,4 @@
-import { Game, Point, encodeMoves, encodeBoard } from '../rule'
+import { Game, Point, encodeMoves } from '../rule'
 import Dexie, { Table } from 'dexie'
 import { RIFDatabase, RIFGame } from './rif'
 
@@ -13,14 +13,16 @@ const TableName: Record<TableName, TableName> = {
   gameCodes: tableNames[0],
 }
 
-export type GameCode = {
+type GameCode = {
   id: RIFGame['id']
   date: number
   board: string[]
+  player: number[]
+  rated: boolean
 }
 
 const indexedFields: Record<TableName, string> = {
-  gameCodes: 'id,date,*board',
+  gameCodes: 'id,date,*board,*player',
 }
 
 export class AnalyzedDatabase extends Dexie {
@@ -38,8 +40,11 @@ export class AnalyzedDatabase extends Dexie {
 
   async loadFromRIFDatabase (progress: (percentile: number) => void = () => {}) {
     const rif = new RIFDatabase()
-    const dateMap = await rif.getTournamentsStartDateNumberMap()
-    const maxId = await rif.getMaxGameId()
+    const [dateMap, ratedMap, maxId] = await Promise.all([
+      rif.getTournamentsStartDateNumberMap(),
+      rif.getTournamentsRatedMap(),
+      rif.getMaxGameId(),
+    ])
     progress(0)
     for (let startId = 0; startId <= maxId; startId += CHUNK_SIZE) {
       const items = await rif.getGamesByIdRange(startId, startId + CHUNK_SIZE)
@@ -50,6 +55,8 @@ export class AnalyzedDatabase extends Dexie {
           id: item.id,
           date: dateMap.get(item.tournament) ?? 0,
           board: boardCodes,
+          player: [item.black, item.white],
+          rated: ratedMap.get(item.tournament) ?? false,
         }
       })
       await this.gameCodes.bulkAdd(gameCodes)
@@ -58,13 +65,17 @@ export class AnalyzedDatabase extends Dexie {
     progress(100)
   }
 
-  async search ([blacks, whites]: [Point[], Point[]], limit: number, offset: number, reverse: boolean = false): Promise<number[]> {
-    if (blacks.length + whites.length <= ENCODE_OFFSET) return []
-    if (blacks.length + whites.length > ENCODE_LIMIT) return []
-    const boardCode = encodeBoard(blacks, whites)
+  async search (
+    moves: Point[],
+    limit: number,
+    offset: number = 0,
+    reverse: boolean = false,
+  ): Promise<number[]> {
+    if (moves.length <= ENCODE_OFFSET || ENCODE_LIMIT < moves.length) return []
+    const boardCode = encodeMoves(moves)[moves.length - 1]
     let collection = this.gameCodes.where({ board: boardCode }).distinct()
     if (reverse) collection = collection.reverse()
     // 'sortBy' is not efficient.
-    return (await collection.sortBy('date')).slice(offset, offset + limit).map(gv => gv.id)
+    return (await collection.filter(gv => gv.rated).sortBy('date')).slice(offset, offset + limit).map(gv => gv.id)
   }
 }

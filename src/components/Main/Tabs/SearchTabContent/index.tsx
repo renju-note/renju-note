@@ -16,8 +16,8 @@ const Default: FC = () => {
   const rifDB = useMemo(() => new RIFDatabase(), [])
   const analyzedDB = useMemo(() => new AnalyzedDatabase(), [])
 
-  const onSearch = async (blacks: Point[], whites: Point[]) => {
-    const ids = await analyzedDB.search([blacks, whites], 20, 0, reverse)
+  const onSearch = async (moves: Point[]) => {
+    const ids = await analyzedDB.search(moves, 20, 0, reverse)
     if (ids.length === 0) {
       setGameViews([])
       return
@@ -28,9 +28,9 @@ const Default: FC = () => {
 
   useEffect(
     () => {
-      onSearch(appState.blacks, appState.whites)
+      onSearch(appState.moves)
     },
-    [appState.blacks.length + appState.whites.length, reverse]
+    [appState.moves.length, reverse]
   )
 
   return <Stack width={system.W} justify="center" align="center">
