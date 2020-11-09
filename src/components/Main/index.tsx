@@ -7,7 +7,7 @@ import Tabs from './Tabs'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
-  return <Flex justify="center" align="top" wrap="wrap">
+  return <Flex justify="center" align="top" wrap="wrap" my="1rem">
     <Stack width={system.W} spacing="1rem">
       <Box>
         <Board />

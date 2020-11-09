@@ -13,7 +13,7 @@ const Default: FC<{items: GameView[]}> = ({
   const onGameViewClick = (gv: GameView) => {
     const game = new Game({ moves: gv.moves })
     if (!game) return
-    setAppstate(appState.setGame(game))
+    setAppstate(appState.setPreviewingGame(game))
   }
   return <table className="search-result">
     <colgroup span={1} style={{ width: system.W * 4 / 20 }} />

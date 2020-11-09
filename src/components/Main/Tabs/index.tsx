@@ -4,7 +4,7 @@ import SearchTabContent from './SearchTabContent'
 
 const Default: FC = () => {
   return <Tabs>
-    <TabList>
+    <TabList mx="1rem">
       <Tab>Search</Tab>
       <Tab>Information</Tab>
     </TabList>

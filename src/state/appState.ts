@@ -22,6 +22,7 @@ type AppStateFields = Pick<
   | 'mode'
   | 'options'
   | 'game'
+  | 'previewingGame'
   | 'cursor'
   | 'freeBlacks'
   | 'freeWhites'
@@ -33,6 +34,7 @@ export class AppState {
   readonly mode: EditMode
   readonly options: AppOption[]
   readonly game: Game
+  readonly previewingGame: Game | 'empty'
   readonly cursor: number
   readonly freeBlacks: FreePointsState
   readonly freeWhites: FreePointsState
@@ -45,6 +47,7 @@ export class AppState {
       this.mode = init.mode
       this.options = init.options
       this.game = init.game
+      this.previewingGame = init.previewingGame
       this.cursor = init.cursor
       this.freeBlacks = init.freeBlacks
       this.freeWhites = init.freeWhites
@@ -54,6 +57,7 @@ export class AppState {
       this.mode = EditMode.mainMoves
       this.options = []
       this.game = new Game({})
+      this.previewingGame = 'empty'
       this.cursor = 0
       this.freeBlacks = new FreePointsState({})
       this.freeWhites = new FreePointsState({})
@@ -71,6 +75,7 @@ export class AppState {
         mode: EditMode.mainMoves,
         options: [],
         game: Game.fromCode(gameCode) ?? new Game({}),
+        previewingGame: 'empty',
         cursor: parseInt(cursorCode),
         freeBlacks: new FreePointsState({}),
         freeWhites: new FreePointsState({}),
@@ -92,6 +97,7 @@ export class AppState {
       mode: EditMode.mainMoves,
       options: optionsCode.split('').map(longName).filter(o => o !== undefined) as AppOption[],
       game: Game.fromCode(gameCode) ?? new Game({}),
+      previewingGame: 'empty',
       cursor: parseInt(cursorCode) || 0,
       freeBlacks: FreePointsState.fromCode(freeBlacksCode) ?? new FreePointsState({}),
       freeWhites: FreePointsState.fromCode(freeWhitesCode) ?? new FreePointsState({}),
@@ -114,6 +120,27 @@ export class AppState {
       cursor: game.moves.length,
       freeBlacks: new FreePointsState({}),
       freeWhites: new FreePointsState({}),
+    })
+  }
+
+  setPreviewingGame (game: Game): AppState {
+    return this.update({
+      previewingGame: game,
+    })
+  }
+
+  setGameFromPreviewing (): AppState {
+    if (this.previewingGame === 'empty') return this
+    return this.update({
+      game: this.previewingGame,
+      cursor: this.previewingGame.moves.length,
+      previewingGame: 'empty',
+    })
+  }
+
+  unsetPreviewingGame (): AppState {
+    return this.update({
+      previewingGame: 'empty',
     })
   }
 
@@ -203,6 +230,7 @@ export class AppState {
   }
 
   canEdit (p: Point): boolean {
+    if (this.previewingGame !== 'empty') return false
     switch (this.mode) {
       case EditMode.mainMoves:
         return (
@@ -294,6 +322,7 @@ export class AppState {
       mode: fields.mode ?? this.mode,
       options: fields.options ?? this.options,
       game: fields.game ?? this.game,
+      previewingGame: fields.previewingGame ?? this.previewingGame,
       cursor: fields.cursor ?? this.cursor,
       freeBlacks: fields.freeBlacks ?? this.freeBlacks,
       freeWhites: fields.freeWhites ?? this.freeWhites,

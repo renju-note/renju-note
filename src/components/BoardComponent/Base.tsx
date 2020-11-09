@@ -58,7 +58,7 @@ const Indices: FC = () => {
   const xIndices = system.indices.map(
     (x, key) => <text
       key={key}
-      x={system.cx(x)} y={system.cy(1) + system.P - system.indexPadding}
+      x={system.cx(x)} y={system.cy(1) + system.P * 19 / 20 - system.indexPadding}
       textAnchor="middle"
       fill="gray"
       fontSize={system.indexFontSize}
@@ -70,7 +70,7 @@ const Indices: FC = () => {
   const yIndices = system.indices.map(
     (y, key) => <text
       key={key}
-      x={system.P * 3 / 10 + system.indexPadding} y={system.cy(y)}
+      x={system.P * 5 / 20 + system.indexPadding} y={system.cy(y)}
       textAnchor="middle"
       dominantBaseline="central"
       fill="gray"
