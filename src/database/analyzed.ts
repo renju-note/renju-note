@@ -76,6 +76,6 @@ export class AnalyzedDatabase extends Dexie {
     let collection = this.gameCodes.where({ board: boardCode }).distinct()
     if (reverse) collection = collection.reverse()
     // 'sortBy' is not efficient.
-    return (await collection.filter(gv => gv.rated).sortBy('date')).slice(offset, offset + limit).map(gv => gv.id)
+    return (await collection.sortBy('date')).slice(offset, offset + limit).map(gv => gv.id)
   }
 }
