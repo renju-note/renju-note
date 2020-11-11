@@ -26,3 +26,7 @@ svg text {
 .search-result tr:hover td {
   background-color: whitesmoke;
 }
+
+.search-result tr.selected td {
+  background-color: lavender;
+}

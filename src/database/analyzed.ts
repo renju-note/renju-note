@@ -1,11 +1,13 @@
-import { Game, Point, encodeMoves } from '../rule'
 import Dexie, { Table } from 'dexie'
+import { encodeMoves, Game, Point } from '../rule'
 import { RIFDatabase, RIFGame } from './rif'
 
 const DBNAME = 'analyzed'
 const CHUNK_SIZE = 1000
-const ENCODE_OFFSET = 2
-const ENCODE_LIMIT = 10
+
+const MIN_ENCODE_MOVES = 3
+const MAX_ENCODE_MOVES = 10
+const MAX_SEARCH_HIT = 1000
 
 const tableNames = ['gameCodes'] as const
 type TableName = typeof tableNames[number]
@@ -50,7 +52,7 @@ export class AnalyzedDatabase extends Dexie {
       const items = await rif.getGamesByIdRange(startId, startId + CHUNK_SIZE)
       const gameCodes = items.map(item => {
         const game = Game.fromCode(item.move) ?? new Game({})
-        const boardCodes = encodeMoves(game.moves.slice(0, ENCODE_LIMIT)).slice(ENCODE_OFFSET)
+        const boardCodes = encodeMoves(game.moves.slice(0, MAX_ENCODE_MOVES)).slice(MIN_ENCODE_MOVES - 1)
         return {
           id: item.id,
           date: dateMap.get(item.tournament) ?? 0,
@@ -69,13 +71,44 @@ export class AnalyzedDatabase extends Dexie {
     moves: Point[],
     limit: number,
     offset: number = 0,
-    reverse: boolean = false,
-  ): Promise<number[]> {
-    if (moves.length <= ENCODE_OFFSET || ENCODE_LIMIT < moves.length) return []
+    desc: boolean = true,
+  ): Promise<SearchResult> {
+    if (moves.length < MIN_ENCODE_MOVES) {
+      return {
+        ids: [],
+        hit: 0,
+        error: `Too few moves (${moves.length} < ${MIN_ENCODE_MOVES})`,
+      }
+    }
+    if (moves.length > MAX_ENCODE_MOVES) {
+      return {
+        ids: [],
+        hit: 0,
+        error: `Too many moves (${moves.length} > ${MAX_ENCODE_MOVES})`,
+      }
+    }
+
     const boardCode = encodeMoves(moves)[moves.length - 1]
-    let collection = this.gameCodes.where({ board: boardCode }).distinct()
-    if (reverse) collection = collection.reverse()
-    // 'sortBy' is not efficient.
-    return (await collection.sortBy('date')).slice(offset, offset + limit).map(gv => gv.id)
+    const condition = { board: boardCode }
+
+    const hit = await this.gameCodes.where(condition).distinct().count()
+    if (hit > MAX_SEARCH_HIT) {
+      return {
+        ids: [],
+        hit,
+        error: `Too many hits (${hit} > ${MAX_SEARCH_HIT})`,
+      }
+    }
+
+    let collection = this.gameCodes.where(condition).distinct()
+    if (desc) collection = collection.reverse()
+    const ids = (await collection.sortBy('date')).slice(offset, offset + limit).map(g => g.id)
+    return { ids, hit }
   }
+}
+
+export type SearchResult = {
+  ids: number[]
+  hit: number
+  error?: string
 }

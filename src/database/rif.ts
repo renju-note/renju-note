@@ -1,5 +1,5 @@
 import Dexie, { Table } from 'dexie'
-import { Point, parsePoints } from '../rule'
+import { parsePoints, Point } from '../rule'
 
 const DBNAME = 'rif'
 const CHUNK_SIZE = 1000
@@ -98,20 +98,21 @@ const indexedFields: Record<TableName, string> = {
 }
 
 export type GameView = {
-  black: RIFPlayer,
-  white: RIFPlayer,
-  blackWon: boolean | null,
-  whiteWon: boolean | null,
-  moves: Point[],
-  btime: number,
-  wtime: number,
-  rule: RIFRule,
-  opening: RIFOpening,
-  alt: Point[],
-  swap: string,
-  info: string,
-  tournament: RIFTournament,
-  publisher: RIFPlayer,
+  id: RIFGame['id']
+  black: RIFPlayer
+  white: RIFPlayer
+  blackWon: boolean | null
+  whiteWon: boolean | null
+  moves: Point[]
+  btime: number
+  wtime: number
+  rule: RIFRule
+  opening: RIFOpening
+  alt: Point[]
+  swap: string
+  info: string
+  tournament: RIFTournament
+  publisher: RIFPlayer
 }
 
 export class RIFDatabase extends Dexie {
@@ -156,6 +157,7 @@ export class RIFDatabase extends Dexie {
       const blackWon = r === 1 ? true : r === 0 ? false : null
       const whiteWon = r === 0 ? true : r === 1 ? false : null
       return {
+        id: game.id,
         black: blacks[i],
         white: whites[i],
         blackWon,

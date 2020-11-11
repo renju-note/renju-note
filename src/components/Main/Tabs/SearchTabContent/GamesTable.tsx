@@ -1,29 +1,34 @@
 import { Icon, Text } from '@chakra-ui/core'
-import React, { FC, useContext } from 'react'
+import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { RiCheckboxCircleFill, RiCloseLine, RiSubtractFill } from 'react-icons/ri'
-import { GameView, RIFPlayer } from '../../../../database'
+import { GameView, RIFDatabase, RIFPlayer } from '../../../../database'
 import { Game } from '../../../../rule'
 import { AppStateContext, SystemContext } from '../../../contexts'
 
-const Default: FC<{items: GameView[]}> = ({
-  items,
+const Default: FC<{gameIds: number[]}> = ({
+  gameIds,
 }) => {
   const system = useContext(SystemContext)
   const [appState, setAppstate] = useContext(AppStateContext)
-  const onGameViewClick = (gv: GameView) => {
+  const db = useMemo(() => new RIFDatabase(), [])
+
+  const [items, setItems] = useState<GameView[]>([])
+  useEffect(
+    () => {
+      if (gameIds.length === 0) {
+        setItems([])
+        return
+      }
+      (async () => setItems(await db.getGameViews(gameIds)))()
+    },
+    [gameIds]
+  )
+  const onClick = (gv: GameView) => {
     const game = new Game({ moves: gv.moves })
     if (!game) return
     setAppstate(appState.setPreviewingGame(game))
   }
   return <table className="search-result">
-    <colgroup span={1} style={{ width: system.W * 4 / 20 }} />
-    <colgroup span={1} style={{ width: system.W * 5 / 20 }} />
-    <colgroup span={1} style={{ width: system.W * 1 / 40 }} />
-    <colgroup span={1} style={{ width: system.W * 1 / 20 }} />
-    <colgroup span={1} style={{ width: system.W * 1 / 40 }} />
-    <colgroup span={1} style={{ width: system.W * 5 / 20 }} />
-    <colgroup span={1} style={{ width: system.W * 2 / 20 }} />
-    <colgroup span={1} style={{ width: system.W * 2 / 20 }} />
     <thead>
       <tr>
         <th>Date</th>
@@ -34,12 +39,20 @@ const Default: FC<{items: GameView[]}> = ({
         <th>Op.</th>
       </tr>
     </thead>
+    <colgroup span={1} style={{ width: system.W * 4 / 20 }} />
+    <colgroup span={1} style={{ width: system.W * 5 / 20 }} />
+    <colgroup span={1} style={{ width: system.W * 1 / 40 }} />
+    <colgroup span={1} style={{ width: system.W * 1 / 20 }} />
+    <colgroup span={1} style={{ width: system.W * 1 / 40 }} />
+    <colgroup span={1} style={{ width: system.W * 5 / 20 }} />
+    <colgroup span={1} style={{ width: system.W * 2 / 20 }} />
+    <colgroup span={1} style={{ width: system.W * 2 / 20 }} />
     <tbody>
       {
         items.map((g, key) => {
           return <tr
             key={key}
-            onClick={() => onGameViewClick(g)}
+            onClick={() => onClick(g)}
           >
             <td>
               <Text fontFamily="Courier Prime" color="gray.600">
