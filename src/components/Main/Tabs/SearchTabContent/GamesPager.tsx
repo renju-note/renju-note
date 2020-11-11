@@ -18,7 +18,7 @@ const Default: FC<Props> = ({
 }) => {
   const system = useContext(SystemContext)
   const lastPage = ~~((hit - 1) / pageSize)
-  return <ButtonGroup spacing={1} size={system.buttonSizeSmaller} variant="outline">
+  return <ButtonGroup spacing={1} size={system.buttonSizeSmaller} variant="ghost">
     <IconButton
       aria-label="first"
       icon={FiChevronsLeft}
@@ -31,7 +31,7 @@ const Default: FC<Props> = ({
       isDisabled={page <= 0}
       onClick={() => setPage(Math.max(0, page - 1))}
     />
-    <Button isDisabled variant="ghost" width={`${system.W / 5}px`}>
+    <Button isDisabled width={`${system.W / 5}px`}>
       {`${page * pageSize + 1} - ${(page + 1) * pageSize} of ${hit}`}
     </Button>
     <IconButton

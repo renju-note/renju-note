@@ -42,17 +42,18 @@ const Default: FC = () => {
     {
       ids.length > 0 &&
       <Box>
-        <GamesTable gameIds={ids} />
-      </Box>
-    }{
-      ids.length > 0 &&
-      <Box>
         <GamesPager
           page={page}
           setPage={setPage}
           hit={hit}
           pageSize={pageSize}
         />
+      </Box>
+    }
+    {
+      ids.length > 0 &&
+      <Box>
+        <GamesTable gameIds={ids} />
       </Box>
     }
   </Stack>
