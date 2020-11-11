@@ -30,12 +30,16 @@ const indexedFields: Record<TableName, string> = {
 export class AnalyzedDatabase extends Dexie {
   private readonly gameCodes: Table<GameCode, number>
 
+  static dbname (): string {
+    return DBNAME
+  }
+
   static reset () {
-    indexedDB.deleteDatabase(DBNAME)
+    indexedDB.deleteDatabase(AnalyzedDatabase.dbname())
   }
 
   constructor () {
-    super(DBNAME)
+    super(AnalyzedDatabase.dbname())
     this.version(1).stores(indexedFields)
     this.gameCodes = this.table(TableName.gameCodes)
   }

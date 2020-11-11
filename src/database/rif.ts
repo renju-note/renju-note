@@ -125,12 +125,16 @@ export class RIFDatabase extends Dexie {
   private readonly tournaments: Table<RIFTournament, number>
   private readonly games: Table<RIFGame, number>
 
+  static dbname (): string {
+    return DBNAME
+  }
+
   static reset () {
-    indexedDB.deleteDatabase(DBNAME)
+    indexedDB.deleteDatabase(RIFDatabase.dbname())
   }
 
   constructor () {
-    super(DBNAME)
+    super(RIFDatabase.dbname())
     this.version(1).stores(indexedFields)
     this.countries = this.table(TableName.countries)
     this.cities = this.table(TableName.cities)

@@ -6,14 +6,10 @@ const Default: FC = () => {
   return <Tabs>
     <TabList mx="1rem">
       <Tab>Search</Tab>
-      <Tab>Information</Tab>
     </TabList>
     <TabPanels>
       <TabPanel pt="1rem">
         <SearchTabContent />
-      </TabPanel>
-      <TabPanel pt="1rem">
-        <p>Under construction</p>
       </TabPanel>
     </TabPanels>
   </Tabs>
