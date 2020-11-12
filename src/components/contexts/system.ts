@@ -74,6 +74,17 @@ export class System {
     }
   }
 
+  get buttonSizeSmaller (): ButtonProps['size'] {
+    switch (this.W) {
+      case 320:
+        return 'xs'
+      case 360:
+        return 'xs'
+      case 640:
+        return 'sm'
+    }
+  }
+
   get rulerStrokeWidth (): number {
     switch (this.W) {
       case 320:
@@ -159,6 +170,17 @@ export class System {
         return '1 4'
       case 640:
         return '3 5'
+    }
+  }
+
+  get seachPageSize (): number {
+    switch (this.W) {
+      case 320:
+        return 10
+      case 360:
+        return 10
+      case 640:
+        return 20
     }
   }
 }

@@ -2,20 +2,21 @@ import {
   Box,
   Flex,
   Icon, IconButton,
-  Menu, MenuButton, MenuItem, MenuList, MenuOptionGroup, MenuItemOption, MenuDivider,
+  Menu, MenuButton, MenuDivider, MenuItem, MenuItemOption, MenuList, MenuOptionGroup,
   Text,
   useDisclosure
 } from '@chakra-ui/core'
 import React, { FC, useContext } from 'react'
 import {
-  RiFocus2Fill,
+  RiDatabase2Line, RiFlaskFill, RiFocus2Fill,
   RiGridLine,
   RiInformationLine,
   RiMenuLine,
   RiQuestionLine
 } from 'react-icons/ri'
-import { SystemContext, PreferenceContext, Preference } from '../../../contexts'
+import { Preference, PreferenceContext, SystemContext } from '../../../contexts'
 import AboutModal from './AboutModal'
+import LoadRIFModal from './LoadRIFModal'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
@@ -27,6 +28,7 @@ const Default: FC = () => {
     if (preference.showOrders) values.push('showOrders')
     return values
   })()
+  const loadRifDisclosure = useDisclosure()
   const aboutDisclosure = useDisclosure()
   return <>
     <Menu autoSelect={false}>
@@ -74,12 +76,19 @@ const Default: FC = () => {
           </MenuItemOption>
         </MenuOptionGroup>
         <MenuDivider />
+        <MenuItem onClick={loadRifDisclosure.onOpen}>
+          <Icon size="small" as={RiDatabase2Line} />
+          <Text ml={2} mr={1}>Load RIF file </Text>
+          <Icon size="small" as={RiFlaskFill} />
+        </MenuItem>
+        <MenuDivider />
         <MenuItem onClick={aboutDisclosure.onOpen}>
           <Icon size="small" as={RiQuestionLine} />
           <Text ml={2}>About Renju Note</Text>
         </MenuItem>
       </MenuList>
     </Menu>
+    <LoadRIFModal isOpen={loadRifDisclosure.isOpen} onClose={loadRifDisclosure.onClose} />
     <AboutModal isOpen={aboutDisclosure.isOpen} onClose={aboutDisclosure.onClose} />
   </>
 }

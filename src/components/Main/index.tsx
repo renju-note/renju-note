@@ -1,18 +1,28 @@
-import { Flex, Stack } from '@chakra-ui/core'
-import React, { FC } from 'react'
+import { Box, Flex, Stack } from '@chakra-ui/core'
+import React, { FC, useContext } from 'react'
+import { PreferenceContext, SystemContext } from '../contexts'
 import Board from './Board'
 import Controller from './Controller'
+import Tabs from './Tabs'
 
 const Default: FC = () => {
-  return <Flex justify="center">
-    <Stack spacing={4} my={2}>
-      <Flex justify="center" align="center">
+  const system = useContext(SystemContext)
+  const preference = useContext(PreferenceContext)[0]
+  return <Flex justify="center" align="top" wrap="wrap" my="1rem">
+    <Stack width={system.W} spacing="1rem">
+      <Box>
         <Board />
-      </Flex>
-      <Flex justify="center" align="center">
+      </Box>
+      <Box>
         <Controller />
-      </Flex>
+      </Box>
     </Stack>
+    {
+      preference.showTabs &&
+      <Box width={system.W} mt="1rem">
+        <Tabs />
+      </Box>
+    }
   </Flex>
 }
 

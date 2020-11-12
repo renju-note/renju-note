@@ -96,9 +96,9 @@ const Default: FC = () => {
           </MenuItemOption>
         </MenuOptionGroup>
         <MenuDivider />
-        <MenuItem onClick={() => setAppState(appState.clearMoves())}>
+        <MenuItem onClick={() => setAppState(appState.clearFollowingMoves())}>
           <Icon size="small" as={RiCloseCircleLine} />
-          <Text ml={2}>Clear Moves</Text>
+          <Text ml={2}>Clear Following Moves</Text>
         </MenuItem>
         <MenuItem onClick={() => setAppState(appState.clearFreeStones())}>
           <Icon size="small" as={RiIndeterminateCircleLine} />
