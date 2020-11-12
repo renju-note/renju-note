@@ -29,15 +29,16 @@ export const AppOption = {
 } as const
 
 export class AppState {
+  readonly game: Game = new Game()
+  readonly cursor: number = 0
   readonly mode: EditMode = EditMode.mainMoves
   readonly options: AppOption[] = []
-  readonly game: Game = new Game({})
-  readonly previewingGame: Game | undefined = undefined
-  readonly cursor: number = 0
   readonly freeBlacks: FreePointsState = new FreePointsState()
   readonly freeWhites: FreePointsState = new FreePointsState()
   readonly markerPoints: FreePointsState = new FreePointsState()
   readonly markerLines: FreeLinesState = new FreeLinesState()
+  readonly previewingGame: Game | undefined = undefined
+  private partialGameCache: Game | undefined
   private boardCache: Board | undefined
 
   constructor (init?: undefined | Partial<AppState>) {
@@ -58,8 +59,8 @@ export class AppState {
   setGame (game: Game): AppState {
     return this.update({
       game: game,
-      options: this.options.filter(o => o !== AppOption.invertMoves),
       cursor: game.moves.length,
+      options: this.options.filter(o => o !== AppOption.invertMoves),
       freeBlacks: new FreePointsState(),
       freeWhites: new FreePointsState(),
     })
@@ -153,7 +154,7 @@ export class AppState {
 
   clearFollowingMoves (): AppState {
     return this.update({
-      game: this.partial,
+      game: this.partialGame,
     })
   }
 
@@ -222,15 +223,15 @@ export class AppState {
   }
 
   get moves (): Point[] {
-    return this.partial.moves
+    return this.partialGame.moves
   }
 
   get blackMoves (): Point[] {
-    return this.hasOption(AppOption.invertMoves) ? this.partial.whites : this.partial.blacks
+    return this.hasOption(AppOption.invertMoves) ? this.partialGame.whites : this.partialGame.blacks
   }
 
   get whiteMoves (): Point[] {
-    return this.hasOption(AppOption.invertMoves) ? this.partial.blacks : this.partial.whites
+    return this.hasOption(AppOption.invertMoves) ? this.partialGame.blacks : this.partialGame.whites
   }
 
   get blacks (): Point[] {
@@ -239,10 +240,6 @@ export class AppState {
 
   get whites (): Point[] {
     return [...this.whiteMoves, ...this.freeWhites.points]
-  }
-
-  get partial (): Game {
-    return this.game.fork(this.cursor)
   }
 
   get isStart (): boolean {
@@ -257,11 +254,18 @@ export class AppState {
     return [...this.blacks, ...this.whites].findIndex(q => equal(p, q)) >= 0
   }
 
+  private get partialGame (): Game {
+    if (this.partialGameCache === undefined) {
+      this.partialGameCache = this.game.fork(this.cursor)
+    }
+    return this.partialGameCache
+  }
+
   encode (): string {
     const codes: string[] = []
-    if (this.options.length > 0) codes.push(`o:${this.options.map(shortName).join('')}`)
-    if (!this.game.empty) codes.push(`g:${this.game.code}`)
+    if (!this.game.empty) codes.push(`g:${this.game.encode()}`)
     if (this.cursor !== 0) codes.push(`c:${this.cursor}`)
+    if (this.options.length > 0) codes.push(`o:${this.options.map(shortName).join('')}`)
     if (!this.freeBlacks.empty) codes.push(`b:${this.freeBlacks.encode()}`)
     if (!this.freeWhites.empty) codes.push(`w:${this.freeWhites.encode()}`)
     if (!this.markerPoints.empty) codes.push(`p:${this.markerPoints.encode()}`)
@@ -273,24 +277,26 @@ export class AppState {
     const codes = code.split(',')
     const findCode = (s: string) => codes.find(c => c.startsWith(s))?.replace(`${s}:`, '') ?? ''
 
-    const optionsCode = findCode('o')
     const gameCode = findCode('g')
     const cursorCode = findCode('c')
+    const optionsCode = findCode('o')
     const freeBlacksCode = findCode('b')
     const freeWhitesCode = findCode('w')
     const markerPointsCode = findCode('p')
     const markerLinesCode = findCode('l')
 
+    const game = Game.decode(gameCode) ?? new Game()
+    const cursor = Math.min(game.moves.length, parseInt(cursorCode) || 0)
     return new AppState({
+      game,
+      cursor,
       mode: EditMode.mainMoves,
       options: optionsCode.split('').map(longName).filter(o => o !== undefined) as AppOption[],
-      game: Game.fromCode(gameCode) ?? new Game({}),
-      previewingGame: undefined,
-      cursor: parseInt(cursorCode) || 0,
       freeBlacks: FreePointsState.decode(freeBlacksCode) ?? new FreePointsState(),
       freeWhites: FreePointsState.decode(freeWhitesCode) ?? new FreePointsState(),
       markerPoints: FreePointsState.decode(markerPointsCode) ?? new FreePointsState(),
       markerLines: FreeLinesState.decode(markerLinesCode) ?? new FreeLinesState(),
+      previewingGame: undefined,
     })
   }
 }

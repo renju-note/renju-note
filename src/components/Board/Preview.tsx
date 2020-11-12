@@ -10,8 +10,8 @@ const Default: FC = () => {
   return <g>
     <Overlay />
     {
-      game.moves.length > 0 && <LastMove
-        point={game.moves[game.moves.length - 1]}
+      game.lastMove && <LastMove
+        point={game.lastMove}
       />
     }
     <Stones

@@ -60,7 +60,7 @@ export class AnalyzedDatabase extends Dexie {
     for (let startId = 0; startId <= maxId; startId += CHUNK_SIZE) {
       const items = await rif.getGamesByIdRange(startId, startId + CHUNK_SIZE)
       const games = items.map(item => {
-        const game = Game.fromCode(item.move) ?? new Game({})
+        const game = Game.decode(item.move) ?? new Game({})
         const boardCodes = encodeMoves(game.moves.slice(0, MAX_ENCODE_MOVES)).slice(MIN_ENCODE_MOVES - 1)
         return {
           id: item.id,

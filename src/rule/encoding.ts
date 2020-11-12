@@ -4,6 +4,14 @@ export const xCode = (x: number) => X_CODES.charAt(x - 1)
 
 export const yCode = (x: number) => x.toString()
 
+export const encodePoints = (ps: Point[]): string => {
+  let ret = ''
+  for (const p of ps) {
+    ret += encode(p)
+  }
+  return ret
+}
+
 export const decodePoints = (code: string): Point[] | undefined => {
   const codes = code.match(/[a-oA-O][0-9]+/g)
   if (!codes) return
@@ -18,7 +26,7 @@ export const decodePoints = (code: string): Point[] | undefined => {
 
 export const encode = ([x, y]: Point): string => `${xCode(x)}${yCode(y)}`
 
-const decode = (code: string): Point | undefined => {
+export const decode = (code: string): Point | undefined => {
   const x = X_CODE_TO_NUM[code[0]]
   const y = parseInt(code.slice(1))
   if (

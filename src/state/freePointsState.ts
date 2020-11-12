@@ -1,4 +1,4 @@
-import { decodePoints, encode, equal, Point } from '../rule'
+import { decodePoints, encodePoints, equal, Point } from '../rule'
 
 export class FreePointsState {
   readonly points: Point[] = []
@@ -37,7 +37,7 @@ export class FreePointsState {
   }
 
   encode (): string {
-    return this.points.map(encode).join('')
+    return encodePoints(this.points)
   }
 
   static decode (code: string): FreePointsState | undefined {
