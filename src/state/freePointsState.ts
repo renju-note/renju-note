@@ -1,4 +1,4 @@
-import { code, equal, parsePoints, Point } from '../rule'
+import { decodePoints, encode, equal, Point } from '../rule'
 
 export class FreePointsState {
   readonly points: Point[] = []
@@ -37,11 +37,11 @@ export class FreePointsState {
   }
 
   encode (): string {
-    return this.points.map(code).join('')
+    return this.points.map(encode).join('')
   }
 
   static decode (code: string): FreePointsState | undefined {
-    const points = parsePoints(code)
+    const points = decodePoints(code)
     return points && new FreePointsState({ points: points })
   }
 }

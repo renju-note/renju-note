@@ -1,4 +1,5 @@
-import { code, equal, parsePoints, Point } from '../foundation'
+import { decodePoints, encode } from '../encoding'
+import { equal, Point } from '../foundation'
 
 export class Game {
   readonly moves: Point[]
@@ -12,7 +13,7 @@ export class Game {
   }
 
   static fromCode (code: string): Game | undefined {
-    const points = parsePoints(code)
+    const points = decodePoints(code)
     return points && new Game({ moves: points })
   }
 
@@ -63,6 +64,6 @@ export class Game {
   }
 
   get code (): string {
-    return this.moves.map(code).join('')
+    return this.moves.map(encode).join('')
   }
 }

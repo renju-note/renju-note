@@ -1,7 +1,6 @@
 import Dexie, { Table } from 'dexie'
-import { parsePoints, Point } from '../rule'
+import { decodePoints, Point } from '../rule'
 
-const DBNAME = 'rif'
 const CHUNK_SIZE = 1000
 
 const tableNames = [
@@ -116,6 +115,7 @@ export type GameView = {
 }
 
 export class RIFDatabase extends Dexie {
+  static readonly DBNAME = 'rif'
   private readonly countries: Table<RIFCountry, number>
   private readonly cities: Table<RIFCity, number>
   private readonly months: Table<RIFMonth, number>
@@ -125,16 +125,12 @@ export class RIFDatabase extends Dexie {
   private readonly tournaments: Table<RIFTournament, number>
   private readonly games: Table<RIFGame, number>
 
-  static dbname (): string {
-    return DBNAME
-  }
-
   static reset () {
-    indexedDB.deleteDatabase(RIFDatabase.dbname())
+    indexedDB.deleteDatabase(RIFDatabase.DBNAME)
   }
 
   constructor () {
-    super(RIFDatabase.dbname())
+    super(RIFDatabase.DBNAME)
     this.version(1).stores(indexedFields)
     this.countries = this.table(TableName.countries)
     this.cities = this.table(TableName.cities)
@@ -166,7 +162,7 @@ export class RIFDatabase extends Dexie {
         white: whites[i],
         blackWon,
         whiteWon,
-        moves: parsePoints(game.move) ?? [],
+        moves: decodePoints(game.move) ?? [],
         btime: game.btime,
         wtime: game.wtime,
         opening: openings[i],

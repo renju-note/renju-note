@@ -1,4 +1,4 @@
-import { code, equal, parsePoints, Point } from '../rule'
+import { decodePoints, encode, equal, Point } from '../rule'
 
 type FreeLine = [Point, Point]
 
@@ -55,11 +55,11 @@ export class FreeLinesState {
   }
 
   encode (): string {
-    return this.lines.map(([start, end]) => `${code(start)}${code(end)}`).join('')
+    return this.lines.map(([start, end]) => `${encode(start)}${encode(end)}`).join('')
   }
 
   static decode (code: string): FreeLinesState | undefined {
-    const points = parsePoints(code)
+    const points = decodePoints(code)
     if (!points) return undefined
     if (points.length % 2 !== 0) return undefined
     const lines: FreeLine[] = []
