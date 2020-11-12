@@ -1,17 +1,19 @@
 import React, { FC, useContext } from 'react'
 import { Point } from '../../rule'
 import { AppOption } from '../../state'
-import { SystemContext, AppStateContext } from '../contexts'
+import { AppStateContext, SystemContext } from '../contexts'
 
 const Default: FC = () => {
   const appState = useContext(AppStateContext)[0]
-  if (appState.previewingGame === 'empty') return <></>
+  if (appState.previewingGame === undefined) return <></>
   const game = appState.previewingGame
   return <g>
     <Overlay />
-    <LastMove
-      point={game.moves[game.moves.length - 1]}
-    />
+    {
+      game.moves.length > 0 && <LastMove
+        point={game.moves[game.moves.length - 1]}
+      />
+    }
     <Stones
       black={true}
       points={game.blacks}
