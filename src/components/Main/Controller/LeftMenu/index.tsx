@@ -2,20 +2,19 @@ import {
   Box,
   Flex,
   Icon, IconButton,
-  Menu, MenuButton, MenuItem, MenuList, MenuOptionGroup, MenuItemOption, MenuDivider,
+  Menu, MenuButton, MenuDivider, MenuItem, MenuItemOption, MenuList, MenuOptionGroup,
   Text,
   useDisclosure
 } from '@chakra-ui/core'
 import React, { FC, useContext } from 'react'
 import {
-  RiFocus2Fill,
+  RiDatabase2Line, RiFlaskFill, RiFocus2Fill,
   RiGridLine,
   RiInformationLine,
   RiMenuLine,
-  RiQuestionLine,
-  RiDatabase2Line,
+  RiQuestionLine
 } from 'react-icons/ri'
-import { SystemContext, PreferenceContext, Preference } from '../../../contexts'
+import { Preference, PreferenceContext, SystemContext } from '../../../contexts'
 import AboutModal from './AboutModal'
 import LoadRIFModal from './LoadRIFModal'
 
@@ -79,7 +78,8 @@ const Default: FC = () => {
         <MenuDivider />
         <MenuItem onClick={loadRifDisclosure.onOpen}>
           <Icon size="small" as={RiDatabase2Line} />
-          <Text ml={2}>Load RIF file</Text>
+          <Text ml={2} mr={1}>Load RIF file </Text>
+          <Icon size="small" as={RiFlaskFill} />
         </MenuItem>
         <MenuDivider />
         <MenuItem onClick={aboutDisclosure.onOpen}>

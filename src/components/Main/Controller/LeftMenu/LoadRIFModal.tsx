@@ -1,16 +1,17 @@
 import {
+  Button,
+  Flex,
   Heading,
-  Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalFooter, ModalOverlay,
+  Input,
   Link,
   List, ListItem,
-  Input, Button,
-  Flex,
+  Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay,
   Progress,
   Stack,
-  useDisclosure,
+  useDisclosure
 } from '@chakra-ui/core'
 import React, { FC, useState } from 'react'
-import { RIFDatabase, AnalyzedDatabase } from '../../../../database'
+import { AnalyzedDatabase, RIFDatabase } from '../../../../database'
 
 type DefaultProps = {
   isOpen: boolean
@@ -72,14 +73,21 @@ const Default: FC<DefaultProps> = ({
           <Heading as="h2" size="sm" mb="1rem">Remarks</Heading>
           <List styleType="disc">
             <ListItem>
-              The file can be downloaded from <Link href="http://www.renju.net/downloads/games.php" color="teal.500" isExternal>RenjuNet</Link>. Be sure to follow the rules presented on the site.
+              <b>EXPERIMENTAL</b>: Currently the function is in quite an early stage and under heavy development.
+              There is no guarantee for its behaviour on your device.
             </ListItem>
             <ListItem>
-              The data will be stored only in your browser&apos;s storage and <b>never</b> uploaded to anywhere.
+              It seems that the function works only on PC with the latest versions of either Chrome or Firefox, but does not on Mobile devices, also not with other browsers including Safari and IE.
+              This is probably due to problems around XML parsers they use and any solution is not found yet.
             </ListItem>
             <ListItem>
-              Keep in mind that, once your browser&apos;s storage was cleared by some actions including deleting histories,
-              your loaded data will be also deleted as well.
+              Loaded dataset will be stored only in your browser&apos;s storage and <b>never</b> uploaded to anywhere.
+              Keep in mind that, once your browser&apos;s storage was resetted by some actions including deleting histories,
+              your dataset will be also deleted as well.
+            </ListItem>
+            <ListItem>
+              RIF file can be downloaded from <Link href="http://www.renju.net/downloads/games.php" color="teal.500" isExternal>RenjuNet</Link>.
+              Be sure to follow the rules presented on the site.
             </ListItem>
           </List>
         </ModalBody>
