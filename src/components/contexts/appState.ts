@@ -1,16 +1,15 @@
 import { createContext, useState } from 'react'
-
 import { AppState } from '../../state'
 
 export type SetAppState = (s: AppState) => void
 
 export const useAppState = (): [AppState, SetAppState] => {
-  const init = AppState.fromCode(window.location.hash.slice(1)) || new AppState({})
+  const init = AppState.decode(window.location.hash.slice(1)) || new AppState({})
   const [appState, setAppState] = useState<AppState>(init)
 
   const setAppStateAndHash = (s: AppState) => {
     setAppState(s)
-    window.history.replaceState(null, '', `#${s.code}`)
+    window.history.replaceState(null, '', `#${s.encode()}`)
   }
   return [appState, setAppStateAndHash]
 }

@@ -1,19 +1,14 @@
 import { code, equal, parsePoints, Point } from '../rule'
 
 export class FreePointsState {
-  readonly points: Point[]
+  readonly points: Point[] = []
 
-  constructor (
-    init:
-      | {}
-      | Pick<FreePointsState, 'points'>
-  ) {
-    this.points = 'points' in init ? init.points : []
+  constructor (init?: undefined | Partial<FreePointsState>) {
+    if (init !== undefined) Object.assign(this, init)
   }
 
-  static fromCode (code: string): FreePointsState | undefined {
-    const points = parsePoints(code)
-    return points && new FreePointsState({ points: points })
+  private update (fields: Partial<FreePointsState>): FreePointsState {
+    return new FreePointsState({ ...this, ...fields })
   }
 
   add (p: Point): FreePointsState {
@@ -37,19 +32,16 @@ export class FreePointsState {
     return this.points.length === 0
   }
 
-  private update (
-    fields: Partial<Pick<FreePointsState, 'points'>>
-  ): FreePointsState {
-    return new FreePointsState({
-      points: fields.points ?? this.points,
-    })
-  }
-
   private has (p: Point): boolean {
     return this.points.findIndex(q => equal(p, q)) >= 0
   }
 
-  get code (): string {
+  encode (): string {
     return this.points.map(code).join('')
+  }
+
+  static decode (code: string): FreePointsState | undefined {
+    const points = parsePoints(code)
+    return points && new FreePointsState({ points: points })
   }
 }

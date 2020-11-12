@@ -112,7 +112,7 @@ const Default: FC = () => {
           onClick={
             () => {
               const message = 'All moves, added stones and markers will be cleared. Sure?'
-              if (window.confirm(message)) setAppState(new AppState({}))
+              if (window.confirm(message)) setAppState(new AppState())
             }
           }>
           <Icon size="small" as={RiDeleteBinFill} color="red.500" />

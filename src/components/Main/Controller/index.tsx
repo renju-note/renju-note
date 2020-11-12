@@ -11,7 +11,7 @@ import UndoButton from './UndoButton'
 const Default: FC = () => {
   const system = useContext(SystemContext)
   const appState = useContext(AppStateContext)[0]
-  if (appState.previewingGame !== 'empty') return <PreviewingController />
+  if (appState.previewingGame !== undefined) return <PreviewingController />
   return <Flex width={system.W} justifyContent="space-around" alignItems="center">
     <LeftMenu />
     <EditMenu />

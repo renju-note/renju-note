@@ -2,108 +2,50 @@ import { Board, equal, Game, N_LINES, Point } from '../rule'
 import { FreeLinesState } from './freeLinesState'
 import { FreePointsState } from './freePointsState'
 
-export const EditMode = {
-  mainMoves: 'mainMoves',
-  freeBlacks: 'freeBlacks',
-  freeWhites: 'freeWhites',
-  markerPoints: 'markerPoints',
-  markerLines: 'markerLines',
+const editModes = [
+  'mainMoves',
+  'freeBlacks',
+  'freeWhites',
+  'markerPoints',
+  'markerLines',
+] as const
+export type EditMode = typeof editModes[number]
+export const EditMode: Record<EditMode, EditMode> = {
+  mainMoves: editModes[0],
+  freeBlacks: editModes[1],
+  freeWhites: editModes[2],
+  markerPoints: editModes[3],
+  markerLines: editModes[4],
 } as const
-export type EditMode = typeof EditMode[keyof typeof EditMode]
 
+const appOptions = [
+  'invertMoves',
+  'labelMarkers',
+] as const
+export type AppOption = typeof appOptions[number]
 export const AppOption = {
-  invertMoves: 'invertMoves',
-  labelMarkers: 'labelMarkers',
+  invertMoves: appOptions[0],
+  labelMarkers: appOptions[1],
 } as const
-export type AppOption = typeof AppOption[keyof typeof AppOption]
-
-type AppStateFields = Pick<
-  AppState,
-  | 'mode'
-  | 'options'
-  | 'game'
-  | 'previewingGame'
-  | 'cursor'
-  | 'freeBlacks'
-  | 'freeWhites'
-  | 'markerPoints'
-  | 'markerLines'
->
 
 export class AppState {
-  readonly mode: EditMode
-  readonly options: AppOption[]
-  readonly game: Game
-  readonly previewingGame: Game | 'empty'
-  readonly cursor: number
-  readonly freeBlacks: FreePointsState
-  readonly freeWhites: FreePointsState
-  readonly markerPoints: FreePointsState
-  readonly markerLines: FreeLinesState
+  readonly mode: EditMode = EditMode.mainMoves
+  readonly options: AppOption[] = []
+  readonly game: Game = new Game({})
+  readonly previewingGame: Game | undefined = undefined
+  readonly cursor: number = 0
+  readonly freeBlacks: FreePointsState = new FreePointsState()
+  readonly freeWhites: FreePointsState = new FreePointsState()
+  readonly markerPoints: FreePointsState = new FreePointsState()
+  readonly markerLines: FreeLinesState = new FreeLinesState()
   private boardCache: Board | undefined
 
-  constructor (init: {} | AppStateFields) {
-    if ('mode' in init) {
-      this.mode = init.mode
-      this.options = init.options
-      this.game = init.game
-      this.previewingGame = init.previewingGame
-      this.cursor = init.cursor
-      this.freeBlacks = init.freeBlacks
-      this.freeWhites = init.freeWhites
-      this.markerPoints = init.markerPoints
-      this.markerLines = init.markerLines
-    } else {
-      this.mode = EditMode.mainMoves
-      this.options = []
-      this.game = new Game({})
-      this.previewingGame = 'empty'
-      this.cursor = 0
-      this.freeBlacks = new FreePointsState({})
-      this.freeWhites = new FreePointsState({})
-      this.markerPoints = new FreePointsState({})
-      this.markerLines = new FreeLinesState({})
-    }
+  constructor (init?: undefined | Partial<AppState>) {
+    if (init !== undefined) Object.assign(this, init)
   }
 
-  static fromCode (code: string): AppState | undefined {
-    if (code.indexOf('/') >= 0) { // legacy format
-      const codes = code.split('/')
-      if (codes.length !== 2) return undefined
-      const [gameCode, cursorCode] = codes
-      return new AppState({
-        mode: EditMode.mainMoves,
-        options: [],
-        game: Game.fromCode(gameCode) ?? new Game({}),
-        previewingGame: 'empty',
-        cursor: parseInt(cursorCode),
-        freeBlacks: new FreePointsState({}),
-        freeWhites: new FreePointsState({}),
-        markerPoints: new FreePointsState({}),
-        markerLines: new FreeLinesState({}),
-      })
-    }
-
-    const codes = code.split(',')
-    const findCode = (s: string) => codes.find(c => c.startsWith(s))?.replace(`${s}:`, '') ?? ''
-    const optionsCode = findCode('o')
-    const gameCode = findCode('g')
-    const cursorCode = findCode('c')
-    const freeBlacksCode = findCode('b')
-    const freeWhitesCode = findCode('w')
-    const markerPointsCode = findCode('p')
-    const markerLinesCode = findCode('l')
-    return new AppState({
-      mode: EditMode.mainMoves,
-      options: optionsCode.split('').map(longName).filter(o => o !== undefined) as AppOption[],
-      game: Game.fromCode(gameCode) ?? new Game({}),
-      previewingGame: 'empty',
-      cursor: parseInt(cursorCode) || 0,
-      freeBlacks: FreePointsState.fromCode(freeBlacksCode) ?? new FreePointsState({}),
-      freeWhites: FreePointsState.fromCode(freeWhitesCode) ?? new FreePointsState({}),
-      markerPoints: FreePointsState.fromCode(markerPointsCode) ?? new FreePointsState({}),
-      markerLines: FreeLinesState.fromCode(markerLinesCode) ?? new FreeLinesState({}),
-    })
+  private update (fields: Partial<AppState>): AppState {
+    return new AppState({ ...this, ...fields })
   }
 
   setMode (mode: EditMode): AppState {
@@ -118,8 +60,8 @@ export class AppState {
       game: game,
       options: this.options.filter(o => o !== AppOption.invertMoves),
       cursor: game.moves.length,
-      freeBlacks: new FreePointsState({}),
-      freeWhites: new FreePointsState({}),
+      freeBlacks: new FreePointsState(),
+      freeWhites: new FreePointsState(),
     })
   }
 
@@ -130,17 +72,17 @@ export class AppState {
   }
 
   setGameFromPreviewing (): AppState {
-    if (this.previewingGame === 'empty') return this
+    if (this.previewingGame === undefined) return this
     return this.update({
       game: this.previewingGame,
       cursor: this.previewingGame.moves.length,
-      previewingGame: 'empty',
+      previewingGame: undefined,
     })
   }
 
   unsetPreviewingGame (): AppState {
     return this.update({
-      previewingGame: 'empty',
+      previewingGame: undefined,
     })
   }
 
@@ -217,20 +159,20 @@ export class AppState {
 
   clearFreeStones (): AppState {
     return this.update({
-      freeBlacks: new FreePointsState({}),
-      freeWhites: new FreePointsState({}),
+      freeBlacks: new FreePointsState(),
+      freeWhites: new FreePointsState(),
     })
   }
 
   clearMarkers (): AppState {
     return this.update({
-      markerPoints: new FreePointsState({}),
-      markerLines: new FreeLinesState({})
+      markerPoints: new FreePointsState(),
+      markerLines: new FreeLinesState()
     })
   }
 
   canEdit (p: Point): boolean {
-    if (this.previewingGame !== 'empty') return false
+    if (this.previewingGame !== undefined) return false
     switch (this.mode) {
       case EditMode.mainMoves:
         return (
@@ -283,14 +225,20 @@ export class AppState {
     return this.partial.moves
   }
 
+  get blackMoves (): Point[] {
+    return this.hasOption(AppOption.invertMoves) ? this.partial.whites : this.partial.blacks
+  }
+
+  get whiteMoves (): Point[] {
+    return this.hasOption(AppOption.invertMoves) ? this.partial.blacks : this.partial.whites
+  }
+
   get blacks (): Point[] {
-    const blackMoves = this.hasOption(AppOption.invertMoves) ? this.partial.whites : this.partial.blacks
-    return [...blackMoves, ...this.freeBlacks.points]
+    return [...this.blackMoves, ...this.freeBlacks.points]
   }
 
   get whites (): Point[] {
-    const whiteMoves = this.hasOption(AppOption.invertMoves) ? this.partial.blacks : this.partial.whites
-    return [...whiteMoves, ...this.freeWhites.points]
+    return [...this.whiteMoves, ...this.freeWhites.points]
   }
 
   get partial (): Game {
@@ -305,34 +253,45 @@ export class AppState {
     return this.cursor === this.game.moves.length
   }
 
-  get code (): string {
+  private hasStone (p: Point): boolean {
+    return [...this.blacks, ...this.whites].findIndex(q => equal(p, q)) >= 0
+  }
+
+  encode (): string {
     const codes: string[] = []
     if (this.options.length > 0) codes.push(`o:${this.options.map(shortName).join('')}`)
     if (!this.game.empty) codes.push(`g:${this.game.code}`)
     if (this.cursor !== 0) codes.push(`c:${this.cursor}`)
-    if (!this.freeBlacks.empty) codes.push(`b:${this.freeBlacks.code}`)
-    if (!this.freeWhites.empty) codes.push(`w:${this.freeWhites.code}`)
-    if (!this.markerPoints.empty) codes.push(`p:${this.markerPoints.code}`)
-    if (!this.markerLines.empty) codes.push(`l:${this.markerLines.code}`)
+    if (!this.freeBlacks.empty) codes.push(`b:${this.freeBlacks.encode()}`)
+    if (!this.freeWhites.empty) codes.push(`w:${this.freeWhites.encode()}`)
+    if (!this.markerPoints.empty) codes.push(`p:${this.markerPoints.encode()}`)
+    if (!this.markerLines.empty) codes.push(`l:${this.markerLines.encode()}`)
     return codes.join(',')
   }
 
-  private update (fields: Partial<AppStateFields>): AppState {
-    return new AppState({
-      mode: fields.mode ?? this.mode,
-      options: fields.options ?? this.options,
-      game: fields.game ?? this.game,
-      previewingGame: fields.previewingGame ?? this.previewingGame,
-      cursor: fields.cursor ?? this.cursor,
-      freeBlacks: fields.freeBlacks ?? this.freeBlacks,
-      freeWhites: fields.freeWhites ?? this.freeWhites,
-      markerPoints: fields.markerPoints ?? this.markerPoints,
-      markerLines: fields.markerLines ?? this.markerLines,
-    })
-  }
+  static decode (code: string): AppState | undefined {
+    const codes = code.split(',')
+    const findCode = (s: string) => codes.find(c => c.startsWith(s))?.replace(`${s}:`, '') ?? ''
 
-  private hasStone (p: Point): boolean {
-    return [...this.blacks, ...this.whites].findIndex(q => equal(p, q)) >= 0
+    const optionsCode = findCode('o')
+    const gameCode = findCode('g')
+    const cursorCode = findCode('c')
+    const freeBlacksCode = findCode('b')
+    const freeWhitesCode = findCode('w')
+    const markerPointsCode = findCode('p')
+    const markerLinesCode = findCode('l')
+
+    return new AppState({
+      mode: EditMode.mainMoves,
+      options: optionsCode.split('').map(longName).filter(o => o !== undefined) as AppOption[],
+      game: Game.fromCode(gameCode) ?? new Game({}),
+      previewingGame: undefined,
+      cursor: parseInt(cursorCode) || 0,
+      freeBlacks: FreePointsState.decode(freeBlacksCode) ?? new FreePointsState(),
+      freeWhites: FreePointsState.decode(freeWhitesCode) ?? new FreePointsState(),
+      markerPoints: FreePointsState.decode(markerPointsCode) ?? new FreePointsState(),
+      markerLines: FreeLinesState.decode(markerLinesCode) ?? new FreeLinesState(),
+    })
   }
 }
 

@@ -2,21 +2,21 @@ import {
   Box,
   Flex,
   Icon, IconButton,
-  Menu, MenuButton, MenuItem, MenuList, MenuOptionGroup, MenuItemOption, MenuDivider,
-  Text,
+  Menu, MenuButton, MenuDivider, MenuItem, MenuItemOption, MenuList, MenuOptionGroup,
+  Text
 } from '@chakra-ui/core'
-import * as firebase from 'firebase/app'
 import 'firebase/analytics'
+import * as firebase from 'firebase/app'
 import React, { FC, useContext } from 'react'
-import { AppStateContext, SystemContext, PreferenceContext, Preference } from '../../../contexts'
-import DownloadHidden, { onDownload } from './DownloadHidden'
 import {
   RiCloseLine,
   RiDownload2Line,
   RiGitCommitFill,
   RiMore2Fill,
-  RiStopMiniFill,
+  RiStopMiniFill
 } from 'react-icons/ri'
+import { AppStateContext, Preference, PreferenceContext, SystemContext } from '../../../contexts'
+import DownloadHidden, { onDownload } from './DownloadHidden'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
@@ -79,7 +79,7 @@ const Default: FC = () => {
         <MenuItem onClick={
           () => {
             onDownload(downloadHiddenId)
-            firebase.analytics().logEvent('download_picture', { code: appState.code })
+            firebase.analytics().logEvent('download_picture', { code: appState.encode() })
           }
         }>
           <Icon size="small" as={RiDownload2Line} />

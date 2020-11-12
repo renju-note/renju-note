@@ -1,14 +1,14 @@
 import React, { FC, useContext } from 'react'
 import { Point } from '../../rule'
 import { AppOption } from '../../state'
-import { SystemContext, AppStateContext } from '../contexts'
+import { AppStateContext, SystemContext } from '../contexts'
 
 const Default: FC = () => {
   const appState = useContext(AppStateContext)[0]
   return <g>
     <Lines lines={appState.markerLines.lines}/>
     {
-      appState.markerLines.start !== 'empty' &&
+      appState.markerLines.start &&
       <LineStart point={appState.markerLines.start} />
     }
     <Points
