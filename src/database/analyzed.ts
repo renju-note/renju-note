@@ -9,13 +9,13 @@ const MIN_ENCODE_MOVES = 3
 const MAX_ENCODE_MOVES = 10
 const MAX_SEARCH_HIT = 1000
 
-const tableNames = ['gameCodes'] as const
+const tableNames = ['games'] as const
 type TableName = typeof tableNames[number]
 const TableName: Record<TableName, TableName> = {
-  gameCodes: tableNames[0],
+  games: tableNames[0],
 }
 
-type GameCode = {
+type AnalyzedGame = {
   id: RIFGame['id']
   date: number
   board: string[]
@@ -24,11 +24,11 @@ type GameCode = {
 }
 
 const indexedFields: Record<TableName, string> = {
-  gameCodes: 'id,date,*board,*player',
+  games: 'id,date,*board,*player',
 }
 
 export class AnalyzedDatabase extends Dexie {
-  private readonly gameCodes: Table<GameCode, number>
+  private readonly games: Table<AnalyzedGame, number>
 
   static dbname (): string {
     return DBNAME
@@ -41,7 +41,7 @@ export class AnalyzedDatabase extends Dexie {
   constructor () {
     super(AnalyzedDatabase.dbname())
     this.version(1).stores(indexedFields)
-    this.gameCodes = this.table(TableName.gameCodes)
+    this.games = this.table(TableName.games)
   }
 
   async loadFromRIFDatabase (progress: (percentile: number) => void = () => {}) {
@@ -54,7 +54,7 @@ export class AnalyzedDatabase extends Dexie {
     progress(0)
     for (let startId = 0; startId <= maxId; startId += CHUNK_SIZE) {
       const items = await rif.getGamesByIdRange(startId, startId + CHUNK_SIZE)
-      const gameCodes = items.map(item => {
+      const games = items.map(item => {
         const game = Game.fromCode(item.move) ?? new Game({})
         const boardCodes = encodeMoves(game.moves.slice(0, MAX_ENCODE_MOVES)).slice(MIN_ENCODE_MOVES - 1)
         return {
@@ -65,7 +65,7 @@ export class AnalyzedDatabase extends Dexie {
           rated: ratedMap.get(item.tournament) ?? false,
         }
       })
-      await this.gameCodes.bulkAdd(gameCodes)
+      await this.games.bulkAdd(games)
       progress(Math.floor((startId + CHUNK_SIZE) * 100 / maxId))
     }
     progress(100)
@@ -95,7 +95,7 @@ export class AnalyzedDatabase extends Dexie {
     const boardCode = encodeMoves(moves)[moves.length - 1]
     const condition = { board: boardCode }
 
-    const hit = await this.gameCodes.where(condition).distinct().count()
+    const hit = await this.games.where(condition).distinct().count()
     if (hit > MAX_SEARCH_HIT) {
       return {
         ids: [],
@@ -104,7 +104,7 @@ export class AnalyzedDatabase extends Dexie {
       }
     }
 
-    let collection = this.gameCodes.where(condition).distinct()
+    let collection = this.games.where(condition).distinct()
     if (desc) collection = collection.reverse()
     const ids = (await collection.sortBy('date')).slice(offset, offset + limit).map(g => g.id)
     return { ids, hit }
