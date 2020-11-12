@@ -38,7 +38,6 @@ export class AppState {
   readonly markerPoints: FreePointsState = new FreePointsState()
   readonly markerLines: FreeLinesState = new FreeLinesState()
   readonly previewingGame: Game | undefined = undefined
-  private partialGameCache: Game | undefined
   private boardCache: Board | undefined
 
   constructor (init?: undefined | Partial<AppState>) {
@@ -255,10 +254,7 @@ export class AppState {
   }
 
   private get partialGame (): Game {
-    if (this.partialGameCache === undefined) {
-      this.partialGameCache = this.game.fork(this.cursor)
-    }
-    return this.partialGameCache
+    return this.game.fork(this.cursor)
   }
 
   encode (): string {
