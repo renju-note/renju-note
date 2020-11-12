@@ -7,6 +7,7 @@ export class Preference {
   readonly showForbiddens: boolean
   readonly showPropertyRows: boolean
   readonly showPropertyEyes: boolean
+  readonly showTabs: boolean
 
   constructor (init: Partial<Preference>) {
     this.showIndices = init.showIndices ?? false
@@ -15,6 +16,7 @@ export class Preference {
     this.showForbiddens = init.showForbiddens ?? false
     this.showPropertyRows = init.showPropertyRows ?? false
     this.showPropertyEyes = init.showPropertyEyes ?? false
+    this.showTabs = init.showTabs ?? false
   }
 }
 

@@ -10,8 +10,9 @@ import {
   Stack,
   useDisclosure
 } from '@chakra-ui/core'
-import React, { FC, useState } from 'react'
+import React, { FC, useContext, useState } from 'react'
 import { AnalyzedDatabase, RIFDatabase } from '../../../../database'
+import { Preference, PreferenceContext } from '../../../contexts'
 
 type DefaultProps = {
   isOpen: boolean
@@ -22,11 +23,12 @@ const Default: FC<DefaultProps> = ({
   isOpen,
   onClose,
 }) => {
-  const analyzingDisclosure = useDisclosure()
+  const [preference, setPreference] = useContext(PreferenceContext)
   const [fileIsInvalid, setFileIsInvalid] = useState<boolean>(false)
   const [parsingProgress, setParsingProgress] = useState<number>(0)
   const [analyzingProgress, setAnalyzingProgress] = useState<number>(0)
   const [completed, setCompleted] = useState<boolean>(false)
+  const analyzingDisclosure = useDisclosure()
 
   const onLoadFile = async () => {
     const elem = document.getElementById('rif-file') as HTMLInputElement
@@ -48,6 +50,7 @@ const Default: FC<DefaultProps> = ({
     await analyzedDB.loadFromRIFDatabase((p) => setAnalyzingProgress(p))
 
     setCompleted(true)
+    setPreference(new Preference({ ...preference, showTabs: true }))
   }
   return <>
     <Modal
