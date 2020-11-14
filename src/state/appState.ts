@@ -48,7 +48,7 @@ export class AppState {
   }
 
   private update (fields: Partial<AppState>): AppState {
-    return new AppState({ ...this, ...fields })
+    return new AppState({ ...this, ...fields, boardCache: undefined })
   }
 
   setMode (mode: EditMode): AppState {
