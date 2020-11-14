@@ -1,35 +1,28 @@
 import { CSSReset, ThemeProvider } from '@chakra-ui/core'
-import React, { FC, useEffect } from 'react'
+import React, { FC } from 'react'
 import './App.css'
 import {
-  AppStateContext, useAppState,
-  PreferenceContext, usePreference,
-  SystemContext, setupSystem,
+  BoardStateContext,
+  PreferenceContext,
+  setupSystem,
+  SystemContext,
+  useBoardState,
+  usePreference
 } from './contexts'
 import Main from './Main'
 
 const App: FC = () => {
   const system = setupSystem()
-
-  const [appState, setAppState] = useAppState()
-  useEffect(
-    () => setAppState(appState),
-    [appState]
-  )
-
-  const [preference, setPreference] = usePreference()
-  useEffect(
-    () => setPreference(preference),
-    [preference],
-  )
+  const boardStateContext = useBoardState()
+  const preferenceContext = usePreference()
   return <ThemeProvider>
     <CSSReset />
     <SystemContext.Provider value={system}>
-      <AppStateContext.Provider value={[appState, setAppState]}>
-        <PreferenceContext.Provider value={[preference, setPreference]}>
+      <BoardStateContext.Provider value={boardStateContext}>
+        <PreferenceContext.Provider value={preferenceContext}>
           <Main />
         </PreferenceContext.Provider>
-      </AppStateContext.Provider>
+      </BoardStateContext.Provider>
     </SystemContext.Provider>
   </ThemeProvider>
 }

@@ -1,6 +1,6 @@
 import { Flex } from '@chakra-ui/core'
 import React, { FC, useContext } from 'react'
-import { AppStateContext, SystemContext } from '../../contexts'
+import { BoardStateContext, SystemContext } from '../../contexts'
 import EditMenu from './EditMenu'
 import LeftMenu from './LeftMenu'
 import Navigator from './Navigator'
@@ -10,8 +10,8 @@ import UndoButton from './UndoButton'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
-  const appState = useContext(AppStateContext)[0]
-  if (appState.previewingGame !== 'empty') return <PreviewingController />
+  const { boardState } = useContext(BoardStateContext)
+  if (boardState.previewingGame !== undefined) return <PreviewingController />
   return <Flex width={system.W} justifyContent="space-around" alignItems="center">
     <LeftMenu />
     <EditMenu />

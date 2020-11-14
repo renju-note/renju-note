@@ -1,19 +1,19 @@
 import React, { FC, useContext } from 'react'
 import { Point } from '../../rule'
-import { AppOption } from '../../state'
-import { SystemContext, AppStateContext } from '../contexts'
+import { BoardOption } from '../../state'
+import { BoardStateContext, SystemContext } from '../contexts'
 
 const Default: FC = () => {
-  const appState = useContext(AppStateContext)[0]
+  const { boardState } = useContext(BoardStateContext)
   return <g>
-    <Lines lines={appState.markerLines.lines}/>
+    <Lines lines={boardState.markerLines.lines}/>
     {
-      appState.markerLines.start !== 'empty' &&
-      <LineStart point={appState.markerLines.start} />
+      boardState.markerLines.start &&
+      <LineStart point={boardState.markerLines.start} />
     }
     <Points
-      points={appState.markerPoints.points}
-      label={appState.options.includes(AppOption.labelMarkers)}
+      points={boardState.markerPoints.points}
+      label={boardState.options.has(BoardOption.labelMarkers)}
     />
   </g>
 }

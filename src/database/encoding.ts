@@ -1,4 +1,4 @@
-import { Point, N_LINES } from '../foundation'
+import { N_LINES, Point } from '../rule/foundation'
 
 type BitBoard = [number[], number[]]
 
@@ -31,19 +31,18 @@ const encode = (board: BitBoard): string => {
   return '+' + encodeHalf(board[0]) + '-' + encodeHalf(board[1])
 }
 
-const encodeHalf = (a: number[]): string => {
+const encodeHalf = (halfBoard: number[]): string => {
   let result = ''
   let skip = 0
-  for (let i = 0; i < a.length; i++) {
-    const l = a[i]
-    if (l === 0) {
+  for (const line of halfBoard) {
+    if (line === 0) {
       skip++
     } else {
       if (skip !== 0) {
         result += skip.toString(16) + '.'
         skip = 0
       }
-      result += a[i].toString(16) + '/'
+      result += line.toString(16) + '/'
       skip = 0
     }
   }

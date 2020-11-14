@@ -1,15 +1,17 @@
 import Dexie, { Table } from 'dexie'
-import { encodeMoves, Game, Point } from '../rule'
+import { Game, Point } from '../rule'
+import { encodeMoves } from './encoding'
 import { RIFDatabase, RIFGame } from './rif'
 
-const DBNAME = 'analyzed'
 const CHUNK_SIZE = 1000
 
 const MIN_ENCODE_MOVES = 3
 const MAX_ENCODE_MOVES = 10
 const MAX_SEARCH_HIT = 1000
 
-const tableNames = ['games'] as const
+const tableNames = [
+  'games',
+] as const
 type TableName = typeof tableNames[number]
 const TableName: Record<TableName, TableName> = {
   games: tableNames[0],
@@ -27,19 +29,22 @@ const indexedFields: Record<TableName, string> = {
   games: 'id,date,*board,*player',
 }
 
+export type SearchResult = {
+  ids: number[]
+  hit: number
+  error?: string
+}
+
 export class AnalyzedDatabase extends Dexie {
+  static readonly DBNAME = 'analyzed'
   private readonly games: Table<AnalyzedGame, number>
 
-  static dbname (): string {
-    return DBNAME
-  }
-
   static reset () {
-    indexedDB.deleteDatabase(AnalyzedDatabase.dbname())
+    indexedDB.deleteDatabase(AnalyzedDatabase.DBNAME)
   }
 
   constructor () {
-    super(AnalyzedDatabase.dbname())
+    super(AnalyzedDatabase.DBNAME)
     this.version(1).stores(indexedFields)
     this.games = this.table(TableName.games)
   }
@@ -55,7 +60,7 @@ export class AnalyzedDatabase extends Dexie {
     for (let startId = 0; startId <= maxId; startId += CHUNK_SIZE) {
       const items = await rif.getGamesByIdRange(startId, startId + CHUNK_SIZE)
       const games = items.map(item => {
-        const game = Game.fromCode(item.move) ?? new Game({})
+        const game = Game.decode(item.move) ?? new Game({})
         const boardCodes = encodeMoves(game.moves.slice(0, MAX_ENCODE_MOVES)).slice(MIN_ENCODE_MOVES - 1)
         return {
           id: item.id,
@@ -109,10 +114,4 @@ export class AnalyzedDatabase extends Dexie {
     const ids = (await collection.sortBy('date')).slice(offset, offset + limit).map(g => g.id)
     return { ids, hit }
   }
-}
-
-export type SearchResult = {
-  ids: number[]
-  hit: number
-  error?: string
 }

@@ -2,7 +2,7 @@ import { Box, Stack, Text } from '@chakra-ui/core'
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { AnalyzedDatabase, ready } from '../../../../database'
 import { Point } from '../../../../rule'
-import { AppStateContext, SystemContext } from '../../../contexts'
+import { BoardStateContext, SystemContext } from '../../../contexts'
 import GamesPager from './GamesPager'
 import GamesTable from './GamesTable'
 
@@ -15,7 +15,7 @@ const Default: FC = () => {
     },
     []
   )
-  const appState = useContext(AppStateContext)[0]
+  const { boardState } = useContext(BoardStateContext)
   const analyzedDB = useMemo(() => new AnalyzedDatabase(), [])
 
   const pageSize = system.seachPageSize
@@ -37,9 +37,9 @@ const Default: FC = () => {
   }
   useEffect(
     () => {
-      onSearch(appState.moves)
+      onSearch(boardState.moves)
     },
-    [appState.moves.length, page]
+    [boardState.moves.length, page]
   )
 
   if (!databaseReady) {

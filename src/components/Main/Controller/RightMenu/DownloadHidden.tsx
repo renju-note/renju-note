@@ -1,6 +1,6 @@
 import { Box } from '@chakra-ui/core'
 import React, { FC } from 'react'
-import BoardComponent from '../../../BoardComponent'
+import Board from '../../../Board'
 import { System, SystemContext } from '../../../contexts'
 
 type DefaultProps = {
@@ -12,7 +12,7 @@ const Default: FC<DefaultProps> = ({
 }) => {
   return <Box hidden>
     <SystemContext.Provider value={new System(640)}>
-      <BoardComponent id={id} />
+      <Board id={id} />
     </SystemContext.Provider>
   </Box>
 }

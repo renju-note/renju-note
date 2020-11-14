@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/core'
 import React, { FC, useContext, useState } from 'react'
 import { AnalyzedDatabase, RIFDatabase } from '../../../../database'
-import { Preference, PreferenceContext } from '../../../contexts'
+import { PreferenceContext, PreferenceOption } from '../../../contexts'
 
 type DefaultProps = {
   isOpen: boolean
@@ -23,7 +23,7 @@ const Default: FC<DefaultProps> = ({
   isOpen,
   onClose,
 }) => {
-  const [preference, setPreference] = useContext(PreferenceContext)
+  const { preference, setPreference } = useContext(PreferenceContext)
   const [fileIsInvalid, setFileIsInvalid] = useState<boolean>(false)
   const [parsingProgress, setParsingProgress] = useState<number>(0)
   const [analyzingProgress, setAnalyzingProgress] = useState<number>(0)
@@ -50,7 +50,7 @@ const Default: FC<DefaultProps> = ({
     await analyzedDB.loadFromRIFDatabase((p) => setAnalyzingProgress(p))
 
     setCompleted(true)
-    setPreference(new Preference({ ...preference, showTabs: true }))
+    setPreference(preference.on([PreferenceOption.showTabs]))
   }
   return <>
     <Modal
