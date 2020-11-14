@@ -1,6 +1,5 @@
 import React, { FC, useContext } from 'react'
 import { Point } from '../../rule'
-import { AppOption } from '../../state'
 import { AppStateContext, SystemContext } from '../contexts'
 
 const Default: FC = () => {
@@ -24,7 +23,7 @@ const Default: FC = () => {
     />
     <Orders
       moves={game.moves}
-      invert={appState.hasOption(AppOption.invertMoves)}
+      invert={false}
     />
   </g>
 }

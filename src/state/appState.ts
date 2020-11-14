@@ -1,4 +1,5 @@
 import { Board, equal, Game, N_LINES, Point } from '../rule'
+import { Options } from '../utils/options'
 import { FreeLinesState } from './freeLinesState'
 import { FreePointsState } from './freePointsState'
 
@@ -23,16 +24,18 @@ const appOptions = [
   'labelMarkers',
 ] as const
 export type AppOption = typeof appOptions[number]
-export const AppOption = {
+export const AppOption: Record<AppOption, AppOption> = {
   invertMoves: appOptions[0],
   labelMarkers: appOptions[1],
 } as const
+
+export type AppOptions = Options<AppOption>
 
 export class AppState {
   readonly game: Game = new Game()
   readonly cursor: number = 0
   readonly mode: EditMode = EditMode.mainMoves
-  readonly options: AppOption[] = []
+  readonly options: AppOptions = new Options<AppOption>()
   readonly freeBlacks: FreePointsState = new FreePointsState()
   readonly freeWhites: FreePointsState = new FreePointsState()
   readonly markerPoints: FreePointsState = new FreePointsState()
@@ -59,7 +62,7 @@ export class AppState {
     return this.update({
       game: game,
       cursor: game.moves.length,
-      options: this.options.filter(o => o !== AppOption.invertMoves),
+      options: this.options.off([AppOption.invertMoves]),
       freeBlacks: new FreePointsState(),
       freeWhites: new FreePointsState(),
     })
@@ -87,11 +90,7 @@ export class AppState {
   }
 
   setOptions (options: AppOption[]): AppState {
-    return this.update({ options: options })
-  }
-
-  hasOption (o: AppOption): boolean {
-    return this.options.indexOf(o) >= 0
+    return this.update({ options: new Options<AppOption>().on(options) })
   }
 
   edit (p: Point): AppState {
@@ -226,11 +225,11 @@ export class AppState {
   }
 
   get blackMoves (): Point[] {
-    return this.hasOption(AppOption.invertMoves) ? this.partialGame.whites : this.partialGame.blacks
+    return this.options.has(AppOption.invertMoves) ? this.partialGame.whites : this.partialGame.blacks
   }
 
   get whiteMoves (): Point[] {
-    return this.hasOption(AppOption.invertMoves) ? this.partialGame.blacks : this.partialGame.whites
+    return this.options.has(AppOption.invertMoves) ? this.partialGame.blacks : this.partialGame.whites
   }
 
   get blacks (): Point[] {
@@ -261,7 +260,7 @@ export class AppState {
     const codes: string[] = []
     if (!this.game.empty) codes.push(`g:${this.game.encode()}`)
     if (this.cursor !== 0) codes.push(`c:${this.cursor}`)
-    if (this.options.length > 0) codes.push(`o:${this.options.map(shortName).join('')}`)
+    if (this.options) codes.push(`o:${encodeAppOptions(this.options)}`)
     if (!this.freeBlacks.empty) codes.push(`b:${this.freeBlacks.encode()}`)
     if (!this.freeWhites.empty) codes.push(`w:${this.freeWhites.encode()}`)
     if (!this.markerPoints.empty) codes.push(`p:${this.markerPoints.encode()}`)
@@ -287,7 +286,7 @@ export class AppState {
       game,
       cursor,
       mode: EditMode.mainMoves,
-      options: optionsCode.split('').map(longName).filter(o => o !== undefined) as AppOption[],
+      options: decodeAppOptions(optionsCode) ?? new Options<AppOption>(),
       freeBlacks: FreePointsState.decode(freeBlacksCode) ?? new FreePointsState(),
       freeWhites: FreePointsState.decode(freeWhitesCode) ?? new FreePointsState(),
       markerPoints: FreePointsState.decode(markerPointsCode) ?? new FreePointsState(),
@@ -297,7 +296,16 @@ export class AppState {
   }
 }
 
-const shortName = (o: AppOption): string => {
+const encodeAppOptions = (options: AppOptions): string => {
+  return options.values.map(shortName).join('')
+}
+
+const decodeAppOptions = (code: string): AppOptions => {
+  const values = code.split('').map(longName).filter(v => v !== undefined) as AppOption[]
+  return new Options<AppOption>().on(values)
+}
+
+const shortName = (o: AppOption): string | undefined => {
   switch (o) {
     case AppOption.invertMoves:
       return 'i'

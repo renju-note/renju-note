@@ -1,7 +1,7 @@
 import React, { FC, useContext } from 'react'
 import { Point } from '../../rule'
 import { AppOption } from '../../state'
-import { SystemContext, PreferenceContext, AppStateContext } from '../contexts'
+import { AppStateContext, PreferenceContext, PreferenceOption, SystemContext } from '../contexts'
 
 const Default: FC = () => {
   const preference = useContext(PreferenceContext)[0]
@@ -9,7 +9,7 @@ const Default: FC = () => {
   const moves = appState.moves
   return <g>
     {
-      preference.emphasizeLastMove && moves.length >= 1 &&
+      preference.has(PreferenceOption.emphasizeLastMove) && moves.length >= 1 &&
       <LastMove
         point={moves[moves.length - 1]}
       />
@@ -23,10 +23,10 @@ const Default: FC = () => {
       points={appState.whites}
     />
     {
-      preference.showOrders &&
+      preference.has(PreferenceOption.showOrders) &&
       <Orders
         moves={moves}
-        invert={appState.hasOption(AppOption.invertMoves)}
+        invert={appState.options.has(AppOption.invertMoves)}
       />
     }
   </g>

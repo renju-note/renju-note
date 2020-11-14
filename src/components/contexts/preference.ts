@@ -1,44 +1,54 @@
 import { createContext, useState } from 'react'
+import { Options } from '../../utils/options'
 
-export class Preference {
-  readonly showIndices: boolean
-  readonly showOrders: boolean
-  readonly emphasizeLastMove: boolean
-  readonly showForbiddens: boolean
-  readonly showPropertyRows: boolean
-  readonly showPropertyEyes: boolean
-  readonly showTabs: boolean
-
-  constructor (init: Partial<Preference>) {
-    this.showIndices = init.showIndices ?? false
-    this.showOrders = init.showOrders ?? false
-    this.emphasizeLastMove = init.emphasizeLastMove ?? false
-    this.showForbiddens = init.showForbiddens ?? false
-    this.showPropertyRows = init.showPropertyRows ?? false
-    this.showPropertyEyes = init.showPropertyEyes ?? false
-    this.showTabs = init.showTabs ?? false
-  }
+const preferenceOptions = [
+  'showIndices',
+  'showOrders',
+  'emphasizeLastMove',
+  'showForbiddens',
+  'showPropertyRows',
+  'showPropertyEyes',
+  'showTabs',
+] as const
+export type PreferenceOption = typeof preferenceOptions[number]
+export const PreferenceOption: Record<PreferenceOption, PreferenceOption> = {
+  showIndices: 'showIndices',
+  showOrders: 'showOrders',
+  emphasizeLastMove: 'emphasizeLastMove',
+  showForbiddens: 'showForbiddens',
+  showPropertyRows: 'showPropertyRows',
+  showPropertyEyes: 'showPropertyEyes',
+  showTabs: 'showTabs',
 }
+
+export type Preference = Options<PreferenceOption>
 
 export type SetPreference = (p: Preference) => void
 
 export const usePreference = (): [Preference, SetPreference] => {
-  const init = loadPreference(localStorage.getItem('preference') || '{}') || new Preference({})
+  const init = decode(localStorage.getItem('preference') || '{}') ?? new Options<PreferenceOption>()
   const [preference, setPreference] = useState<Preference>(init)
   const setAndSavePreference = (p: Preference) => {
     setPreference(p)
-    localStorage.setItem('preference', JSON.stringify(p))
+    localStorage.setItem('preference', encode(p))
   }
   return [preference, setAndSavePreference]
 }
 
-export const PreferenceContext = createContext<[Preference, SetPreference]>([new Preference({}), () => {}])
+export const PreferenceContext = createContext<[Preference, SetPreference]>([
+  new Options<PreferenceOption>(),
+  () => {},
+])
 
-const loadPreference = (localStoragePreference: string): Preference | undefined => {
+const encode = (p: Preference): string => {
+  return JSON.stringify(p.map)
+}
+
+const decode = (code: string): Preference | undefined => {
   try {
-    const partial = JSON.parse(localStoragePreference) as Partial<Preference>
-    return new Preference(partial)
+    const init = JSON.parse(code) as Partial<Record<PreferenceOption, boolean>>
+    return new Options<PreferenceOption>(init)
   } catch (e) {
-    console.log(`Invalid preference: '${localStoragePreference}'`)
+    return undefined
   }
 }

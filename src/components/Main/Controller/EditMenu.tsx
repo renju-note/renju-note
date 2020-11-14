@@ -77,7 +77,7 @@ const Default: FC = () => {
         <MenuOptionGroup
           title="Transform"
           type="checkbox"
-          defaultValue={appState.options}
+          defaultValue={appState.options.values}
           onChange={
             (value: any) => setAppState(appState.setOptions(value as AppOption[]))
           }

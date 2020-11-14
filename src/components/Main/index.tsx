@@ -1,6 +1,6 @@
 import { Box, Flex, Stack } from '@chakra-ui/core'
 import React, { FC, useContext } from 'react'
-import { PreferenceContext, SystemContext } from '../contexts'
+import { PreferenceContext, PreferenceOption, SystemContext } from '../contexts'
 import Board from './Board'
 import Controller from './Controller'
 import Tabs from './Tabs'
@@ -18,7 +18,7 @@ const Default: FC = () => {
       </Box>
     </Stack>
     {
-      preference.showTabs &&
+      preference.has(PreferenceOption.showTabs) &&
       <Box width={system.W} mt="1rem">
         <Tabs />
       </Box>

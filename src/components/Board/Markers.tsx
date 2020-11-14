@@ -13,7 +13,7 @@ const Default: FC = () => {
     }
     <Points
       points={appState.markerPoints.points}
-      label={appState.options.includes(AppOption.labelMarkers)}
+      label={appState.options.has(AppOption.labelMarkers)}
     />
   </g>
 }
