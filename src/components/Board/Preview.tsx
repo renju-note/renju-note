@@ -1,11 +1,11 @@
 import React, { FC, useContext } from 'react'
 import { Point } from '../../rule'
-import { AppStateContext, SystemContext } from '../contexts'
+import { BoardStateContext, SystemContext } from '../contexts'
 
 const Default: FC = () => {
-  const appState = useContext(AppStateContext)[0]
-  if (appState.previewingGame === undefined) return <></>
-  const game = appState.previewingGame
+  const boardState = useContext(BoardStateContext)[0]
+  if (boardState.previewingGame === undefined) return <></>
+  const game = boardState.previewingGame
   return <g>
     <Overlay />
     {

@@ -14,13 +14,13 @@ import {
   RiMore2Fill,
   RiStopMiniFill
 } from 'react-icons/ri'
-import { AppStateContext, PreferenceContext, PreferenceOption, SystemContext } from '../../../contexts'
+import { BoardStateContext, PreferenceContext, PreferenceOption, SystemContext } from '../../../contexts'
 import DownloadHidden, { onDownload } from './DownloadHidden'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
   const downloadHiddenId = 'download-hidden'
-  const appState = useContext(AppStateContext)[0]
+  const boardState = useContext(BoardStateContext)[0]
   const [preference, setPreference] = useContext(PreferenceContext)
   const targetPreferences = [
     PreferenceOption.showForbiddens,
@@ -68,7 +68,7 @@ const Default: FC = () => {
         <MenuItem onClick={
           () => {
             onDownload(downloadHiddenId)
-            firebase.analytics().logEvent('download_picture', { code: appState.encode() })
+            firebase.analytics().logEvent('download_picture', { code: boardState.encode() })
           }
         }>
           <Icon size="small" as={RiDownload2Line} />

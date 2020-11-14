@@ -1,9 +1,9 @@
 import React, { FC, useContext } from 'react'
 import { Point, Property } from '../../rule'
-import { AppStateContext, PreferenceContext, PreferenceOption, SystemContext } from '../contexts'
+import { BoardStateContext, PreferenceContext, PreferenceOption, SystemContext } from '../contexts'
 
 const Default: FC = () => {
-  const board = useContext(AppStateContext)[0].board
+  const board = useContext(BoardStateContext)[0].board
   const preference = useContext(PreferenceContext)[0]
   return <g>
     {

@@ -20,25 +20,25 @@ import {
   RiIndeterminateCircleLine,
   RiRadioButtonLine
 } from 'react-icons/ri'
-import { AppOption, AppState, EditMode } from '../../../state'
-import { AppStateContext, SystemContext } from '../../contexts'
+import { BoardOption, BoardState, EditMode } from '../../../state'
+import { BoardStateContext, SystemContext } from '../../contexts'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
-  const [appState, setAppState] = useContext(AppStateContext)
+  const [boardState, setBoardState] = useContext(BoardStateContext)
   return <>
     <Menu autoSelect={false}>
       <MenuButton as={Box}>
         <IconButton
-          icon={() => <ModeIcon mode={appState.mode} />}
+          icon={() => <ModeIcon mode={boardState.mode} />}
           aria-label="edit"
           size={system.buttonSize}
           variant="ghost"
         />
       </MenuButton>
       <MenuList>
-        <MenuOptionGroup defaultValue={appState.mode} title="Mode" type="radio" onChange={
-          (value: any) => setAppState(appState.setMode(value as EditMode))
+        <MenuOptionGroup defaultValue={boardState.mode} title="Mode" type="radio" onChange={
+          (value: any) => setBoardState(boardState.setMode(value as EditMode))
         }>
           <MenuItemOption value={EditMode.mainMoves}>
             <Flex alignItems="center">
@@ -77,18 +77,18 @@ const Default: FC = () => {
         <MenuOptionGroup
           title="Transform"
           type="checkbox"
-          defaultValue={appState.options.values}
+          defaultValue={boardState.options.values}
           onChange={
-            (value: any) => setAppState(appState.setOptions(value as AppOption[]))
+            (value: any) => setBoardState(boardState.setOptions(value as BoardOption[]))
           }
         >
-          <MenuItemOption value={AppOption.invertMoves}>
+          <MenuItemOption value={BoardOption.invertMoves}>
             <Flex alignItems="center">
               <Icon size="small" as={RiContrastFill} />
               <Text ml={2}>Invert Moves</Text>
             </Flex>
           </MenuItemOption>
-          <MenuItemOption value={AppOption.labelMarkers}>
+          <MenuItemOption value={BoardOption.labelMarkers}>
             <Flex alignItems="center">
               <Icon size="small" as={RiAtLine} />
               <Text ml={2}>Label Markers</Text>
@@ -96,15 +96,15 @@ const Default: FC = () => {
           </MenuItemOption>
         </MenuOptionGroup>
         <MenuDivider />
-        <MenuItem onClick={() => setAppState(appState.clearFollowingMoves())}>
+        <MenuItem onClick={() => setBoardState(boardState.clearFollowingMoves())}>
           <Icon size="small" as={RiCloseCircleLine} />
           <Text ml={2}>Clear Following Moves</Text>
         </MenuItem>
-        <MenuItem onClick={() => setAppState(appState.clearFreeStones())}>
+        <MenuItem onClick={() => setBoardState(boardState.clearFreeStones())}>
           <Icon size="small" as={RiIndeterminateCircleLine} />
           <Text ml={2}>Clear Added Stones</Text>
         </MenuItem>
-        <MenuItem onClick={() => setAppState(appState.clearMarkers())}>
+        <MenuItem onClick={() => setBoardState(boardState.clearMarkers())}>
           <Icon size="small" as={RiEraserLine} />
           <Text ml={2}>Clear Markers</Text>
         </MenuItem>
@@ -112,7 +112,7 @@ const Default: FC = () => {
           onClick={
             () => {
               const message = 'All moves, added stones and markers will be cleared. Sure?'
-              if (window.confirm(message)) setAppState(new AppState())
+              if (window.confirm(message)) setBoardState(new BoardState())
             }
           }>
           <Icon size="small" as={RiDeleteBinFill} color="red.500" />

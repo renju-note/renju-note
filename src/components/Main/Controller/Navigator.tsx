@@ -5,25 +5,25 @@ import {
 } from '@chakra-ui/core'
 import React, { FC, useContext } from 'react'
 import { FiChevronLeft, FiChevronRight, FiChevronsLeft, FiChevronsRight } from 'react-icons/fi'
-import { AppStateContext, SystemContext } from '../../contexts'
+import { BoardStateContext, SystemContext } from '../../contexts'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
-  const [appState, setAppState] = useContext(AppStateContext)
+  const [boardState, setBoardState] = useContext(BoardStateContext)
   return <Flex justifyContent="center" alignItems="center">
     <IconButton
-      onClick={() => setAppState(appState.toStart())}
+      onClick={() => setBoardState(boardState.toStart())}
       icon={FiChevronsLeft} aria-label="to start"
       size={system.buttonSize}
       variant="ghost"
-      isDisabled={appState.isStart}
+      isDisabled={boardState.isStart}
     />
     <IconButton
-      onClick={() => setAppState(appState.backward())}
+      onClick={() => setBoardState(boardState.backward())}
       icon={FiChevronLeft} aria-label="backward"
       size={system.buttonSize}
       variant="ghost"
-      isDisabled={appState.isStart}
+      isDisabled={boardState.isStart}
     />
     <Button
       width={6} // do not resize according to text
@@ -31,21 +31,21 @@ const Default: FC = () => {
       variant="ghost" fontFamily="Noto Serif" fontWeight="normal"
       isDisabled={true}
     >
-      {appState.cursor}
+      {boardState.cursor}
     </Button>
     <IconButton
-      onClick={() => setAppState(appState.forward())}
+      onClick={() => setBoardState(boardState.forward())}
       icon={FiChevronRight} aria-label="forward"
       size={system.buttonSize}
       variant="ghost"
-      isDisabled={appState.isLast}
+      isDisabled={boardState.isLast}
     />
     <IconButton
-      onClick={() => setAppState(appState.toLast())}
+      onClick={() => setBoardState(boardState.toLast())}
       icon={FiChevronsRight} aria-label="to last"
       size={system.buttonSize}
       variant="ghost"
-      isDisabled={appState.isLast}
+      isDisabled={boardState.isLast}
     />
   </Flex>
 }

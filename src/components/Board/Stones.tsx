@@ -1,12 +1,12 @@
 import React, { FC, useContext } from 'react'
 import { Point } from '../../rule'
-import { AppOption } from '../../state'
-import { AppStateContext, PreferenceContext, PreferenceOption, SystemContext } from '../contexts'
+import { BoardOption } from '../../state'
+import { BoardStateContext, PreferenceContext, PreferenceOption, SystemContext } from '../contexts'
 
 const Default: FC = () => {
   const preference = useContext(PreferenceContext)[0]
-  const appState = useContext(AppStateContext)[0]
-  const moves = appState.moves
+  const boardState = useContext(BoardStateContext)[0]
+  const moves = boardState.moves
   return <g>
     {
       preference.has(PreferenceOption.emphasizeLastMove) && moves.length >= 1 &&
@@ -16,17 +16,17 @@ const Default: FC = () => {
     }
     <Stones
       black={true}
-      points={appState.blacks}
+      points={boardState.blacks}
     />
     <Stones
       black={false}
-      points={appState.whites}
+      points={boardState.whites}
     />
     {
       preference.has(PreferenceOption.showOrders) &&
       <Orders
         moves={moves}
-        invert={appState.options.has(AppOption.invertMoves)}
+        invert={boardState.options.has(BoardOption.invertMoves)}
       />
     }
   </g>

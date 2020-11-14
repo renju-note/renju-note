@@ -1,7 +1,7 @@
 import { Board, equal, Game, N_LINES, Point } from '../rule'
 import { Options } from '../utils/options'
-import { FreeLinesState } from './freeLinesState'
-import { FreePointsState } from './freePointsState'
+import { FreeLinesState } from './freeLines'
+import { FreePointsState } from './freePoints'
 
 const editModes = [
   'mainMoves',
@@ -19,23 +19,23 @@ export const EditMode: Record<EditMode, EditMode> = {
   markerLines: editModes[4],
 } as const
 
-const appOptions = [
+const boardOptions = [
   'invertMoves',
   'labelMarkers',
 ] as const
-export type AppOption = typeof appOptions[number]
-export const AppOption: Record<AppOption, AppOption> = {
-  invertMoves: appOptions[0],
-  labelMarkers: appOptions[1],
+export type BoardOption = typeof boardOptions[number]
+export const BoardOption: Record<BoardOption, BoardOption> = {
+  invertMoves: boardOptions[0],
+  labelMarkers: boardOptions[1],
 } as const
 
-export type AppOptions = Options<AppOption>
+export type BoardOptions = Options<BoardOption>
 
-export class AppState {
+export class BoardState {
   readonly game: Game = new Game()
   readonly cursor: number = 0
   readonly mode: EditMode = EditMode.mainMoves
-  readonly options: AppOptions = new Options<AppOption>()
+  readonly options: BoardOptions = new Options<BoardOption>()
   readonly freeBlacks: FreePointsState = new FreePointsState()
   readonly freeWhites: FreePointsState = new FreePointsState()
   readonly markerPoints: FreePointsState = new FreePointsState()
@@ -43,38 +43,38 @@ export class AppState {
   readonly previewingGame: Game | undefined = undefined
   private boardCache: Board | undefined
 
-  constructor (init?: undefined | Partial<AppState>) {
+  constructor (init?: undefined | Partial<BoardState>) {
     if (init !== undefined) Object.assign(this, init)
   }
 
-  private update (fields: Partial<AppState>): AppState {
-    return new AppState({ ...this, ...fields, boardCache: undefined })
+  private update (fields: Partial<BoardState>): BoardState {
+    return new BoardState({ ...this, ...fields, boardCache: undefined })
   }
 
-  setMode (mode: EditMode): AppState {
+  setMode (mode: EditMode): BoardState {
     return this.update({
       mode: mode,
       markerLines: mode === EditMode.markerPoints ? this.markerLines : this.markerLines.unstart(),
     })
   }
 
-  setGame (game: Game): AppState {
+  setGame (game: Game): BoardState {
     return this.update({
       game: game,
       cursor: game.moves.length,
-      options: this.options.off([AppOption.invertMoves]),
+      options: this.options.off([BoardOption.invertMoves]),
       freeBlacks: new FreePointsState(),
       freeWhites: new FreePointsState(),
     })
   }
 
-  setPreviewingGame (game: Game): AppState {
+  setPreviewingGame (game: Game): BoardState {
     return this.update({
       previewingGame: game,
     })
   }
 
-  setGameFromPreviewing (): AppState {
+  setGameFromPreviewing (): BoardState {
     if (this.previewingGame === undefined) return this
     return this.update({
       game: this.previewingGame,
@@ -83,17 +83,17 @@ export class AppState {
     })
   }
 
-  unsetPreviewingGame (): AppState {
+  unsetPreviewingGame (): BoardState {
     return this.update({
       previewingGame: undefined,
     })
   }
 
-  setOptions (options: AppOption[]): AppState {
-    return this.update({ options: new Options<AppOption>().on(options) })
+  setOptions (options: BoardOption[]): BoardState {
+    return this.update({ options: new Options<BoardOption>().on(options) })
   }
 
-  edit (p: Point): AppState {
+  edit (p: Point): BoardState {
     if (!this.canEdit(p)) return this
     switch (this.mode) {
       case EditMode.mainMoves:
@@ -111,7 +111,7 @@ export class AppState {
     }
   }
 
-  undo (): AppState {
+  undo (): BoardState {
     if (!this.canUndo) return this
     switch (this.mode) {
       case EditMode.mainMoves:
@@ -129,41 +129,41 @@ export class AppState {
     }
   }
 
-  forward (): AppState {
+  forward (): BoardState {
     return this.navigate(this.cursor + 1)
   }
 
-  backward (): AppState {
+  backward (): BoardState {
     return this.navigate(this.cursor - 1)
   }
 
-  toStart (): AppState {
+  toStart (): BoardState {
     return this.navigate(0)
   }
 
-  toLast (): AppState {
+  toLast (): BoardState {
     return this.navigate(this.game.moves.length)
   }
 
-  navigate (i: number): AppState {
+  navigate (i: number): BoardState {
     if (i < 0 || this.game.moves.length < i) return this
     return this.update({ cursor: i })
   }
 
-  clearFollowingMoves (): AppState {
+  clearFollowingMoves (): BoardState {
     return this.update({
       game: this.partialGame,
     })
   }
 
-  clearFreeStones (): AppState {
+  clearFreeStones (): BoardState {
     return this.update({
       freeBlacks: new FreePointsState(),
       freeWhites: new FreePointsState(),
     })
   }
 
-  clearMarkers (): AppState {
+  clearMarkers (): BoardState {
     return this.update({
       markerPoints: new FreePointsState(),
       markerLines: new FreeLinesState()
@@ -225,11 +225,11 @@ export class AppState {
   }
 
   get blackMoves (): Point[] {
-    return this.options.has(AppOption.invertMoves) ? this.partialGame.whites : this.partialGame.blacks
+    return this.options.has(BoardOption.invertMoves) ? this.partialGame.whites : this.partialGame.blacks
   }
 
   get whiteMoves (): Point[] {
-    return this.options.has(AppOption.invertMoves) ? this.partialGame.blacks : this.partialGame.whites
+    return this.options.has(BoardOption.invertMoves) ? this.partialGame.blacks : this.partialGame.whites
   }
 
   get blacks (): Point[] {
@@ -260,7 +260,7 @@ export class AppState {
     const codes: string[] = []
     if (!this.game.empty) codes.push(`g:${this.game.encode()}`)
     if (this.cursor !== 0) codes.push(`c:${this.cursor}`)
-    if (this.options) codes.push(`o:${encodeAppOptions(this.options)}`)
+    if (this.options) codes.push(`o:${encodeBoardOptions(this.options)}`)
     if (!this.freeBlacks.empty) codes.push(`b:${this.freeBlacks.encode()}`)
     if (!this.freeWhites.empty) codes.push(`w:${this.freeWhites.encode()}`)
     if (!this.markerPoints.empty) codes.push(`p:${this.markerPoints.encode()}`)
@@ -268,7 +268,7 @@ export class AppState {
     return codes.join(',')
   }
 
-  static decode (code: string): AppState | undefined {
+  static decode (code: string): BoardState | undefined {
     const codes = code.split(',')
     const findCode = (s: string) => codes.find(c => c.startsWith(s))?.replace(`${s}:`, '') ?? ''
 
@@ -282,11 +282,11 @@ export class AppState {
 
     const game = Game.decode(gameCode) ?? new Game()
     const cursor = Math.min(game.moves.length, parseInt(cursorCode) || 0)
-    return new AppState({
+    return new BoardState({
       game,
       cursor,
       mode: EditMode.mainMoves,
-      options: decodeAppOptions(optionsCode) ?? new Options<AppOption>(),
+      options: decodeBoardOptions(optionsCode) ?? new Options<BoardOption>(),
       freeBlacks: FreePointsState.decode(freeBlacksCode) ?? new FreePointsState(),
       freeWhites: FreePointsState.decode(freeWhitesCode) ?? new FreePointsState(),
       markerPoints: FreePointsState.decode(markerPointsCode) ?? new FreePointsState(),
@@ -296,29 +296,29 @@ export class AppState {
   }
 }
 
-const encodeAppOptions = (options: AppOptions): string => {
+const encodeBoardOptions = (options: BoardOptions): string => {
   return options.values.map(shortName).join('')
 }
 
-const decodeAppOptions = (code: string): AppOptions => {
-  const values = code.split('').map(longName).filter(v => v !== undefined) as AppOption[]
-  return new Options<AppOption>().on(values)
+const decodeBoardOptions = (code: string): BoardOptions => {
+  const values = code.split('').map(longName).filter(v => v !== undefined) as BoardOption[]
+  return new Options<BoardOption>().on(values)
 }
 
-const shortName = (o: AppOption): string | undefined => {
+const shortName = (o: BoardOption): string | undefined => {
   switch (o) {
-    case AppOption.invertMoves:
+    case BoardOption.invertMoves:
       return 'i'
-    case AppOption.labelMarkers:
+    case BoardOption.labelMarkers:
       return 'l'
   }
 }
 
-const longName = (s: string): AppOption | undefined => {
+const longName = (s: string): BoardOption | undefined => {
   switch (s) {
     case 'i':
-      return AppOption.invertMoves
+      return BoardOption.invertMoves
     case 'l':
-      return AppOption.labelMarkers
+      return BoardOption.labelMarkers
   }
 }
