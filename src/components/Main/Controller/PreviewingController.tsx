@@ -4,7 +4,7 @@ import { BoardStateContext, SystemContext } from '../../contexts'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
-  const {boardState, setBoardState} = useContext(BoardStateContext)
+  const { boardState, setBoardState } = useContext(BoardStateContext)
   return <Flex width={system.W} justifyContent="space-evenly" alignItems="center">
     <Button
       width={system.W / 4}

@@ -5,13 +5,14 @@ import {
   BoardStateContext,
   PreferenceContext,
   setupSystem,
-  SystemContext, useBoardState, usePreference
+  SystemContext,
+  useBoardState,
+  usePreference
 } from './contexts'
 import Main from './Main'
 
 const App: FC = () => {
   const system = setupSystem()
-
   const boardStateContext = useBoardState()
   const preferenceContext = usePreference()
   return <ThemeProvider>

@@ -9,7 +9,7 @@ import { BoardStateContext, SystemContext } from '../../contexts'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
-  const {boardState, setBoardState} = useContext(BoardStateContext)
+  const { boardState, setBoardState } = useContext(BoardStateContext)
   return <Flex justifyContent="center" alignItems="center">
     <IconButton
       onClick={() => setBoardState(boardState.toStart())}

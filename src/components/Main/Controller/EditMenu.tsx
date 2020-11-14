@@ -25,7 +25,7 @@ import { BoardStateContext, SystemContext } from '../../contexts'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
-  const {boardState, setBoardState} = useContext(BoardStateContext)
+  const { boardState, setBoardState } = useContext(BoardStateContext)
   return <>
     <Menu autoSelect={false}>
       <MenuButton as={Box}>

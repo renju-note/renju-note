@@ -13,7 +13,7 @@ import { BoardStateContext, SystemContext } from '../../contexts'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
-  const {boardState, setBoardState} = useContext(BoardStateContext)
+  const { boardState, setBoardState } = useContext(BoardStateContext)
   return <IconButton
     onClick={() => setBoardState(boardState.undo())}
     onTouchStart={(e) => e.preventDefault()}
