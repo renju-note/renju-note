@@ -1,4 +1,4 @@
-import { ButtonProps } from '@chakra-ui/core'
+import { ButtonProps } from '@chakra-ui/react'
 import { createContext } from 'react'
 import { encode, N_LINES, Point, xCode, yCode } from '../../rule'
 

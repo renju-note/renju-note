@@ -1,5 +1,4 @@
 import {
-  Box,
   Flex,
   Icon,
   IconButton,
@@ -12,7 +11,7 @@ import {
   MenuOptionGroup,
   Text,
   useDisclosure,
-} from '@chakra-ui/core'
+} from '@chakra-ui/react'
 import React, { FC, useContext } from 'react'
 import {
   RiDatabase2Line,
@@ -40,14 +39,12 @@ const Default: FC = () => {
   return (
     <>
       <Menu autoSelect={false}>
-        <MenuButton as={Box}>
-          <IconButton
-            icon={RiMenuLine}
-            aria-label="menu"
-            size={system.buttonSize}
-            variant="ghost"
-          />
-        </MenuButton>
+        <MenuButton
+          as={IconButton}
+          size={system.buttonSize}
+          variant="ghost"
+          icon={<RiMenuLine />}
+        />
         <MenuList>
           <MenuOptionGroup
             title="Display"
@@ -59,34 +56,34 @@ const Default: FC = () => {
           >
             <MenuItemOption value={PreferenceOption.showIndices}>
               <Flex alignItems="center">
-                <Icon size="small" as={RiGridLine} />
+                <Icon boxSize="small" as={RiGridLine} />
                 <Text ml={2}>Line Indices</Text>
               </Flex>
             </MenuItemOption>
             <MenuItemOption value={PreferenceOption.showOrders}>
               <Flex alignItems="center">
-                <Icon size="small" as={RiInformationLine} />
+                <Icon boxSize="small" as={RiInformationLine} />
                 <Text ml={2}>Move Orders</Text>
               </Flex>
             </MenuItemOption>
             <MenuItemOption value={PreferenceOption.emphasizeLastMove}>
               <Flex alignItems="center">
-                <Icon size="small" as={RiFocus2Fill} />
+                <Icon boxSize="small" as={RiFocus2Fill} />
                 <Text ml={2}>Last Move</Text>
               </Flex>
             </MenuItemOption>
           </MenuOptionGroup>
           <MenuDivider />
           <MenuItem onClick={loadRifDisclosure.onOpen}>
-            <Icon size="small" as={RiDatabase2Line} />
+            <Icon boxSize="small" as={RiDatabase2Line} />
             <Text ml={2} mr={1}>
               Load RIF file{' '}
             </Text>
-            <Icon size="small" as={RiFlaskFill} />
+            <Icon boxSize="small" as={RiFlaskFill} />
           </MenuItem>
           <MenuDivider />
           <MenuItem onClick={aboutDisclosure.onOpen}>
-            <Icon size="small" as={RiQuestionLine} />
+            <Icon boxSize="small" as={RiQuestionLine} />
             <Text ml={2}>About Renju Note</Text>
           </MenuItem>
         </MenuList>

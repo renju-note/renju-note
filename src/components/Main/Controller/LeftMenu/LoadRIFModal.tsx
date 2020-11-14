@@ -16,7 +16,7 @@ import {
   Progress,
   Stack,
   useDisclosure,
-} from '@chakra-ui/core'
+} from '@chakra-ui/react'
 import React, { FC, useContext, useState } from 'react'
 import { AnalyzedDatabase, RIFDatabase } from '../../../../database'
 import { PreferenceContext, PreferenceOption } from '../../../contexts'

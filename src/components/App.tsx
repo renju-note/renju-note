@@ -1,4 +1,4 @@
-import { CSSReset, ThemeProvider } from '@chakra-ui/core'
+import { ChakraProvider } from '@chakra-ui/react'
 import React, { FC } from 'react'
 import './App.css'
 import {
@@ -16,8 +16,7 @@ const App: FC = () => {
   const boardStateContext = useBoardState()
   const preferenceContext = usePreference()
   return (
-    <ThemeProvider>
-      <CSSReset />
+    <ChakraProvider>
       <SystemContext.Provider value={system}>
         <BoardStateContext.Provider value={boardStateContext}>
           <PreferenceContext.Provider value={preferenceContext}>
@@ -25,7 +24,7 @@ const App: FC = () => {
           </PreferenceContext.Provider>
         </BoardStateContext.Provider>
       </SystemContext.Provider>
-    </ThemeProvider>
+    </ChakraProvider>
   )
 }
 

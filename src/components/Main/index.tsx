@@ -1,4 +1,4 @@
-import { Box, Flex, Stack } from '@chakra-ui/core'
+import { Box, Flex, Stack } from '@chakra-ui/react'
 import React, { FC, useContext } from 'react'
 import { PreferenceContext, PreferenceOption, SystemContext } from '../contexts'
 import Board from './Board'

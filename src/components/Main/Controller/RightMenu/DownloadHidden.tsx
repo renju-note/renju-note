@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/core'
+import { Box } from '@chakra-ui/react'
 import React, { FC } from 'react'
 import Board from '../../../Board'
 import { System, SystemContext } from '../../../contexts'

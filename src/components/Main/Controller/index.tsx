@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/core'
+import { Flex } from '@chakra-ui/react'
 import React, { FC, useContext } from 'react'
 import { BoardStateContext, SystemContext } from '../../contexts'
 import EditMenu from './EditMenu'

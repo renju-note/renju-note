@@ -1,19 +1,19 @@
 import {
   Heading,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalOverlay,
   Link,
   List,
   ListIcon,
   ListItem,
-} from '@chakra-ui/core'
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+} from '@chakra-ui/react'
 import React, { FC } from 'react'
-import { FiTwitter, FiGithub } from 'react-icons/fi'
+import { FiGithub, FiTwitter } from 'react-icons/fi'
 
 type DefaultProps = {
   isOpen: boolean

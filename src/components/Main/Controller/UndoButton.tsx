@@ -1,6 +1,5 @@
-import { IconButton } from '@chakra-ui/core'
+import { IconButton } from '@chakra-ui/react'
 import React, { FC, useContext } from 'react'
-import { IconType } from 'react-icons'
 import {
   RiCloseCircleLine,
   RiEraserFill,
@@ -18,7 +17,7 @@ const Default: FC = () => {
     <IconButton
       onClick={() => setBoardState(boardState.undo())}
       onTouchStart={e => e.preventDefault()}
-      icon={undoIcon(boardState.mode)}
+      icon={<UndoIcon mode={boardState.mode} />}
       aria-label="undo"
       size={system.buttonSize}
       variant="ghost"
@@ -27,20 +26,20 @@ const Default: FC = () => {
   )
 }
 
-const undoIcon = (mode: EditMode): IconType => {
+const UndoIcon: FC<{ mode: EditMode }> = ({ mode }) => {
   switch (mode) {
     case EditMode.mainMoves:
-      return RiCloseCircleLine
+      return <RiCloseCircleLine />
     case EditMode.freeBlacks:
-      return RiIndeterminateCircleFill
+      return <RiIndeterminateCircleFill />
     case EditMode.freeWhites:
-      return RiIndeterminateCircleLine
+      return <RiIndeterminateCircleLine />
     case EditMode.markerPoints:
-      return RiEraserFill
+      return <RiEraserFill />
     case EditMode.markerLines:
-      return RiEraserLine
+      return <RiEraserLine />
     default:
-      return RiCloseCircleLine
+      return <RiCloseCircleLine />
   }
 }
 
