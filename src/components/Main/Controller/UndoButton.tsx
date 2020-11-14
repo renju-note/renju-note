@@ -6,7 +6,7 @@ import {
   RiEraserFill,
   RiEraserLine,
   RiIndeterminateCircleFill,
-  RiIndeterminateCircleLine
+  RiIndeterminateCircleLine,
 } from 'react-icons/ri'
 import { EditMode } from '../../../state'
 import { BoardStateContext, SystemContext } from '../../contexts'
@@ -14,14 +14,17 @@ import { BoardStateContext, SystemContext } from '../../contexts'
 const Default: FC = () => {
   const system = useContext(SystemContext)
   const { boardState, setBoardState } = useContext(BoardStateContext)
-  return <IconButton
-    onClick={() => setBoardState(boardState.undo())}
-    onTouchStart={(e) => e.preventDefault()}
-    icon={undoIcon(boardState.mode)} aria-label="undo"
-    size={system.buttonSize}
-    variant="ghost"
-    isDisabled={!boardState.canUndo}
-  />
+  return (
+    <IconButton
+      onClick={() => setBoardState(boardState.undo())}
+      onTouchStart={e => e.preventDefault()}
+      icon={undoIcon(boardState.mode)}
+      aria-label="undo"
+      size={system.buttonSize}
+      variant="ghost"
+      isDisabled={!boardState.canUndo}
+    />
+  )
 }
 
 const undoIcon = (mode: EditMode): IconType => {

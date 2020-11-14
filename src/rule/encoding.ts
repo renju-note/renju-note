@@ -37,7 +37,9 @@ export const decode = (code: string): Point | undefined => {
     N_LINES < x ||
     y < 1 ||
     N_LINES < y
-  ) return undefined
+  ) {
+    return undefined
+  }
   return [x, y]
 }
 

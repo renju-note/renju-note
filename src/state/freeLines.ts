@@ -6,15 +6,15 @@ export class FreeLinesState {
   readonly lines: FreeLine[] = []
   readonly start: Point | undefined = undefined
 
-  constructor (init?: undefined | Partial<FreeLinesState>) {
+  constructor(init?: undefined | Partial<FreeLinesState>) {
     if (init !== undefined) Object.assign(this, init)
   }
 
-  private update (fields: Partial<FreeLinesState>): FreeLinesState {
+  private update(fields: Partial<FreeLinesState>): FreeLinesState {
     return new FreeLinesState({ ...this, ...fields })
   }
 
-  draw (p: Point): FreeLinesState {
+  draw(p: Point): FreeLinesState {
     if (this.start === undefined) {
       return this.update({ start: p })
     }
@@ -29,7 +29,7 @@ export class FreeLinesState {
     })
   }
 
-  undo (): FreeLinesState {
+  undo(): FreeLinesState {
     if (this.start !== undefined) {
       return this.update({ start: undefined })
     }
@@ -38,27 +38,27 @@ export class FreeLinesState {
     })
   }
 
-  unstart (): FreeLinesState {
+  unstart(): FreeLinesState {
     return this.update({ start: undefined })
   }
 
-  get canUndo (): boolean {
+  get canUndo(): boolean {
     return this.start !== undefined || this.lines.length > 0
   }
 
-  get empty (): boolean {
+  get empty(): boolean {
     return this.lines.length === 0
   }
 
-  private has (line: FreeLine): boolean {
+  private has(line: FreeLine): boolean {
     return includes(this.lines, line)
   }
 
-  encode (): string {
+  encode(): string {
     return this.lines.map(([start, end]) => `${encode(start)}${encode(end)}`).join('')
   }
 
-  static decode (code: string): FreeLinesState | undefined {
+  static decode(code: string): FreeLinesState | undefined {
     const points = decodePoints(code)
     if (!points) return undefined
     if (points.length % 2 !== 0) return undefined
@@ -72,9 +72,11 @@ export class FreeLinesState {
 }
 
 const includes = (lines: FreeLine[], [start, end]: FreeLine): boolean => {
-  return lines.findIndex(
-    ([s, e]) => (equal(start, s) && equal(end, e)) || (equal(start, e) && equal(end, s))
-  ) >= 0
+  return (
+    lines.findIndex(
+      ([s, e]) => (equal(start, s) && equal(end, e)) || (equal(start, e) && equal(end, s))
+    ) >= 0
+  )
 }
 
 const valid = ([start, end]: FreeLine): boolean => {
@@ -82,9 +84,9 @@ const valid = ([start, end]: FreeLine): boolean => {
   const [sx, sy] = start
   const [ex, ey] = end
   return (
-    (sx === ex) || // vertical
-    (sy === ey) || // horizontal
-    (ex - sx === ey - sy) || // ascending
-    (ex - sx === sy - ey) // descending
+    sx === ex || // vertical
+    sy === ey || // horizontal
+    ex - sx === ey - sy || // ascending
+    ex - sx === sy - ey // descending
   )
 }

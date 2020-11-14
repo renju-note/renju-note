@@ -9,9 +9,7 @@ const MIN_ENCODE_MOVES = 3
 const MAX_ENCODE_MOVES = 10
 const MAX_SEARCH_HIT = 1000
 
-const tableNames = [
-  'games',
-] as const
+const tableNames = ['games'] as const
 type TableName = typeof tableNames[number]
 const TableName: Record<TableName, TableName> = {
   games: tableNames[0],
@@ -39,17 +37,17 @@ export class AnalyzedDatabase extends Dexie {
   static readonly DBNAME = 'analyzed'
   private readonly games: Table<AnalyzedGame, number>
 
-  static reset () {
+  static reset() {
     indexedDB.deleteDatabase(AnalyzedDatabase.DBNAME)
   }
 
-  constructor () {
+  constructor() {
     super(AnalyzedDatabase.DBNAME)
     this.version(1).stores(indexedFields)
     this.games = this.table(TableName.games)
   }
 
-  async loadFromRIFDatabase (progress: (percentile: number) => void = () => {}) {
+  async loadFromRIFDatabase(progress: (percentile: number) => void = () => {}) {
     const rif = new RIFDatabase()
     const [dateMap, ratedMap, maxId] = await Promise.all([
       rif.getTournamentsStartDateNumberMap(),
@@ -61,7 +59,9 @@ export class AnalyzedDatabase extends Dexie {
       const items = await rif.getGamesByIdRange(startId, startId + CHUNK_SIZE)
       const games = items.map(item => {
         const game = Game.decode(item.move) ?? new Game({})
-        const boardCodes = encodeMoves(game.moves.slice(0, MAX_ENCODE_MOVES)).slice(MIN_ENCODE_MOVES - 1)
+        const boardCodes = encodeMoves(game.moves.slice(0, MAX_ENCODE_MOVES)).slice(
+          MIN_ENCODE_MOVES - 1
+        )
         return {
           id: item.id,
           date: dateMap.get(item.tournament) ?? 0,
@@ -71,16 +71,16 @@ export class AnalyzedDatabase extends Dexie {
         }
       })
       await this.games.bulkAdd(games)
-      progress(Math.floor((startId + CHUNK_SIZE) * 100 / maxId))
+      progress(Math.floor(((startId + CHUNK_SIZE) * 100) / maxId))
     }
     progress(100)
   }
 
-  async search (
+  async search(
     moves: Point[],
     limit: number,
     offset: number = 0,
-    desc: boolean = true,
+    desc: boolean = true
   ): Promise<SearchResult> {
     if (moves.length < MIN_ENCODE_MOVES) {
       return {

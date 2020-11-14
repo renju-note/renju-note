@@ -51,6 +51,14 @@
     ],
     "react/prop-types": [
       "off"
+    ],
+    "space-before-function-paren": [
+      "error",
+      {
+        "named": "never",
+        "anonymous": "always",
+        "asyncArrow": "always"
+      }
     ]
   },
   "settings": {

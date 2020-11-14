@@ -24,7 +24,7 @@ export const PreferenceOption: Record<PreferenceOption, PreferenceOption> = {
 export type Preference = Options<PreferenceOption>
 
 export type PreferenceContext = {
-  preference: Preference,
+  preference: Preference
   setPreference: (p: Preference) => void
 }
 

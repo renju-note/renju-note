@@ -9,12 +9,9 @@ import GamesTable from './GamesTable'
 const Default: FC = () => {
   const system = useContext(SystemContext)
   const [databaseReady, setDatabaseReady] = useState<boolean>(false)
-  useEffect(
-    () => {
-      (async () => setDatabaseReady(await ready()))()
-    },
-    []
-  )
+  useEffect(() => {
+    ;(async () => setDatabaseReady(await ready()))()
+  }, [])
   const { boardState } = useContext(BoardStateContext)
   const analyzedDB = useMemo(() => new AnalyzedDatabase(), [])
 
@@ -26,51 +23,44 @@ const Default: FC = () => {
   const [error, setError] = useState<string | undefined>()
 
   const onSearch = async (moves: Point[]) => {
-    const { ids, hit, error } = await analyzedDB.search(
-      moves,
-      pageSize,
-      page * pageSize,
-    )
+    const { ids, hit, error } = await analyzedDB.search(moves, pageSize, page * pageSize)
     setIds(ids)
     setHit(hit)
     setError(error)
   }
-  useEffect(
-    () => {
-      onSearch(boardState.moves)
-    },
-    [boardState.moves.length, page]
-  )
+  useEffect(() => {
+    onSearch(boardState.moves)
+  }, [boardState.moves.length, page])
 
   if (!databaseReady) {
-    return <Stack width={system.W} justify="center" align="center" spacing="1rem">
-      <Text color="gray.600" my="1rem">Database is not ready</Text>
-    </Stack>
+    return (
+      <Stack width={system.W} justify="center" align="center" spacing="1rem">
+        <Text color="gray.600" my="1rem">
+          Database is not ready
+        </Text>
+      </Stack>
+    )
   }
 
-  return <Stack width={system.W} justify="center" align="center" spacing="1rem">
-    {
-      error &&
-      <Text color="gray.600" my="1rem">{error}</Text>
-    }
-    {
-      ids.length > 0 &&
-      <Box>
-        <GamesPager
-          page={page}
-          setPage={setPage}
-          hit={hit}
-          pageSize={pageSize}
-        />
-      </Box>
-    }
-    {
-      ids.length > 0 &&
-      <Box>
-        <GamesTable gameIds={ids} />
-      </Box>
-    }
-  </Stack>
+  return (
+    <Stack width={system.W} justify="center" align="center" spacing="1rem">
+      {error && (
+        <Text color="gray.600" my="1rem">
+          {error}
+        </Text>
+      )}
+      {ids.length > 0 && (
+        <Box>
+          <GamesPager page={page} setPage={setPage} hit={hit} pageSize={pageSize} />
+        </Box>
+      )}
+      {ids.length > 0 && (
+        <Box>
+          <GamesTable gameIds={ids} />
+        </Box>
+      )}
+    </Stack>
+  )
 }
 
 export default Default

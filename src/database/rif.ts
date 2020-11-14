@@ -125,11 +125,11 @@ export class RIFDatabase extends Dexie {
   private readonly tournaments: Table<RIFTournament, number>
   private readonly games: Table<RIFGame, number>
 
-  static reset () {
+  static reset() {
     indexedDB.deleteDatabase(RIFDatabase.DBNAME)
   }
 
-  constructor () {
+  constructor() {
     super(RIFDatabase.DBNAME)
     this.version(1).stores(indexedFields)
     this.countries = this.table(TableName.countries)
@@ -142,7 +142,7 @@ export class RIFDatabase extends Dexie {
     this.games = this.table(TableName.games)
   }
 
-  async getGameViews (gameIds: RIFGame['id'][]): Promise<GameView[]> {
+  async getGameViews(gameIds: RIFGame['id'][]): Promise<GameView[]> {
     const games = await this.games.bulkGet(gameIds)
     const [blacks, whites, publishers, tournaments, rules, openings] = await Promise.all([
       this.players.bulkGet(games.map(g => g.black)),
@@ -176,16 +176,16 @@ export class RIFDatabase extends Dexie {
     })
   }
 
-  async getGamesByIdRange (start: RIFGame['id'], end: RIFGame['id']): Promise<RIFGame[]> {
+  async getGamesByIdRange(start: RIFGame['id'], end: RIFGame['id']): Promise<RIFGame[]> {
     return await this.games.where('id').between(start, end).toArray()
   }
 
-  async getMaxGameId (): Promise<RIFGame['id']> {
+  async getMaxGameId(): Promise<RIFGame['id']> {
     const maxGame = await this.games.orderBy('id').last()
     return maxGame?.id ?? 0
   }
 
-  async getTournamentsStartDateNumberMap (): Promise<Map<RIFTournament['id'], number>> {
+  async getTournamentsStartDateNumberMap(): Promise<Map<RIFTournament['id'], number>> {
     const ts = await this.tournaments.toArray()
     const result = new Map<RIFTournament['id'], number>()
     for (let i = 0; i < ts.length; i++) {
@@ -201,7 +201,7 @@ export class RIFDatabase extends Dexie {
     return result
   }
 
-  async getTournamentsRatedMap (): Promise<Map<RIFTournament['id'], boolean>> {
+  async getTournamentsRatedMap(): Promise<Map<RIFTournament['id'], boolean>> {
     const ts = await this.tournaments.toArray()
     const result = new Map<RIFTournament['id'], boolean>()
     for (let i = 0; i < ts.length; i++) {
@@ -211,7 +211,7 @@ export class RIFDatabase extends Dexie {
     return result
   }
 
-  async loadFromFile (file: File, progress: (percentile: number) => void = () => {}) {
+  async loadFromFile(file: File, progress: (percentile: number) => void = () => {}) {
     const text = await file.text()
     const dom = new DOMParser().parseFromString(text, 'application/xml')
 
@@ -251,7 +251,7 @@ export class RIFDatabase extends Dexie {
     await Promise.all(promises)
   }
 
-  private async addCountries (elems: HTMLCollection) {
+  private async addCountries(elems: HTMLCollection) {
     const items: RIFCountry[] = []
     for (let i = 0; i < elems.length; i++) {
       const [e, id] = getElemWithId(elems, i) ?? []
@@ -267,7 +267,7 @@ export class RIFDatabase extends Dexie {
     })
   }
 
-  private async addCities (elems: HTMLCollection) {
+  private async addCities(elems: HTMLCollection) {
     const items: RIFCity[] = []
     for (let i = 0; i < elems.length; i++) {
       const [e, id] = getElemWithId(elems, i) ?? []
@@ -283,7 +283,7 @@ export class RIFDatabase extends Dexie {
     })
   }
 
-  private async addMonths (elems: HTMLCollection) {
+  private async addMonths(elems: HTMLCollection) {
     const items: RIFMonth[] = []
     for (let i = 0; i < elems.length; i++) {
       const [e, id] = getElemWithId(elems, i) ?? []
@@ -298,7 +298,7 @@ export class RIFDatabase extends Dexie {
     })
   }
 
-  private async addRules (elems: HTMLCollection) {
+  private async addRules(elems: HTMLCollection) {
     const items: RIFRule[] = []
     for (let i = 0; i < elems.length; i++) {
       const [e, id] = getElemWithId(elems, i) ?? []
@@ -314,7 +314,7 @@ export class RIFDatabase extends Dexie {
     })
   }
 
-  private async addOpenings (elems: HTMLCollection) {
+  private async addOpenings(elems: HTMLCollection) {
     const items: RIFOpening[] = []
     for (let i = 0; i < elems.length; i++) {
       const [e, id] = getElemWithId(elems, i) ?? []
@@ -323,7 +323,6 @@ export class RIFDatabase extends Dexie {
         id: id,
         name: e.getAttribute('name') ?? '',
         abbr: e.getAttribute('abbr') ?? '',
-
       })
     }
     await this.transaction('rw', this.openings, async () => {
@@ -331,7 +330,7 @@ export class RIFDatabase extends Dexie {
     })
   }
 
-  private async addPlayers (elems: HTMLCollection) {
+  private async addPlayers(elems: HTMLCollection) {
     const items: RIFPlayer[] = []
     for (let i = 0; i < elems.length; i++) {
       const [e, id] = getElemWithId(elems, i) ?? []
@@ -349,7 +348,7 @@ export class RIFDatabase extends Dexie {
     })
   }
 
-  private async addTournaments (elems: HTMLCollection) {
+  private async addTournaments(elems: HTMLCollection) {
     const items: RIFTournament[] = []
     for (let i = 0; i < elems.length; i++) {
       const [e, id] = getElemWithId(elems, i) ?? []
@@ -372,7 +371,7 @@ export class RIFDatabase extends Dexie {
     })
   }
 
-  private async addGames (elems: HTMLCollection, progress: (percentile: number) => void = () => {}) {
+  private async addGames(elems: HTMLCollection, progress: (percentile: number) => void = () => {}) {
     for (let c = 0; c < elems.length; c += CHUNK_SIZE) {
       const items: RIFGame[] = []
       for (let i = 0; i < CHUNK_SIZE; i++) {
@@ -399,7 +398,7 @@ export class RIFDatabase extends Dexie {
       await this.transaction('rw', this.games, async () => {
         await this.games.bulkAdd(items)
       })
-      progress(Math.floor((c + CHUNK_SIZE) * 100 / elems.length))
+      progress(Math.floor(((c + CHUNK_SIZE) * 100) / elems.length))
     }
     progress(100)
   }
