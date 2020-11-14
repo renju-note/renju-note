@@ -4,7 +4,7 @@ import { BoardOption } from '../../state'
 import { BoardStateContext, SystemContext } from '../contexts'
 
 const Default: FC = () => {
-  const boardState = useContext(BoardStateContext)[0]
+  const { boardState } = useContext(BoardStateContext)
   return <g>
     <Lines lines={boardState.markerLines.lines}/>
     {

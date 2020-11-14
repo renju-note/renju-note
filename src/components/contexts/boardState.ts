@@ -1,17 +1,23 @@
 import { createContext, useState } from 'react'
 import { BoardState } from '../../state'
 
-export type SetBoardState = (s: BoardState) => void
-
-export const useBoardState = (): [BoardState, SetBoardState] => {
-  const init = BoardState.decode(window.location.hash.slice(1)) || new BoardState({})
-  const [boardState, setBoardState] = useState<BoardState>(init)
-
-  const setBoardStateAndHash = (s: BoardState) => {
-    setBoardState(s)
-    window.history.replaceState(null, '', `#${s.encode()}`)
-  }
-  return [boardState, setBoardStateAndHash]
+export type BoardStateContext = {
+  boardState: BoardState
+  setBoardState: (s: BoardState) => void
 }
 
-export const BoardStateContext = createContext<[BoardState, SetBoardState]>([new BoardState({}), () => {}])
+export const BoardStateContext = createContext<BoardStateContext>({
+  boardState: new BoardState(),
+  setBoardState: () => {},
+})
+
+export const useBoardState = (): BoardStateContext => {
+  const [boardState, setBoardStateState] = useState<BoardState>(
+    () => BoardState.decode(window.location.hash.slice(1)) || new BoardState()
+  )
+  const setBoardState = (s: BoardState) => {
+    setBoardStateState(s)
+    window.history.replaceState(null, '', `#${s.encode()}`)
+  }
+  return { boardState, setBoardState }
+}

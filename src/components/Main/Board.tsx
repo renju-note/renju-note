@@ -6,7 +6,7 @@ import { BoardStateContext } from '../contexts'
 const MAIN_BOARD_ID = 'main-board'
 
 const Default: FC = () => {
-  const [boardState, setBoardState] = useContext(BoardStateContext)
+  const {boardState, setBoardState} = useContext(BoardStateContext)
   const onClickPoint = (p: Point) => setBoardState(boardState.edit(p))
   return <Board
     id={MAIN_BOARD_ID}

@@ -20,7 +20,7 @@ import DownloadHidden, { onDownload } from './DownloadHidden'
 const Default: FC = () => {
   const system = useContext(SystemContext)
   const downloadHiddenId = 'download-hidden'
-  const boardState = useContext(BoardStateContext)[0]
+  const { boardState } = useContext(BoardStateContext)
   const { preference, setPreference } = useContext(PreferenceContext)
   const targetPreferences = [
     PreferenceOption.showForbiddens,

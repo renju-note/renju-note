@@ -9,7 +9,7 @@ const Default: FC<{gameIds: number[]}> = ({
   gameIds,
 }) => {
   const system = useContext(SystemContext)
-  const [boardState, setAppstate] = useContext(BoardStateContext)
+  const { boardState, setBoardState } = useContext(BoardStateContext)
   const db = useMemo(() => new RIFDatabase(), [])
 
   const [items, setItems] = useState<GameView[]>([])
@@ -26,7 +26,7 @@ const Default: FC<{gameIds: number[]}> = ({
   const onClick = (gv: GameView) => {
     const game = new Game({ moves: gv.moves })
     if (!game) return
-    setAppstate(boardState.setPreviewingGame(game))
+    setBoardState(boardState.setPreviewingGame(game))
   }
   return <table className="search-result">
     <thead>

@@ -10,7 +10,7 @@ import UndoButton from './UndoButton'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
-  const boardState = useContext(BoardStateContext)[0]
+  const { boardState } = useContext(BoardStateContext)
   if (boardState.previewingGame !== undefined) return <PreviewingController />
   return <Flex width={system.W} justifyContent="space-around" alignItems="center">
     <LeftMenu />

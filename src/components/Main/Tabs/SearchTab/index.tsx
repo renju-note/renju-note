@@ -15,7 +15,7 @@ const Default: FC = () => {
     },
     []
   )
-  const boardState = useContext(BoardStateContext)[0]
+  const { boardState } = useContext(BoardStateContext)
   const analyzedDB = useMemo(() => new AnalyzedDatabase(), [])
 
   const pageSize = system.seachPageSize

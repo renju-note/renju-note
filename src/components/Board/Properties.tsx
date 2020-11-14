@@ -3,8 +3,9 @@ import { Point, Property } from '../../rule'
 import { BoardStateContext, PreferenceContext, PreferenceOption, SystemContext } from '../contexts'
 
 const Default: FC = () => {
-  const board = useContext(BoardStateContext)[0].board
+  const { boardState } = useContext(BoardStateContext)
   const { preference } = useContext(PreferenceContext)
+  const board = boardState.board
   return <g>
     {
       preference.has(PreferenceOption.showPropertyRows) &&

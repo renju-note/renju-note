@@ -3,7 +3,7 @@ import { Point } from '../../rule'
 import { BoardStateContext, SystemContext } from '../contexts'
 
 const Default: FC = () => {
-  const boardState = useContext(BoardStateContext)[0]
+  const { boardState } = useContext(BoardStateContext)
   if (boardState.previewingGame === undefined) return <></>
   const game = boardState.previewingGame
   return <g>
