@@ -2,10 +2,11 @@ import React, { FC, useContext } from 'react'
 import { Point } from '../../rule'
 import { SystemContext } from '../contexts'
 import Base from './Base'
-import Properties from './Properties'
-import Stones from './Stones'
-import Preview from './Preview'
+import FreeStones from './FreeStones'
+import Game from './Game'
 import Markers from './Markers'
+import Preview from './Preview'
+import Properties from './Properties'
 
 type DefaultProps = {
   id: string
@@ -33,7 +34,8 @@ const Default: FC<DefaultProps> = ({
     <Base />
     <Properties />
     <Markers />
-    <Stones />
+    <FreeStones />
+    <Game />
     <Preview />
   </svg>
 }

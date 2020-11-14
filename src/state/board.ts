@@ -224,6 +224,10 @@ export class BoardState {
     return this.partialGame.moves
   }
 
+  get lastMove (): Point | undefined {
+    return this.partialGame.lastMove
+  }
+
   get blackMoves (): Point[] {
     return this.options.has(BoardOption.invertMoves) ? this.partialGame.whites : this.partialGame.blacks
   }
