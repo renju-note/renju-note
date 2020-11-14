@@ -12,7 +12,7 @@ export class System {
   readonly C: number // cell size
   readonly P: number // padding
 
-  constructor (windowInnerWidth: number) {
+  constructor(windowInnerWidth: number) {
     if (windowInnerWidth >= 640) {
       this.W = 640
       this.C = 40
@@ -28,42 +28,39 @@ export class System {
     }
   }
 
-  cx (x: number): number {
+  cx(x: number): number {
     return this.P + (x - 1) * this.C
   }
 
-  cy (y: number): number {
+  cy(y: number): number {
     return this.P + (this.N - y) * this.C
   }
 
-  c ([x, y]: Point): BoardCoordinate {
+  c([x, y]: Point): BoardCoordinate {
     return [this.cx(x), this.cy(y)]
   }
 
-  p ([bx, by]: [number, number]): Point {
-    return [
-      adjust((bx - this.P) / this.C + 1),
-      adjust((this.W - by - this.P) / this.C + 1),
-    ]
+  p([bx, by]: [number, number]): Point {
+    return [adjust((bx - this.P) / this.C + 1), adjust((this.W - by - this.P) / this.C + 1)]
   }
 
-  xCode (x: number): string {
+  xCode(x: number): string {
     return xCode(x)
   }
 
-  yCode (y: number): string {
+  yCode(y: number): string {
     return yCode(y)
   }
 
-  code ([x, y]: Point): string {
+  code([x, y]: Point): string {
     return encode([x, y])
   }
 
-  get indices (): number[] {
+  get indices(): number[] {
     return new Array(this.N).fill(null).map((_, i) => i + 1)
   }
 
-  get buttonSize (): ButtonProps['size'] {
+  get buttonSize(): ButtonProps['size'] {
     switch (this.W) {
       case 320:
         return 'sm'
@@ -74,7 +71,7 @@ export class System {
     }
   }
 
-  get buttonSizeSmaller (): ButtonProps['size'] {
+  get buttonSizeSmaller(): ButtonProps['size'] {
     switch (this.W) {
       case 320:
         return 'xs'
@@ -85,7 +82,7 @@ export class System {
     }
   }
 
-  get rulerStrokeWidth (): number {
+  get rulerStrokeWidth(): number {
     switch (this.W) {
       case 320:
         return 1
@@ -96,7 +93,7 @@ export class System {
     }
   }
 
-  get stoneStrokeWidth (): number {
+  get stoneStrokeWidth(): number {
     switch (this.W) {
       case 320:
         return 1.5
@@ -107,7 +104,7 @@ export class System {
     }
   }
 
-  get indexFontSize (): string {
+  get indexFontSize(): string {
     switch (this.W) {
       case 320:
         return '8px'
@@ -118,7 +115,7 @@ export class System {
     }
   }
 
-  get indexPadding (): number {
+  get indexPadding(): number {
     switch (this.W) {
       case 320:
         return 1
@@ -129,7 +126,7 @@ export class System {
     }
   }
 
-  get orderFontSize (): string {
+  get orderFontSize(): string {
     switch (this.W) {
       case 320:
         return '12px'
@@ -140,7 +137,7 @@ export class System {
     }
   }
 
-  get forbiddenStrokeWidth (): number {
+  get forbiddenStrokeWidth(): number {
     switch (this.W) {
       case 320:
         return 4
@@ -151,7 +148,7 @@ export class System {
     }
   }
 
-  get propertyRowStrokeWidth (): number {
+  get propertyRowStrokeWidth(): number {
     switch (this.W) {
       case 320:
         return 3
@@ -162,7 +159,7 @@ export class System {
     }
   }
 
-  get propertyRowStrokeDasharray (): string {
+  get propertyRowStrokeDasharray(): string {
     switch (this.W) {
       case 320:
         return '1 4'
@@ -173,7 +170,7 @@ export class System {
     }
   }
 
-  get seachPageSize (): number {
+  get seachPageSize(): number {
     switch (this.W) {
       case 320:
         return 10

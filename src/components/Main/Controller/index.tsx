@@ -12,13 +12,15 @@ const Default: FC = () => {
   const system = useContext(SystemContext)
   const { boardState } = useContext(BoardStateContext)
   if (boardState.previewingGame !== undefined) return <PreviewingController />
-  return <Flex width={system.W} justifyContent="space-around" alignItems="center">
-    <LeftMenu />
-    <EditMenu />
-    <Navigator />
-    <UndoButton />
-    <RightMenu />
-  </Flex>
+  return (
+    <Flex width={system.W} justifyContent="space-around" alignItems="center">
+      <LeftMenu />
+      <EditMenu />
+      <Navigator />
+      <UndoButton />
+      <RightMenu />
+    </Flex>
+  )
 }
 
 export default Default

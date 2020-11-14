@@ -19,7 +19,12 @@ export type RowPattern = {
   readonly whmask: Stones
 }
 
-export const search = (blacks: Stones, whites: Stones, within: number, pattern: RowPattern): number[] => {
+export const search = (
+  blacks: Stones,
+  whites: Stones,
+  within: number,
+  pattern: RowPattern
+): number[] => {
   if (within < pattern.size) return []
   const filter: Stones = 2 ** pattern.size - 1 // e.g. 6 -> 0b111111
 
@@ -562,7 +567,7 @@ const WHITE_FIVE_PATTERNS: RowPattern[] = [
     whites: 0b11111,
     blmask: 0b00000,
     whmask: 0b00000,
-  }
+  },
 ]
 
 export const BLACK_PATTERNS: Record<RowKind, RowPattern[]> = {

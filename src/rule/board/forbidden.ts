@@ -46,13 +46,13 @@ const between = (p: Point, r: SquareRow): boolean => {
   const [s, e] = [r.start, r.end]
   switch (r.direction) {
     case 'vertical':
-      return p[0] === s[0] && (s[1] <= p[1] && p[1] <= e[1])
+      return p[0] === s[0] && s[1] <= p[1] && p[1] <= e[1]
     case 'horizontal':
-      return p[1] === s[1] && (s[0] <= p[0] && p[0] <= e[0])
+      return p[1] === s[1] && s[0] <= p[0] && p[0] <= e[0]
     case 'ascending':
-      return (s[0] <= p[0] && p[0] <= e[0]) && (p[0] - s[0] === p[1] - s[1])
+      return s[0] <= p[0] && p[0] <= e[0] && p[0] - s[0] === p[1] - s[1]
     case 'descending':
-      return (s[0] <= p[0] && p[0] <= e[0]) && (p[0] - s[0] === s[1] - p[1])
+      return s[0] <= p[0] && p[0] <= e[0] && p[0] - s[0] === s[1] - p[1]
   }
 }
 
