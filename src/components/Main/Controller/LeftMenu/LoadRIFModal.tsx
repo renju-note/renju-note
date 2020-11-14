@@ -23,7 +23,7 @@ const Default: FC<DefaultProps> = ({
   isOpen,
   onClose,
 }) => {
-  const [preference, setPreference] = useContext(PreferenceContext)
+  const { preference, setPreference } = useContext(PreferenceContext)
   const [fileIsInvalid, setFileIsInvalid] = useState<boolean>(false)
   const [parsingProgress, setParsingProgress] = useState<number>(0)
   const [analyzingProgress, setAnalyzingProgress] = useState<number>(0)

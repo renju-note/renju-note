@@ -23,22 +23,26 @@ export const PreferenceOption: Record<PreferenceOption, PreferenceOption> = {
 
 export type Preference = Options<PreferenceOption>
 
-export type SetPreference = (p: Preference) => void
-
-export const usePreference = (): [Preference, SetPreference] => {
-  const init = decode(localStorage.getItem('preference') || '{}') ?? new Options<PreferenceOption>()
-  const [preference, setPreference] = useState<Preference>(init)
-  const setAndSavePreference = (p: Preference) => {
-    setPreference(p)
-    localStorage.setItem('preference', encode(p))
-  }
-  return [preference, setAndSavePreference]
+export type PreferenceContext = {
+  preference: Preference,
+  setPreference: (p: Preference) => void
 }
 
-export const PreferenceContext = createContext<[Preference, SetPreference]>([
-  new Options<PreferenceOption>(),
-  () => {},
-])
+export const PreferenceContext = createContext<PreferenceContext>({
+  preference: new Options<PreferenceOption>(),
+  setPreference: () => {},
+})
+
+export const usePreference = (): PreferenceContext => {
+  const [preference, setPreferenceState] = useState<Preference>(
+    () => decode(localStorage.getItem('preference') || '{}') ?? new Options<PreferenceOption>()
+  )
+  const setPreference = (p: Preference) => {
+    setPreferenceState(p)
+    localStorage.setItem('preference', encode(p))
+  }
+  return { preference, setPreference }
+}
 
 const encode = (p: Preference): string => {
   return JSON.stringify(p.map)

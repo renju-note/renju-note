@@ -4,7 +4,7 @@ import { BoardOption } from '../../state'
 import { BoardStateContext, PreferenceContext, PreferenceOption, SystemContext } from '../contexts'
 
 const Default: FC = () => {
-  const preference = useContext(PreferenceContext)[0]
+  const { preference } = useContext(PreferenceContext)
   const boardState = useContext(BoardStateContext)[0]
   const moves = boardState.moves
   return <g>

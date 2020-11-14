@@ -4,7 +4,7 @@ import { BoardStateContext, PreferenceContext, PreferenceOption, SystemContext }
 
 const Default: FC = () => {
   const board = useContext(BoardStateContext)[0].board
-  const preference = useContext(PreferenceContext)[0]
+  const { preference } = useContext(PreferenceContext)
   return <g>
     {
       preference.has(PreferenceOption.showPropertyRows) &&

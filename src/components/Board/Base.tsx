@@ -2,7 +2,7 @@ import React, { FC, useContext } from 'react'
 import { PreferenceContext, PreferenceOption, SystemContext } from '../contexts'
 
 const Default: FC = () => {
-  const preference = useContext(PreferenceContext)[0]
+  const { preference } = useContext(PreferenceContext)
   return <g>
     <Rulers />
     <Stars />

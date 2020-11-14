@@ -21,7 +21,7 @@ import LoadRIFModal from './LoadRIFModal'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
-  const [preference, setPreference] = useContext(PreferenceContext)
+  const { preference, setPreference } = useContext(PreferenceContext)
   const targetPreferences = [
     PreferenceOption.showIndices,
     PreferenceOption.showOrders,

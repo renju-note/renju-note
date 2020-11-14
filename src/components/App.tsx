@@ -4,8 +4,8 @@ import './App.css'
 import {
   BoardStateContext,
   PreferenceContext,
-  setupSystem, SystemContext, useBoardState,
-  usePreference
+  setupSystem,
+  SystemContext, useBoardState, usePreference
 } from './contexts'
 import Main from './Main'
 
@@ -18,16 +18,12 @@ const App: FC = () => {
     [boardState]
   )
 
-  const [preference, setPreference] = usePreference()
-  useEffect(
-    () => setPreference(preference),
-    [preference],
-  )
+  const { preference, setPreference } = usePreference()
   return <ThemeProvider>
     <CSSReset />
     <SystemContext.Provider value={system}>
       <BoardStateContext.Provider value={[boardState, setBoardState]}>
-        <PreferenceContext.Provider value={[preference, setPreference]}>
+        <PreferenceContext.Provider value={{ preference, setPreference }}>
           <Main />
         </PreferenceContext.Provider>
       </BoardStateContext.Provider>
