@@ -257,7 +257,7 @@ export class BoardState {
     const codes: string[] = []
     if (!this.game.empty) codes.push(`g:${this.game.encode()}`)
     if (this.cursor !== 0) codes.push(`c:${this.cursor}`)
-    if (this.options) codes.push(`o:${encodeBoardOptions(this.options)}`)
+    if (!this.options.empty) codes.push(`o:${encodeBoardOptions(this.options)}`)
     if (!this.freeBlacks.empty) codes.push(`b:${this.freeBlacks.encode()}`)
     if (!this.freeWhites.empty) codes.push(`w:${this.freeWhites.encode()}`)
     if (!this.markerPoints.empty) codes.push(`p:${this.markerPoints.encode()}`)

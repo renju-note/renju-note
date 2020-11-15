@@ -29,6 +29,13 @@ export class Options<T extends string> {
     return new Options<T>({ ...this.map, ...map })
   }
 
+  get empty(): boolean {
+    for (const v in this.map) {
+      if (this.map[v]) return false
+    }
+    return true
+  }
+
   get values(): T[] {
     const values: T[] = []
     for (const v in this.map) {

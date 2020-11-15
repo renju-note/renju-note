@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Flex,
   Heading,
@@ -47,42 +48,46 @@ const Default: FC = () => {
   }
   return (
     <>
-      <Heading as="h1" size="sm" mb="1rem">
-        Load .rif file
-      </Heading>
-      <Flex alignItems="center" mb="1rem">
-        <Input
-          id="rif-file"
-          type="file"
-          isInvalid={fileIsInvalid}
-          onChange={() => setFileIsInvalid(false)}
-          mr="1rem"
-        />
-        <Button onClick={onLoadFile}>Load</Button>
-      </Flex>
-      <Heading as="h2" size="sm" mb="1rem">
-        Remarks
-      </Heading>
-      <UnorderedList>
-        <ListItem>
-          It seems that this feature works only on PC with the latest version of either Chrome or
-          Firefox, but does not on Mobile devices, also does not with other browsers including
-          Safari and IE. This is probably due to problems around XML parsers they provide and any
-          solution is not found yet.
-        </ListItem>
-        <ListItem>
-          The data loaded from file will be stored only in your browser&apos;s storage and{' '}
-          <b>never</b> uploaded to anywhere. Keep in mind that, once the storage was resetted by an
-          action like deleting histories, your data will be also deleted as well.
-        </ListItem>
-        <ListItem>
-          RIF&apos;s official dataset can be downloaded from{' '}
-          <Link href="http://www.renju.net/downloads/games.php" color="teal.500" isExternal>
-            RenjuNet
-          </Link>
-          . Be sure to follow rules presented on the site.
-        </ListItem>
-      </UnorderedList>
+      <Stack>
+        <Heading as="h2" size="sm">
+          Load .rif file
+        </Heading>
+        <Flex alignItems="center">
+          <Input
+            id="rif-file"
+            type="file"
+            isInvalid={fileIsInvalid}
+            onChange={() => setFileIsInvalid(false)}
+            mr="1rem"
+          />
+          <Button onClick={onLoadFile}>Load</Button>
+        </Flex>
+        <Heading as="h2" size="sm">
+          Remarks
+        </Heading>
+        <Box mx="1rem">
+          <UnorderedList>
+            <ListItem>
+              It seems that this feature works only on PC with the latest version of either Chrome
+              or Firefox, but does not on Mobile devices, also does not with other browsers
+              including Safari and IE. This is probably due to problems around XML parsers they
+              provide and any solution is not found yet.
+            </ListItem>
+            <ListItem>
+              The data loaded from file will be stored only in your browser&apos;s storage and{' '}
+              <b>never</b> uploaded to anywhere. Keep in mind that, once the storage was resetted by
+              an action like deleting histories, your data will be also deleted as well.
+            </ListItem>
+            <ListItem>
+              RIF&apos;s official dataset can be downloaded from{' '}
+              <Link href="http://www.renju.net/downloads/games.php" color="teal.500" isExternal>
+                RenjuNet
+              </Link>
+              . Be sure to follow rules presented on the site.
+            </ListItem>
+          </UnorderedList>
+        </Box>
+      </Stack>
       <Modal
         isOpen={analyzingDisclosure.isOpen}
         onClose={analyzingDisclosure.onClose}
