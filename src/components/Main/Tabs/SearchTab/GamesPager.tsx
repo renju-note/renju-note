@@ -28,7 +28,7 @@ const Default: FC<Props> = ({ page, setPage, hit, pageSize }) => {
         onClick={() => setPage(Math.max(0, page - 1))}
       />
       <Button isDisabled width={`${system.W / 5}px`}>
-        {`${page * pageSize + 1} - ${(page + 1) * pageSize} of ${hit}`}
+        {`${page * pageSize + 1}-${Math.min((page + 1) * pageSize, hit)} of ${hit}`}
       </Button>
       <IconButton
         aria-label="next"

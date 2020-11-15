@@ -1,4 +1,5 @@
 import {
+  Box,
   Heading,
   Link,
   List,
@@ -11,6 +12,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Stack,
   UnorderedList,
 } from '@chakra-ui/react'
 import React, { FC } from 'react'
@@ -29,35 +31,39 @@ const Default: FC<DefaultProps> = ({ isOpen, onClose }) => {
         <ModalHeader as="h1">About Renju Note</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Heading as="h2" size="sm" mb="1rem">
-            Links
-          </Heading>
-          <List mb="1rem">
-            <ListItem>
-              <ListIcon as={FiTwitter} />
-              <Link href="//twitter.com/renjunotecom" color="teal.500" isExternal>
-                @renjunotecom
-              </Link>
-              &nbsp;-&nbsp;contact
-            </ListItem>
-            <ListItem>
-              <ListIcon as={FiGithub} />
-              <Link href="//github.com/renju-note" color="teal.500" isExternal>
-                @renju-note
-              </Link>
-              &nbsp;-&nbsp;source code
-            </ListItem>
-          </List>
-          <Heading as="h2" size="sm" mb="1rem">
-            Remarks
-          </Heading>
-          <UnorderedList>
-            <ListItem>Use on your own responsibility.</ListItem>
-            <ListItem>
-              Some of your activity logs will be sent to third-party analytics services in order to
-              improve user experiences.
-            </ListItem>
-          </UnorderedList>
+          <Stack>
+            <Heading as="h2" size="sm">
+              Links
+            </Heading>
+            <List>
+              <ListItem>
+                <ListIcon as={FiTwitter} />
+                <Link href="//twitter.com/renjunotecom" color="teal.500" isExternal>
+                  @renjunotecom
+                </Link>
+                &nbsp;-&nbsp;contact
+              </ListItem>
+              <ListItem>
+                <ListIcon as={FiGithub} />
+                <Link href="//github.com/renju-note" color="teal.500" isExternal>
+                  @renju-note
+                </Link>
+                &nbsp;-&nbsp;source code
+              </ListItem>
+            </List>
+            <Heading as="h2" size="sm">
+              Remarks
+            </Heading>
+            <Box ml="1rem">
+              <UnorderedList>
+                <ListItem>Use on your own responsibility.</ListItem>
+                <ListItem>
+                  Some of your activity logs will be sent to third-party analytics services in order
+                  to improve user experiences.
+                </ListItem>
+              </UnorderedList>
+            </Box>
+          </Stack>
         </ModalBody>
         <ModalFooter></ModalFooter>
       </ModalContent>

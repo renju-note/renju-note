@@ -34,7 +34,7 @@ const Default: FC = () => {
 
   if (!databaseReady) {
     return (
-      <Stack width={system.W} justify="center" align="center">
+      <Stack justify="center" align="center">
         <Text color="gray.600" my="1rem">
           Database is not ready
         </Text>
@@ -43,7 +43,7 @@ const Default: FC = () => {
   }
 
   return (
-    <Stack width={system.W} justify="center" align="center">
+    <Stack justify="center" align="center">
       {error && (
         <Text color="gray.600" my="1rem">
           {error}
