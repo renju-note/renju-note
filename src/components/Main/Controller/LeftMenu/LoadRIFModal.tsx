@@ -4,7 +4,6 @@ import {
   Heading,
   Input,
   Link,
-  List,
   ListItem,
   Modal,
   ModalBody,
@@ -15,6 +14,7 @@ import {
   ModalOverlay,
   Progress,
   Stack,
+  UnorderedList,
   useDisclosure,
 } from '@chakra-ui/react'
 import React, { FC, useContext, useState } from 'react'
@@ -77,7 +77,7 @@ const Default: FC<DefaultProps> = ({ isOpen, onClose }) => {
             <Heading as="h2" size="sm" mb="1rem">
               Remarks
             </Heading>
-            <List styleType="disc">
+            <UnorderedList>
               <ListItem>
                 <b>EXPERIMENTAL</b>: Currently the function is in quite an early stage and under
                 heavy development. There is no guarantee for its behaviour on your device.
@@ -101,7 +101,7 @@ const Default: FC<DefaultProps> = ({ isOpen, onClose }) => {
                 </Link>
                 . Be sure to follow the rules presented on the site.
               </ListItem>
-            </List>
+            </UnorderedList>
           </ModalBody>
           <ModalFooter></ModalFooter>
         </ModalContent>

@@ -11,6 +11,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  UnorderedList,
 } from '@chakra-ui/react'
 import React, { FC } from 'react'
 import { FiGithub, FiTwitter } from 'react-icons/fi'
@@ -33,14 +34,14 @@ const Default: FC<DefaultProps> = ({ isOpen, onClose }) => {
           </Heading>
           <List mb="1rem">
             <ListItem>
-              <ListIcon icon={FiTwitter} />
+              <ListIcon as={FiTwitter} />
               <Link href="//twitter.com/renjunotecom" color="teal.500" isExternal>
                 @renjunotecom
               </Link>
               &nbsp;-&nbsp;contact
             </ListItem>
             <ListItem>
-              <ListIcon icon={FiGithub} />
+              <ListIcon as={FiGithub} />
               <Link href="//github.com/renju-note" color="teal.500" isExternal>
                 @renju-note
               </Link>
@@ -50,13 +51,13 @@ const Default: FC<DefaultProps> = ({ isOpen, onClose }) => {
           <Heading as="h2" size="sm" mb="1rem">
             Remarks
           </Heading>
-          <List styleType="disc">
+          <UnorderedList>
             <ListItem>Use on your own responsibility.</ListItem>
             <ListItem>
               Some of your activities are sent to third-party analytics services in order to improve
               user experiences.
             </ListItem>
-          </List>
+          </UnorderedList>
         </ModalBody>
         <ModalFooter></ModalFooter>
       </ModalContent>
