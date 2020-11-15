@@ -54,8 +54,8 @@ const Default: FC<DefaultProps> = ({ isOpen, onClose }) => {
           <UnorderedList>
             <ListItem>Use on your own responsibility.</ListItem>
             <ListItem>
-              Some of your activities are sent to third-party analytics services in order to improve
-              user experiences.
+              Some of your activity logs will be sent to third-party analytics services in order to
+              improve user experiences.
             </ListItem>
           </UnorderedList>
         </ModalBody>

@@ -61,7 +61,7 @@ const Default: FC<DefaultProps> = ({ isOpen, onClose }) => {
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader as="h1">Load RIF file</ModalHeader>
+          <ModalHeader as="h1">Load .rif file</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Flex alignItems="center" mb="1rem">
@@ -79,27 +79,26 @@ const Default: FC<DefaultProps> = ({ isOpen, onClose }) => {
             </Heading>
             <UnorderedList>
               <ListItem>
-                <b>EXPERIMENTAL</b>: Currently the function is in quite an early stage and under
+                <b>EXPERIMENTAL</b>: Currently this feature is in quite an early stage and under
                 heavy development. There is no guarantee for its behaviour on your device.
               </ListItem>
               <ListItem>
-                It seems that the function works only on PC with the latest versions of either
-                Chrome or Firefox, but does not on Mobile devices, also not with other browsers
+                It seems that the feature works only on PC with the latest version of either Chrome
+                or Firefox, but does not on Mobile devices, also does not with other browsers
                 including Safari and IE. This is probably due to problems around XML parsers they
-                use and any solution is not found yet.
+                provide and any solution is not found yet.
               </ListItem>
               <ListItem>
-                Loaded dataset will be stored only in your browser&apos;s storage and <b>never</b>{' '}
-                uploaded to anywhere. Keep in mind that, once your browser&apos;s storage was
-                resetted by some actions including deleting histories, your dataset will be also
-                deleted as well.
+                The data loaded from file will be stored only in your browser&apos;s storage and{' '}
+                <b>never</b> uploaded to anywhere. Keep in mind that, once the storage was resetted
+                by an action like deleting histories, your data will be also deleted as well.
               </ListItem>
               <ListItem>
-                RIF file can be downloaded from{' '}
+                RIF&apos;s official dataset can be downloaded from{' '}
                 <Link href="http://www.renju.net/downloads/games.php" color="teal.500" isExternal>
                   RenjuNet
                 </Link>
-                . Be sure to follow the rules presented on the site.
+                . Be sure to follow rules presented on the site.
               </ListItem>
             </UnorderedList>
           </ModalBody>

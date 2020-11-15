@@ -77,7 +77,7 @@ const Default: FC = () => {
           <MenuItem onClick={loadRifDisclosure.onOpen}>
             <Icon boxSize="small" as={RiDatabase2Line} />
             <Text ml={2} mr={1}>
-              Load RIF file{' '}
+              Load .rif file{' '}
             </Text>
             <Icon boxSize="small" as={RiFlaskFill} />
           </MenuItem>

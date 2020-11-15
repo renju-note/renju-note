@@ -9,7 +9,7 @@ const Default: FC = () => {
   const system = useContext(SystemContext)
   const { preference } = useContext(PreferenceContext)
   return (
-    <Flex justify="center" align="top" wrap="wrap">
+    <Flex justify="center" align="top" wrap="wrap" mt="0.5rem">
       <Stack width={system.W} spacing="1rem">
         <Box>
           <Board />
