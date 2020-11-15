@@ -37,7 +37,7 @@ const Default: FC = () => {
   ]
   return (
     <>
-      <Menu autoSelect={false} placement="auto">
+      <Menu autoSelect={false} placement="top-end">
         <MenuButton
           as={IconButton}
           icon={<RiSettings2Line />}

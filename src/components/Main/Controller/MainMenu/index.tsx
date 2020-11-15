@@ -32,7 +32,7 @@ const Default: FC = () => {
   const aboutDisclosure = useDisclosure()
   return (
     <>
-      <Menu autoSelect={false} placement="auto">
+      <Menu autoSelect={false} placement="top-start">
         <MenuButton
           as={IconButton}
           size={system.buttonSize}
