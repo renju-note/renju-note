@@ -4,19 +4,15 @@ import {
   IconButton,
   Menu,
   MenuButton,
-  MenuDivider,
-  MenuItem,
   MenuItemOption,
   MenuList,
   MenuOptionGroup,
   Text,
 } from '@chakra-ui/react'
 import 'firebase/analytics'
-import * as firebase from 'firebase/app'
 import React, { FC, useContext } from 'react'
 import {
   RiCloseLine,
-  RiDownload2Line,
   RiFocus2Fill,
   RiGitCommitFill,
   RiGridLine,
@@ -24,18 +20,10 @@ import {
   RiSettings2Line,
   RiStopMiniFill,
 } from 'react-icons/ri'
-import {
-  BoardStateContext,
-  PreferenceContext,
-  PreferenceOption,
-  SystemContext,
-} from '../../../contexts'
-import DownloadHidden, { onDownload } from './DownloadHidden'
+import { PreferenceContext, PreferenceOption, SystemContext } from '../../contexts'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
-  const downloadHiddenId = 'download-hidden'
-  const { boardState } = useContext(BoardStateContext)
   const { preference, setPreference } = useContext(PreferenceContext)
   const boardAndMovesPreferences = [
     PreferenceOption.showIndices,
@@ -116,19 +104,8 @@ const Default: FC = () => {
               </Flex>
             </MenuItemOption>
           </MenuOptionGroup>
-          <MenuDivider />
-          <MenuItem
-            onClick={() => {
-              onDownload(downloadHiddenId)
-              firebase.analytics().logEvent('download_picture', { code: boardState.encode() })
-            }}
-          >
-            <Icon boxSize="small" as={RiDownload2Line} />
-            <Text ml={2}>Download Picture</Text>
-          </MenuItem>
         </MenuList>
       </Menu>
-      <DownloadHidden id={downloadHiddenId} />
     </>
   )
 }

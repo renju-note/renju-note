@@ -9,14 +9,25 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
+import 'firebase/analytics'
+import * as firebase from 'firebase/app'
 import React, { FC, useContext } from 'react'
-import { RiDatabase2Line, RiFlaskFill, RiMenuLine, RiQuestionLine } from 'react-icons/ri'
-import { SystemContext } from '../../../contexts'
+import {
+  RiDatabase2Line,
+  RiDownload2Line,
+  RiFlaskFill,
+  RiMenuLine,
+  RiQuestionLine,
+} from 'react-icons/ri'
+import { BoardStateContext, SystemContext } from '../../../contexts'
 import AboutModal from './AboutModal'
+import DownloadHidden, { onDownload } from './DownloadHidden'
 import LoadRIFModal from './LoadRIFModal'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
+  const downloadHiddenId = 'download-hidden'
+  const { boardState } = useContext(BoardStateContext)
   const loadRifDisclosure = useDisclosure()
   const aboutDisclosure = useDisclosure()
   return (
@@ -29,6 +40,16 @@ const Default: FC = () => {
           icon={<RiMenuLine />}
         />
         <MenuList>
+          <MenuItem
+            onClick={() => {
+              onDownload(downloadHiddenId)
+              firebase.analytics().logEvent('download_picture', { code: boardState.encode() })
+            }}
+          >
+            <Icon boxSize="small" as={RiDownload2Line} />
+            <Text ml={2}>Download Picture</Text>
+          </MenuItem>
+          <MenuDivider />
           <MenuItem onClick={loadRifDisclosure.onOpen}>
             <Icon boxSize="small" as={RiDatabase2Line} />
             <Text ml={2} mr={1}>
@@ -44,6 +65,7 @@ const Default: FC = () => {
         </MenuList>
       </Menu>
       <LoadRIFModal isOpen={loadRifDisclosure.isOpen} onClose={loadRifDisclosure.onClose} />
+      <DownloadHidden id={downloadHiddenId} />
       <AboutModal isOpen={aboutDisclosure.isOpen} onClose={aboutDisclosure.onClose} />
     </>
   )
