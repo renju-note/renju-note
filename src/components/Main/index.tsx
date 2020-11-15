@@ -1,4 +1,4 @@
-import { Box, Flex, Stack } from '@chakra-ui/core'
+import { Box, Flex, Stack } from '@chakra-ui/react'
 import React, { FC, useContext } from 'react'
 import { PreferenceContext, PreferenceOption, SystemContext } from '../contexts'
 import Board from './Board'
@@ -9,7 +9,7 @@ const Default: FC = () => {
   const system = useContext(SystemContext)
   const { preference } = useContext(PreferenceContext)
   return (
-    <Flex justify="center" align="top" wrap="wrap" my="1rem">
+    <Flex justify="center" align="top" wrap="wrap" mt="0.5rem">
       <Stack width={system.W} spacing="1rem">
         <Box>
           <Board />

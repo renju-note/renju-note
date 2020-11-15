@@ -1,5 +1,4 @@
 import {
-  Box,
   Flex,
   Icon,
   IconButton,
@@ -11,7 +10,7 @@ import {
   MenuList,
   MenuOptionGroup,
   Text,
-} from '@chakra-ui/core'
+} from '@chakra-ui/react'
 import 'firebase/analytics'
 import * as firebase from 'firebase/app'
 import React, { FC, useContext } from 'react'
@@ -43,14 +42,13 @@ const Default: FC = () => {
   return (
     <>
       <Menu autoSelect={false}>
-        <MenuButton as={Box}>
-          <IconButton
-            icon={RiMore2Fill}
-            aria-label="more"
-            size={system.buttonSize}
-            variant="ghost"
-          />
-        </MenuButton>
+        <MenuButton
+          as={IconButton}
+          icon={<RiMore2Fill />}
+          aria-label="more"
+          size={system.buttonSize}
+          variant="ghost"
+        />
         <MenuList>
           <MenuOptionGroup
             title="Feature"
@@ -62,22 +60,19 @@ const Default: FC = () => {
           >
             <MenuItemOption value={PreferenceOption.showForbiddens}>
               <Flex alignItems="center">
-                <Icon size="small" as={RiCloseLine} />
+                <Icon boxSize="small" as={RiCloseLine} />
                 <Text ml={2}>Forbidden Points</Text>
               </Flex>
             </MenuItemOption>
             <MenuItemOption value={PreferenceOption.showPropertyEyes}>
               <Flex alignItems="center">
-                <Icon
-                  size="small"
-                  as={() => <RiStopMiniFill style={{ transform: 'rotate(45deg)' }} />}
-                />
+                <Icon boxSize="small" as={RiStopMiniFill} style={{ transform: 'rotate(45deg)' }} />
                 <Text ml={2}>Threes and Fours</Text>
               </Flex>
             </MenuItemOption>
             <MenuItemOption value="showPropertyRows">
               <Flex alignItems="center">
-                <Icon size="small" as={RiGitCommitFill} />
+                <Icon boxSize="small" as={RiGitCommitFill} />
                 <Text ml={2}>Potential Lines</Text>
               </Flex>
             </MenuItemOption>
@@ -89,7 +84,7 @@ const Default: FC = () => {
               firebase.analytics().logEvent('download_picture', { code: boardState.encode() })
             }}
           >
-            <Icon size="small" as={RiDownload2Line} />
+            <Icon boxSize="small" as={RiDownload2Line} />
             <Text ml={2}>Download Picture</Text>
           </MenuItem>
         </MenuList>

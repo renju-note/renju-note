@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react'
+import React, { createContext, FC, useState } from 'react'
 import { BoardState } from '../../state'
 
 export type BoardStateContext = {
@@ -11,7 +11,7 @@ export const BoardStateContext = createContext<BoardStateContext>({
   setBoardState: () => {},
 })
 
-export const useBoardState = (): BoardStateContext => {
+export const BoardStateProvider: FC = ({ children }) => {
   const [boardState, setBoardStateState] = useState<BoardState>(
     () => BoardState.decode(window.location.hash.slice(1)) || new BoardState()
   )
@@ -19,5 +19,9 @@ export const useBoardState = (): BoardStateContext => {
     setBoardStateState(s)
     window.history.replaceState(null, '', `#${s.encode()}`)
   }
-  return { boardState, setBoardState }
+  return (
+    <BoardStateContext.Provider value={{ boardState, setBoardState }}>
+      {children}
+    </BoardStateContext.Provider>
+  )
 }

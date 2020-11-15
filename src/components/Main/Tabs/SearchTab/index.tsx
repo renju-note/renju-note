@@ -1,4 +1,4 @@
-import { Box, Stack, Text } from '@chakra-ui/core'
+import { Box, Stack, Text } from '@chakra-ui/react'
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { AnalyzedDatabase, ready } from '../../../../database'
 import { Point } from '../../../../rule'
@@ -34,7 +34,7 @@ const Default: FC = () => {
 
   if (!databaseReady) {
     return (
-      <Stack width={system.W} justify="center" align="center" spacing="1rem">
+      <Stack width={system.W} justify="center" align="center">
         <Text color="gray.600" my="1rem">
           Database is not ready
         </Text>
@@ -43,7 +43,7 @@ const Default: FC = () => {
   }
 
   return (
-    <Stack width={system.W} justify="center" align="center" spacing="1rem">
+    <Stack width={system.W} justify="center" align="center">
       {error && (
         <Text color="gray.600" my="1rem">
           {error}

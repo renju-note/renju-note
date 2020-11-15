@@ -1,5 +1,4 @@
 import {
-  Box,
   Flex,
   Icon,
   IconButton,
@@ -11,7 +10,7 @@ import {
   MenuList,
   MenuOptionGroup,
   Text,
-} from '@chakra-ui/core'
+} from '@chakra-ui/react'
 import 'firebase/analytics'
 import React, { FC, useContext } from 'react'
 import {
@@ -36,14 +35,13 @@ const Default: FC = () => {
   return (
     <>
       <Menu autoSelect={false}>
-        <MenuButton as={Box}>
-          <IconButton
-            icon={() => <ModeIcon mode={boardState.mode} />}
-            aria-label="edit"
-            size={system.buttonSize}
-            variant="ghost"
-          />
-        </MenuButton>
+        <MenuButton
+          as={IconButton}
+          icon={<ModeIcon mode={boardState.mode} />}
+          aria-label="edit"
+          size={system.buttonSize}
+          variant="ghost"
+        />
         <MenuList>
           <MenuOptionGroup
             defaultValue={boardState.mode}
@@ -93,28 +91,28 @@ const Default: FC = () => {
           >
             <MenuItemOption value={BoardOption.invertMoves}>
               <Flex alignItems="center">
-                <Icon size="small" as={RiContrastFill} />
+                <Icon boxSize="small" as={RiContrastFill} />
                 <Text ml={2}>Invert Moves</Text>
               </Flex>
             </MenuItemOption>
             <MenuItemOption value={BoardOption.labelMarkers}>
               <Flex alignItems="center">
-                <Icon size="small" as={RiAtLine} />
+                <Icon boxSize="small" as={RiAtLine} />
                 <Text ml={2}>Label Markers</Text>
               </Flex>
             </MenuItemOption>
           </MenuOptionGroup>
           <MenuDivider />
           <MenuItem onClick={() => setBoardState(boardState.clearFollowingMoves())}>
-            <Icon size="small" as={RiCloseCircleLine} />
+            <Icon boxSize="small" as={RiCloseCircleLine} />
             <Text ml={2}>Clear Following Moves</Text>
           </MenuItem>
           <MenuItem onClick={() => setBoardState(boardState.clearFreeStones())}>
-            <Icon size="small" as={RiIndeterminateCircleLine} />
+            <Icon boxSize="small" as={RiIndeterminateCircleLine} />
             <Text ml={2}>Clear Added Stones</Text>
           </MenuItem>
           <MenuItem onClick={() => setBoardState(boardState.clearMarkers())}>
-            <Icon size="small" as={RiEraserLine} />
+            <Icon boxSize="small" as={RiEraserLine} />
             <Text ml={2}>Clear Markers</Text>
           </MenuItem>
           <MenuItem
@@ -123,7 +121,7 @@ const Default: FC = () => {
               if (window.confirm(message)) setBoardState(new BoardState())
             }}
           >
-            <Icon size="small" as={RiDeleteBinFill} color="red.500" />
+            <Icon boxSize="small" as={RiDeleteBinFill} color="red.500" />
             <Text ml={2} color="red.500">
               Reset All
             </Text>
@@ -137,17 +135,17 @@ const Default: FC = () => {
 const ModeIcon: FC<{ mode: EditMode }> = ({ mode }) => {
   switch (mode) {
     case EditMode.mainMoves:
-      return <Icon size="small" as={RiRadioButtonLine} />
+      return <Icon boxSize="small" as={RiRadioButtonLine} />
     case EditMode.freeBlacks:
-      return <Icon size="small" as={RiAddCircleFill} />
+      return <Icon boxSize="small" as={RiAddCircleFill} />
     case EditMode.freeWhites:
-      return <Icon size="small" as={RiAddCircleLine} />
+      return <Icon boxSize="small" as={RiAddCircleLine} />
     case EditMode.markerPoints:
-      return <Icon size="small" as={RiEditCircleFill} />
+      return <Icon boxSize="small" as={RiEditCircleFill} />
     case EditMode.markerLines:
-      return <Icon size="small" as={RiEditLine} />
+      return <Icon boxSize="small" as={RiEditLine} />
     default:
-      return <Icon size="small" as={RiRadioButtonLine} />
+      return <Icon boxSize="small" as={RiRadioButtonLine} />
   }
 }
 

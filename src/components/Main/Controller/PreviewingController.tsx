@@ -1,4 +1,4 @@
-import { Button, Flex } from '@chakra-ui/core'
+import { Button, Flex } from '@chakra-ui/react'
 import React, { FC, useContext } from 'react'
 import { BoardStateContext, SystemContext } from '../../contexts'
 
@@ -9,7 +9,7 @@ const Default: FC = () => {
     <Flex width={system.W} justifyContent="space-evenly" alignItems="center">
       <Button
         width={system.W / 4}
-        variantColor="blue"
+        colorScheme="blue"
         onClick={() => setBoardState(boardState.setGameFromPreviewing())}
       >
         Open

@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react'
+import React, { createContext, FC, useState } from 'react'
 import { Options } from '../../utils/options'
 
 const preferenceOptions = [
@@ -33,7 +33,7 @@ export const PreferenceContext = createContext<PreferenceContext>({
   setPreference: () => {},
 })
 
-export const usePreference = (): PreferenceContext => {
+export const PreferenceProvider: FC = ({ children }) => {
   const [preference, setPreferenceState] = useState<Preference>(
     () => decode(localStorage.getItem('preference') || '{}') ?? new Options<PreferenceOption>()
   )
@@ -41,7 +41,11 @@ export const usePreference = (): PreferenceContext => {
     setPreferenceState(p)
     localStorage.setItem('preference', encode(p))
   }
-  return { preference, setPreference }
+  return (
+    <PreferenceContext.Provider value={{ preference, setPreference }}>
+      {children}
+    </PreferenceContext.Provider>
+  )
 }
 
 const encode = (p: Preference): string => {

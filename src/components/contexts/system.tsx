@@ -1,5 +1,5 @@
-import { ButtonProps } from '@chakra-ui/core'
-import { createContext } from 'react'
+import { ButtonProps } from '@chakra-ui/react'
+import React, { createContext, FC, useMemo } from 'react'
 import { encode, N_LINES, Point, xCode, yCode } from '../../rule'
 
 export type BoardWidth = 640 | 360 | 320
@@ -182,8 +182,11 @@ export class System {
   }
 }
 
-const adjust = (n: number): number => Math.min(Math.max(1, Math.round(n)), N_LINES)
-
 export const SystemContext = createContext<System>(new System(640))
 
-export const setupSystem = (): System => new System(window.innerWidth)
+export const SystemProvider: FC = ({ children }) => {
+  const system = useMemo(() => new System(window.innerWidth), [])
+  return <SystemContext.Provider value={system}>{children}</SystemContext.Provider>
+}
+
+const adjust = (n: number): number => Math.min(Math.max(1, Math.round(n)), N_LINES)

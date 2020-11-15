@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, IconButton } from '@chakra-ui/core'
+import { Button, ButtonGroup, IconButton } from '@chakra-ui/react'
 import React, { FC, useContext } from 'react'
 import { FiChevronLeft, FiChevronRight, FiChevronsLeft, FiChevronsRight } from 'react-icons/fi'
 import { SystemContext } from '../../../contexts'
@@ -17,13 +17,13 @@ const Default: FC<Props> = ({ page, setPage, hit, pageSize }) => {
     <ButtonGroup spacing={1} size={system.buttonSizeSmaller} variant="ghost">
       <IconButton
         aria-label="first"
-        icon={FiChevronsLeft}
+        icon={<FiChevronsLeft />}
         isDisabled={page <= 0}
         onClick={() => setPage(0)}
       />
       <IconButton
         aria-label="prev"
-        icon={FiChevronLeft}
+        icon={<FiChevronLeft />}
         isDisabled={page <= 0}
         onClick={() => setPage(Math.max(0, page - 1))}
       />
@@ -32,13 +32,13 @@ const Default: FC<Props> = ({ page, setPage, hit, pageSize }) => {
       </Button>
       <IconButton
         aria-label="next"
-        icon={FiChevronRight}
+        icon={<FiChevronRight />}
         isDisabled={page >= lastPage}
         onClick={() => setPage(Math.min(lastPage, page + 1))}
       />
       <IconButton
         aria-label="last"
-        icon={FiChevronsRight}
+        icon={<FiChevronsRight />}
         isDisabled={page >= lastPage}
         onClick={() => setPage(lastPage)}
       />

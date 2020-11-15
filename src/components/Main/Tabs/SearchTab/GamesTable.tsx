@@ -1,4 +1,4 @@
-import { Icon, Text } from '@chakra-ui/core'
+import { Icon, Text } from '@chakra-ui/react'
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { RiCheckboxCircleFill, RiCloseLine, RiSubtractFill } from 'react-icons/ri'
 import { GameView, RIFDatabase, RIFPlayer } from '../../../../database'
@@ -94,11 +94,11 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
 const WonIcon: FC<{ won: boolean | null }> = ({ won }) => {
   switch (won) {
     case true:
-      return <Icon as={RiCheckboxCircleFill} size="small" color="green.500" />
+      return <Icon as={RiCheckboxCircleFill} boxSize="small" color="green.500" />
     case false:
-      return <Icon as={RiCloseLine} size="small" color="gray.500" />
+      return <Icon as={RiCloseLine} boxSize="small" color="gray.500" />
     case null:
-      return <Icon as={RiSubtractFill} size="small" color="gray.500" />
+      return <Icon as={RiSubtractFill} boxSize="small" color="gray.500" />
     default:
       return <></>
   }

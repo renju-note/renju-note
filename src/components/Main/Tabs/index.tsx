@@ -1,4 +1,4 @@
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/core'
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
 import React, { FC } from 'react'
 import SearchTab from './SearchTab'
 
@@ -9,7 +9,7 @@ const Default: FC = () => {
         <Tab>Search</Tab>
       </TabList>
       <TabPanels>
-        <TabPanel pt="1rem">
+        <TabPanel px={0}>
           <SearchTab />
         </TabPanel>
       </TabPanels>

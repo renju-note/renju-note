@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, IconButton } from '@chakra-ui/core'
+import { Button, ButtonGroup, IconButton } from '@chakra-ui/react'
 import React, { FC, useContext } from 'react'
 import { FiChevronLeft, FiChevronRight, FiChevronsLeft, FiChevronsRight } from 'react-icons/fi'
 import { BoardStateContext, SystemContext } from '../../contexts'
@@ -10,13 +10,13 @@ const Default: FC = () => {
     <ButtonGroup spacing={1} variant="ghost" size={system.buttonSize}>
       <IconButton
         onClick={() => setBoardState(boardState.toStart())}
-        icon={FiChevronsLeft}
+        icon={<FiChevronsLeft />}
         aria-label="to start"
         isDisabled={boardState.isStart}
       />
       <IconButton
         onClick={() => setBoardState(boardState.backward())}
-        icon={FiChevronLeft}
+        icon={<FiChevronLeft />}
         aria-label="backward"
         isDisabled={boardState.isStart}
       />
@@ -30,13 +30,13 @@ const Default: FC = () => {
       </Button>
       <IconButton
         onClick={() => setBoardState(boardState.forward())}
-        icon={FiChevronRight}
+        icon={<FiChevronRight />}
         aria-label="forward"
         isDisabled={boardState.isLast}
       />
       <IconButton
         onClick={() => setBoardState(boardState.toLast())}
-        icon={FiChevronsRight}
+        icon={<FiChevronsRight />}
         aria-label="to last"
         isDisabled={boardState.isLast}
       />
