@@ -8,7 +8,7 @@ const preferenceOptions = [
   'showForbiddens',
   'showPropertyRows',
   'showPropertyEyes',
-  'showTabs',
+  'advancedMode',
 ] as const
 export type PreferenceOption = typeof preferenceOptions[number]
 export const PreferenceOption: Record<PreferenceOption, PreferenceOption> = {
@@ -18,7 +18,7 @@ export const PreferenceOption: Record<PreferenceOption, PreferenceOption> = {
   showForbiddens: 'showForbiddens',
   showPropertyRows: 'showPropertyRows',
   showPropertyEyes: 'showPropertyEyes',
-  showTabs: 'showTabs',
+  advancedMode: 'advancedMode',
 }
 
 export type Preference = Options<PreferenceOption>

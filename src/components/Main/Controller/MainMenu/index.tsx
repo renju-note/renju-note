@@ -1,4 +1,11 @@
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  Button,
   Icon,
   IconButton,
   Menu,
@@ -13,22 +20,41 @@ import 'firebase/analytics'
 import * as firebase from 'firebase/app'
 import React, { FC, useContext } from 'react'
 import {
-  RiDatabase2Line,
   RiDownload2Line,
   RiFlaskFill,
+  RiFolderChartLine,
+  RiFolderForbidLine,
   RiMenuLine,
   RiQuestionLine,
 } from 'react-icons/ri'
-import { BoardStateContext, SystemContext } from '../../../contexts'
+import {
+  BoardStateContext,
+  PreferenceContext,
+  PreferenceOption,
+  SystemContext,
+} from '../../../contexts'
 import AboutModal from './AboutModal'
 import DownloadHidden, { onDownload } from './DownloadHidden'
-import LoadRIFModal from './LoadRIFModal'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
+
   const downloadHiddenId = 'download-hidden'
   const { boardState } = useContext(BoardStateContext)
-  const loadRifDisclosure = useDisclosure()
+
+  const advancedModeDisclosure = useDisclosure()
+  const { preference, setPreference } = useContext(PreferenceContext)
+  const isAdvanced = preference.has(PreferenceOption.advancedMode)
+  const toggleMode = () => {
+    if (isAdvanced) {
+      setPreference(preference.off([PreferenceOption.advancedMode]))
+    } else {
+      advancedModeDisclosure.onOpen()
+      setPreference(preference.on([PreferenceOption.advancedMode]))
+    }
+  }
+  const modeIcon = isAdvanced ? RiFolderForbidLine : RiFolderChartLine
+
   const aboutDisclosure = useDisclosure()
   return (
     <>
@@ -50,12 +76,12 @@ const Default: FC = () => {
             <Text ml={2}>Download Picture</Text>
           </MenuItem>
           <MenuDivider />
-          <MenuItem onClick={loadRifDisclosure.onOpen}>
-            <Icon boxSize="small" as={RiDatabase2Line} />
+          <MenuItem onClick={toggleMode}>
+            <Icon boxSize="small" as={modeIcon} />
             <Text ml={2} mr={1}>
-              Load .rif file{' '}
+              {isAdvanced ? 'Basic Mode' : 'Advanced Mode'}
             </Text>
-            <Icon boxSize="small" as={RiFlaskFill} />
+            {!isAdvanced && <Icon boxSize="small" as={RiFlaskFill} />}
           </MenuItem>
           <MenuDivider />
           <MenuItem onClick={aboutDisclosure.onOpen}>
@@ -64,10 +90,37 @@ const Default: FC = () => {
           </MenuItem>
         </MenuList>
       </Menu>
-      <LoadRIFModal isOpen={loadRifDisclosure.isOpen} onClose={loadRifDisclosure.onClose} />
       <DownloadHidden id={downloadHiddenId} />
+      <AdvancedModeAlertDialog
+        isOpen={advancedModeDisclosure.isOpen}
+        onClose={advancedModeDisclosure.onClose}
+      />
       <AboutModal isOpen={aboutDisclosure.isOpen} onClose={aboutDisclosure.onClose} />
     </>
+  )
+}
+
+const AdvancedModeAlertDialog: FC<{ isOpen: boolean; onClose: () => void }> = ({
+  isOpen,
+  onClose,
+}) => {
+  return (
+    <AlertDialog isOpen={isOpen} onClose={onClose} leastDestructiveRef={undefined} isCentered>
+      <AlertDialogOverlay>
+        <AlertDialogContent>
+          <AlertDialogHeader as="h1">Now you&apos;re in advanced mode!</AlertDialogHeader>
+          <AlertDialogBody>
+            All features in advanced mode are <b>EXPERIMENTAL</b>. There is no guarantee for their
+            behaviour on your device.
+          </AlertDialogBody>
+          <AlertDialogFooter>
+            <Button colorScheme="blue" onClick={onClose}>
+              OK
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialogOverlay>
+    </AlertDialog>
   )
 }
 

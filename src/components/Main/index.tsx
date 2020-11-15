@@ -18,8 +18,8 @@ const Default: FC = () => {
           <Controller />
         </Box>
       </Stack>
-      {preference.has(PreferenceOption.showTabs) && (
-        <Box width={system.W} mt="1rem">
+      {preference.has(PreferenceOption.advancedMode) && (
+        <Box width={system.W} mt="0.5rem">
           <Tabs />
         </Box>
       )}
