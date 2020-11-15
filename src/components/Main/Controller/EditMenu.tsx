@@ -34,7 +34,7 @@ const Default: FC = () => {
   const { boardState, setBoardState } = useContext(BoardStateContext)
   return (
     <>
-      <Menu autoSelect={false}>
+      <Menu autoSelect={false} placement="auto">
         <MenuButton
           as={IconButton}
           icon={<ModeIcon mode={boardState.mode} />}
