@@ -4,10 +4,12 @@ import { RiCheckboxCircleFill, RiCloseLine, RiSubtractFill } from 'react-icons/r
 import { GameView, RIFDatabase, RIFPlayer } from '../../../../database'
 import { Game } from '../../../../rule'
 import { BoardStateContext, SystemContext } from '../../../contexts'
+import { GameViewContext } from '../contexts'
 
 const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
   const system = useContext(SystemContext)
   const { boardState, setBoardState } = useContext(BoardStateContext)
+  const { setGameView } = useContext(GameViewContext)
   const db = useMemo(() => new RIFDatabase(), [])
 
   const [items, setItems] = useState<GameView[]>([])
@@ -19,6 +21,7 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
     ;(async () => setItems(await db.getGameViews(gameIds)))()
   }, [gameIds])
   const onClick = (gv: GameView) => {
+    setGameView(gv)
     const game = new Game({ moves: gv.moves })
     if (!game) return
     setBoardState(boardState.setPreviewingGame(game))
