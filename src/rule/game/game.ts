@@ -13,7 +13,7 @@ export class Game {
   }
 
   move(p: Point): Game {
-    if (!this.movable(p)) return this
+    if (this.has(p)) return this
     return this.update({
       moves: [...this.moves, p],
     })
@@ -26,8 +26,8 @@ export class Game {
     })
   }
 
-  movable(p: Point): boolean {
-    return this.moves.findIndex(q => equal(p, q)) < 0
+  has(p: Point): boolean {
+    return this.moves.findIndex(q => equal(p, q)) >= 0
   }
 
   fork(i: number): Game {
