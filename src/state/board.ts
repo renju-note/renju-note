@@ -23,8 +23,9 @@ export const BoardOption: Record<BoardOption, BoardOption> = {
 export type BoardOptions = Options<BoardOption>
 
 export class BoardState {
-  readonly game: Game = new Game()
+  readonly mainGame: Game = new Game()
   readonly cursor: number = 0
+  readonly branch: Point[] = []
   readonly mode: EditMode = EditMode.mainMoves
   readonly options: BoardOptions = new Options<BoardOption>()
   readonly freeBlacks: FreePointsState = new FreePointsState()
@@ -33,14 +34,67 @@ export class BoardState {
   readonly markerLines: FreeLinesState = new FreeLinesState()
   readonly previewingGame: Game | undefined = undefined
   private boardCache: Board | undefined
+  private gameCache: Game | undefined
 
   constructor(init?: undefined | Partial<BoardState>) {
     if (init !== undefined) Object.assign(this, init)
   }
 
   private update(fields: Partial<BoardState>): BoardState {
-    return new BoardState({ ...this, ...fields, boardCache: undefined })
+    return new BoardState({ ...this, ...fields, boardCache: undefined, gameCache: undefined })
   }
+
+  /* edit */
+
+  private canEdit(p: Point): boolean {
+    if (this.previewingGame !== undefined) return false
+    switch (this.mode) {
+      case EditMode.mainMoves:
+        return !this.hasStone(p) && !(this.game.isBlackTurn && this.board.forbidden(p))
+      case EditMode.freeBlacks:
+        return this.isLast && !this.isForking && !this.mainGame.has(p) && !this.freeWhites.has(p)
+      case EditMode.freeWhites:
+        return this.isLast && !this.isForking && !this.mainGame.has(p) && !this.freeBlacks.has(p)
+      case EditMode.markerPoints:
+        return !this.hasStone(p)
+      case EditMode.markerLines:
+        return true
+      default:
+        return false
+    }
+  }
+
+  edit(p: Point): BoardState {
+    if (!this.canEdit(p)) return this
+    switch (this.mode) {
+      case EditMode.mainMoves:
+        return this.move(p)
+      case EditMode.freeBlacks:
+        return this.update({ freeBlacks: this.freeBlacks.edit(p) })
+      case EditMode.freeWhites:
+        return this.update({ freeWhites: this.freeWhites.edit(p) })
+      case EditMode.markerPoints:
+        return this.update({ markerPoints: this.markerPoints.edit(p) })
+      case EditMode.markerLines:
+        return this.update({ markerLines: this.markerLines.draw(p) })
+      default:
+        return this
+    }
+  }
+
+  private move(p: Point): BoardState {
+    if (this.isForking) {
+      return this.update({ branch: [...this.branch, p] })
+    } else if (this.isLast) {
+      return this.update({ mainGame: this.mainGame.move(p) }).toLast()
+    } else if (equal(p, this.mainGame.moves[this.cursor])) {
+      return this.forward()
+    } else {
+      return this.update({ branch: [p] })
+    }
+  }
+
+  /* edit menu */
 
   setMode(mode: EditMode): BoardState {
     return this.update({
@@ -49,102 +103,12 @@ export class BoardState {
     })
   }
 
-  setGame(game: Game): BoardState {
-    return this.update({
-      game: game,
-      cursor: game.moves.length,
-      options: this.options.off([BoardOption.invertMoves]),
-      freeBlacks: new FreePointsState(),
-      freeWhites: new FreePointsState(),
-    })
-  }
-
-  setPreviewingGame(game: Game): BoardState {
-    return this.update({
-      previewingGame: game,
-    })
-  }
-
-  setGameFromPreviewing(): BoardState {
-    if (this.previewingGame === undefined) return this
-    return this.update({
-      game: this.previewingGame,
-      cursor: this.previewingGame.moves.length,
-      previewingGame: undefined,
-    })
-  }
-
-  unsetPreviewingGame(): BoardState {
-    return this.update({
-      previewingGame: undefined,
-    })
-  }
-
   setOptions(options: BoardOption[]): BoardState {
     return this.update({ options: new Options<BoardOption>().on(options) })
   }
 
-  edit(p: Point): BoardState {
-    if (!this.canEdit(p)) return this
-    switch (this.mode) {
-      case EditMode.mainMoves:
-        return this.update({ game: this.game.move(p) }).toLast()
-      case EditMode.freeBlacks:
-        return this.update({ freeBlacks: this.freeBlacks.add(p) })
-      case EditMode.freeWhites:
-        return this.update({ freeWhites: this.freeWhites.add(p) })
-      case EditMode.markerPoints:
-        return this.update({ markerPoints: this.markerPoints.add(p) })
-      case EditMode.markerLines:
-        return this.update({ markerLines: this.markerLines.draw(p) })
-      default:
-        return this
-    }
-  }
-
-  undo(): BoardState {
-    if (!this.canUndo) return this
-    switch (this.mode) {
-      case EditMode.mainMoves:
-        return this.update({ game: this.game.undo() }).toLast()
-      case EditMode.freeBlacks:
-        return this.update({ freeBlacks: this.freeBlacks.undo() })
-      case EditMode.freeWhites:
-        return this.update({ freeWhites: this.freeWhites.undo() })
-      case EditMode.markerPoints:
-        return this.update({ markerPoints: this.markerPoints.undo() })
-      case EditMode.markerLines:
-        return this.update({ markerLines: this.markerLines.undo() })
-      default:
-        return this
-    }
-  }
-
-  forward(): BoardState {
-    return this.navigate(this.cursor + 1)
-  }
-
-  backward(): BoardState {
-    return this.navigate(this.cursor - 1)
-  }
-
-  toStart(): BoardState {
-    return this.navigate(0)
-  }
-
-  toLast(): BoardState {
-    return this.navigate(this.game.moves.length)
-  }
-
-  navigate(i: number): BoardState {
-    if (i < 0 || this.game.moves.length < i) return this
-    return this.update({ cursor: i })
-  }
-
-  clearFollowingMoves(): BoardState {
-    return this.update({
-      game: this.partialGame,
-    })
+  clearGame(): BoardState {
+    return this.setGame(new Game())
   }
 
   clearFreeStones(): BoardState {
@@ -161,30 +125,12 @@ export class BoardState {
     })
   }
 
-  canEdit(p: Point): boolean {
-    if (this.previewingGame !== undefined) return false
-    switch (this.mode) {
-      case EditMode.mainMoves:
-        return (
-          this.isLast && !this.hasStone(p) && !(this.game.isBlackTurn && this.board.forbidden(p))
-        )
-      case EditMode.freeBlacks:
-        return this.isLast && !this.hasStone(p)
-      case EditMode.freeWhites:
-        return this.isLast && !this.hasStone(p)
-      case EditMode.markerPoints:
-        return !this.hasStone(p)
-      case EditMode.markerLines:
-        return true
-      default:
-        return false
-    }
-  }
+  /* undo */
 
   get canUndo(): boolean {
     switch (this.mode) {
       case EditMode.mainMoves:
-        return this.isLast && this.game.canUndo
+        return this.isForking || (this.isLast && this.mainGame.canUndo)
       case EditMode.freeBlacks:
         return this.freeBlacks.canUndo
       case EditMode.freeWhites:
@@ -198,6 +144,118 @@ export class BoardState {
     }
   }
 
+  undo(): BoardState {
+    if (!this.canUndo) return this
+    switch (this.mode) {
+      case EditMode.mainMoves:
+        return this.unmove()
+      case EditMode.freeBlacks:
+        return this.update({ freeBlacks: this.freeBlacks.undo() })
+      case EditMode.freeWhites:
+        return this.update({ freeWhites: this.freeWhites.undo() })
+      case EditMode.markerPoints:
+        return this.update({ markerPoints: this.markerPoints.undo() })
+      case EditMode.markerLines:
+        return this.update({ markerLines: this.markerLines.undo() })
+      default:
+        return this
+    }
+  }
+
+  private unmove(): BoardState {
+    if (this.isForking) {
+      return this.update({ branch: this.branch.slice(0, this.branch.length - 1) })
+    } else {
+      return this.update({ mainGame: this.mainGame.undo() }).toLast()
+    }
+  }
+
+  clearRestMoves(): BoardState {
+    if (this.isLast) return this
+    return this.setGame(this.game)
+  }
+
+  /* navigate */
+
+  get isStart(): boolean {
+    return this.cursor === 0
+  }
+
+  get isLast(): boolean {
+    return this.cursor === this.mainGame.size
+  }
+
+  private navigate(i: number): BoardState {
+    if (i < 0 || this.mainGame.size < i) return this
+    return this.update({ cursor: i })
+  }
+
+  get canForward() {
+    return !this.isForking && !this.isLast
+  }
+
+  forward(): BoardState {
+    if (!this.canForward) return this
+    return this.navigate(this.cursor + 1)
+  }
+
+  toLast(): BoardState {
+    if (!this.canForward) return this
+    return this.navigate(this.mainGame.size)
+  }
+
+  get canBackward() {
+    return !this.isForking && !this.isStart
+  }
+
+  backward(): BoardState {
+    if (!this.canBackward) return this
+    return this.navigate(this.cursor - 1)
+  }
+
+  toStart(): BoardState {
+    if (!this.canBackward) return this
+    return this.navigate(0)
+  }
+
+  /* fork */
+
+  get isForking(): boolean {
+    return this.branch.length > 0
+  }
+
+  clearForkingMoves(): BoardState {
+    return this.update({
+      branch: [],
+    })
+  }
+
+  setGameFromForking(): BoardState {
+    if (!this.isForking) return this
+    return this.setGame(this.game)
+  }
+
+  /* preview */
+
+  setGameFromPreviewing(): BoardState {
+    if (this.previewingGame === undefined) return this
+    return this.setGame(this.previewingGame)
+  }
+
+  setPreviewingGame(game: Game): BoardState {
+    return this.update({
+      previewingGame: game,
+    })
+  }
+
+  unsetPreviewingGame(): BoardState {
+    return this.update({
+      previewingGame: undefined,
+    })
+  }
+
+  /* general */
+
   get board(): Board {
     if (this.boardCache === undefined) {
       this.boardCache = new Board({
@@ -209,24 +267,21 @@ export class BoardState {
     return this.boardCache
   }
 
-  get moves(): Point[] {
-    return this.partialGame.moves
-  }
-
-  get lastMove(): Point | undefined {
-    return this.partialGame.lastMove
+  get game(): Game {
+    if (this.gameCache === undefined) {
+      this.gameCache = new Game({
+        moves: [...this.mainGame.moves.slice(0, this.cursor), ...this.branch],
+      })
+    }
+    return this.gameCache
   }
 
   get blackMoves(): Point[] {
-    return this.options.has(BoardOption.invertMoves)
-      ? this.partialGame.whites
-      : this.partialGame.blacks
+    return this.options.has(BoardOption.invertMoves) ? this.game.whites : this.game.blacks
   }
 
   get whiteMoves(): Point[] {
-    return this.options.has(BoardOption.invertMoves)
-      ? this.partialGame.blacks
-      : this.partialGame.whites
+    return this.options.has(BoardOption.invertMoves) ? this.game.blacks : this.game.whites
   }
 
   get blacks(): Point[] {
@@ -237,25 +292,23 @@ export class BoardState {
     return [...this.whiteMoves, ...this.freeWhites.points]
   }
 
-  get isStart(): boolean {
-    return this.cursor === 0
-  }
-
-  get isLast(): boolean {
-    return this.cursor === this.game.moves.length
-  }
-
   private hasStone(p: Point): boolean {
-    return [...this.blacks, ...this.whites].findIndex(q => equal(p, q)) >= 0
+    return this.game.has(p) || this.freeWhites.has(p) || this.freeBlacks.has(p)
   }
 
-  private get partialGame(): Game {
-    return this.game.fork(this.cursor)
+  private setGame(game: Game): BoardState {
+    return new BoardState({
+      mainGame: game,
+      cursor: game.size,
+      branch: [],
+    })
   }
+
+  /* encode */
 
   encode(): string {
     const codes: string[] = []
-    if (!this.game.empty) codes.push(`g:${this.game.encode()}`)
+    if (!this.mainGame.empty) codes.push(`g:${this.mainGame.encode()}`)
     if (this.cursor !== 0) codes.push(`c:${this.cursor}`)
     if (!this.options.empty) codes.push(`o:${encodeBoardOptions(this.options)}`)
     if (!this.freeBlacks.empty) codes.push(`b:${this.freeBlacks.encode()}`)
@@ -277,10 +330,10 @@ export class BoardState {
     const markerPointsCode = findCode('p')
     const markerLinesCode = findCode('l')
 
-    const game = Game.decode(gameCode) ?? new Game()
-    const cursor = Math.min(game.moves.length, parseInt(cursorCode) || 0)
+    const mainGame = Game.decode(gameCode) ?? new Game()
+    const cursor = Math.min(mainGame.size, parseInt(cursorCode) || 0)
     return new BoardState({
-      game,
+      mainGame,
       cursor,
       mode: EditMode.mainMoves,
       options: decodeBoardOptions(optionsCode) ?? new Options<BoardOption>(),

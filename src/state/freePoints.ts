@@ -11,10 +11,11 @@ export class FreePointsState {
     return new FreePointsState({ ...this, ...fields })
   }
 
-  add(p: Point): FreePointsState {
-    if (this.has(p)) return this
+  edit(p: Point): FreePointsState {
+    const ps = this.points
+    const idx = ps.findIndex(q => equal(p, q))
     return this.update({
-      points: [...this.points, p],
+      points: idx < 0 ? [...ps, p] : [...ps.slice(0, idx), ...ps.slice(idx + 1)],
     })
   }
 
@@ -24,16 +25,16 @@ export class FreePointsState {
     })
   }
 
+  has(p: Point): boolean {
+    return this.points.findIndex(q => equal(p, q)) >= 0
+  }
+
   get canUndo(): boolean {
     return this.points.length > 0
   }
 
   get empty(): boolean {
     return this.points.length === 0
-  }
-
-  private has(p: Point): boolean {
-    return this.points.findIndex(q => equal(p, q)) >= 0
   }
 
   encode(): string {

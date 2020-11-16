@@ -103,9 +103,9 @@ const Default: FC = () => {
             </MenuItemOption>
           </MenuOptionGroup>
           <MenuDivider />
-          <MenuItem onClick={() => setBoardState(boardState.clearFollowingMoves())}>
+          <MenuItem onClick={() => setBoardState(boardState.clearGame())}>
             <Icon boxSize="small" as={RiCloseCircleLine} />
-            <Text ml={2}>Clear Following Moves</Text>
+            <Text ml={2}>Clear Moves</Text>
           </MenuItem>
           <MenuItem onClick={() => setBoardState(boardState.clearFreeStones())}>
             <Icon boxSize="small" as={RiIndeterminateCircleLine} />
