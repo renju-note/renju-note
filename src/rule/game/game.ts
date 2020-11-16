@@ -64,8 +64,8 @@ export class Game {
     return this.moves.length % 2 === 0
   }
 
-  get isFirstTurn(): boolean {
-    return this.isBlackTurn
+  get size(): number {
+    return this.moves.length
   }
 
   get empty(): boolean {

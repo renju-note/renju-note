@@ -29,8 +29,8 @@ const Default: FC = () => {
     setError(error)
   }
   useEffect(() => {
-    onSearch(boardState.moves)
-  }, [boardState.moves.length, page])
+    onSearch(boardState.game.moves)
+  }, [boardState.game.size, page])
 
   if (!databaseReady) {
     return (

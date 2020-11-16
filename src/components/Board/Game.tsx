@@ -6,14 +6,15 @@ import { LastMove, Moves, Orders } from './common'
 const Default: FC = () => {
   const { preference } = useContext(PreferenceContext)
   const { boardState } = useContext(BoardStateContext)
+  const game = boardState.game
   return (
     <g>
-      {preference.has(PreferenceOption.emphasizeLastMove) && boardState.lastMove && (
-        <LastMove point={boardState.lastMove} />
+      {preference.has(PreferenceOption.emphasizeLastMove) && game.lastMove && (
+        <LastMove point={game.lastMove} />
       )}
-      <Moves moves={boardState.moves} invert={boardState.options.has(BoardOption.invertMoves)} />
+      <Moves moves={game.moves} invert={boardState.options.has(BoardOption.invertMoves)} />
       {preference.has(PreferenceOption.showOrders) && (
-        <Orders moves={boardState.moves} invert={boardState.options.has(BoardOption.invertMoves)} />
+        <Orders moves={game.moves} invert={boardState.options.has(BoardOption.invertMoves)} />
       )}
     </g>
   )
