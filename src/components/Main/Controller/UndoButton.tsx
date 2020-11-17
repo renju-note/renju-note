@@ -14,9 +14,7 @@ import { BoardStateContext, SystemContext } from '../../contexts'
 const Default: FC = () => {
   const system = useContext(SystemContext)
   const { boardState, setBoardState } = useContext(BoardStateContext)
-  if (!boardState.isForking && !boardState.isLast) {
-    return <RestMenu />
-  }
+  if (boardState.canClearRest) return <ClearRestMenu />
   return (
     <IconButton
       onClick={() => setBoardState(boardState.undo())}
@@ -48,7 +46,7 @@ const UndoIcon: FC<{ mode: EditMode }> = ({ mode }) => {
   }
 }
 
-const RestMenu: FC = () => {
+const ClearRestMenu: FC = () => {
   const system = useContext(SystemContext)
   const { boardState, setBoardState } = useContext(BoardStateContext)
   return (

@@ -27,6 +27,23 @@ svg text {
   background-color: whitesmoke;
 }
 
-.search-result tr.selected td {
+.search-result tr.previewing td {
   background-color: lavender;
+}
+
+.search-result tr.main td {
+  background-color: honeydew;
+}
+
+.detail-game th {
+  text-align: left;
+  font-family: 'Roboto';
+  font-weight: bolder;
+  color: dimgray;
+}
+
+.detail-game td {
+  text-align: left;
+  font-family: 'Roboto';
+  color: dimgray;
 }

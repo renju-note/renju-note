@@ -1,17 +1,14 @@
-import { Icon, Text } from '@chakra-ui/react'
+import { Text } from '@chakra-ui/react'
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
-import { RiCheckboxCircleFill, RiCloseLine, RiSubtractFill } from 'react-icons/ri'
 import { GameView, RIFDatabase, RIFPlayer } from '../../../../database'
 import { Game } from '../../../../rule'
 import { BoardStateContext, SystemContext } from '../../../contexts'
-import { GameViewContext } from '../contexts'
+import { WonIcon } from '../common'
 
 const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
   const system = useContext(SystemContext)
-  const { boardState, setBoardState } = useContext(BoardStateContext)
-  const { setGameView } = useContext(GameViewContext)
   const db = useMemo(() => new RIFDatabase(), [])
-
+  const { boardState, setBoardState } = useContext(BoardStateContext)
   const [items, setItems] = useState<GameView[]>([])
   useEffect(() => {
     if (gameIds.length === 0) {
@@ -21,9 +18,7 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
     ;(async () => setItems(await db.getGameViews(gameIds)))()
   }, [gameIds])
   const onClick = (gv: GameView) => {
-    setGameView(gv)
-    const game = new Game({ moves: gv.moves })
-    if (!game) return
+    const game = new Game({ moves: gv.moves, gid: gv.id })
     setBoardState(boardState.setPreviewingGame(game))
   }
   return (
@@ -48,8 +43,10 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
       <colgroup span={1} style={{ width: (system.W * 2) / 20 }} />
       <tbody>
         {items.map((g, key) => {
+          const [mgid, pgid] = [boardState.mainGame.gid, boardState.previewingGame?.gid]
+          const className = g.id === mgid ? 'main' : g.id === pgid ? 'previewing' : undefined
           return (
-            <tr key={key} onClick={() => onClick(g)}>
+            <tr key={key} onClick={() => onClick(g)} className={className}>
               <td>
                 <Text fontFamily="Courier Prime" color="gray.600">
                   {g.tournament.start}
@@ -92,19 +89,6 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
       </tbody>
     </table>
   )
-}
-
-const WonIcon: FC<{ won: boolean | null }> = ({ won }) => {
-  switch (won) {
-    case true:
-      return <Icon as={RiCheckboxCircleFill} boxSize="small" color="green.500" />
-    case false:
-      return <Icon as={RiCloseLine} boxSize="small" color="gray.500" />
-    case null:
-      return <Icon as={RiSubtractFill} boxSize="small" color="gray.500" />
-    default:
-      return <></>
-  }
 }
 
 const playerShortName = (p: RIFPlayer): string => `${p.name.trim()[0] ?? '?'}. ${p.surname.trim()}`

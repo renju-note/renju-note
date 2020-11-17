@@ -83,7 +83,7 @@ export class BoardState {
   }
 
   private move(p: Point): BoardState {
-    if (this.isForking) {
+    if (this.isForking || this.mainGame.finalized) {
       return this.update({ branch: [...this.branch, p] })
     } else if (this.isLast) {
       return this.update({ mainGame: this.mainGame.move(p) }).toLast()
@@ -168,6 +168,15 @@ export class BoardState {
     } else {
       return this.update({ mainGame: this.mainGame.undo() }).toLast()
     }
+  }
+
+  get canClearRest(): boolean {
+    return (
+      this.mode === EditMode.mainMoves &&
+      !this.mainGame.finalized &&
+      !this.isForking &&
+      !this.isLast
+    )
   }
 
   clearRestMoves(): BoardState {
@@ -308,8 +317,9 @@ export class BoardState {
 
   encode(): string {
     const codes: string[] = []
-    if (!this.mainGame.empty) codes.push(`g:${this.mainGame.encode()}`)
+    if (this.mainGame.gid !== undefined) codes.push(`gid:${this.mainGame.gid}`)
     if (this.cursor !== 0) codes.push(`c:${this.cursor}`)
+    if (!this.mainGame.empty) codes.push(`g:${this.mainGame.encode()}`)
     if (!this.options.empty) codes.push(`o:${encodeBoardOptions(this.options)}`)
     if (!this.freeBlacks.empty) codes.push(`b:${this.freeBlacks.encode()}`)
     if (!this.freeWhites.empty) codes.push(`w:${this.freeWhites.encode()}`)
@@ -320,9 +330,11 @@ export class BoardState {
 
   static decode(code: string): BoardState | undefined {
     const codes = code.split(',')
-    const findCode = (s: string) => codes.find(c => c.startsWith(s))?.replace(`${s}:`, '') ?? ''
+    const findCode = (s: string) =>
+      codes.find(c => c.startsWith(`${s}:`))?.replace(`${s}:`, '') ?? ''
 
     const gameCode = findCode('g')
+    const gidCode = findCode('gid')
     const cursorCode = findCode('c')
     const optionsCode = findCode('o')
     const freeBlacksCode = findCode('b')
@@ -330,7 +342,8 @@ export class BoardState {
     const markerPointsCode = findCode('p')
     const markerLinesCode = findCode('l')
 
-    const mainGame = Game.decode(gameCode) ?? new Game()
+    let mainGame = Game.decode(gameCode) ?? new Game()
+    if (gidCode) mainGame = mainGame.setGid(parseInt(gidCode) || undefined)
     const cursor = Math.min(mainGame.size, parseInt(cursorCode) || 0)
     return new BoardState({
       mainGame,
