@@ -105,9 +105,11 @@ export type GameView = {
   moves: Point[]
   btime: number
   wtime: number
+  round: string
   rule: RIFRule
   opening: RIFOpening
-  alt: Point[]
+  alts: Point[]
+  alt: string
   swap: string
   info: string
   tournament: RIFTournament
@@ -167,11 +169,13 @@ export class RIFDatabase extends Dexie {
         wtime: game.wtime,
         opening: openings[i],
         rule: rules[i],
-        alt: [], // TODO
+        alt: game.alt,
+        alts: [], // TODO
         swap: game.swap,
         info: game.info,
         publisher: publishers[i],
         tournament: tournaments[i],
+        round: game.round,
       }
     })
   }
@@ -207,6 +211,26 @@ export class RIFDatabase extends Dexie {
     for (let i = 0; i < ts.length; i++) {
       const t = ts[i]
       result.set(t.id, t.rated)
+    }
+    return result
+  }
+
+  async getCountriesMap(): Promise<Map<RIFCountry['id'], RIFCountry>> {
+    const arr = await this.countries.toArray()
+    const result = new Map<RIFCountry['id'], RIFCountry>()
+    for (let i = 0; i < arr.length; i++) {
+      const x = arr[i]
+      result.set(x.id, x)
+    }
+    return result
+  }
+
+  async getCitiesMap(): Promise<Map<RIFCity['id'], RIFCity>> {
+    const arr = await this.cities.toArray()
+    const result = new Map<RIFCity['id'], RIFCity>()
+    for (let i = 0; i < arr.length; i++) {
+      const x = arr[i]
+      result.set(x.id, x)
     }
     return result
   }

@@ -86,14 +86,14 @@ export class AnalyzedDatabase extends Dexie {
       return {
         ids: [],
         hit: 0,
-        error: `Too few moves (${moves.length} < ${MIN_ENCODE_MOVES})`,
+        error: `Under searchable moves (${moves.length} < ${MIN_ENCODE_MOVES})`,
       }
     }
     if (moves.length > MAX_ENCODE_MOVES) {
       return {
         ids: [],
         hit: 0,
-        error: `Too many moves (${moves.length} > ${MAX_ENCODE_MOVES})`,
+        error: `Over searchable moves (${moves.length} > ${MAX_ENCODE_MOVES})`,
       }
     }
 

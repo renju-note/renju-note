@@ -3,6 +3,7 @@ import { equal, Point } from '../foundation'
 
 export class Game {
   readonly moves: Point[] = []
+  readonly gid: number | undefined
 
   constructor(init?: undefined | Partial<Game>) {
     if (init !== undefined) Object.assign(this, init)
@@ -13,6 +14,7 @@ export class Game {
   }
 
   move(p: Point): Game {
+    if (this.finalized) return this
     if (this.has(p)) return this
     return this.update({
       moves: [...this.moves, p],
@@ -20,6 +22,7 @@ export class Game {
   }
 
   undo(): Game {
+    if (this.finalized) return this
     if (this.moves.length === 0) return this
     return this.update({
       moves: this.moves.slice(0, this.moves.length - 1),
@@ -30,14 +33,12 @@ export class Game {
     return this.moves.findIndex(q => equal(p, q)) >= 0
   }
 
-  fork(i: number): Game {
-    return new Game({
-      moves: this.moves.slice(0, i),
-    })
+  setGid(gid: number | undefined): Game {
+    return this.update({ gid })
   }
 
   get canUndo(): boolean {
-    return this.moves.length > 0
+    return !this.finalized && this.moves.length > 0
   }
 
   get blacks(): Point[] {
@@ -70,6 +71,10 @@ export class Game {
 
   get empty(): boolean {
     return this.moves.length === 0
+  }
+
+  get finalized(): boolean {
+    return this.gid !== undefined
   }
 
   encode(): string {

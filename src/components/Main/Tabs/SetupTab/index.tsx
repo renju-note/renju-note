@@ -48,7 +48,7 @@ const Default: FC = () => {
   }
   return (
     <>
-      <Stack>
+      <Stack px="1rem">
         <Heading as="h2" size="sm">
           Load .rif file
         </Heading>
