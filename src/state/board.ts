@@ -83,14 +83,14 @@ export class BoardState {
   }
 
   private move(p: Point): BoardState {
-    if (this.isForking || this.mainGame.finalized) {
+    if (this.isForking) {
       return this.update({ branch: [...this.branch, p] })
-    } else if (this.isLast) {
-      return this.update({ mainGame: this.mainGame.move(p) }).toLast()
-    } else if (equal(p, this.mainGame.moves[this.cursor])) {
+    } else if (!this.isLast && equal(p, this.mainGame.moves[this.cursor])) {
       return this.forward()
-    } else {
+    } else if (!this.isLast || this.mainGame.finalized) {
       return this.update({ branch: [p] })
+    } else {
+      return this.update({ mainGame: this.mainGame.move(p) }).toLast()
     }
   }
 
