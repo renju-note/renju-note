@@ -2,13 +2,14 @@ import { Text } from '@chakra-ui/react'
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { GameView, RIFDatabase, RIFPlayer } from '../../../../database'
 import { Game } from '../../../../rule'
-import { BoardStateContext, SystemContext } from '../../../contexts'
+import { AdvancedStateContext, BoardStateContext, SystemContext } from '../../../contexts'
 import { WonIcon } from '../common'
 
 const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
   const system = useContext(SystemContext)
   const db = useMemo(() => new RIFDatabase(), [])
-  const { boardState, setBoardState } = useContext(BoardStateContext)
+  const { boardState } = useContext(BoardStateContext)
+  const { advancedState, setAdvancedState } = useContext(AdvancedStateContext)
   const [items, setItems] = useState<GameView[]>([])
   useEffect(() => {
     if (gameIds.length === 0) {
@@ -19,7 +20,7 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
   }, [gameIds])
   const onClick = (gv: GameView) => {
     const game = new Game({ moves: gv.moves, gid: gv.id })
-    setBoardState(boardState.setPreviewingGame(game))
+    setAdvancedState(advancedState.setPreviewingGame(game))
   }
   return (
     <table className="search-result">
@@ -43,7 +44,7 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
       <colgroup span={1} style={{ width: (system.W * 2) / 20 }} />
       <tbody>
         {items.map((g, key) => {
-          const [mgid, pgid] = [boardState.mainGame.gid, boardState.previewingGame?.gid]
+          const [mgid, pgid] = [boardState.mainGame.gid, advancedState.previewingGame?.gid]
           const className = g.id === mgid ? 'main' : g.id === pgid ? 'previewing' : undefined
           return (
             <tr key={key} onClick={() => onClick(g)} className={className}>
