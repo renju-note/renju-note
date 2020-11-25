@@ -105,7 +105,7 @@ export class BoardState {
     return this.update({ options: new Options<BoardOption>().on(options) })
   }
 
-  clearGame(): BoardState {
+  clearMoves(): BoardState {
     return this.setGame(new Game())
   }
 
@@ -180,6 +180,14 @@ export class BoardState {
   clearRestMoves(): BoardState {
     if (this.isLast) return this
     return this.setGame(this.game)
+  }
+
+  get canClearGame(): boolean {
+    return this.mode === EditMode.mainMoves && this.mainGame.finalized && !this.isForking
+  }
+
+  clearGame(): BoardState {
+    return this.setGame(new Game())
   }
 
   /* navigate */

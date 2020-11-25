@@ -1,5 +1,6 @@
 import { Icon, IconButton, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react'
 import React, { FC, useContext } from 'react'
+import { FiXSquare } from 'react-icons/fi'
 import {
   RiCloseCircleLine,
   RiDeleteBack2Line,
@@ -9,12 +10,14 @@ import {
   RiIndeterminateCircleLine,
 } from 'react-icons/ri'
 import { EditMode } from '../../../state'
-import { BoardStateContext, SystemContext } from '../../contexts'
+import { TabName } from '../../../state/advanced'
+import { AdvancedStateContext, BoardStateContext, SystemContext } from '../../contexts'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
   const { boardState, setBoardState } = useContext(BoardStateContext)
   if (boardState.canClearRest) return <ClearRestMenu />
+  if (boardState.canClearGame) return <ClearGameMenu />
   return (
     <IconButton
       onClick={() => setBoardState(boardState.undo())}
@@ -62,6 +65,29 @@ const ClearRestMenu: FC = () => {
           <Icon boxSize="small" as={RiDeleteBack2Line} style={{ transform: 'rotate(180deg)' }} />
           <Text ml={2} mr={1}>
             Clear Rest of Moves
+          </Text>
+        </MenuItem>
+      </MenuList>
+    </Menu>
+  )
+}
+
+const ClearGameMenu: FC = () => {
+  const system = useContext(SystemContext)
+  const { boardState, setBoardState } = useContext(BoardStateContext)
+  const { advancedState, setAdvancedState } = useContext(AdvancedStateContext)
+  const onClearGame = () => {
+    setBoardState(boardState.clearGame())
+    setAdvancedState(advancedState.setTab(TabName.search))
+  }
+  return (
+    <Menu autoSelect={false} placement="top">
+      <MenuButton size={system.buttonSize} as={IconButton} variant="ghost" icon={<FiXSquare />} />
+      <MenuList>
+        <MenuItem onClick={onClearGame}>
+          <Icon boxSize="small" as={FiXSquare} />
+          <Text ml={2} mr={1}>
+            Clear Game
           </Text>
         </MenuItem>
       </MenuList>

@@ -103,7 +103,7 @@ const Default: FC = () => {
             </MenuItemOption>
           </MenuOptionGroup>
           <MenuDivider />
-          <MenuItem onClick={() => setBoardState(boardState.clearGame())}>
+          <MenuItem onClick={() => setBoardState(boardState.clearMoves())}>
             <Icon boxSize="small" as={RiCloseCircleLine} />
             <Text ml={2}>Clear Moves</Text>
           </MenuItem>
