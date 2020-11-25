@@ -32,7 +32,6 @@ export class BoardState {
   readonly freeWhites: FreePointsState = new FreePointsState()
   readonly markerPoints: FreePointsState = new FreePointsState()
   readonly markerLines: FreeLinesState = new FreeLinesState()
-  readonly previewingGame: Game | undefined = undefined
   private boardCache: Board | undefined
   private gameCache: Game | undefined
 
@@ -47,7 +46,6 @@ export class BoardState {
   /* edit */
 
   private canEdit(p: Point): boolean {
-    if (this.previewingGame !== undefined) return false
     switch (this.mode) {
       case EditMode.mainMoves:
         return !this.hasStone(p) && !(this.game.isBlackTurn && this.board.forbidden(p))
@@ -244,25 +242,6 @@ export class BoardState {
     return this.setGame(this.game)
   }
 
-  /* preview */
-
-  setGameFromPreviewing(): BoardState {
-    if (this.previewingGame === undefined) return this
-    return this.setGame(this.previewingGame)
-  }
-
-  setPreviewingGame(game: Game): BoardState {
-    return this.update({
-      previewingGame: game,
-    })
-  }
-
-  unsetPreviewingGame(): BoardState {
-    return this.update({
-      previewingGame: undefined,
-    })
-  }
-
   /* general */
 
   get board(): Board {
@@ -305,7 +284,7 @@ export class BoardState {
     return this.game.has(p) || this.freeWhites.has(p) || this.freeBlacks.has(p)
   }
 
-  private setGame(game: Game): BoardState {
+  setGame(game: Game): BoardState {
     return new BoardState({
       mainGame: game,
       cursor: game.size,
@@ -354,7 +333,6 @@ export class BoardState {
       freeWhites: FreePointsState.decode(freeWhitesCode) ?? new FreePointsState(),
       markerPoints: FreePointsState.decode(markerPointsCode) ?? new FreePointsState(),
       markerLines: FreeLinesState.decode(markerLinesCode) ?? new FreeLinesState(),
-      previewingGame: undefined,
     })
   }
 }

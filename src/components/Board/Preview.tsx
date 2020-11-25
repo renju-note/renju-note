@@ -1,11 +1,11 @@
 import React, { FC, useContext } from 'react'
-import { BoardStateContext, SystemContext } from '../contexts'
+import { AdvancedStateContext, SystemContext } from '../contexts'
 import { LastMove, Moves, Orders } from './common'
 
 const Default: FC = () => {
-  const { boardState } = useContext(BoardStateContext)
-  if (boardState.previewingGame === undefined) return <></>
-  const game = boardState.previewingGame
+  const { advancedState } = useContext(AdvancedStateContext)
+  if (advancedState.previewingGame === undefined) return <></>
+  const game = advancedState.previewingGame
   return (
     <g>
       <Overlay />
