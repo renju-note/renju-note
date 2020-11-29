@@ -1,11 +1,11 @@
 import { Button, Flex } from '@chakra-ui/react'
 import React, { FC, useContext } from 'react'
-import { TabName } from '../../../state/advanced'
+import { BoardState, TabName } from '../../../state'
 import { AdvancedStateContext, BoardStateContext, SystemContext } from '../../contexts'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
-  const { boardState, setBoardState } = useContext(BoardStateContext)
+  const { setBoardState } = useContext(BoardStateContext)
   const { advancedState, setAdvancedState } = useContext(AdvancedStateContext)
   return (
     <Flex width={system.W} justifyContent="space-evenly" alignItems="center">
@@ -14,18 +14,16 @@ const Default: FC = () => {
         colorScheme="blue"
         onClick={() => {
           if (advancedState.previewingGame === undefined) return
-          setBoardState(
-            boardState.setGame(
-              advancedState.previewingGame.main,
-              advancedState.previewingGame.gameid
-            )
-          )
-          setAdvancedState(advancedState.unsetPreview().setTab(TabName.detail))
+          setBoardState(new BoardState({ mainGame: advancedState.previewingGame }))
+          setAdvancedState(advancedState.unsetPreviewingGame().setTab(TabName.detail))
         }}
       >
         Open
       </Button>
-      <Button width={system.W / 4} onClick={() => setAdvancedState(advancedState.unsetPreview())}>
+      <Button
+        width={system.W / 4}
+        onClick={() => setAdvancedState(advancedState.unsetPreviewingGame())}
+      >
         Cancel
       </Button>
     </Flex>

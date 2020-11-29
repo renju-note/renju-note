@@ -95,6 +95,10 @@ export class BoardState {
     return this.update({ options: new Options<BoardOption>().on(options) })
   }
 
+  setMainGame(mainGame: GameState): BoardState {
+    return this.update({ mainGame })
+  }
+
   clearMoves(): BoardState {
     return this.update({
       mainGame: new GameState(),
@@ -187,14 +191,6 @@ export class BoardState {
 
   private get inverted(): boolean {
     return this.options.has(BoardOption.invertMoves)
-  }
-
-  setGame(game: Game, gameid?: number | undefined): BoardState {
-    return this.update({ mainGame: new GameState({ main: game, gameid }).toLast() })
-  }
-
-  setMainGame(mainGame: GameState): BoardState {
-    return this.update({ mainGame })
   }
 
   /* encode */

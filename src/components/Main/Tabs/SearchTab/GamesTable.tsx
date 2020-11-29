@@ -2,6 +2,7 @@ import { Text } from '@chakra-ui/react'
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { GameView, RIFDatabase, RIFPlayer } from '../../../../database'
 import { Game } from '../../../../rule'
+import { GameState } from '../../../../state'
 import { AdvancedStateContext, BoardStateContext, SystemContext } from '../../../contexts'
 import { WonIcon } from '../common'
 
@@ -19,8 +20,8 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
     ;(async () => setItems(await db.getGameViews(gameIds)))()
   }, [gameIds])
   const onClick = (gv: GameView) => {
-    const game = new Game({ moves: gv.moves })
-    setAdvancedState(advancedState.setPreview(game, gv.id))
+    const gameState = new GameState({ main: new Game({ moves: gv.moves }), gameid: gv.id })
+    setAdvancedState(advancedState.setPreviewingGame(gameState))
   }
   return (
     <table className="search-result">

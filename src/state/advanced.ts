@@ -1,4 +1,3 @@
-import { Game } from '../rule'
 import { GameState } from './game'
 
 const tabNames = ['search', 'detail', 'setup'] as const
@@ -38,11 +37,11 @@ export class AdvancedState {
     return this.tabs.indexOf(this.tab)
   }
 
-  setPreview(game: Game, gameid?: number | undefined): AdvancedState {
-    return this.update({ previewingGame: new GameState({ main: game, cursor: game.size, gameid }) })
+  setPreviewingGame(gameState: GameState): AdvancedState {
+    return this.update({ previewingGame: gameState })
   }
 
-  unsetPreview(): AdvancedState {
+  unsetPreviewingGame(): AdvancedState {
     return this.update({ previewingGame: undefined })
   }
 }

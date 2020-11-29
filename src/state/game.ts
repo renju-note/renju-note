@@ -8,7 +8,10 @@ export class GameState {
   private cache: Game | undefined
 
   constructor(init?: undefined | Partial<GameState>) {
-    if (init !== undefined) Object.assign(this, init)
+    if (init !== undefined) {
+      Object.assign(this, init)
+      if (!('cursor' in init)) this.cursor = this.main.size
+    }
   }
 
   private update(fields: Partial<GameState>): GameState {
