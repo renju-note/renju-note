@@ -12,7 +12,7 @@ export const TabName: Record<TabName, TabName> = {
 export class AdvancedState {
   readonly tab: TabName = TabName.setup
   readonly tabs: TabName[] = [TabName.setup]
-  readonly preview: GameState | undefined
+  readonly previewingGame: GameState | undefined
 
   constructor(init?: undefined | Partial<AdvancedState>) {
     if (init !== undefined) Object.assign(this, init)
@@ -39,10 +39,10 @@ export class AdvancedState {
   }
 
   setPreview(game: Game, gameid?: number | undefined): AdvancedState {
-    return this.update({ preview: new GameState({ main: game, cursor: game.size, gameid }) })
+    return this.update({ previewingGame: new GameState({ main: game, cursor: game.size, gameid }) })
   }
 
   unsetPreview(): AdvancedState {
-    return this.update({ preview: undefined })
+    return this.update({ previewingGame: undefined })
   }
 }

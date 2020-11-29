@@ -26,7 +26,7 @@ export type BoardOptions = Options<BoardOption>
 export class BoardState {
   readonly mode: EditMode = EditMode.mainMoves
   readonly options: BoardOptions = new Options<BoardOption>()
-  readonly gameState: GameState = new GameState()
+  readonly mainGame: GameState = new GameState()
   readonly freeBlacks: FreePointsState = new FreePointsState()
   readonly freeWhites: FreePointsState = new FreePointsState()
   readonly markerPoints: FreePointsState = new FreePointsState()
@@ -46,7 +46,7 @@ export class BoardState {
   private canEdit(p: Point): boolean {
     switch (this.mode) {
       case EditMode.mainMoves:
-        return this.gameState.canMove(p) && !(this.game.isBlackTurn && this.board.forbidden(p))
+        return this.mainGame.canMove(p) && !(this.game.isBlackTurn && this.board.forbidden(p))
       case EditMode.freeBlacks:
         return this.canEditFreeStone(p) && !this.freeWhites.has(p)
       case EditMode.freeWhites:
@@ -68,7 +68,7 @@ export class BoardState {
     if (!this.canEdit(p)) return this
     switch (this.mode) {
       case EditMode.mainMoves:
-        return this.update({ gameState: this.gameState.move(p) })
+        return this.update({ mainGame: this.mainGame.move(p) })
       case EditMode.freeBlacks:
         return this.update({ freeBlacks: this.freeBlacks.edit(p) })
       case EditMode.freeWhites:
@@ -118,7 +118,7 @@ export class BoardState {
   get canUndo(): boolean {
     switch (this.mode) {
       case EditMode.mainMoves:
-        return this.gameState.canUndo
+        return this.mainGame.canUndo
       case EditMode.freeBlacks:
         return this.freeBlacks.canUndo
       case EditMode.freeWhites:
@@ -136,7 +136,7 @@ export class BoardState {
     if (!this.canUndo) return this
     switch (this.mode) {
       case EditMode.mainMoves:
-        return this.update({ gameState: this.gameState.undo() })
+        return this.update({ mainGame: this.mainGame.undo() })
       case EditMode.freeBlacks:
         return this.update({ freeBlacks: this.freeBlacks.undo() })
       case EditMode.freeWhites:
@@ -151,69 +151,69 @@ export class BoardState {
   }
 
   get canClearRestOfMoves(): boolean {
-    return this.mode === EditMode.mainMoves && !this.canUndo && this.gameState.canClearRest
+    return this.mode === EditMode.mainMoves && !this.canUndo && this.mainGame.canClearRest
   }
 
   clearRestOfMoves(): BoardState {
     if (!this.canClearRestOfMoves) return this
-    return this.update({ gameState: this.gameState.clearRest() })
+    return this.update({ mainGame: this.mainGame.clearRest() })
   }
 
   get canClearGame(): boolean {
-    return this.mode === EditMode.mainMoves && !this.canUndo && this.gameState.isReadOnly
+    return this.mode === EditMode.mainMoves && !this.canUndo && this.mainGame.isReadOnly
   }
 
   clearGame(): BoardState {
     if (!this.canClearGame) return this
-    return this.update({ gameState: new GameState() })
+    return this.update({ mainGame: new GameState() })
   }
 
   /* navigate */
 
   get isStart(): boolean {
-    return this.gameState.isStart
+    return this.mainGame.isStart
   }
 
   get isLast(): boolean {
-    return this.gameState.isLast
+    return this.mainGame.isLast
   }
 
   get canForward() {
-    return this.gameState.canForward
+    return this.mainGame.canForward
   }
 
   forward(): BoardState {
     if (!this.canForward) return this
-    return this.update({ gameState: this.gameState.forward() })
+    return this.update({ mainGame: this.mainGame.forward() })
   }
 
   toLast(): BoardState {
     if (!this.canForward) return this
-    return this.update({ gameState: this.gameState.toLast() })
+    return this.update({ mainGame: this.mainGame.toLast() })
   }
 
   get canBackward() {
-    return this.gameState.canBackward
+    return this.mainGame.canBackward
   }
 
   backward(): BoardState {
     if (!this.canBackward) return this
-    return this.update({ gameState: this.gameState.backward() })
+    return this.update({ mainGame: this.mainGame.backward() })
   }
 
   toStart(): BoardState {
     if (!this.canBackward) return this
-    return this.update({ gameState: this.gameState.toStart() })
+    return this.update({ mainGame: this.mainGame.toStart() })
   }
 
   /* fork */
 
   get isForking(): boolean {
-    return this.gameState.isBranching
+    return this.mainGame.isBranching
   }
 
   clearForkingMoves(): BoardState {
-    return this.update({ gameState: this.gameState.clearBranch() })
+    return this.update({ mainGame: this.mainGame.clearBranch() })
   }
 
   /* general */
@@ -230,7 +230,7 @@ export class BoardState {
   }
 
   get game(): Game {
-    return this.gameState.game
+    return this.mainGame.current
   }
 
   get blacks(): Point[] {
@@ -246,16 +246,16 @@ export class BoardState {
   }
 
   setGame(game: Game, gameid?: number | undefined): BoardState {
-    return this.update({ gameState: new GameState({ main: game, gameid }).toLast() })
+    return this.update({ mainGame: new GameState({ main: game, gameid }).toLast() })
   }
 
   /* encode */
 
   encode(): string {
     const codes: string[] = []
-    if (this.gameState.gameid !== undefined) codes.push(`gid:${this.gameState.gameid}`)
-    if (this.gameState.cursor !== 0) codes.push(`c:${this.gameState.cursor}`)
-    if (!this.gameState.main.empty) codes.push(`g:${this.gameState.main.encode()}`)
+    if (this.mainGame.gameid !== undefined) codes.push(`gid:${this.mainGame.gameid}`)
+    if (this.mainGame.cursor !== 0) codes.push(`c:${this.mainGame.cursor}`)
+    if (!this.mainGame.main.empty) codes.push(`g:${this.mainGame.main.encode()}`)
     if (!this.options.empty) codes.push(`o:${encodeBoardOptions(this.options)}`)
     if (!this.freeBlacks.empty) codes.push(`b:${this.freeBlacks.encode()}`)
     if (!this.freeWhites.empty) codes.push(`w:${this.freeWhites.encode()}`)
@@ -282,7 +282,7 @@ export class BoardState {
     return new BoardState({
       mode: EditMode.mainMoves,
       options: decodeBoardOptions(optionsCode) ?? new Options<BoardOption>(),
-      gameState: new GameState({
+      mainGame: new GameState({
         main: game,
         cursor: Math.min(game.size, parseInt(cursorCode) || 0),
         gameid: parseInt(gidCode) || undefined,

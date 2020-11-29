@@ -47,7 +47,7 @@ const Default: FC = () => {
           fontWeight="normal"
           isDisabled={true}
         >
-          {boardState.gameState.cursor}
+          {boardState.mainGame.cursor}
         </Button>
       )}
       <IconButton

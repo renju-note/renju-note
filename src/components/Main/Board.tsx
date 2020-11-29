@@ -9,7 +9,7 @@ const Default: FC = () => {
   const { boardState, setBoardState } = useContext(BoardStateContext)
   const { advancedState } = useContext(AdvancedStateContext)
   const onClickPoint = (p: Point) => {
-    if (advancedState.preview !== undefined) return
+    if (advancedState.previewingGame !== undefined) return
     setBoardState(boardState.edit(p))
   }
   return <Board id={MAIN_BOARD_ID} onClickPoint={onClickPoint} />

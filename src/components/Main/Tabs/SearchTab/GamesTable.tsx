@@ -44,7 +44,7 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
       <colgroup span={1} style={{ width: (system.W * 2) / 20 }} />
       <tbody>
         {items.map((g, key) => {
-          const [mgid, pgid] = [boardState.gameState.gameid, advancedState.preview?.gameid]
+          const [mgid, pgid] = [boardState.mainGame.gameid, advancedState.previewingGame?.gameid]
           const className = g.id === mgid ? 'main' : g.id === pgid ? 'previewing' : undefined
           return (
             <tr key={key} onClick={() => onClick(g)} className={className}>

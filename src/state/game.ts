@@ -16,7 +16,7 @@ export class GameState {
   }
 
   canMove(p: Point): boolean {
-    return !this.game.has(p)
+    return !this.current.has(p)
   }
 
   move(p: Point): GameState {
@@ -127,7 +127,7 @@ export class GameState {
 
   /* current game */
 
-  get game(): Game {
+  get current(): Game {
     if (this.cache === undefined) {
       this.cache = new Game({
         moves: [...this.main.partial(this.cursor).moves, ...this.branch],
@@ -137,11 +137,11 @@ export class GameState {
   }
 
   get blacks(): Point[] {
-    return this.game.blacks
+    return this.current.blacks
   }
 
   get whites(): Point[] {
-    return this.game.whites
+    return this.current.whites
   }
 
   get isReadOnly(): boolean {

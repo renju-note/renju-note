@@ -13,9 +13,12 @@ const Default: FC = () => {
         width={system.W / 4}
         colorScheme="blue"
         onClick={() => {
-          if (advancedState.preview === undefined) return
+          if (advancedState.previewingGame === undefined) return
           setBoardState(
-            boardState.setGame(advancedState.preview.game, advancedState.preview.gameid)
+            boardState.setGame(
+              advancedState.previewingGame.main,
+              advancedState.previewingGame.gameid
+            )
           )
           setAdvancedState(advancedState.unsetPreview().setTab(TabName.detail))
         }}
