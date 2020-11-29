@@ -16,7 +16,7 @@ import { AdvancedStateContext, BoardStateContext, SystemContext } from '../../co
 const Default: FC = () => {
   const system = useContext(SystemContext)
   const { boardState, setBoardState } = useContext(BoardStateContext)
-  if (boardState.canClearRest) return <ClearRestMenu />
+  if (boardState.canClearRestOfMoves) return <ClearRestMenu />
   if (boardState.canClearGame) return <ClearGameMenu />
   return (
     <IconButton
@@ -61,7 +61,7 @@ const ClearRestMenu: FC = () => {
         icon={<RiDeleteBack2Line style={{ transform: 'rotate(180deg)' }} />}
       />
       <MenuList>
-        <MenuItem onClick={() => setBoardState(boardState.clearRestMoves())}>
+        <MenuItem onClick={() => setBoardState(boardState.clearRestOfMoves())}>
           <Icon boxSize="small" as={RiDeleteBack2Line} style={{ transform: 'rotate(180deg)' }} />
           <Text ml={2} mr={1}>
             Clear Rest of Moves

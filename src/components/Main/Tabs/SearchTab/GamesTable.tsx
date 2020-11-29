@@ -19,8 +19,8 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
     ;(async () => setItems(await db.getGameViews(gameIds)))()
   }, [gameIds])
   const onClick = (gv: GameView) => {
-    const game = new Game({ moves: gv.moves, gid: gv.id })
-    setAdvancedState(advancedState.setPreviewingGame(game))
+    const game = new Game({ moves: gv.moves })
+    setAdvancedState(advancedState.setPreview(game, gv.id))
   }
   return (
     <table className="search-result">
@@ -44,7 +44,7 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
       <colgroup span={1} style={{ width: (system.W * 2) / 20 }} />
       <tbody>
         {items.map((g, key) => {
-          const [mgid, pgid] = [boardState.mainGame.gid, advancedState.previewingGame?.gid]
+          const [mgid, pgid] = [boardState.gameState.gameid, advancedState.preview?.gameid]
           const className = g.id === mgid ? 'main' : g.id === pgid ? 'previewing' : undefined
           return (
             <tr key={key} onClick={() => onClick(g)} className={className}>

@@ -47,7 +47,7 @@ const Default: FC = () => {
           fontWeight="normal"
           isDisabled={true}
         >
-          {boardState.cursor}
+          {boardState.gameState.cursor}
         </Button>
       )}
       <IconButton
@@ -79,7 +79,7 @@ const ForkingMenu: FC = () => {
           </Text>
         </MenuItem>
         <MenuDivider />
-        <MenuItem onClick={() => setBoardState(boardState.setGameFromForking())}>
+        <MenuItem onClick={() => setBoardState(boardState.setGame(boardState.game))}>
           <Icon boxSize="small" as={RiRefreshLine} />
           <Text ml={2} mr={1}>
             Set Branch as Main

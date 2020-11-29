@@ -13,17 +13,16 @@ const Default: FC = () => {
         width={system.W / 4}
         colorScheme="blue"
         onClick={() => {
-          if (advancedState.previewingGame === undefined) return
-          setBoardState(boardState.setGame(advancedState.previewingGame))
-          setAdvancedState(advancedState.unsetPreviewingGame().setTab(TabName.detail))
+          if (advancedState.preview === undefined) return
+          setBoardState(
+            boardState.setGame(advancedState.preview.game, advancedState.preview.gameid)
+          )
+          setAdvancedState(advancedState.unsetPreview().setTab(TabName.detail))
         }}
       >
         Open
       </Button>
-      <Button
-        width={system.W / 4}
-        onClick={() => setAdvancedState(advancedState.unsetPreviewingGame())}
-      >
+      <Button width={system.W / 4} onClick={() => setAdvancedState(advancedState.unsetPreview())}>
         Cancel
       </Button>
     </Flex>

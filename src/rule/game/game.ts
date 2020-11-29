@@ -3,18 +3,18 @@ import { equal, Point } from '../foundation'
 
 export class Game {
   readonly moves: Point[] = []
-  readonly gid: number | undefined
+  private blacksCache: Point[] | undefined
+  private whitesCache: Point[] | undefined
 
   constructor(init?: undefined | Partial<Game>) {
     if (init !== undefined) Object.assign(this, init)
   }
 
   private update(fields: Partial<Game>): Game {
-    return new Game({ ...this, ...fields })
+    return new Game({ ...this, ...fields, blacksCache: undefined, whitesCache: undefined })
   }
 
   move(p: Point): Game {
-    if (this.finalized) return this
     if (this.has(p)) return this
     return this.update({
       moves: [...this.moves, p],
@@ -22,7 +22,6 @@ export class Game {
   }
 
   undo(): Game {
-    if (this.finalized) return this
     if (this.moves.length === 0) return this
     return this.update({
       moves: this.moves.slice(0, this.moves.length - 1),
@@ -33,28 +32,34 @@ export class Game {
     return this.moves.findIndex(q => equal(p, q)) >= 0
   }
 
-  setGid(gid: number | undefined): Game {
-    return this.update({ gid })
+  partial(length: number): Game {
+    return this.update({ moves: this.moves.slice(0, length) })
   }
 
   get canUndo(): boolean {
-    return !this.finalized && this.moves.length > 0
+    return this.moves.length > 0
   }
 
   get blacks(): Point[] {
-    const result: Point[] = []
-    for (let i = 0; i < this.moves.length; i += 2) {
-      result[~~(i / 2)] = this.moves[i]
+    if (this.blacksCache === undefined) {
+      const result: Point[] = []
+      for (let i = 0; i < this.moves.length; i += 2) {
+        result[~~(i / 2)] = this.moves[i]
+      }
+      this.blacksCache = result
     }
-    return result
+    return this.blacksCache
   }
 
   get whites(): Point[] {
-    const result: Point[] = []
-    for (let i = 1; i < this.moves.length; i += 2) {
-      result[~~((i - 1) / 2)] = this.moves[i]
+    if (this.whitesCache === undefined) {
+      const result: Point[] = []
+      for (let i = 1; i < this.moves.length; i += 2) {
+        result[~~((i - 1) / 2)] = this.moves[i]
+      }
+      this.whitesCache = result
     }
-    return result
+    return this.whitesCache
   }
 
   get lastMove(): Point | undefined {
@@ -71,10 +76,6 @@ export class Game {
 
   get empty(): boolean {
     return this.moves.length === 0
-  }
-
-  get finalized(): boolean {
-    return this.gid !== undefined
   }
 
   encode(): string {
