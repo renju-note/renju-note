@@ -46,7 +46,7 @@ export class BoardState {
   private canEdit(p: Point): boolean {
     switch (this.mode) {
       case EditMode.mainMoves:
-        return this.mainGame.canMove(p) && !(this.game.isBlackTurn && this.board.forbidden(p))
+        return this.canEditMove(p)
       case EditMode.freeBlacks:
         return this.canEditFreeStone(p) && !this.freeWhites.has(p)
       case EditMode.freeWhites:
@@ -60,8 +60,17 @@ export class BoardState {
     }
   }
 
+  private canEditMove(p: Point): boolean {
+    return (
+      this.mainGame.canMove(p) &&
+      !this.freeBlacks.has(p) &&
+      !this.freeWhites.has(p) &&
+      !(this.isBlackTurn && this.board.forbidden(p))
+    )
+  }
+
   private canEditFreeStone(p: Point): boolean {
-    return this.mainGame.isLast && !this.mainGame.isBranching && !this.game.has(p)
+    return this.mainGame.isLast && !this.mainGame.isBranching && !this.mainGame.main.has(p)
   }
 
   edit(p: Point): BoardState {
@@ -187,6 +196,10 @@ export class BoardState {
 
   get whites(): Point[] {
     return [...(this.inverted ? this.game.blacks : this.game.whites), ...this.freeWhites.points]
+  }
+
+  get isBlackTurn(): boolean {
+    return this.inverted ? !this.game.isBlackTurn : this.game.isBlackTurn
   }
 
   private get inverted(): boolean {
