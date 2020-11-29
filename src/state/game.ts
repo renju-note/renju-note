@@ -125,6 +125,10 @@ export class GameState {
     return this.update({ branch: [] })
   }
 
+  newFromBranch(): GameState {
+    return new GameState({ main: this.current, cursor: this.current.size })
+  }
+
   /* current game */
 
   get current(): Game {

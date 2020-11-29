@@ -23,23 +23,23 @@ import { BoardStateContext, SystemContext } from '../../contexts'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
-  const { boardState, setBoardState } = useContext(BoardStateContext)
+  const { gameState, setGameState } = useContext(BoardStateContext)
   return (
     <ButtonGroup spacing={1} variant="ghost" size={system.buttonSize}>
       <IconButton
-        onClick={() => setBoardState(boardState.toStart())}
+        onClick={() => setGameState(gameState.toStart())}
         icon={<FiChevronsLeft />}
         aria-label="to start"
-        isDisabled={!boardState.canBackward}
+        isDisabled={!gameState.canBackward}
       />
       <IconButton
-        onClick={() => setBoardState(boardState.backward())}
+        onClick={() => setGameState(gameState.backward())}
         icon={<FiChevronLeft />}
         aria-label="backward"
-        isDisabled={!boardState.canBackward}
+        isDisabled={!gameState.canBackward}
       />
-      {boardState.isForking ? (
-        <ForkingMenu />
+      {gameState.isBranching ? (
+        <BranchingMenu />
       ) : (
         <Button
           width={6} // do not resize according to text
@@ -47,39 +47,39 @@ const Default: FC = () => {
           fontWeight="normal"
           isDisabled={true}
         >
-          {boardState.mainGame.cursor}
+          {gameState.cursor}
         </Button>
       )}
       <IconButton
-        onClick={() => setBoardState(boardState.forward())}
+        onClick={() => setGameState(gameState.forward())}
         icon={<FiChevronRight />}
         aria-label="forward"
-        isDisabled={!boardState.canForward}
+        isDisabled={!gameState.canForward}
       />
       <IconButton
-        onClick={() => setBoardState(boardState.toLast())}
+        onClick={() => setGameState(gameState.toLast())}
         icon={<FiChevronsRight />}
         aria-label="to last"
-        isDisabled={!boardState.canForward}
+        isDisabled={!gameState.canForward}
       />
     </ButtonGroup>
   )
 }
 
-const ForkingMenu: FC = () => {
-  const { boardState, setBoardState } = useContext(BoardStateContext)
+const BranchingMenu: FC = () => {
+  const { gameState, setGameState } = useContext(BoardStateContext)
   return (
     <Menu autoSelect={false} placement="top">
       <MenuButton as={IconButton} icon={<FiGitBranch />} colorScheme="purple" />
       <MenuList>
-        <MenuItem onClick={() => setBoardState(boardState.clearForkingMoves())}>
+        <MenuItem onClick={() => setGameState(gameState.clearBranch())}>
           <Icon boxSize="small" as={RiDeleteBack2Line} />
           <Text ml={2} mr={1}>
             Clear Branch
           </Text>
         </MenuItem>
         <MenuDivider />
-        <MenuItem onClick={() => setBoardState(boardState.setGame(boardState.game))}>
+        <MenuItem onClick={() => setGameState(gameState.newFromBranch())}>
           <Icon boxSize="small" as={RiRefreshLine} />
           <Text ml={2} mr={1}>
             Set Branch as Main

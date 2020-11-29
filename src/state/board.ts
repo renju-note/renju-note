@@ -61,7 +61,7 @@ export class BoardState {
   }
 
   private canEditFreeStone(p: Point): boolean {
-    return this.isLast && !this.isForking && !this.game.has(p)
+    return this.mainGame.isLast && !this.mainGame.isBranching && !this.game.has(p)
   }
 
   edit(p: Point): BoardState {
@@ -96,7 +96,9 @@ export class BoardState {
   }
 
   clearMoves(): BoardState {
-    return this.setGame(new Game())
+    return this.update({
+      mainGame: new GameState(),
+    })
   }
 
   clearFreeStones(): BoardState {
@@ -154,66 +156,8 @@ export class BoardState {
     return this.mode === EditMode.mainMoves && !this.canUndo && this.mainGame.canClearRest
   }
 
-  clearRestOfMoves(): BoardState {
-    if (!this.canClearRestOfMoves) return this
-    return this.update({ mainGame: this.mainGame.clearRest() })
-  }
-
-  get canClearGame(): boolean {
+  get canClearMainGame(): boolean {
     return this.mode === EditMode.mainMoves && !this.canUndo && this.mainGame.isReadOnly
-  }
-
-  clearGame(): BoardState {
-    if (!this.canClearGame) return this
-    return this.update({ mainGame: new GameState() })
-  }
-
-  /* navigate */
-
-  get isStart(): boolean {
-    return this.mainGame.isStart
-  }
-
-  get isLast(): boolean {
-    return this.mainGame.isLast
-  }
-
-  get canForward() {
-    return this.mainGame.canForward
-  }
-
-  forward(): BoardState {
-    if (!this.canForward) return this
-    return this.update({ mainGame: this.mainGame.forward() })
-  }
-
-  toLast(): BoardState {
-    if (!this.canForward) return this
-    return this.update({ mainGame: this.mainGame.toLast() })
-  }
-
-  get canBackward() {
-    return this.mainGame.canBackward
-  }
-
-  backward(): BoardState {
-    if (!this.canBackward) return this
-    return this.update({ mainGame: this.mainGame.backward() })
-  }
-
-  toStart(): BoardState {
-    if (!this.canBackward) return this
-    return this.update({ mainGame: this.mainGame.toStart() })
-  }
-
-  /* fork */
-
-  get isForking(): boolean {
-    return this.mainGame.isBranching
-  }
-
-  clearForkingMoves(): BoardState {
-    return this.update({ mainGame: this.mainGame.clearBranch() })
   }
 
   /* general */
@@ -247,6 +191,10 @@ export class BoardState {
 
   setGame(game: Game, gameid?: number | undefined): BoardState {
     return this.update({ mainGame: new GameState({ main: game, gameid }).toLast() })
+  }
+
+  setMainGame(mainGame: GameState): BoardState {
+    return this.update({ mainGame })
   }
 
   /* encode */
