@@ -4,18 +4,18 @@ import { GameState, LinesState, OptionsState, PointsState } from './common'
 const editModes = ['mainMoves', 'freeBlacks', 'freeWhites', 'markerPoints', 'markerLines'] as const
 export type EditMode = typeof editModes[number]
 export const EditMode: Record<EditMode, EditMode> = {
-  mainMoves: editModes[0],
-  freeBlacks: editModes[1],
-  freeWhites: editModes[2],
-  markerPoints: editModes[3],
-  markerLines: editModes[4],
+  mainMoves: 'mainMoves',
+  freeBlacks: 'freeBlacks',
+  freeWhites: 'freeWhites',
+  markerPoints: 'markerPoints',
+  markerLines: 'markerLines',
 } as const
 
 const boardOptions = ['invertMoves', 'labelMarkers'] as const
 export type BoardOption = typeof boardOptions[number]
 export const BoardOption: Record<BoardOption, BoardOption> = {
-  invertMoves: boardOptions[0],
-  labelMarkers: boardOptions[1],
+  invertMoves: 'invertMoves',
+  labelMarkers: 'labelMarkers',
 } as const
 
 export type BoardOptionsState = OptionsState<BoardOption>
@@ -238,31 +238,15 @@ export class BoardState {
 }
 
 const encodeBoardOptions = (options: BoardOptionsState): string => {
+  const shortName = (o: string): string => o[0]
   return options.values.map(shortName).join('')
 }
 
 const decodeBoardOptions = (code: string): BoardOptionsState => {
+  const longName = (s: string): BoardOption | undefined => boardOptions.find(o => o.startsWith(s))
   const values = code
     .split('')
     .map(longName)
     .filter(v => v !== undefined) as BoardOption[]
   return new OptionsState<BoardOption>().on(values)
-}
-
-const shortName = (o: BoardOption): string | undefined => {
-  switch (o) {
-    case BoardOption.invertMoves:
-      return 'i'
-    case BoardOption.labelMarkers:
-      return 'l'
-  }
-}
-
-const longName = (s: string): BoardOption | undefined => {
-  switch (s) {
-    case 'i':
-      return BoardOption.invertMoves
-    case 'l':
-      return BoardOption.labelMarkers
-  }
 }
