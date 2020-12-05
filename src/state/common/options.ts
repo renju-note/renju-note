@@ -1,4 +1,4 @@
-export class Options<T extends string> {
+export class OptionsState<T extends string> {
   readonly map: Partial<Record<T, boolean>> = {}
 
   constructor(init?: Partial<Record<T, boolean>>) {
@@ -9,24 +9,24 @@ export class Options<T extends string> {
     return !!this.map[v]
   }
 
-  on(values: T[]): Options<T> {
+  on(values: T[]): OptionsState<T> {
     const map: Partial<Record<T, boolean>> = {}
     for (const v of values) map[v] = true
-    return new Options<T>({ ...this.map, ...map })
+    return new OptionsState<T>({ ...this.map, ...map })
   }
 
-  off(values: T[]): Options<T> {
+  off(values: T[]): OptionsState<T> {
     const map: Partial<Record<T, boolean>> = {}
     for (const v of values) map[v] = false
-    return new Options<T>({ ...this.map, ...map })
+    return new OptionsState<T>({ ...this.map, ...map })
   }
 
-  change(targets: T[], on: T[]): Options<T> {
+  change(targets: T[], on: T[]): OptionsState<T> {
     const map: Partial<Record<T, boolean>> = {}
     for (const v of targets) {
       map[v] = on.includes(v)
     }
-    return new Options<T>({ ...this.map, ...map })
+    return new OptionsState<T>({ ...this.map, ...map })
   }
 
   get empty(): boolean {

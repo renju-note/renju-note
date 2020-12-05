@@ -1,17 +1,17 @@
-import { decodePoints, encodePoints, equal, Point } from '../rule'
+import { decodePoints, encodePoints, equal, Point } from '../../rule'
 
-export class FreePointsState {
+export class PointsState {
   readonly points: Point[] = []
 
-  constructor(init?: undefined | Partial<FreePointsState>) {
+  constructor(init?: undefined | Partial<PointsState>) {
     if (init !== undefined) Object.assign(this, init)
   }
 
-  private update(fields: Partial<FreePointsState>): FreePointsState {
-    return new FreePointsState({ ...this, ...fields })
+  private update(fields: Partial<PointsState>): PointsState {
+    return new PointsState({ ...this, ...fields })
   }
 
-  edit(p: Point): FreePointsState {
+  edit(p: Point): PointsState {
     const ps = this.points
     const idx = ps.findIndex(q => equal(p, q))
     return this.update({
@@ -19,7 +19,7 @@ export class FreePointsState {
     })
   }
 
-  undo(): FreePointsState {
+  undo(): PointsState {
     return this.update({
       points: this.points.slice(0, this.points.length - 1),
     })
@@ -41,8 +41,8 @@ export class FreePointsState {
     return encodePoints(this.points)
   }
 
-  static decode(code: string): FreePointsState | undefined {
+  static decode(code: string): PointsState | undefined {
     const points = decodePoints(code)
-    return points && new FreePointsState({ points: points })
+    return points && new PointsState({ points: points })
   }
 }

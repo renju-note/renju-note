@@ -1,4 +1,4 @@
-import { GameState } from './game'
+import { GameState } from './common'
 
 const tabNames = ['search', 'detail', 'setup'] as const
 export type TabName = typeof tabNames[number]

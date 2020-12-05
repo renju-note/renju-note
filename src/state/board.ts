@@ -1,36 +1,33 @@
 import { Board, N_LINES, Point } from '../rule'
-import { Options } from '../utils/options'
-import { FreeLinesState } from './freeLines'
-import { FreePointsState } from './freePoints'
-import { GameState } from './game'
+import { GameState, LinesState, OptionsState, PointsState } from './common'
 
 const editModes = ['mainMoves', 'freeBlacks', 'freeWhites', 'markerPoints', 'markerLines'] as const
 export type EditMode = typeof editModes[number]
 export const EditMode: Record<EditMode, EditMode> = {
-  mainMoves: editModes[0],
-  freeBlacks: editModes[1],
-  freeWhites: editModes[2],
-  markerPoints: editModes[3],
-  markerLines: editModes[4],
+  mainMoves: 'mainMoves',
+  freeBlacks: 'freeBlacks',
+  freeWhites: 'freeWhites',
+  markerPoints: 'markerPoints',
+  markerLines: 'markerLines',
 } as const
 
 const boardOptions = ['invertMoves', 'labelMarkers'] as const
 export type BoardOption = typeof boardOptions[number]
 export const BoardOption: Record<BoardOption, BoardOption> = {
-  invertMoves: boardOptions[0],
-  labelMarkers: boardOptions[1],
+  invertMoves: 'invertMoves',
+  labelMarkers: 'labelMarkers',
 } as const
 
-export type BoardOptions = Options<BoardOption>
+export type BoardOptionsState = OptionsState<BoardOption>
 
 export class BoardState {
   readonly mode: EditMode = EditMode.mainMoves
-  readonly options: BoardOptions = new Options<BoardOption>()
+  readonly options: BoardOptionsState = new OptionsState<BoardOption>()
   readonly mainGame: GameState = new GameState()
-  readonly freeBlacks: FreePointsState = new FreePointsState()
-  readonly freeWhites: FreePointsState = new FreePointsState()
-  readonly markerPoints: FreePointsState = new FreePointsState()
-  readonly markerLines: FreeLinesState = new FreeLinesState()
+  readonly freeBlacks: PointsState = new PointsState()
+  readonly freeWhites: PointsState = new PointsState()
+  readonly markerPoints: PointsState = new PointsState()
+  readonly markerLines: LinesState = new LinesState()
   private cache: Board | undefined
 
   constructor(init?: undefined | Partial<BoardState>) {
@@ -102,7 +99,7 @@ export class BoardState {
   }
 
   setOptions(options: BoardOption[]): BoardState {
-    return this.update({ options: new Options<BoardOption>().on(options) })
+    return this.update({ options: new OptionsState<BoardOption>().on(options) })
   }
 
   setMainGame(mainGame: GameState): BoardState {
@@ -117,15 +114,15 @@ export class BoardState {
 
   clearFreeStones(): BoardState {
     return this.update({
-      freeBlacks: new FreePointsState(),
-      freeWhites: new FreePointsState(),
+      freeBlacks: new PointsState(),
+      freeWhites: new PointsState(),
     })
   }
 
   clearMarkers(): BoardState {
     return this.update({
-      markerPoints: new FreePointsState(),
-      markerLines: new FreeLinesState(),
+      markerPoints: new PointsState(),
+      markerLines: new LinesState(),
     })
   }
 
@@ -230,42 +227,26 @@ export class BoardState {
     const markerLinesCode = find('l:')
     return new BoardState({
       mode: EditMode.mainMoves,
-      options: decodeBoardOptions(optionsCode) ?? new Options<BoardOption>(),
+      options: decodeBoardOptions(optionsCode) ?? new OptionsState<BoardOption>(),
       mainGame: GameState.decode(mainGameCode) ?? new GameState(),
-      freeBlacks: FreePointsState.decode(freeBlacksCode) ?? new FreePointsState(),
-      freeWhites: FreePointsState.decode(freeWhitesCode) ?? new FreePointsState(),
-      markerPoints: FreePointsState.decode(markerPointsCode) ?? new FreePointsState(),
-      markerLines: FreeLinesState.decode(markerLinesCode) ?? new FreeLinesState(),
+      freeBlacks: PointsState.decode(freeBlacksCode) ?? new PointsState(),
+      freeWhites: PointsState.decode(freeWhitesCode) ?? new PointsState(),
+      markerPoints: PointsState.decode(markerPointsCode) ?? new PointsState(),
+      markerLines: LinesState.decode(markerLinesCode) ?? new LinesState(),
     })
   }
 }
 
-const encodeBoardOptions = (options: BoardOptions): string => {
+const encodeBoardOptions = (options: BoardOptionsState): string => {
+  const shortName = (o: string): string => o[0]
   return options.values.map(shortName).join('')
 }
 
-const decodeBoardOptions = (code: string): BoardOptions => {
+const decodeBoardOptions = (code: string): BoardOptionsState => {
+  const longName = (s: string): BoardOption | undefined => boardOptions.find(o => o.startsWith(s))
   const values = code
     .split('')
     .map(longName)
     .filter(v => v !== undefined) as BoardOption[]
-  return new Options<BoardOption>().on(values)
-}
-
-const shortName = (o: BoardOption): string | undefined => {
-  switch (o) {
-    case BoardOption.invertMoves:
-      return 'i'
-    case BoardOption.labelMarkers:
-      return 'l'
-  }
-}
-
-const longName = (s: string): BoardOption | undefined => {
-  switch (s) {
-    case 'i':
-      return BoardOption.invertMoves
-    case 'l':
-      return BoardOption.labelMarkers
-  }
+  return new OptionsState<BoardOption>().on(values)
 }

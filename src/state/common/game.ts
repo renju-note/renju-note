@@ -1,4 +1,4 @@
-import { equal, Game, Point } from '../rule'
+import { equal, Game, Point } from '../../rule'
 
 export class GameState {
   readonly main: Game = new Game()

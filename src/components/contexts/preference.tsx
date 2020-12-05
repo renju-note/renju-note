@@ -1,5 +1,5 @@
 import React, { createContext, FC, useState } from 'react'
-import { Options } from '../../utils/options'
+import { OptionsState } from '../../state'
 
 const preferenceOptions = [
   'showIndices',
@@ -21,7 +21,7 @@ export const PreferenceOption: Record<PreferenceOption, PreferenceOption> = {
   advancedMode: 'advancedMode',
 }
 
-export type Preference = Options<PreferenceOption>
+export type Preference = OptionsState<PreferenceOption>
 
 export type PreferenceContext = {
   preference: Preference
@@ -29,13 +29,13 @@ export type PreferenceContext = {
 }
 
 export const PreferenceContext = createContext<PreferenceContext>({
-  preference: new Options<PreferenceOption>(),
+  preference: new OptionsState<PreferenceOption>(),
   setPreference: () => {},
 })
 
 export const PreferenceProvider: FC = ({ children }) => {
   const [preference, setPreferenceState] = useState<Preference>(
-    () => decode(localStorage.getItem('preference') || '{}') ?? new Options<PreferenceOption>()
+    () => decode(localStorage.getItem('preference') || '{}') ?? new OptionsState<PreferenceOption>()
   )
   const setPreference = (p: Preference) => {
     setPreferenceState(p)
@@ -55,7 +55,7 @@ const encode = (p: Preference): string => {
 const decode = (code: string): Preference | undefined => {
   try {
     const init = JSON.parse(code) as Partial<Record<PreferenceOption, boolean>>
-    return new Options<PreferenceOption>(init)
+    return new OptionsState<PreferenceOption>(init)
   } catch (e) {
     return undefined
   }

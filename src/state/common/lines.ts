@@ -1,25 +1,25 @@
-import { decodePoints, encode, equal, Point } from '../rule'
+import { decodePoints, encode, equal, Point } from '../../rule'
 
-type FreeLine = [Point, Point]
+type Line = [Point, Point]
 
-export class FreeLinesState {
-  readonly lines: FreeLine[] = []
+export class LinesState {
+  readonly lines: Line[] = []
   readonly start: Point | undefined = undefined
 
-  constructor(init?: undefined | Partial<FreeLinesState>) {
+  constructor(init?: undefined | Partial<LinesState>) {
     if (init !== undefined) Object.assign(this, init)
   }
 
-  private update(fields: Partial<FreeLinesState>): FreeLinesState {
-    return new FreeLinesState({ ...this, ...fields })
+  private update(fields: Partial<LinesState>): LinesState {
+    return new LinesState({ ...this, ...fields })
   }
 
-  draw(p: Point): FreeLinesState {
+  draw(p: Point): LinesState {
     if (this.start === undefined) {
       return this.update({ start: p })
     }
 
-    const line: FreeLine = [this.start, p]
+    const line: Line = [this.start, p]
     if (this.has(line) || !valid(line)) {
       return this.update({ start: undefined })
     }
@@ -29,7 +29,7 @@ export class FreeLinesState {
     })
   }
 
-  undo(): FreeLinesState {
+  undo(): LinesState {
     if (this.start !== undefined) {
       return this.update({ start: undefined })
     }
@@ -38,7 +38,7 @@ export class FreeLinesState {
     })
   }
 
-  unstart(): FreeLinesState {
+  unstart(): LinesState {
     return this.update({ start: undefined })
   }
 
@@ -50,7 +50,7 @@ export class FreeLinesState {
     return this.lines.length === 0
   }
 
-  private has(line: FreeLine): boolean {
+  private has(line: Line): boolean {
     return includes(this.lines, line)
   }
 
@@ -58,20 +58,20 @@ export class FreeLinesState {
     return this.lines.map(([start, end]) => `${encode(start)}${encode(end)}`).join('')
   }
 
-  static decode(code: string): FreeLinesState | undefined {
+  static decode(code: string): LinesState | undefined {
     const points = decodePoints(code)
     if (!points) return undefined
     if (points.length % 2 !== 0) return undefined
-    const lines: FreeLine[] = []
+    const lines: Line[] = []
     for (let i = 0; i < points.length / 2; i++) {
-      const l: FreeLine = [points[i * 2], points[i * 2 + 1]]
+      const l: Line = [points[i * 2], points[i * 2 + 1]]
       if (valid(l) && !includes(lines, l)) lines.push(l)
     }
-    return new FreeLinesState({ lines: lines })
+    return new LinesState({ lines: lines })
   }
 }
 
-const includes = (lines: FreeLine[], [start, end]: FreeLine): boolean => {
+const includes = (lines: Line[], [start, end]: Line): boolean => {
   return (
     lines.findIndex(
       ([s, e]) => (equal(start, s) && equal(end, e)) || (equal(start, e) && equal(end, s))
@@ -79,7 +79,7 @@ const includes = (lines: FreeLine[], [start, end]: FreeLine): boolean => {
   )
 }
 
-const valid = ([start, end]: FreeLine): boolean => {
+const valid = ([start, end]: Line): boolean => {
   if (equal(start, end)) return false
   const [sx, sy] = start
   const [ex, ey] = end
