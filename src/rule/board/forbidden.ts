@@ -1,4 +1,5 @@
 import { Point } from '../foundation'
+import { RowKind } from './row'
 import { Square, SquareRow } from './square'
 
 export const forbiddenKinds = ['doubleThree', 'doubleFour', 'overline'] as const
@@ -16,13 +17,13 @@ export const forbidden = (square: Square, point: Point): ForbiddenKind | undefin
 
 const overline = (square: Square, point: Point): boolean => {
   const next = square.put(true, point)
-  const newOverlines = next.rows.get(true, 'overline').filter(r => between(point, r))
+  const newOverlines = next.rows.get(true, RowKind.overline).filter(r => between(point, r))
   return newOverlines.length > 0
 }
 
 const doubleFour = (square: Square, point: Point): boolean => {
   const next = square.put(true, point)
-  const newFours = next.rows.get(true, 'four').filter(r => between(point, r))
+  const newFours = next.rows.get(true, RowKind.four).filter(r => between(point, r))
   if (newFours.length < 2) return false
 
   // checking not open four
@@ -31,7 +32,7 @@ const doubleFour = (square: Square, point: Point): boolean => {
 
 const doubleThree = (square: Square, point: Point): boolean => {
   const next = square.put(true, point)
-  const newThrees = next.rows.get(true, 'three').filter(r => between(point, r))
+  const newThrees = next.rows.get(true, RowKind.three).filter(r => between(point, r))
   if (newThrees.length < 2) return false
 
   // checking not fake three
