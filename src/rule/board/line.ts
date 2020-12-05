@@ -78,20 +78,20 @@ class RowsProxy {
   private readonly size: number
   private readonly blacks: Stones
   private readonly whites: Stones
-  private readonly blackCache: Record<RowKind, LineRow[] | undefined>
-  private readonly whiteCache: Record<RowKind, LineRow[] | undefined>
+  private readonly bcache: Record<RowKind, LineRow[] | undefined>
+  private readonly wcache: Record<RowKind, LineRow[] | undefined>
 
   constructor(size: number, blacks: Stones, whites: Stones) {
     this.size = size
     this.blacks = blacks
     this.whites = whites
 
-    this.blackCache = emptyRowsCache()
-    this.whiteCache = emptyRowsCache()
+    this.bcache = emptyRowsCache()
+    this.wcache = emptyRowsCache()
   }
 
   get(black: boolean, kind: RowKind): LineRow[] {
-    const cache = black ? this.blackCache : this.whiteCache
+    const cache = black ? this.bcache : this.wcache
     if (cache[kind] === undefined) {
       cache[kind] = this.compute(black, kind)
     }

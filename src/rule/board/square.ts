@@ -1,6 +1,6 @@
 import { Point } from '../foundation'
 import { Line } from './line'
-import { RowKind, emptyRowsCache } from './row'
+import { emptyRowsCache, RowKind } from './row'
 
 const directions = ['vertical', 'horizontal', 'ascending', 'descending'] as const
 type Direction = typeof directions[number]
@@ -136,19 +136,18 @@ export type SquareRow = {
 class RowsProxy {
   private readonly size: number
   private readonly facets: Facet[]
-  private readonly blackCache: Record<RowKind, SquareRow[] | undefined>
-  private readonly whiteCache: Record<RowKind, SquareRow[] | undefined>
+  private readonly bcache: Record<RowKind, SquareRow[] | undefined>
+  private readonly wcache: Record<RowKind, SquareRow[] | undefined>
 
   constructor(size: number, facets: Facet[]) {
     this.size = size
     this.facets = facets
-
-    this.blackCache = emptyRowsCache()
-    this.whiteCache = emptyRowsCache()
+    this.bcache = emptyRowsCache()
+    this.wcache = emptyRowsCache()
   }
 
   get(black: boolean, kind: RowKind): SquareRow[] {
-    const cache = black ? this.blackCache : this.whiteCache
+    const cache = black ? this.bcache : this.wcache
     if (cache[kind] === undefined) {
       cache[kind] = this.compute(black, kind)
     }
