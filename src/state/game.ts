@@ -154,4 +154,27 @@ export class GameState {
   get isReadOnly(): boolean {
     return this.gameid !== undefined
   }
+
+  encode(): string {
+    const codes: string[] = []
+    if (this.gameid !== undefined) codes.push(`gid:${this.gameid}`)
+    if (this.cursor !== 0) codes.push(`c:${this.cursor}`)
+    if (!this.main.empty) codes.push(`g:${this.main.encode()}`)
+    return codes.join(',')
+  }
+
+  static decode(code: string): GameState | undefined {
+    const codes = code.split(',')
+    const findCode = (s: string) =>
+      codes.find(c => c.startsWith(`${s}:`))?.replace(`${s}:`, '') ?? ''
+
+    const gameCode = findCode('g')
+    const cursorCode = findCode('c')
+    const gidCode = findCode('gid')
+
+    const main = Game.decode(gameCode) ?? new Game()
+    const cursor = Math.min(main.size, parseInt(cursorCode) || 0)
+    const gameid = parseInt(gidCode) || undefined
+    return new GameState({ main, cursor, gameid })
+  }
 }

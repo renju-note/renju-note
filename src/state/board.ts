@@ -210,9 +210,8 @@ export class BoardState {
 
   encode(): string {
     const codes: string[] = []
-    if (this.mainGame.gameid !== undefined) codes.push(`gid:${this.mainGame.gameid}`)
-    if (this.mainGame.cursor !== 0) codes.push(`c:${this.mainGame.cursor}`)
-    if (!this.mainGame.main.empty) codes.push(`g:${this.mainGame.main.encode()}`)
+    const gameCode = this.mainGame.encode()
+    if (gameCode !== '') codes.push(gameCode)
     if (!this.options.empty) codes.push(`o:${encodeBoardOptions(this.options)}`)
     if (!this.freeBlacks.empty) codes.push(`b:${this.freeBlacks.encode()}`)
     if (!this.freeWhites.empty) codes.push(`w:${this.freeWhites.encode()}`)
@@ -234,16 +233,10 @@ export class BoardState {
     const freeWhitesCode = findCode('w')
     const markerPointsCode = findCode('p')
     const markerLinesCode = findCode('l')
-
-    const game = Game.decode(gameCode) ?? new Game()
     return new BoardState({
       mode: EditMode.mainMoves,
       options: decodeBoardOptions(optionsCode) ?? new Options<BoardOption>(),
-      mainGame: new GameState({
-        main: game,
-        cursor: Math.min(game.size, parseInt(cursorCode) || 0),
-        gameid: parseInt(gidCode) || undefined,
-      }),
+      mainGame: GameState.decode([gameCode, gidCode, cursorCode].join(',')) ?? new GameState(),
       freeBlacks: FreePointsState.decode(freeBlacksCode) ?? new FreePointsState(),
       freeWhites: FreePointsState.decode(freeWhitesCode) ?? new FreePointsState(),
       markerPoints: FreePointsState.decode(markerPointsCode) ?? new FreePointsState(),
