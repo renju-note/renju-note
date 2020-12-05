@@ -8,7 +8,7 @@ import GamesTable from './GamesTable'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
-  const { boardState } = useContext(BoardStateContext)
+  const { gameState } = useContext(BoardStateContext)
   const analyzedDB = useMemo(() => new AnalyzedDatabase(), [])
   const pageSize = system.seachPageSize
 
@@ -23,8 +23,8 @@ const Default: FC = () => {
     setError(error)
   }
   useEffect(() => {
-    onSearch(boardState.game.moves)
-  }, [boardState.game.size, page])
+    onSearch(gameState.current.moves)
+  }, [gameState.current.size, page])
   return (
     <Stack justify="center" align="center">
       {error && (

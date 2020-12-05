@@ -151,6 +151,10 @@ export class GameState {
     return this.current.whites
   }
 
+  get isBlackTurn(): boolean {
+    return this.current.isBlackTurn
+  }
+
   get isReadOnly(): boolean {
     return this.gameid !== undefined
   }
@@ -158,20 +162,17 @@ export class GameState {
   encode(): string {
     const codes: string[] = []
     if (this.gameid !== undefined) codes.push(`gid:${this.gameid}`)
-    if (this.cursor !== 0) codes.push(`c:${this.cursor}`)
     if (!this.main.empty) codes.push(`g:${this.main.encode()}`)
+    if (this.cursor !== 0) codes.push(`c:${this.cursor}`)
     return codes.join(',')
   }
 
   static decode(code: string): GameState | undefined {
     const codes = code.split(',')
-    const findCode = (s: string) =>
-      codes.find(c => c.startsWith(`${s}:`))?.replace(`${s}:`, '') ?? ''
-
-    const gameCode = findCode('g')
-    const cursorCode = findCode('c')
-    const gidCode = findCode('gid')
-
+    const find = (s: string) => codes.find(c => c.startsWith(s))?.replace(s, '') ?? ''
+    const gameCode = find('g:')
+    const cursorCode = find('c:')
+    const gidCode = find('gid:')
     const main = Game.decode(gameCode) ?? new Game()
     const cursor = Math.min(main.size, parseInt(cursorCode) || 0)
     const gameid = parseInt(gidCode) || undefined

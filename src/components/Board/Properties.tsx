@@ -5,30 +5,32 @@ import { BoardStateContext, PreferenceContext, PreferenceOption, SystemContext }
 const Default: FC = () => {
   const { boardState } = useContext(BoardStateContext)
   const { preference } = useContext(PreferenceContext)
-  const board = boardState.board
+  const properties = boardState.current.properties
   return (
     <g>
       {preference.has(PreferenceOption.showPropertyRows) && (
         <>
-          <PropertyRows black={true} properties={board.properties.get(true, 'two')} />
-          <PropertyRows black={true} properties={board.properties.get(true, 'closedThree')} />
-          <PropertyRows black={false} properties={board.properties.get(false, 'two')} />
-          <PropertyRows black={false} properties={board.properties.get(false, 'closedThree')} />
-          <PropertyRows black={true} properties={board.properties.get(true, 'three')} />
-          <PropertyRows black={true} properties={board.properties.get(true, 'four')} />
-          <PropertyRows black={false} properties={board.properties.get(false, 'three')} />
-          <PropertyRows black={false} properties={board.properties.get(false, 'four')} />
+          <PropertyRows black={true} properties={properties.get(true, 'two')} />
+          <PropertyRows black={true} properties={properties.get(true, 'closedThree')} />
+          <PropertyRows black={false} properties={properties.get(false, 'two')} />
+          <PropertyRows black={false} properties={properties.get(false, 'closedThree')} />
+          <PropertyRows black={true} properties={properties.get(true, 'three')} />
+          <PropertyRows black={true} properties={properties.get(true, 'four')} />
+          <PropertyRows black={false} properties={properties.get(false, 'three')} />
+          <PropertyRows black={false} properties={properties.get(false, 'four')} />
         </>
       )}
       {preference.has(PreferenceOption.showPropertyEyes) && (
         <>
-          <PropertyEyes black={true} properties={board.properties.get(true, 'three')} />
-          <PropertyEyes black={true} properties={board.properties.get(true, 'four')} emphasized />
-          <PropertyEyes black={false} properties={board.properties.get(false, 'three')} />
-          <PropertyEyes black={false} properties={board.properties.get(false, 'four')} emphasized />
+          <PropertyEyes black={true} properties={properties.get(true, 'three')} />
+          <PropertyEyes black={true} properties={properties.get(true, 'four')} emphasized />
+          <PropertyEyes black={false} properties={properties.get(false, 'three')} />
+          <PropertyEyes black={false} properties={properties.get(false, 'four')} emphasized />
         </>
       )}
-      {preference.has(PreferenceOption.showForbiddens) && <Forbiddens points={board.forbiddens} />}
+      {preference.has(PreferenceOption.showForbiddens) && (
+        <Forbiddens points={boardState.current.forbiddens} />
+      )}
     </g>
   )
 }

@@ -1,4 +1,4 @@
-import { Board, Game, N_LINES, Point } from '../rule'
+import { Board, N_LINES, Point } from '../rule'
 import { Options } from '../utils/options'
 import { FreeLinesState } from './freeLines'
 import { FreePointsState } from './freePoints'
@@ -61,11 +61,12 @@ export class BoardState {
   }
 
   private canEditMove(p: Point): boolean {
+    const isBlackTurn = this.inverted ? !this.mainGame.isBlackTurn : this.mainGame.isBlackTurn
     return (
       this.mainGame.canMove(p) &&
       !this.freeBlacks.has(p) &&
       !this.freeWhites.has(p) &&
-      !(this.isBlackTurn && this.board.forbidden(p))
+      !(isBlackTurn && this.current.forbidden(p))
     )
   }
 
@@ -175,7 +176,7 @@ export class BoardState {
 
   /* general */
 
-  get board(): Board {
+  get current(): Board {
     if (this.cache === undefined) {
       this.cache = new Board({
         size: N_LINES,
@@ -186,20 +187,18 @@ export class BoardState {
     return this.cache
   }
 
-  get game(): Game {
-    return this.mainGame.current
-  }
-
   get blacks(): Point[] {
-    return [...(this.inverted ? this.game.whites : this.game.blacks), ...this.freeBlacks.points]
+    return [
+      ...(this.inverted ? this.mainGame.whites : this.mainGame.blacks),
+      ...this.freeBlacks.points,
+    ]
   }
 
   get whites(): Point[] {
-    return [...(this.inverted ? this.game.blacks : this.game.whites), ...this.freeWhites.points]
-  }
-
-  get isBlackTurn(): boolean {
-    return this.inverted ? !this.game.isBlackTurn : this.game.isBlackTurn
+    return [
+      ...(this.inverted ? this.mainGame.blacks : this.mainGame.whites),
+      ...this.freeWhites.points,
+    ]
   }
 
   private get inverted(): boolean {
@@ -210,8 +209,8 @@ export class BoardState {
 
   encode(): string {
     const codes: string[] = []
-    const gameCode = this.mainGame.encode()
-    if (gameCode !== '') codes.push(gameCode)
+    const mainGameCode = this.mainGame.encode()
+    if (mainGameCode !== '') codes.push(mainGameCode)
     if (!this.options.empty) codes.push(`o:${encodeBoardOptions(this.options)}`)
     if (!this.freeBlacks.empty) codes.push(`b:${this.freeBlacks.encode()}`)
     if (!this.freeWhites.empty) codes.push(`w:${this.freeWhites.encode()}`)
@@ -222,21 +221,17 @@ export class BoardState {
 
   static decode(code: string): BoardState | undefined {
     const codes = code.split(',')
-    const findCode = (s: string) =>
-      codes.find(c => c.startsWith(`${s}:`))?.replace(`${s}:`, '') ?? ''
-
-    const gameCode = findCode('g')
-    const gidCode = findCode('gid')
-    const cursorCode = findCode('c')
-    const optionsCode = findCode('o')
-    const freeBlacksCode = findCode('b')
-    const freeWhitesCode = findCode('w')
-    const markerPointsCode = findCode('p')
-    const markerLinesCode = findCode('l')
+    const find = (s: string) => codes.find(c => c.startsWith(s))?.replace(s, '') ?? ''
+    const optionsCode = find('o:')
+    const mainGameCode = `gid:${find('gid:')},g:${find('g:')},c:${find('c:')}`
+    const freeBlacksCode = find('b:')
+    const freeWhitesCode = find('w:')
+    const markerPointsCode = find('p:')
+    const markerLinesCode = find('l:')
     return new BoardState({
       mode: EditMode.mainMoves,
       options: decodeBoardOptions(optionsCode) ?? new Options<BoardOption>(),
-      mainGame: GameState.decode([gameCode, gidCode, cursorCode].join(',')) ?? new GameState(),
+      mainGame: GameState.decode(mainGameCode) ?? new GameState(),
       freeBlacks: FreePointsState.decode(freeBlacksCode) ?? new FreePointsState(),
       freeWhites: FreePointsState.decode(freeWhitesCode) ?? new FreePointsState(),
       markerPoints: FreePointsState.decode(markerPointsCode) ?? new FreePointsState(),
