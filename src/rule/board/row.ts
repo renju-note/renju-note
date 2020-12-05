@@ -1,7 +1,14 @@
 export type Stones = number // stones as bits, e.g. 0b00111010
 
-export const rowKinds = ['two', 'closedThree', 'three', 'four', 'five', 'overline'] as const
-export type RowKind = typeof rowKinds[number]
+export const RowKind: Record<string, number> = {
+  two: 2,
+  closedThree: 13,
+  three: 3,
+  four: 4,
+  five: 5,
+  overline: 6,
+} as const
+export type RowKind = typeof RowKind[keyof typeof RowKind]
 
 export type Row = {
   readonly kind: RowKind
@@ -44,7 +51,7 @@ export const search = (
 
 const BLACK_TWO_PATTERNS: RowPattern[] = [
   {
-    row: { kind: 'two', size: 4, eyes: [2, 3] },
+    row: { kind: RowKind.two, size: 4, eyes: [2, 3] },
     size: 8,
     offset: 2,
     blacks: 0b00001100,
@@ -53,7 +60,7 @@ const BLACK_TWO_PATTERNS: RowPattern[] = [
     whmask: 0b10000001,
   },
   {
-    row: { kind: 'two', size: 4, eyes: [1, 3] },
+    row: { kind: RowKind.two, size: 4, eyes: [1, 3] },
     size: 8,
     offset: 2,
     blacks: 0b00010100,
@@ -62,7 +69,7 @@ const BLACK_TWO_PATTERNS: RowPattern[] = [
     whmask: 0b10000001,
   },
   {
-    row: { kind: 'two', size: 4, eyes: [0, 3] },
+    row: { kind: RowKind.two, size: 4, eyes: [0, 3] },
     size: 8,
     offset: 2,
     blacks: 0b00011000,
@@ -71,7 +78,7 @@ const BLACK_TWO_PATTERNS: RowPattern[] = [
     whmask: 0b10000001,
   },
   {
-    row: { kind: 'two', size: 4, eyes: [1, 2] },
+    row: { kind: RowKind.two, size: 4, eyes: [1, 2] },
     size: 8,
     offset: 2,
     blacks: 0b00100100,
@@ -80,7 +87,7 @@ const BLACK_TWO_PATTERNS: RowPattern[] = [
     whmask: 0b10000001,
   },
   {
-    row: { kind: 'two', size: 4, eyes: [0, 2] },
+    row: { kind: RowKind.two, size: 4, eyes: [0, 2] },
     size: 8,
     offset: 2,
     blacks: 0b00101000,
@@ -89,7 +96,7 @@ const BLACK_TWO_PATTERNS: RowPattern[] = [
     whmask: 0b10000001,
   },
   {
-    row: { kind: 'two', size: 4, eyes: [0, 1] },
+    row: { kind: RowKind.two, size: 4, eyes: [0, 1] },
     size: 8,
     offset: 2,
     blacks: 0b00110000,
@@ -101,7 +108,7 @@ const BLACK_TWO_PATTERNS: RowPattern[] = [
 
 const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
   {
-    row: { kind: 'closedThree', size: 5, eyes: [2, 3] },
+    row: { kind: RowKind.closedThree, size: 5, eyes: [2, 3] },
     size: 7,
     offset: 1,
     blacks: 0b0100110,
@@ -110,7 +117,7 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b1000001,
   },
   {
-    row: { kind: 'closedThree', size: 5, eyes: [1, 3] },
+    row: { kind: RowKind.closedThree, size: 5, eyes: [1, 3] },
     size: 7,
     offset: 1,
     blacks: 0b0101010,
@@ -119,7 +126,7 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b1000001,
   },
   {
-    row: { kind: 'closedThree', size: 5, eyes: [1, 2] },
+    row: { kind: RowKind.closedThree, size: 5, eyes: [1, 2] },
     size: 7,
     offset: 1,
     blacks: 0b0110010,
@@ -128,7 +135,7 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b1000001,
   },
   {
-    row: { kind: 'closedThree', size: 5, eyes: [3, 4] },
+    row: { kind: RowKind.closedThree, size: 5, eyes: [3, 4] },
     size: 7,
     offset: 1,
     blacks: 0b0001110,
@@ -137,7 +144,7 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b1000000,
   },
   {
-    row: { kind: 'closedThree', size: 5, eyes: [3, 5] },
+    row: { kind: RowKind.closedThree, size: 5, eyes: [3, 5] },
     size: 7,
     offset: 1,
     blacks: 0b0010110,
@@ -146,7 +153,7 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b1000000,
   },
   {
-    row: { kind: 'closedThree', size: 5, eyes: [2, 5] },
+    row: { kind: RowKind.closedThree, size: 5, eyes: [2, 5] },
     size: 7,
     offset: 1,
     blacks: 0b0011010,
@@ -155,7 +162,7 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b1000000,
   },
   {
-    row: { kind: 'closedThree', size: 5, eyes: [0, 3] },
+    row: { kind: RowKind.closedThree, size: 5, eyes: [0, 3] },
     size: 7,
     offset: 1,
     blacks: 0b0101100,
@@ -164,7 +171,7 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b0000001,
   },
   {
-    row: { kind: 'closedThree', size: 5, eyes: [0, 2] },
+    row: { kind: RowKind.closedThree, size: 5, eyes: [0, 2] },
     size: 7,
     offset: 1,
     blacks: 0b0110100,
@@ -173,7 +180,7 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b0000001,
   },
   {
-    row: { kind: 'closedThree', size: 5, eyes: [0, 1] },
+    row: { kind: RowKind.closedThree, size: 5, eyes: [0, 1] },
     size: 7,
     offset: 1,
     blacks: 0b0111000,
@@ -182,7 +189,7 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b0000001,
   },
   {
-    row: { kind: 'closedThree', size: 5, eyes: [1, 5] },
+    row: { kind: RowKind.closedThree, size: 5, eyes: [1, 5] },
     size: 7,
     offset: 1,
     blacks: 0b0011100,
@@ -191,7 +198,7 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b0000000,
   },
   {
-    row: { kind: 'closedThree', size: 5, eyes: [1, 4] },
+    row: { kind: RowKind.closedThree, size: 5, eyes: [1, 4] },
     size: 8,
     offset: 2,
     blacks: 0b00110101,
@@ -200,7 +207,7 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b10000000,
   },
   {
-    row: { kind: 'closedThree', size: 5, eyes: [0, 3] },
+    row: { kind: RowKind.closedThree, size: 5, eyes: [0, 3] },
     size: 8,
     offset: 1,
     blacks: 0b10101100,
@@ -212,7 +219,7 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
 
 const BLACK_THREE_PATTERNS: RowPattern[] = [
   {
-    row: { kind: 'three', size: 6, eyes: [4] },
+    row: { kind: RowKind.three, size: 6, eyes: [4] },
     size: 8,
     offset: 1,
     blacks: 0b00011100,
@@ -221,7 +228,7 @@ const BLACK_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b10000001,
   },
   {
-    row: { kind: 'three', size: 6, eyes: [3] },
+    row: { kind: RowKind.three, size: 6, eyes: [3] },
     size: 8,
     offset: 1,
     blacks: 0b00101100,
@@ -230,7 +237,7 @@ const BLACK_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b10000001,
   },
   {
-    row: { kind: 'three', size: 6, eyes: [2] },
+    row: { kind: RowKind.three, size: 6, eyes: [2] },
     size: 8,
     offset: 1,
     blacks: 0b00110100,
@@ -239,7 +246,7 @@ const BLACK_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b10000001,
   },
   {
-    row: { kind: 'three', size: 6, eyes: [1] },
+    row: { kind: RowKind.three, size: 6, eyes: [1] },
     size: 8,
     offset: 1,
     blacks: 0b00111000,
@@ -251,7 +258,7 @@ const BLACK_THREE_PATTERNS: RowPattern[] = [
 
 const BLACK_FOUR_PATTERNS: RowPattern[] = [
   {
-    row: { kind: 'four', size: 5, eyes: [4] },
+    row: { kind: RowKind.four, size: 5, eyes: [4] },
     size: 7,
     offset: 1,
     blacks: 0b0011110,
@@ -260,7 +267,7 @@ const BLACK_FOUR_PATTERNS: RowPattern[] = [
     whmask: 0b1000001,
   },
   {
-    row: { kind: 'four', size: 5, eyes: [3] },
+    row: { kind: RowKind.four, size: 5, eyes: [3] },
     size: 7,
     offset: 1,
     blacks: 0b0101110,
@@ -269,7 +276,7 @@ const BLACK_FOUR_PATTERNS: RowPattern[] = [
     whmask: 0b1000001,
   },
   {
-    row: { kind: 'four', size: 5, eyes: [2] },
+    row: { kind: RowKind.four, size: 5, eyes: [2] },
     size: 7,
     offset: 1,
     blacks: 0b0110110,
@@ -278,7 +285,7 @@ const BLACK_FOUR_PATTERNS: RowPattern[] = [
     whmask: 0b1000001,
   },
   {
-    row: { kind: 'four', size: 5, eyes: [1] },
+    row: { kind: RowKind.four, size: 5, eyes: [1] },
     size: 7,
     offset: 1,
     blacks: 0b0111010,
@@ -287,7 +294,7 @@ const BLACK_FOUR_PATTERNS: RowPattern[] = [
     whmask: 0b1000001,
   },
   {
-    row: { kind: 'four', size: 5, eyes: [0] },
+    row: { kind: RowKind.four, size: 5, eyes: [0] },
     size: 7,
     offset: 1,
     blacks: 0b0111100,
@@ -299,7 +306,7 @@ const BLACK_FOUR_PATTERNS: RowPattern[] = [
 
 const BLACK_FIVE_PATTERNS: RowPattern[] = [
   {
-    row: { kind: 'five', size: 5, eyes: [] },
+    row: { kind: RowKind.five, size: 5, eyes: [] },
     size: 7,
     offset: 1,
     blacks: 0b0111110,
@@ -311,7 +318,7 @@ const BLACK_FIVE_PATTERNS: RowPattern[] = [
 
 const BLACK_OVERLINE_PATTERNS: RowPattern[] = [
   {
-    row: { kind: 'overline', size: 6, eyes: [] },
+    row: { kind: RowKind.overline, size: 6, eyes: [] },
     size: 6,
     offset: 0,
     blacks: 0b111111,
@@ -323,7 +330,7 @@ const BLACK_OVERLINE_PATTERNS: RowPattern[] = [
 
 const WHITE_TWO_PATTERNS: RowPattern[] = [
   {
-    row: { kind: 'two', size: 4, eyes: [2, 3] },
+    row: { kind: RowKind.two, size: 4, eyes: [2, 3] },
     size: 6,
     offset: 1,
     blacks: 0b000000,
@@ -332,7 +339,7 @@ const WHITE_TWO_PATTERNS: RowPattern[] = [
     whmask: 0b000000,
   },
   {
-    row: { kind: 'two', size: 4, eyes: [1, 3] },
+    row: { kind: RowKind.two, size: 4, eyes: [1, 3] },
     size: 6,
     offset: 1,
     blacks: 0b000000,
@@ -341,7 +348,7 @@ const WHITE_TWO_PATTERNS: RowPattern[] = [
     whmask: 0b000000,
   },
   {
-    row: { kind: 'two', size: 4, eyes: [0, 3] },
+    row: { kind: RowKind.two, size: 4, eyes: [0, 3] },
     size: 6,
     offset: 1,
     blacks: 0b000000,
@@ -350,7 +357,7 @@ const WHITE_TWO_PATTERNS: RowPattern[] = [
     whmask: 0b000000,
   },
   {
-    row: { kind: 'two', size: 4, eyes: [1, 2] },
+    row: { kind: RowKind.two, size: 4, eyes: [1, 2] },
     size: 6,
     offset: 1,
     blacks: 0b000000,
@@ -359,7 +366,7 @@ const WHITE_TWO_PATTERNS: RowPattern[] = [
     whmask: 0b000000,
   },
   {
-    row: { kind: 'two', size: 4, eyes: [0, 2] },
+    row: { kind: RowKind.two, size: 4, eyes: [0, 2] },
     size: 6,
     offset: 1,
     blacks: 0b000000,
@@ -368,7 +375,7 @@ const WHITE_TWO_PATTERNS: RowPattern[] = [
     whmask: 0b000000,
   },
   {
-    row: { kind: 'two', size: 4, eyes: [0, 1] },
+    row: { kind: RowKind.two, size: 4, eyes: [0, 1] },
     size: 6,
     offset: 1,
     blacks: 0b000000,
@@ -380,7 +387,7 @@ const WHITE_TWO_PATTERNS: RowPattern[] = [
 
 const WHITE_CLOSED_THREE_PATTERNS: RowPattern[] = [
   {
-    row: { kind: 'closedThree', size: 5, eyes: [2, 3] },
+    row: { kind: RowKind.closedThree, size: 5, eyes: [2, 3] },
     size: 5,
     offset: 0,
     blacks: 0b00000,
@@ -389,7 +396,7 @@ const WHITE_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b00000,
   },
   {
-    row: { kind: 'closedThree', size: 5, eyes: [1, 3] },
+    row: { kind: RowKind.closedThree, size: 5, eyes: [1, 3] },
     size: 5,
     offset: 0,
     blacks: 0b00000,
@@ -398,7 +405,7 @@ const WHITE_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b00000,
   },
   {
-    row: { kind: 'closedThree', size: 5, eyes: [1, 2] },
+    row: { kind: RowKind.closedThree, size: 5, eyes: [1, 2] },
     size: 5,
     offset: 0,
     blacks: 0b00000,
@@ -407,7 +414,7 @@ const WHITE_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b00000,
   },
   {
-    row: { kind: 'closedThree', size: 5, eyes: [3, 4] },
+    row: { kind: RowKind.closedThree, size: 5, eyes: [3, 4] },
     size: 6,
     offset: 1,
     blacks: 0b000001,
@@ -416,7 +423,7 @@ const WHITE_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b000000,
   },
   {
-    row: { kind: 'closedThree', size: 5, eyes: [3, 5] },
+    row: { kind: RowKind.closedThree, size: 5, eyes: [3, 5] },
     size: 6,
     offset: 1,
     blacks: 0b000001,
@@ -425,7 +432,7 @@ const WHITE_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b000000,
   },
   {
-    row: { kind: 'closedThree', size: 5, eyes: [2, 5] },
+    row: { kind: RowKind.closedThree, size: 5, eyes: [2, 5] },
     size: 6,
     offset: 1,
     blacks: 0b000001,
@@ -434,7 +441,7 @@ const WHITE_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b000000,
   },
   {
-    row: { kind: 'closedThree', size: 5, eyes: [0, 3] },
+    row: { kind: RowKind.closedThree, size: 5, eyes: [0, 3] },
     size: 6,
     offset: 0,
     blacks: 0b100000,
@@ -443,7 +450,7 @@ const WHITE_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b000000,
   },
   {
-    row: { kind: 'closedThree', size: 5, eyes: [0, 2] },
+    row: { kind: RowKind.closedThree, size: 5, eyes: [0, 2] },
     size: 6,
     offset: 0,
     blacks: 0b100000,
@@ -452,7 +459,7 @@ const WHITE_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b000000,
   },
   {
-    row: { kind: 'closedThree', size: 5, eyes: [0, 1] },
+    row: { kind: RowKind.closedThree, size: 5, eyes: [0, 1] },
     size: 6,
     offset: 0,
     blacks: 0b100000,
@@ -461,7 +468,7 @@ const WHITE_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b000000,
   },
   {
-    row: { kind: 'closedThree', size: 5, eyes: [1, 5] },
+    row: { kind: RowKind.closedThree, size: 5, eyes: [1, 5] },
     size: 7,
     offset: 1,
     blacks: 0b1000001,
@@ -473,7 +480,7 @@ const WHITE_CLOSED_THREE_PATTERNS: RowPattern[] = [
 
 const WHITE_THREE_PATTERNS: RowPattern[] = [
   {
-    row: { kind: 'three', size: 6, eyes: [4] },
+    row: { kind: RowKind.three, size: 6, eyes: [4] },
     size: 6,
     offset: 0,
     blacks: 0b000000,
@@ -482,7 +489,7 @@ const WHITE_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b000000,
   },
   {
-    row: { kind: 'three', size: 6, eyes: [3] },
+    row: { kind: RowKind.three, size: 6, eyes: [3] },
     size: 6,
     offset: 0,
     blacks: 0b000000,
@@ -491,7 +498,7 @@ const WHITE_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b000000,
   },
   {
-    row: { kind: 'three', size: 6, eyes: [2] },
+    row: { kind: RowKind.three, size: 6, eyes: [2] },
     size: 6,
     offset: 0,
     blacks: 0b000000,
@@ -500,7 +507,7 @@ const WHITE_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b000000,
   },
   {
-    row: { kind: 'three', size: 6, eyes: [1] },
+    row: { kind: RowKind.three, size: 6, eyes: [1] },
     size: 6,
     offset: 0,
     blacks: 0b000000,
@@ -512,7 +519,7 @@ const WHITE_THREE_PATTERNS: RowPattern[] = [
 
 const WHITE_FOUR_PATTERNS: RowPattern[] = [
   {
-    row: { kind: 'four', size: 5, eyes: [4] },
+    row: { kind: RowKind.four, size: 5, eyes: [4] },
     size: 5,
     offset: 0,
     blacks: 0b00000,
@@ -521,7 +528,7 @@ const WHITE_FOUR_PATTERNS: RowPattern[] = [
     whmask: 0b00000,
   },
   {
-    row: { kind: 'four', size: 5, eyes: [3] },
+    row: { kind: RowKind.four, size: 5, eyes: [3] },
     size: 5,
     offset: 0,
     blacks: 0b00000,
@@ -530,7 +537,7 @@ const WHITE_FOUR_PATTERNS: RowPattern[] = [
     whmask: 0b00000,
   },
   {
-    row: { kind: 'four', size: 5, eyes: [2] },
+    row: { kind: RowKind.four, size: 5, eyes: [2] },
     size: 5,
     offset: 0,
     blacks: 0b00000,
@@ -539,7 +546,7 @@ const WHITE_FOUR_PATTERNS: RowPattern[] = [
     whmask: 0b00000,
   },
   {
-    row: { kind: 'four', size: 5, eyes: [1] },
+    row: { kind: RowKind.four, size: 5, eyes: [1] },
     size: 5,
     offset: 0,
     blacks: 0b00000,
@@ -548,7 +555,7 @@ const WHITE_FOUR_PATTERNS: RowPattern[] = [
     whmask: 0b00000,
   },
   {
-    row: { kind: 'four', size: 5, eyes: [0] },
+    row: { kind: RowKind.four, size: 5, eyes: [0] },
     size: 5,
     offset: 0,
     blacks: 0b00000,
@@ -560,7 +567,7 @@ const WHITE_FOUR_PATTERNS: RowPattern[] = [
 
 const WHITE_FIVE_PATTERNS: RowPattern[] = [
   {
-    row: { kind: 'five', size: 5, eyes: [] },
+    row: { kind: RowKind.five, size: 5, eyes: [] },
     size: 5,
     offset: 0,
     blacks: 0b00000,
@@ -571,28 +578,28 @@ const WHITE_FIVE_PATTERNS: RowPattern[] = [
 ]
 
 export const BLACK_PATTERNS: Record<RowKind, RowPattern[]> = {
-  two: BLACK_TWO_PATTERNS,
-  closedThree: BLACK_CLOSED_THREE_PATTERNS,
-  three: BLACK_THREE_PATTERNS,
-  four: BLACK_FOUR_PATTERNS,
-  five: BLACK_FIVE_PATTERNS,
-  overline: BLACK_OVERLINE_PATTERNS,
+  2: BLACK_TWO_PATTERNS,
+  13: BLACK_CLOSED_THREE_PATTERNS,
+  3: BLACK_THREE_PATTERNS,
+  4: BLACK_FOUR_PATTERNS,
+  5: BLACK_FIVE_PATTERNS,
+  6: BLACK_OVERLINE_PATTERNS,
 }
 
 export const WHITE_PATTERNS: Record<RowKind, RowPattern[]> = {
-  two: WHITE_TWO_PATTERNS,
-  closedThree: WHITE_CLOSED_THREE_PATTERNS,
-  three: WHITE_THREE_PATTERNS,
-  four: WHITE_FOUR_PATTERNS,
-  five: WHITE_FIVE_PATTERNS,
-  overline: [],
+  2: WHITE_TWO_PATTERNS,
+  13: WHITE_CLOSED_THREE_PATTERNS,
+  3: WHITE_THREE_PATTERNS,
+  4: WHITE_FOUR_PATTERNS,
+  5: WHITE_FIVE_PATTERNS,
+  6: [],
 }
 
 export const emptyRowsCache = (): Record<RowKind, undefined> => ({
-  two: undefined,
-  closedThree: undefined,
-  three: undefined,
-  four: undefined,
-  five: undefined,
-  overline: undefined,
+  2: undefined,
+  13: undefined,
+  3: undefined,
+  4: undefined,
+  5: undefined,
+  6: undefined,
 })

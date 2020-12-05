@@ -1,4 +1,4 @@
-import { Stones, RowKind, search, emptyRowsCache, BLACK_PATTERNS, WHITE_PATTERNS } from './row'
+import { BLACK_PATTERNS, emptyRowsCache, RowKind, search, Stones, WHITE_PATTERNS } from './row'
 
 const INT_SIZE = 32
 

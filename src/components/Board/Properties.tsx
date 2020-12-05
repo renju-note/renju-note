@@ -1,5 +1,5 @@
 import React, { FC, useContext } from 'react'
-import { Point, Property } from '../../rule'
+import { Point, Property, RowKind } from '../../rule'
 import { BoardStateContext, PreferenceContext, PreferenceOption, SystemContext } from '../contexts'
 
 const Default: FC = () => {
@@ -10,22 +10,22 @@ const Default: FC = () => {
     <g>
       {preference.has(PreferenceOption.showPropertyRows) && (
         <>
-          <PropertyRows black={true} properties={properties.get(true, 'two')} />
-          <PropertyRows black={true} properties={properties.get(true, 'closedThree')} />
-          <PropertyRows black={false} properties={properties.get(false, 'two')} />
-          <PropertyRows black={false} properties={properties.get(false, 'closedThree')} />
-          <PropertyRows black={true} properties={properties.get(true, 'three')} />
-          <PropertyRows black={true} properties={properties.get(true, 'four')} />
-          <PropertyRows black={false} properties={properties.get(false, 'three')} />
-          <PropertyRows black={false} properties={properties.get(false, 'four')} />
+          <PropertyRows black={true} properties={properties.get(true, RowKind.two)} />
+          <PropertyRows black={true} properties={properties.get(true, RowKind.closedThree)} />
+          <PropertyRows black={false} properties={properties.get(false, RowKind.two)} />
+          <PropertyRows black={false} properties={properties.get(false, RowKind.closedThree)} />
+          <PropertyRows black={true} properties={properties.get(true, RowKind.three)} />
+          <PropertyRows black={true} properties={properties.get(true, RowKind.four)} />
+          <PropertyRows black={false} properties={properties.get(false, RowKind.three)} />
+          <PropertyRows black={false} properties={properties.get(false, RowKind.four)} />
         </>
       )}
       {preference.has(PreferenceOption.showPropertyEyes) && (
         <>
-          <PropertyEyes black={true} properties={properties.get(true, 'three')} />
-          <PropertyEyes black={true} properties={properties.get(true, 'four')} emphasized />
-          <PropertyEyes black={false} properties={properties.get(false, 'three')} />
-          <PropertyEyes black={false} properties={properties.get(false, 'four')} emphasized />
+          <PropertyEyes black={true} properties={properties.get(true, RowKind.three)} />
+          <PropertyEyes black={true} properties={properties.get(true, RowKind.four)} emphasized />
+          <PropertyEyes black={false} properties={properties.get(false, RowKind.three)} />
+          <PropertyEyes black={false} properties={properties.get(false, RowKind.four)} emphasized />
         </>
       )}
       {preference.has(PreferenceOption.showForbiddens) && (
