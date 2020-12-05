@@ -2,7 +2,7 @@ export type Stones = number // stones as bits, e.g. 0b00111010
 
 export const RowKind: Record<string, number> = {
   two: 2,
-  closedThree: 13,
+  sword: 13,
   three: 3,
   four: 4,
   five: 5,
@@ -106,9 +106,9 @@ const BLACK_TWO_PATTERNS: RowPattern[] = [
   },
 ]
 
-const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
+const BLACK_SWORD_PATTERNS: RowPattern[] = [
   {
-    row: { kind: RowKind.closedThree, size: 5, eyes: [2, 3] },
+    row: { kind: RowKind.sword, size: 5, eyes: [2, 3] },
     size: 7,
     offset: 1,
     blacks: 0b0100110,
@@ -117,7 +117,7 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b1000001,
   },
   {
-    row: { kind: RowKind.closedThree, size: 5, eyes: [1, 3] },
+    row: { kind: RowKind.sword, size: 5, eyes: [1, 3] },
     size: 7,
     offset: 1,
     blacks: 0b0101010,
@@ -126,7 +126,7 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b1000001,
   },
   {
-    row: { kind: RowKind.closedThree, size: 5, eyes: [1, 2] },
+    row: { kind: RowKind.sword, size: 5, eyes: [1, 2] },
     size: 7,
     offset: 1,
     blacks: 0b0110010,
@@ -135,7 +135,7 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b1000001,
   },
   {
-    row: { kind: RowKind.closedThree, size: 5, eyes: [3, 4] },
+    row: { kind: RowKind.sword, size: 5, eyes: [3, 4] },
     size: 7,
     offset: 1,
     blacks: 0b0001110,
@@ -144,7 +144,7 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b1000000,
   },
   {
-    row: { kind: RowKind.closedThree, size: 5, eyes: [3, 5] },
+    row: { kind: RowKind.sword, size: 5, eyes: [3, 5] },
     size: 7,
     offset: 1,
     blacks: 0b0010110,
@@ -153,7 +153,7 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b1000000,
   },
   {
-    row: { kind: RowKind.closedThree, size: 5, eyes: [2, 5] },
+    row: { kind: RowKind.sword, size: 5, eyes: [2, 5] },
     size: 7,
     offset: 1,
     blacks: 0b0011010,
@@ -162,7 +162,7 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b1000000,
   },
   {
-    row: { kind: RowKind.closedThree, size: 5, eyes: [0, 3] },
+    row: { kind: RowKind.sword, size: 5, eyes: [0, 3] },
     size: 7,
     offset: 1,
     blacks: 0b0101100,
@@ -171,7 +171,7 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b0000001,
   },
   {
-    row: { kind: RowKind.closedThree, size: 5, eyes: [0, 2] },
+    row: { kind: RowKind.sword, size: 5, eyes: [0, 2] },
     size: 7,
     offset: 1,
     blacks: 0b0110100,
@@ -180,7 +180,7 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b0000001,
   },
   {
-    row: { kind: RowKind.closedThree, size: 5, eyes: [0, 1] },
+    row: { kind: RowKind.sword, size: 5, eyes: [0, 1] },
     size: 7,
     offset: 1,
     blacks: 0b0111000,
@@ -189,7 +189,7 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b0000001,
   },
   {
-    row: { kind: RowKind.closedThree, size: 5, eyes: [1, 5] },
+    row: { kind: RowKind.sword, size: 5, eyes: [1, 5] },
     size: 7,
     offset: 1,
     blacks: 0b0011100,
@@ -198,7 +198,7 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b0000000,
   },
   {
-    row: { kind: RowKind.closedThree, size: 5, eyes: [1, 4] },
+    row: { kind: RowKind.sword, size: 5, eyes: [1, 4] },
     size: 8,
     offset: 2,
     blacks: 0b00110101,
@@ -207,7 +207,7 @@ const BLACK_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b10000000,
   },
   {
-    row: { kind: RowKind.closedThree, size: 5, eyes: [0, 3] },
+    row: { kind: RowKind.sword, size: 5, eyes: [0, 3] },
     size: 8,
     offset: 1,
     blacks: 0b10101100,
@@ -385,9 +385,9 @@ const WHITE_TWO_PATTERNS: RowPattern[] = [
   },
 ]
 
-const WHITE_CLOSED_THREE_PATTERNS: RowPattern[] = [
+const WHITE_SWORD_PATTERNS: RowPattern[] = [
   {
-    row: { kind: RowKind.closedThree, size: 5, eyes: [2, 3] },
+    row: { kind: RowKind.sword, size: 5, eyes: [2, 3] },
     size: 5,
     offset: 0,
     blacks: 0b00000,
@@ -396,7 +396,7 @@ const WHITE_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b00000,
   },
   {
-    row: { kind: RowKind.closedThree, size: 5, eyes: [1, 3] },
+    row: { kind: RowKind.sword, size: 5, eyes: [1, 3] },
     size: 5,
     offset: 0,
     blacks: 0b00000,
@@ -405,7 +405,7 @@ const WHITE_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b00000,
   },
   {
-    row: { kind: RowKind.closedThree, size: 5, eyes: [1, 2] },
+    row: { kind: RowKind.sword, size: 5, eyes: [1, 2] },
     size: 5,
     offset: 0,
     blacks: 0b00000,
@@ -414,7 +414,7 @@ const WHITE_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b00000,
   },
   {
-    row: { kind: RowKind.closedThree, size: 5, eyes: [3, 4] },
+    row: { kind: RowKind.sword, size: 5, eyes: [3, 4] },
     size: 6,
     offset: 1,
     blacks: 0b000001,
@@ -423,7 +423,7 @@ const WHITE_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b000000,
   },
   {
-    row: { kind: RowKind.closedThree, size: 5, eyes: [3, 5] },
+    row: { kind: RowKind.sword, size: 5, eyes: [3, 5] },
     size: 6,
     offset: 1,
     blacks: 0b000001,
@@ -432,7 +432,7 @@ const WHITE_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b000000,
   },
   {
-    row: { kind: RowKind.closedThree, size: 5, eyes: [2, 5] },
+    row: { kind: RowKind.sword, size: 5, eyes: [2, 5] },
     size: 6,
     offset: 1,
     blacks: 0b000001,
@@ -441,7 +441,7 @@ const WHITE_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b000000,
   },
   {
-    row: { kind: RowKind.closedThree, size: 5, eyes: [0, 3] },
+    row: { kind: RowKind.sword, size: 5, eyes: [0, 3] },
     size: 6,
     offset: 0,
     blacks: 0b100000,
@@ -450,7 +450,7 @@ const WHITE_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b000000,
   },
   {
-    row: { kind: RowKind.closedThree, size: 5, eyes: [0, 2] },
+    row: { kind: RowKind.sword, size: 5, eyes: [0, 2] },
     size: 6,
     offset: 0,
     blacks: 0b100000,
@@ -459,7 +459,7 @@ const WHITE_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b000000,
   },
   {
-    row: { kind: RowKind.closedThree, size: 5, eyes: [0, 1] },
+    row: { kind: RowKind.sword, size: 5, eyes: [0, 1] },
     size: 6,
     offset: 0,
     blacks: 0b100000,
@@ -468,7 +468,7 @@ const WHITE_CLOSED_THREE_PATTERNS: RowPattern[] = [
     whmask: 0b000000,
   },
   {
-    row: { kind: RowKind.closedThree, size: 5, eyes: [1, 5] },
+    row: { kind: RowKind.sword, size: 5, eyes: [1, 5] },
     size: 7,
     offset: 1,
     blacks: 0b1000001,
@@ -579,7 +579,7 @@ const WHITE_FIVE_PATTERNS: RowPattern[] = [
 
 export const BLACK_PATTERNS: Record<RowKind, RowPattern[]> = {
   2: BLACK_TWO_PATTERNS,
-  13: BLACK_CLOSED_THREE_PATTERNS,
+  13: BLACK_SWORD_PATTERNS,
   3: BLACK_THREE_PATTERNS,
   4: BLACK_FOUR_PATTERNS,
   5: BLACK_FIVE_PATTERNS,
@@ -588,7 +588,7 @@ export const BLACK_PATTERNS: Record<RowKind, RowPattern[]> = {
 
 export const WHITE_PATTERNS: Record<RowKind, RowPattern[]> = {
   2: WHITE_TWO_PATTERNS,
-  13: WHITE_CLOSED_THREE_PATTERNS,
+  13: WHITE_SWORD_PATTERNS,
   3: WHITE_THREE_PATTERNS,
   4: WHITE_FOUR_PATTERNS,
   5: WHITE_FIVE_PATTERNS,

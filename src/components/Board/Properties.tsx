@@ -11,9 +11,9 @@ const Default: FC = () => {
       {preference.has(PreferenceOption.showPropertyRows) && (
         <>
           <PropertyRows black={true} properties={properties.get(true, RowKind.two)} />
-          <PropertyRows black={true} properties={properties.get(true, RowKind.closedThree)} />
+          <PropertyRows black={true} properties={properties.get(true, RowKind.sword)} />
           <PropertyRows black={false} properties={properties.get(false, RowKind.two)} />
-          <PropertyRows black={false} properties={properties.get(false, RowKind.closedThree)} />
+          <PropertyRows black={false} properties={properties.get(false, RowKind.sword)} />
           <PropertyRows black={true} properties={properties.get(true, RowKind.three)} />
           <PropertyRows black={true} properties={properties.get(true, RowKind.four)} />
           <PropertyRows black={false} properties={properties.get(false, RowKind.three)} />
