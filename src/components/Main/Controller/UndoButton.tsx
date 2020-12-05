@@ -9,15 +9,15 @@ import {
   RiIndeterminateCircleFill,
   RiIndeterminateCircleLine,
 } from 'react-icons/ri'
-import { EditMode } from '../../../state'
+import { EditMode, GameState } from '../../../state'
 import { TabName } from '../../../state/advanced'
 import { AdvancedStateContext, BoardStateContext, SystemContext } from '../../contexts'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
   const { boardState, setBoardState } = useContext(BoardStateContext)
-  if (boardState.canClearRest) return <ClearRestMenu />
-  if (boardState.canClearGame) return <ClearGameMenu />
+  if (boardState.canClearRestOfMoves) return <ClearRestOfMovesMenu />
+  if (boardState.canClearMainGame) return <ClearMainGameMenu />
   return (
     <IconButton
       onClick={() => setBoardState(boardState.undo())}
@@ -26,7 +26,7 @@ const Default: FC = () => {
       aria-label="undo"
       size={system.buttonSize}
       variant="ghost"
-      colorScheme={boardState.isForking ? 'purple' : undefined}
+      colorScheme={boardState.mainGame.isBranching ? 'purple' : undefined}
       isDisabled={!boardState.canUndo}
     />
   )
@@ -49,9 +49,9 @@ const UndoIcon: FC<{ mode: EditMode }> = ({ mode }) => {
   }
 }
 
-const ClearRestMenu: FC = () => {
+const ClearRestOfMovesMenu: FC = () => {
   const system = useContext(SystemContext)
-  const { boardState, setBoardState } = useContext(BoardStateContext)
+  const { gameState, setGameState } = useContext(BoardStateContext)
   return (
     <Menu autoSelect={false} placement="top">
       <MenuButton
@@ -61,7 +61,7 @@ const ClearRestMenu: FC = () => {
         icon={<RiDeleteBack2Line style={{ transform: 'rotate(180deg)' }} />}
       />
       <MenuList>
-        <MenuItem onClick={() => setBoardState(boardState.clearRestMoves())}>
+        <MenuItem onClick={() => setGameState(gameState.clearRest())}>
           <Icon boxSize="small" as={RiDeleteBack2Line} style={{ transform: 'rotate(180deg)' }} />
           <Text ml={2} mr={1}>
             Clear Rest of Moves
@@ -72,12 +72,12 @@ const ClearRestMenu: FC = () => {
   )
 }
 
-const ClearGameMenu: FC = () => {
+const ClearMainGameMenu: FC = () => {
   const system = useContext(SystemContext)
-  const { boardState, setBoardState } = useContext(BoardStateContext)
+  const { setGameState } = useContext(BoardStateContext)
   const { advancedState, setAdvancedState } = useContext(AdvancedStateContext)
   const onClearGame = () => {
-    setBoardState(boardState.clearGame())
+    setGameState(new GameState())
     setAdvancedState(advancedState.setTab(TabName.search))
   }
   return (

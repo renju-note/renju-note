@@ -5,7 +5,7 @@ import { LastMove, Moves, Orders } from './common'
 const Default: FC = () => {
   const { advancedState } = useContext(AdvancedStateContext)
   if (advancedState.previewingGame === undefined) return <></>
-  const game = advancedState.previewingGame
+  const game = advancedState.previewingGame.main
   return (
     <g>
       <Overlay />

@@ -17,7 +17,7 @@ const Default: FC = () => {
   }, [])
 
   const { boardState } = useContext(BoardStateContext)
-  const gid = boardState.mainGame.gid
+  const gid = boardState.mainGame.gameid
   const [gameView, setGameView] = useState<GameView>()
   useEffect(() => {
     if (gid === undefined) {

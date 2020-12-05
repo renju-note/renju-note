@@ -1,14 +1,18 @@
 import React, { createContext, FC, useState } from 'react'
-import { BoardState } from '../../state'
+import { BoardState, GameState } from '../../state'
 
 export type BoardStateContext = {
   boardState: BoardState
+  gameState: GameState
   setBoardState: (s: BoardState) => void
+  setGameState: (s: GameState) => void
 }
 
 export const BoardStateContext = createContext<BoardStateContext>({
   boardState: new BoardState(),
+  gameState: new GameState(),
   setBoardState: () => {},
+  setGameState: () => {},
 })
 
 export const BoardStateProvider: FC = ({ children }) => {
@@ -19,8 +23,13 @@ export const BoardStateProvider: FC = ({ children }) => {
     setBoardStateState(s)
     window.history.replaceState(null, '', `#${s.encode()}`)
   }
+  const setGameState = (s: GameState) => {
+    setBoardState(boardState.setMainGame(s))
+  }
   return (
-    <BoardStateContext.Provider value={{ boardState, setBoardState }}>
+    <BoardStateContext.Provider
+      value={{ boardState, gameState: boardState.mainGame, setBoardState, setGameState }}
+    >
       {children}
     </BoardStateContext.Provider>
   )
