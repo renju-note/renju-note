@@ -5,27 +5,27 @@ import { BoardStateContext, PreferenceContext, PreferenceOption, SystemContext }
 const Default: FC = () => {
   const { boardState } = useContext(BoardStateContext)
   const { preference } = useContext(PreferenceContext)
-  const properties = boardState.current.properties
+  const current = boardState.current
   return (
     <g>
       {preference.has(PreferenceOption.showPropertyRows) && (
         <>
-          <PropertyRows black={true} properties={properties.get(true, RowKind.two)} />
-          <PropertyRows black={true} properties={properties.get(true, RowKind.sword)} />
-          <PropertyRows black={false} properties={properties.get(false, RowKind.two)} />
-          <PropertyRows black={false} properties={properties.get(false, RowKind.sword)} />
-          <PropertyRows black={true} properties={properties.get(true, RowKind.three)} />
-          <PropertyRows black={true} properties={properties.get(true, RowKind.four)} />
-          <PropertyRows black={false} properties={properties.get(false, RowKind.three)} />
-          <PropertyRows black={false} properties={properties.get(false, RowKind.four)} />
+          <PropertyRows black properties={current.properties(true, RowKind.two)} />
+          <PropertyRows black properties={current.properties(true, RowKind.sword)} />
+          <PropertyRows black properties={current.properties(true, RowKind.three)} />
+          <PropertyRows black properties={current.properties(true, RowKind.four)} />
+          <PropertyRows properties={current.properties(false, RowKind.two)} />
+          <PropertyRows properties={current.properties(false, RowKind.sword)} />
+          <PropertyRows properties={current.properties(false, RowKind.three)} />
+          <PropertyRows properties={current.properties(false, RowKind.four)} />
         </>
       )}
       {preference.has(PreferenceOption.showPropertyEyes) && (
         <>
-          <PropertyEyes black={true} properties={properties.get(true, RowKind.three)} />
-          <PropertyEyes black={true} properties={properties.get(true, RowKind.four)} emphasized />
-          <PropertyEyes black={false} properties={properties.get(false, RowKind.three)} />
-          <PropertyEyes black={false} properties={properties.get(false, RowKind.four)} emphasized />
+          <PropertyEyes black properties={current.properties(true, RowKind.three)} />
+          <PropertyEyes black properties={current.properties(true, RowKind.four)} emphasized />
+          <PropertyEyes properties={current.properties(false, RowKind.three)} />
+          <PropertyEyes properties={current.properties(false, RowKind.four)} emphasized />
         </>
       )}
       {preference.has(PreferenceOption.showForbiddens) && (
@@ -68,9 +68,9 @@ const Forbiddens: FC<{ points: Point[] }> = ({ points }) => {
 }
 
 type PropertiesProps = {
-  black: boolean
+  black?: boolean
   properties: Property[]
-  emphasized?: boolean | undefined
+  emphasized?: boolean
 }
 
 const PropertyRows: FC<PropertiesProps> = ({ black, properties }) => {

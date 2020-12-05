@@ -32,22 +32,22 @@ export class Square {
   }
 
   put(black: boolean, p: Point): Square {
-    const bsize = this.size
+    const size = this.size
     const facets = this.facets.map(([direction, lines]) => {
-      const [i, j] = toIndex(p, direction, bsize)
+      const [i, j] = toIndex(p, direction, size)
       const newLine = lines[i].put(black, j)
       const newLines = [...lines.slice(0, i), newLine, ...lines.slice(i + 1, lines.length)]
       return [direction, newLines] as Facet
     })
-    return new Square({ size: this.size, facets: facets })
+    return new Square({ size, facets })
   }
 
   putMulti(black: boolean, ps: Point[]): Square {
-    const bsize = this.size
+    const size = this.size
     const facets = this.facets.map(([direction, lines]) => {
       const m = new Map<number, number[]>()
       for (let n = 0; n < ps.length; n++) {
-        const [i, j] = toIndex(ps[n], direction, bsize)
+        const [i, j] = toIndex(ps[n], direction, size)
         if (m.has(i)) {
           m.get(i)!.push(j)
         } else {
@@ -57,18 +57,18 @@ export class Square {
       const newLines = lines.map((l, i) => (m.has(i) ? l.putMulti(black, m.get(i)!) : l))
       return [direction, newLines] as Facet
     })
-    return new Square({ size: this.size, facets: facets })
+    return new Square({ size, facets })
   }
 
   remove(p: Point): Square {
-    const bsize = this.size
+    const size = this.size
     const facets = this.facets.map(([direction, lines]) => {
-      const [i, j] = toIndex(p, direction, bsize)
+      const [i, j] = toIndex(p, direction, size)
       const newLine = lines[i].remove(j)
       const newLines = [...lines.slice(0, i), newLine, ...lines.slice(i + 1, lines.length)]
       return [direction, newLines] as Facet
     })
-    return new Square({ size: this.size, facets: facets })
+    return new Square({ size, facets })
   }
 
   toString(): string {
@@ -81,7 +81,7 @@ export class Square {
   }
 }
 
-const toIndex = ([x, y]: Point, direction: Direction, bsize: number): Index => {
+const toIndex = ([x, y]: Point, direction: Direction, size: number): Index => {
   let i: number, j: number
   switch (direction) {
     case 'vertical':
@@ -89,17 +89,17 @@ const toIndex = ([x, y]: Point, direction: Direction, bsize: number): Index => {
     case 'horizontal':
       return [y - 1, x - 1]
     case 'ascending':
-      i = x - 1 + (bsize - y)
-      j = i < bsize ? x - 1 : y - 1
+      i = x - 1 + (size - y)
+      j = i < size ? x - 1 : y - 1
       return [i, j]
     case 'descending':
       i = x - 1 + (y - 1)
-      j = i < bsize ? x - 1 : bsize - y
+      j = i < size ? x - 1 : size - y
       return [i, j]
   }
 }
 
-const toPoint = ([i, j]: Index, direction: Direction, bsize: number): Point => {
+const toPoint = ([i, j]: Index, direction: Direction, size: number): Point => {
   let x: number, y: number
   switch (direction) {
     case 'vertical':
@@ -107,12 +107,12 @@ const toPoint = ([i, j]: Index, direction: Direction, bsize: number): Point => {
     case 'horizontal':
       return [j + 1, i + 1]
     case 'ascending':
-      x = i < bsize ? j + 1 : i + 1 + (j + 1) - bsize
-      y = i < bsize ? bsize - (i + 1) + (j + 1) : j + 1
+      x = i < size ? j + 1 : i + 1 + (j + 1) - size
+      y = i < size ? size - (i + 1) + (j + 1) : j + 1
       return [x, y]
     case 'descending':
-      x = i < bsize ? j + 1 : i + 1 + (j + 1) - bsize
-      y = i < bsize ? i + 1 - j : bsize - j
+      x = i < size ? j + 1 : i + 1 + (j + 1) - size
+      y = i < size ? i + 1 - j : size - j
       return [x, y]
   }
 }
@@ -148,22 +148,20 @@ class RowsProxy {
 
   get(black: boolean, kind: RowKind): SquareRow[] {
     const cache = black ? this.bcache : this.wcache
-    if (cache[kind] === undefined) {
-      cache[kind] = this.compute(black, kind)
-    }
+    if (cache[kind] === undefined) cache[kind] = this.compute(black, kind)
     return cache[kind]!
   }
 
   private compute(black: boolean, kind: RowKind): SquareRow[] {
-    const bsize = this.size
+    const size = this.size
     return this.facets.flatMap(([direction, lines]) =>
       lines.flatMap((l, i) =>
-        l.rows.get(black, kind).map(lrow => ({
-          kind: lrow.kind,
+        l.rows.get(black, kind).map(row => ({
+          kind: row.kind,
           direction: direction,
-          start: toPoint([i, lrow.start], direction, bsize),
-          end: toPoint([i, lrow.start + lrow.size - 1], direction, bsize),
-          eyes: lrow.eyes.map(j => toPoint([i, j], direction, bsize)),
+          start: toPoint([i, row.start], direction, size),
+          end: toPoint([i, row.start + row.size - 1], direction, size),
+          eyes: row.eyes.map(j => toPoint([i, j], direction, size)),
         }))
       )
     )
