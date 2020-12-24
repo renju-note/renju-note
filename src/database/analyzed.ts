@@ -27,6 +27,19 @@ const indexedFields: Record<TableName, string> = {
   games: 'id,date,*board,*player',
 }
 
+type SearchParams = {
+  moves?: Point[]
+  playerId?: number
+  limit?: number
+  offset?: number
+  desc?: boolean
+}
+
+type SearchCondition = {
+  board?: string
+  player?: number
+}
+
 export type SearchResult = {
   ids: number[]
   hit: number
@@ -76,29 +89,36 @@ export class AnalyzedDatabase extends Dexie {
     progress(100)
   }
 
-  async search(
-    moves: Point[],
-    limit: number,
-    offset: number = 0,
-    desc: boolean = true
-  ): Promise<SearchResult> {
-    if (moves.length < MIN_ENCODE_MOVES) {
-      return {
-        ids: [],
-        hit: 0,
-        error: `Too few moves to search (${moves.length} < ${MIN_ENCODE_MOVES})`,
+  async search({
+    moves,
+    playerId,
+    limit = 20,
+    offset = 0,
+    desc = true,
+  }: SearchParams): Promise<SearchResult> {
+    const condition: SearchCondition = {}
+    if (moves !== undefined) {
+      if (moves.length < MIN_ENCODE_MOVES) {
+        return {
+          ids: [],
+          hit: 0,
+          error: `Too few moves to search (${moves.length} < ${MIN_ENCODE_MOVES})`,
+        }
       }
-    }
-    if (moves.length > MAX_ENCODE_MOVES) {
-      return {
-        ids: [],
-        hit: 0,
-        error: `Too many moves to search (${moves.length} > ${MAX_ENCODE_MOVES})`,
+      if (moves.length > MAX_ENCODE_MOVES) {
+        return {
+          ids: [],
+          hit: 0,
+          error: `Too many moves to search (${moves.length} > ${MAX_ENCODE_MOVES})`,
+        }
       }
+      const boardCode = encodeMoves(moves)[moves.length - 1]
+      condition.board = boardCode
     }
 
-    const boardCode = encodeMoves(moves)[moves.length - 1]
-    const condition = { board: boardCode }
+    if (playerId !== undefined) {
+      condition.player = playerId
+    }
 
     const hit = await this.games.where(condition).distinct().count()
     if (hit <= 0) {

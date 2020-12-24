@@ -12,6 +12,7 @@ export class AdvancedState {
   readonly tab: TabName = TabName.setup
   readonly tabs: TabName[] = [TabName.setup]
   readonly previewingGame: GameState | undefined
+  readonly playerId: number | undefined
 
   constructor(init?: undefined | Partial<AdvancedState>) {
     if (init !== undefined) Object.assign(this, init)
@@ -43,5 +44,13 @@ export class AdvancedState {
 
   unsetPreviewingGame(): AdvancedState {
     return this.update({ previewingGame: undefined })
+  }
+
+  setPlayerId(playerId: number): AdvancedState {
+    return this.update({ playerId })
+  }
+
+  unsetPlayerId(): AdvancedState {
+    return this.update({ playerId: undefined })
   }
 }

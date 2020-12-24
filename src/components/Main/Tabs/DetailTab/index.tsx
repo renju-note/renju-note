@@ -1,7 +1,8 @@
-import { Box, Heading, Link, Stack, Text } from '@chakra-ui/react'
+import { Box, Button, Heading, Link, Stack, Text } from '@chakra-ui/react'
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
-import { GameView, RIFCity, RIFCountry, RIFDatabase } from '../../../../database'
-import { BoardStateContext, SystemContext } from '../../../contexts'
+import { GameView, RIFCity, RIFCountry, RIFDatabase, RIFPlayer } from '../../../../database'
+import { TabName } from '../../../../state'
+import { AdvancedStateContext, BoardStateContext, SystemContext } from '../../../contexts'
 import { WonIcon } from '../common'
 
 const Default: FC = () => {
@@ -29,6 +30,7 @@ const Default: FC = () => {
       if (result.length > 0) setGameView(result[0])
     })()
   }, [gid])
+
   if (gameView === undefined) {
     return (
       <Stack justify="center" align="center">
@@ -94,19 +96,16 @@ const Default: FC = () => {
       <Heading as="h2" size="sm">
         Black Player
       </Heading>
-      <Text pl="1rem">
-        {`${black.name.trim()} ${black.surname.trim()}`}
-        <br />
-        {countriesMap.get(black.country)?.name}
-      </Text>
+      <Box pl="1rem">
+        <Player player={black} countriesMap={countriesMap} />
+      </Box>
 
       <Heading as="h2" size="sm">
         White Player
       </Heading>
-      <Text pl="1rem">
-        {`${white.name.trim()} ${white.surname.trim()}`} <br />
-        {countriesMap.get(black.country)?.name}
-      </Text>
+      <Box pl="1rem">
+        <Player player={white} countriesMap={countriesMap} />
+      </Box>
 
       <Heading as="h2" size="sm">
         Tournament
@@ -124,7 +123,9 @@ const Default: FC = () => {
       <Heading as="h2" size="sm">
         Publisher
       </Heading>
-      <Text pl="1rem">{`${publisher.name.trim()} ${publisher.surname.trim()}`}</Text>
+      <Box pl="1rem">
+        <Player player={publisher} countriesMap={countriesMap} />
+      </Box>
 
       <Heading as="h2" size="sm">
         Generated Link
@@ -136,6 +137,26 @@ const Default: FC = () => {
         </Link>
       </Text>
     </Stack>
+  )
+}
+
+const Player: FC<{ player: RIFPlayer; countriesMap: Map<number, RIFCountry> }> = ({
+  player,
+  countriesMap,
+}) => {
+  const { advancedState, setAdvancedState } = useContext(AdvancedStateContext)
+  const onClick = () => {
+    setAdvancedState(advancedState.setPlayerId(player.id).setTab(TabName.search))
+  }
+  return (
+    <Text>
+      <Button
+        variant="link"
+        onClick={onClick}
+      >{`${player.name.trim()} ${player.surname.trim()}`}</Button>
+      <br />
+      {countriesMap.get(player.country)?.name}
+    </Text>
   )
 }
 
