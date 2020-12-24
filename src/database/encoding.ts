@@ -1,25 +1,25 @@
 import { N_LINES, Point } from '../rule/foundation'
 
-type BitBoard = [number[], number[]]
+type BitBoard = number[]
 
 export const encodeMoves = (moves: Point[]): string[] => {
   const movesVariants = variants(moves)
   const boardVariants: BitBoard[] = [
-    [prepareHalf(), prepareHalf()],
-    [prepareHalf(), prepareHalf()],
-    [prepareHalf(), prepareHalf()],
-    [prepareHalf(), prepareHalf()],
-    [prepareHalf(), prepareHalf()],
-    [prepareHalf(), prepareHalf()],
-    [prepareHalf(), prepareHalf()],
-    [prepareHalf(), prepareHalf()],
+    prepare(),
+    prepare(),
+    prepare(),
+    prepare(),
+    prepare(),
+    prepare(),
+    prepare(),
+    prepare(),
   ]
   const result: string[] = []
   for (let i = 0; i < moves.length; i++) {
     const candidates: string[] = []
     for (let v = 0; v < movesVariants.length; v++) {
       const [x, y] = movesVariants[v][i]
-      boardVariants[v][i % 2][x - 1] += 2 ** (y - 1)
+      boardVariants[v][x - 1] += ((i % 2) + 1) << (2 * (y - 1))
       candidates[v] = encode(boardVariants[v])
     }
     result[i] = stringMin(candidates)
@@ -28,13 +28,9 @@ export const encodeMoves = (moves: Point[]): string[] => {
 }
 
 const encode = (board: BitBoard): string => {
-  return '+' + encodeHalf(board[0]) + '-' + encodeHalf(board[1])
-}
-
-const encodeHalf = (halfBoard: number[]): string => {
   let result = ''
   let skip = 0
-  for (const line of halfBoard) {
+  for (const line of board) {
     if (line === 0) {
       skip++
     } else {
@@ -49,7 +45,7 @@ const encodeHalf = (halfBoard: number[]): string => {
   return result
 }
 
-const prepareHalf = (): number[] => new Array(N_LINES).fill(0)
+const prepare = (): number[] => new Array(N_LINES).fill(0)
 
 const variants = (ps: Point[]): Point[][] => {
   return [
