@@ -3,10 +3,10 @@ import { Game, Point } from '../rule'
 import { encodeMoves } from './encoding'
 import { RIFDatabase, RIFGame } from './rif'
 
-const CHUNK_SIZE = 1000
+const CHUNK_SIZE = 2000
 
 const MIN_ENCODE_MOVES = 3
-const MAX_ENCODE_MOVES = 10
+const MAX_ENCODE_MOVES = 20
 const MAX_SEARCH_HIT = 1000
 
 const tableNames = ['games'] as const
@@ -86,14 +86,14 @@ export class AnalyzedDatabase extends Dexie {
       return {
         ids: [],
         hit: 0,
-        error: `Under searchable moves (${moves.length} < ${MIN_ENCODE_MOVES})`,
+        error: `Too few moves to search (${moves.length} < ${MIN_ENCODE_MOVES})`,
       }
     }
     if (moves.length > MAX_ENCODE_MOVES) {
       return {
         ids: [],
         hit: 0,
-        error: `Over searchable moves (${moves.length} > ${MAX_ENCODE_MOVES})`,
+        error: `Too many moves to search (${moves.length} > ${MAX_ENCODE_MOVES})`,
       }
     }
 
@@ -101,11 +101,18 @@ export class AnalyzedDatabase extends Dexie {
     const condition = { board: boardCode }
 
     const hit = await this.games.where(condition).distinct().count()
+    if (hit <= 0) {
+      return {
+        ids: [],
+        hit,
+        error: 'No game found',
+      }
+    }
     if (hit > MAX_SEARCH_HIT) {
       return {
         ids: [],
         hit,
-        error: `Too many hits (${hit} > ${MAX_SEARCH_HIT})`,
+        error: `Too many games (${hit} > ${MAX_SEARCH_HIT})`,
       }
     }
 

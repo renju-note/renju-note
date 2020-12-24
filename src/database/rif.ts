@@ -1,7 +1,7 @@
 import Dexie, { Table } from 'dexie'
 import { decodePoints, Point } from '../rule'
 
-const CHUNK_SIZE = 1000
+const CHUNK_SIZE = 2000
 
 const tableNames = [
   'countries',
