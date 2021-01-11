@@ -215,6 +215,42 @@ const BLACK_SWORD_PATTERNS: RowPattern[] = [
     blmask: 0b00000000,
     whmask: 0b00000001,
   },
+  {
+    row: { kind: RowKind.sword, size: 5, eyes: [0, 4] },
+    size: 8,
+    offset: 2,
+    blacks: 0b00111001,
+    whites: 0b00000000,
+    blmask: 0b00000000,
+    whmask: 0b10000000,
+  },
+  {
+    row: { kind: RowKind.sword, size: 5, eyes: [0, 4] },
+    size: 8,
+    offset: 1,
+    blacks: 0b10011100,
+    whites: 0b00000000,
+    blmask: 0b00000000,
+    whmask: 0b00000001,
+  },
+  {
+    row: { kind: RowKind.sword, size: 5, eyes: [2, 4] },
+    size: 8,
+    offset: 2,
+    blacks: 0b00101101,
+    whites: 0b00000000,
+    blmask: 0b00000000,
+    whmask: 0b10000000,
+  },
+  {
+    row: { kind: RowKind.sword, size: 5, eyes: [0, 2] },
+    size: 8,
+    offset: 1,
+    blacks: 0b10110100,
+    whites: 0b00000000,
+    blmask: 0b00000000,
+    whmask: 0b00000001,
+  },
 ]
 
 const BLACK_THREE_PATTERNS: RowPattern[] = [
