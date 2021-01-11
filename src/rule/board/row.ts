@@ -144,7 +144,7 @@ const BLACK_SWORD_PATTERNS: RowPattern[] = [
     whmask: 0b1000000,
   },
   {
-    row: { kind: RowKind.sword, size: 5, eyes: [3, 5] },
+    row: { kind: RowKind.sword, size: 5, eyes: [2, 4] },
     size: 7,
     offset: 1,
     blacks: 0b0010110,
@@ -153,7 +153,7 @@ const BLACK_SWORD_PATTERNS: RowPattern[] = [
     whmask: 0b1000000,
   },
   {
-    row: { kind: RowKind.sword, size: 5, eyes: [2, 5] },
+    row: { kind: RowKind.sword, size: 5, eyes: [1, 4] },
     size: 7,
     offset: 1,
     blacks: 0b0011010,
@@ -189,7 +189,7 @@ const BLACK_SWORD_PATTERNS: RowPattern[] = [
     whmask: 0b0000001,
   },
   {
-    row: { kind: RowKind.sword, size: 5, eyes: [1, 5] },
+    row: { kind: RowKind.sword, size: 5, eyes: [0, 4] },
     size: 7,
     offset: 1,
     blacks: 0b0011100,
@@ -423,7 +423,7 @@ const WHITE_SWORD_PATTERNS: RowPattern[] = [
     whmask: 0b000000,
   },
   {
-    row: { kind: RowKind.sword, size: 5, eyes: [3, 5] },
+    row: { kind: RowKind.sword, size: 5, eyes: [2, 4] },
     size: 6,
     offset: 1,
     blacks: 0b000001,
@@ -432,7 +432,7 @@ const WHITE_SWORD_PATTERNS: RowPattern[] = [
     whmask: 0b000000,
   },
   {
-    row: { kind: RowKind.sword, size: 5, eyes: [2, 5] },
+    row: { kind: RowKind.sword, size: 5, eyes: [1, 4] },
     size: 6,
     offset: 1,
     blacks: 0b000001,
@@ -468,7 +468,7 @@ const WHITE_SWORD_PATTERNS: RowPattern[] = [
     whmask: 0b000000,
   },
   {
-    row: { kind: RowKind.sword, size: 5, eyes: [1, 5] },
+    row: { kind: RowKind.sword, size: 5, eyes: [0, 4] },
     size: 7,
     offset: 1,
     blacks: 0b1000001,
