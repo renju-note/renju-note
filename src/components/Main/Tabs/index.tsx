@@ -2,6 +2,7 @@ import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
 import React, { FC, useContext } from 'react'
 import { TabName } from '../../../state/advanced'
 import { AdvancedStateContext } from '../../contexts'
+import AnalysisTab from './AnalysisTab'
 import DetailTab from './DetailTab'
 import SearchTab from './SearchTab'
 import SetupTab from './SetupTab'
@@ -31,6 +32,12 @@ const Default: FC = () => {
               return (
                 <TabPanel key={key}>
                   <DetailTab />
+                </TabPanel>
+              )
+            case TabName.analysis:
+              return (
+                <TabPanel key={key}>
+                  <AnalysisTab />
                 </TabPanel>
               )
             case TabName.setup:

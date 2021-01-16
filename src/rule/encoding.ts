@@ -12,6 +12,10 @@ export const encodePoints = (ps: Point[]): string => {
   return ret
 }
 
+export const encodePointsWithSeparator = (ps: Point[], sep: string): string => {
+  return ps.map(encode).join(sep)
+}
+
 export const decodePoints = (code: string): Point[] | undefined => {
   const codes = code.match(/[a-oA-O][0-9]+/g)
   if (!codes) return

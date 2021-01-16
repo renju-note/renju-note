@@ -1,16 +1,17 @@
 import { GameState } from './common'
 
-const tabNames = ['search', 'detail', 'setup'] as const
+const tabNames = ['search', 'detail', 'analysis', 'setup'] as const
 export type TabName = typeof tabNames[number]
 export const TabName: Record<TabName, TabName> = {
   search: 'search',
   detail: 'detail',
+  analysis: 'analysis',
   setup: 'setup',
 } as const
 
 export class AdvancedState {
   readonly tab: TabName = TabName.setup
-  readonly tabs: TabName[] = [TabName.setup]
+  readonly tabs: TabName[] = [TabName.analysis, TabName.setup]
   readonly previewingGame: GameState | undefined
 
   constructor(init?: undefined | Partial<AdvancedState>) {
