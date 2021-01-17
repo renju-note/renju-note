@@ -3,6 +3,13 @@ import { Game, Point } from '../rule'
 import { encodeMoves } from './encoding'
 import { RIFDatabase, RIFGame } from './rif'
 
+const VERSION = 2
+const EXAMPLE_MOVES: Point[] = [
+  [8, 8],
+  [9, 9],
+  [6, 6],
+] // I13
+
 const CHUNK_SIZE = 2000
 
 const MIN_ENCODE_MOVES = 3
@@ -43,7 +50,7 @@ export class AnalyzedDatabase extends Dexie {
 
   constructor() {
     super(AnalyzedDatabase.DBNAME)
-    this.version(1).stores(indexedFields)
+    this.version(VERSION).stores(indexedFields)
     this.games = this.table(TableName.games)
   }
 
@@ -120,5 +127,15 @@ export class AnalyzedDatabase extends Dexie {
     if (desc) collection = collection.reverse()
     const ids = (await collection.sortBy('date')).slice(offset, offset + limit).map(g => g.id)
     return { ids, hit }
+  }
+
+  async ready(): Promise<boolean> {
+    try {
+      const example = encodeMoves(EXAMPLE_MOVES)[EXAMPLE_MOVES.length - 1]
+      return (await this.games.where({ board: example }).first()) !== undefined
+    } catch (e) {
+      console.log(e)
+      return false
+    }
   }
 }
