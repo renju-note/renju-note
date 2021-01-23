@@ -180,6 +180,10 @@ export class RIFDatabase extends Dexie {
     })
   }
 
+  async getPlayer(playerId: RIFPlayer['id']): Promise<RIFPlayer | undefined> {
+    return await this.players.get(playerId)
+  }
+
   async getGamesByIdRange(start: RIFGame['id'], end: RIFGame['id']): Promise<RIFGame[]> {
     return await this.games.where('id').between(start, end).toArray()
   }

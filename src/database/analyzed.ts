@@ -127,6 +127,14 @@ export class AnalyzedDatabase extends Dexie {
       condition.player = playerId
     }
 
+    if (condition.player === undefined && condition.board === undefined) {
+      return {
+        ids: [],
+        hit: 0,
+        error: 'Search condition is not set',
+      }
+    }
+
     const hit = await this.games.where(condition).distinct().count()
     if (hit <= 0) {
       return {

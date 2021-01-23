@@ -19,24 +19,31 @@ const Default: FC = () => {
     ;(async () => setReady(await analyzedDB.ready()))()
   }, [])
 
+  const searchMoves = advancedState.searchWithMoves ? gameState.current.moves : undefined
+  const searchPlayerId = advancedState.searchPlayerId
   const [page, setPage] = useState<number>(0)
+
   const [ids, setIds] = useState<number[]>([])
   const [hit, setHit] = useState<number>(0)
   const [error, setError] = useState<string | undefined>()
-  const onSearch = async (moves?: Point[], playerId?: number) => {
+  const onSearch = async (moves?: Point[], playerId?: number, page?: number) => {
     const { ids, hit, error } = await analyzedDB.search({
       moves,
       playerId,
       limit: pageSize,
-      offset: page * pageSize,
+      offset: (page ?? 0) * pageSize,
     })
     setIds(ids)
     setHit(hit)
     setError(error)
   }
   useEffect(() => {
-    onSearch(gameState.current.moves, advancedState.playerId)
-  }, [gameState.current.size, advancedState.playerId, page])
+    setPage(0)
+    onSearch(searchMoves, searchPlayerId)
+  }, [searchMoves?.length, searchPlayerId])
+  useEffect(() => {
+    onSearch(searchMoves, searchPlayerId, page)
+  }, [page])
   return (
     <Stack justify="center" align="center">
       <Box>
