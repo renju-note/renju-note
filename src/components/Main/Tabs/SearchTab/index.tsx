@@ -14,6 +14,11 @@ const Default: FC = () => {
   const analyzedDB = useMemo(() => new AnalyzedDatabase(), [])
   const pageSize = system.seachPageSize
 
+  const [ready, setReady] = useState<boolean>()
+  useEffect(() => {
+    ;(async () => setReady(await analyzedDB.ready()))()
+  }, [])
+
   const [page, setPage] = useState<number>(0)
   const [ids, setIds] = useState<number[]>([])
   const [hit, setHit] = useState<number>(0)
@@ -37,6 +42,13 @@ const Default: FC = () => {
       <Box>
         <SearchController />
       </Box>
+      {!ready && (
+        <Text color="red.600" my="1rem">
+          Search failed (maybe app was updated).
+          <br />
+          Please load file again from &lsquo;Setup&rsquo; tab.
+        </Text>
+      )}
       {error && (
         <Text color="gray.600" py="1rem">
           {error}
