@@ -144,6 +144,16 @@ export class RIFDatabase extends Dexie {
     this.games = this.table(TableName.games)
   }
 
+  async searchPlayers(prefixes: string[], limit: number = 10): Promise<RIFPlayer[]> {
+    return await this.players
+      .where('surname')
+      .startsWithAnyOfIgnoreCase(prefixes)
+      .or('name')
+      .startsWithAnyOfIgnoreCase(prefixes)
+      .limit(limit)
+      .sortBy('surname')
+  }
+
   async getGameViews(gameIds: RIFGame['id'][]): Promise<GameView[]> {
     const games = await this.games.bulkGet(gameIds)
     const [blacks, whites, publishers, tournaments, rules, openings] = await Promise.all([

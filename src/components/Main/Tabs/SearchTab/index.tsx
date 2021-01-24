@@ -19,7 +19,10 @@ const Default: FC = () => {
     ;(async () => setReady(await analyzedDB.ready()))()
   }, [])
 
-  const searchMoves = advancedState.searchWithMoves ? gameState.current.moves : undefined
+  const searchMoves =
+    advancedState.searchWithMoves && gameState.current.size > 0
+      ? gameState.current.moves
+      : undefined
   const searchPlayerId = advancedState.searchPlayerId
   const [page, setPage] = useState<number>(0)
 

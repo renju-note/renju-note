@@ -7,11 +7,13 @@ import {
   InputLeftAddon,
   InputRightElement,
   SimpleGrid,
+  useDisclosure,
 } from '@chakra-ui/react'
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { RiRadioButtonLine, RiUser3Fill } from 'react-icons/ri'
-import { RIFDatabase, RIFPlayer } from '../../../../database'
-import { AdvancedStateContext, BoardStateContext, SystemContext } from '../../../contexts'
+import { RIFDatabase, RIFPlayer } from '../../../../../database'
+import { AdvancedStateContext, BoardStateContext, SystemContext } from '../../../../contexts'
+import PlayerModal from './PlayerModal'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
@@ -28,6 +30,8 @@ const Default: FC = () => {
       setPlayer(undefined)
     }
   }, [playerId])
+
+  const playerDisclosure = useDisclosure()
   return (
     <SimpleGrid width={system.W} px="1rem" columns={2} spacing={1}>
       <Box>
@@ -59,6 +63,7 @@ const Default: FC = () => {
             placeholder="select player"
             isReadOnly
             value={player ? `${player.name.trim()} ${player.surname.trim()}` : ''}
+            onClick={playerDisclosure.onOpen}
           />
           <InputRightElement>
             <CloseButton
@@ -67,6 +72,7 @@ const Default: FC = () => {
             />
           </InputRightElement>
         </InputGroup>
+        <PlayerModal isOpen={playerDisclosure.isOpen} onClose={playerDisclosure.onClose} />
       </Box>
     </SimpleGrid>
   )
