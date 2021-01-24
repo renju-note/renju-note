@@ -131,7 +131,7 @@ export class AnalyzedDatabase extends Dexie {
       return {
         ids: [],
         hit: 0,
-        error: 'Search condition is not set',
+        error: 'Specify moves or player',
       }
     }
 
