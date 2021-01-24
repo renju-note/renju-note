@@ -53,20 +53,22 @@ const Default: FC = () => {
             <colgroup span={1} style={{ width: (system.W * 1) / 16 }} />
             <colgroup span={1} style={{ width: (system.W * 1) / 16 }} />
             <colgroup span={1} style={{ width: (system.W * 2) / 16 }} />
-            <tr>
-              <th>Black</th>
-              <td>
-                <WonIcon won={gameView.blackWon} />
-              </td>
-              <td>{gameView.btime || '?'} min</td>
-            </tr>
-            <tr>
-              <th>White</th>
-              <td>
-                <WonIcon won={gameView.whiteWon} />
-              </td>
-              <td>{gameView.wtime || '?'} min</td>
-            </tr>
+            <tbody>
+              <tr>
+                <th>Black</th>
+                <td>
+                  <WonIcon won={gameView.blackWon} />
+                </td>
+                <td>{gameView.btime || '?'} min</td>
+              </tr>
+              <tr>
+                <th>White</th>
+                <td>
+                  <WonIcon won={gameView.whiteWon} />
+                </td>
+                <td>{gameView.wtime || '?'} min</td>
+              </tr>
+            </tbody>
           </table>
         </Box>
         <Box width={(system.W * 10) / 16}>
