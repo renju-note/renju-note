@@ -110,7 +110,11 @@ const PlayerInput: FC = () => {
             onChange={e => onChange(e.target.value)}
           />
           <InputRightElement>
-            <CloseButton size="sm" onClick={onUnsetPlayer} />
+            <CloseButton
+              size="sm"
+              onClick={onUnsetPlayer}
+              disabled={advancedState.searchPlayerId === undefined}
+            />
           </InputRightElement>
         </InputGroup>
       </PopoverTrigger>
