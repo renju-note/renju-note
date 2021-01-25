@@ -1,4 +1,4 @@
-import { Text } from '@chakra-ui/react'
+import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { GameView, RIFDatabase, RIFPlayer } from '../../../../database'
 import { Game } from '../../../../rule'
@@ -24,17 +24,17 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
     setAdvancedState(advancedState.setPreviewingGame(gameState))
   }
   return (
-    <table className="search-result">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Black</th>
-          <th colSpan={3}>Result</th>
-          <th>White</th>
-          <th>Rule</th>
-          <th>Op.</th>
-        </tr>
-      </thead>
+    <Table size="rjn-info" variant="rjn-info">
+      <Thead>
+        <Tr>
+          <Th>Date</Th>
+          <Th>Black</Th>
+          <Th colSpan={3}>Result</Th>
+          <Th>White</Th>
+          <Th>Rule</Th>
+          <Th>Op.</Th>
+        </Tr>
+      </Thead>
       <colgroup span={1} style={{ width: (system.W * 4) / 20 }} />
       <colgroup span={1} style={{ width: (system.W * 5) / 20 }} />
       <colgroup span={1} style={{ width: (system.W * 1) / 40 }} />
@@ -43,53 +43,33 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
       <colgroup span={1} style={{ width: (system.W * 5) / 20 }} />
       <colgroup span={1} style={{ width: (system.W * 2) / 20 }} />
       <colgroup span={1} style={{ width: (system.W * 2) / 20 }} />
-      <tbody>
+      <Tbody>
         {items.map((g, key) => {
           const [mgid, pgid] = [boardState.mainGame.gameid, advancedState.previewingGame?.gameid]
-          const className = g.id === mgid ? 'main' : g.id === pgid ? 'previewing' : undefined
           return (
-            <tr key={key} onClick={() => onClick(g)} className={className}>
-              <td>
-                <Text fontFamily="Courier Prime" color="gray.600">
-                  {g.tournament.start}
-                </Text>
-              </td>
-              <td>
-                <Text fontFamily="Noto Serif" color="gray.800">
-                  {playerShortName(g.black)}
-                </Text>
-              </td>
-              <td>
+            <Tr
+              key={key}
+              onClick={() => onClick(g)}
+              bg={g.id === mgid ? 'green.100' : g.id === pgid ? 'purple.100' : undefined}
+              _hover={{ bg: 'gray.100' }}
+            >
+              <Td isNumeric>{g.tournament.start}</Td>
+              <Td>{playerShortName(g.black)}</Td>
+              <Td>
                 <WonIcon won={g.blackWon} />
-              </td>
-              <td>
-                <Text fontFamily="Noto Serif" color="gray.800">
-                  {g.moves.length.toString()}
-                </Text>
-              </td>
-              <td>
+              </Td>
+              <Td>{g.moves.length.toString()}</Td>
+              <Td>
                 <WonIcon won={g.whiteWon} />
-              </td>
-              <td>
-                <Text fontFamily="Noto Serif" color="gray.800">
-                  {playerShortName(g.white)}
-                </Text>
-              </td>
-              <td>
-                <Text fontFamily="Courier Prime" color="gray.600">
-                  {ruleShortName(g.rule.name)}
-                </Text>
-              </td>
-              <td>
-                <Text fontFamily="Courier Prime" color="gray.600">
-                  {g.opening.abbr.toUpperCase()}
-                </Text>
-              </td>
-            </tr>
+              </Td>
+              <Td>{playerShortName(g.white)}</Td>
+              <Td isNumeric>{ruleShortName(g.rule.name)}</Td>
+              <Td isNumeric>{g.opening.abbr.toUpperCase()}</Td>
+            </Tr>
           )
         })}
-      </tbody>
-    </table>
+      </Tbody>
+    </Table>
   )
 }
 

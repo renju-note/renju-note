@@ -12,6 +12,10 @@ import {
   PopoverContent,
   PopoverTrigger,
   SimpleGrid,
+  Table,
+  Tbody,
+  Td,
+  Tr,
   useDisclosure,
 } from '@chakra-ui/react'
 import React, { FC, useContext, useMemo, useRef, useState } from 'react'
@@ -115,15 +119,15 @@ const PlayerInput: FC = () => {
       <PopoverContent>
         <PopoverArrow />
         <PopoverBody>
-          <table className="search-result">
-            <tbody>
+          <Table variant="unstyled" size="sm">
+            <Tbody>
               {players.map((p, i) => (
-                <tr key={i} onClick={() => onSetPlayer(p)}>
-                  <td>{`${p.name.trim()} ${p.surname.trim()}`}</td>
-                </tr>
+                <Tr key={i} onClick={() => onSetPlayer(p)} _hover={{ bg: 'gray.100' }}>
+                  <Td>{`${p.name.trim()} ${p.surname.trim()}`}</Td>
+                </Tr>
               ))}
-            </tbody>
-          </table>
+            </Tbody>
+          </Table>
         </PopoverBody>
       </PopoverContent>
     </Popover>
