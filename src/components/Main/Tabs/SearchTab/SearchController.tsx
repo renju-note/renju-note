@@ -18,7 +18,7 @@ import {
   Tr,
   useDisclosure,
 } from '@chakra-ui/react'
-import React, { FC, useContext, useMemo, useRef, useState } from 'react'
+import React, { FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { RiRadioButtonLine, RiUser3Fill } from 'react-icons/ri'
 import { RIFDatabase, RIFPlayer } from '../../../../database'
 import { AdvancedStateContext, BoardStateContext, SystemContext } from '../../../contexts'
@@ -76,13 +76,7 @@ const PlayerInput: FC = () => {
     })()
   }
   const onSetPlayer = (player: RIFPlayer) => {
-    const playerId = player.id
-    setAdvancedState(advancedState.setSearchPlayerId(playerId))
-    ;(async () => {
-      const player = await rifDB.getPlayer(playerId)
-      const playerName = player ? `${player.name.trim()} ${player.surname.trim()}` : ''
-      setValue(playerName)
-    })()
+    setAdvancedState(advancedState.setSearchPlayerId(player.id))
     popoverDisclosure.onClose()
   }
   const onUnsetPlayer = () => {
@@ -90,6 +84,16 @@ const PlayerInput: FC = () => {
     setValue('')
     popoverDisclosure.onClose()
   }
+
+  const playerId = advancedState.searchPlayerId
+  useEffect(() => {
+    if (typeof playerId !== 'number') return
+    ;(async () => {
+      const player = await rifDB.getPlayer(playerId)
+      const playerName = player ? `${player.name.trim()} ${player.surname.trim()}` : ''
+      setValue(playerName)
+    })()
+  }, [playerId])
 
   const playerInputRef = useRef(null)
   return (
