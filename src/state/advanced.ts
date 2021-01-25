@@ -39,12 +39,8 @@ export class AdvancedState {
     return this.tabs.indexOf(this.tab)
   }
 
-  setPreviewingGame(gameState: GameState): AdvancedState {
+  setPreviewingGame(gameState: GameState | undefined): AdvancedState {
     return this.update({ previewingGame: gameState })
-  }
-
-  unsetPreviewingGame(): AdvancedState {
-    return this.update({ previewingGame: undefined })
   }
 
   setSearchPlayerId(id: number | undefined): AdvancedState {

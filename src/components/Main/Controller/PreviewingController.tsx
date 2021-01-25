@@ -15,14 +15,14 @@ const Default: FC = () => {
         onClick={() => {
           if (advancedState.previewingGame === undefined) return
           setBoardState(new BoardState({ mainGame: advancedState.previewingGame }))
-          setAdvancedState(advancedState.unsetPreviewingGame().setTab(TabName.detail))
+          setAdvancedState(advancedState.setPreviewingGame(undefined).setTab(TabName.detail))
         }}
       >
         Open
       </Button>
       <Button
         width={system.W / 4}
-        onClick={() => setAdvancedState(advancedState.unsetPreviewingGame())}
+        onClick={() => setAdvancedState(advancedState.setPreviewingGame(undefined))}
       >
         Cancel
       </Button>
