@@ -157,35 +157,35 @@ export class RIFDatabase extends Dexie {
   async getGameViews(gameIds: RIFGame['id'][]): Promise<GameView[]> {
     const games = await this.games.bulkGet(gameIds)
     const [blacks, whites, publishers, tournaments, rules, openings] = await Promise.all([
-      this.players.bulkGet(games.map(g => g.black)),
-      this.players.bulkGet(games.map(g => g.white)),
-      this.players.bulkGet(games.map(g => g.publisher)),
-      this.tournaments.bulkGet(games.map(g => g.tournament)),
-      this.rules.bulkGet(games.map(g => g.rule)),
-      this.openings.bulkGet(games.map(g => g.opening)),
+      this.players.bulkGet(games.map(g => g?.black ?? 0)),
+      this.players.bulkGet(games.map(g => g?.white ?? 0)),
+      this.players.bulkGet(games.map(g => g?.publisher ?? 0)),
+      this.tournaments.bulkGet(games.map(g => g?.tournament ?? 0)),
+      this.rules.bulkGet(games.map(g => g?.rule ?? 0)),
+      this.openings.bulkGet(games.map(g => g?.opening ?? 0)),
     ])
     return games.map((game, i) => {
-      const r = game.bresult
+      const r = game?.bresult ?? null
       const blackWon = r === 1 ? true : r === 0 ? false : null
       const whiteWon = r === 0 ? true : r === 1 ? false : null
       return {
-        id: game.id,
-        black: blacks[i],
-        white: whites[i],
+        id: game?.id ?? 0,
+        black: blacks[i] ?? unknownRIFPlayer(),
+        white: whites[i] ?? unknownRIFPlayer(),
         blackWon,
         whiteWon,
-        moves: decodePoints(game.move) ?? [],
-        btime: game.btime,
-        wtime: game.wtime,
-        opening: openings[i],
-        rule: rules[i],
-        alt: game.alt,
+        moves: decodePoints(game?.move ?? '') ?? [],
+        btime: game?.btime ?? 0,
+        wtime: game?.wtime ?? 0,
+        opening: openings[i] ?? unknownRIFOpening(),
+        rule: rules[i] ?? unknownRIFRule(),
+        alt: game?.alt ?? '',
         alts: [], // TODO
-        swap: game.swap,
-        info: game.info,
-        publisher: publishers[i],
-        tournament: tournaments[i],
-        round: game.round,
+        swap: game?.swap ?? '',
+        info: game?.info ?? '',
+        publisher: publishers[i] ?? unknownRIFPlayer(),
+        tournament: tournaments[i] ?? unknownRIFTournament(),
+        round: game?.round ?? '',
       }
     })
   }
@@ -449,3 +449,36 @@ const getElemWithId = (elems: HTMLCollection, i: number): [Element, number] | un
   if (isNaN(id)) return
   return [e, id]
 }
+
+const unknownRIFPlayer = (): RIFPlayer => ({
+  id: 0,
+  name: '',
+  surname: '',
+  country: 0,
+  city: 0,
+})
+
+const unknownRIFOpening = (): RIFOpening => ({
+  id: 0,
+  name: '',
+  abbr: '',
+})
+
+const unknownRIFRule = (): RIFRule => ({
+  id: 0,
+  name: '',
+  info: '',
+})
+
+const unknownRIFTournament = (): RIFTournament => ({
+  id: 0,
+  name: '',
+  country: 0,
+  city: 0,
+  year: 0,
+  month: 0,
+  start: '',
+  end: '',
+  rule: 0,
+  rated: false,
+})
