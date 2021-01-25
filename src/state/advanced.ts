@@ -12,7 +12,7 @@ export class AdvancedState {
   readonly tab: TabName = TabName.setup
   readonly tabs: TabName[] = [TabName.setup]
   readonly previewingGame: GameState | undefined
-  readonly searchPlayerId: number | undefined
+  readonly searchPlayerId?: number
   readonly searchWithMoves: boolean = true
 
   constructor(init?: undefined | Partial<AdvancedState>) {
@@ -39,20 +39,12 @@ export class AdvancedState {
     return this.tabs.indexOf(this.tab)
   }
 
-  setPreviewingGame(gameState: GameState): AdvancedState {
+  setPreviewingGame(gameState: GameState | undefined): AdvancedState {
     return this.update({ previewingGame: gameState })
   }
 
-  unsetPreviewingGame(): AdvancedState {
-    return this.update({ previewingGame: undefined })
-  }
-
-  setSearchPlayerId(id: number): AdvancedState {
+  setSearchPlayerId(id: number | undefined): AdvancedState {
     return this.update({ searchPlayerId: id })
-  }
-
-  unsetSearchPlayerId(): AdvancedState {
-    return this.update({ searchPlayerId: undefined })
   }
 
   setSearchWithMoves(on: boolean): AdvancedState {

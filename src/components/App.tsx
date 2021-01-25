@@ -3,10 +3,11 @@ import React, { FC } from 'react'
 import './App.css'
 import { BoardStateProvider, PreferenceProvider, SystemProvider } from './contexts'
 import Main from './Main'
+import theme from './theme'
 
 const Default: FC = () => {
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
       <SystemProvider>
         <PreferenceProvider>
           <BoardStateProvider>

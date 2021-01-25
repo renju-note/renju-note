@@ -11,39 +11,3 @@ button:disabled {
 svg text {
   user-select: none;
 }
-
-.search-result th {
-  text-align: center;
-  font-family: 'Roboto';
-  font-weight: normal;
-  color: gray;
-}
-
-.search-result td {
-  text-align: center;
-}
-
-.search-result tr:hover td {
-  background-color: whitesmoke;
-}
-
-.search-result tr.previewing td {
-  background-color: lavender;
-}
-
-.search-result tr.main td {
-  background-color: honeydew;
-}
-
-.detail-game th {
-  text-align: left;
-  font-family: 'Roboto';
-  font-weight: bolder;
-  color: dimgray;
-}
-
-.detail-game td {
-  text-align: left;
-  font-family: 'Roboto';
-  color: dimgray;
-}

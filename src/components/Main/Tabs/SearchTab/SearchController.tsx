@@ -12,6 +12,10 @@ import {
   PopoverContent,
   PopoverTrigger,
   SimpleGrid,
+  Table,
+  Tbody,
+  Td,
+  Tr,
   useDisclosure,
 } from '@chakra-ui/react'
 import React, { FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
@@ -62,21 +66,8 @@ const PlayerInput: FC = () => {
   const rifDB = useMemo(() => new RIFDatabase(), [])
 
   const [value, setValue] = useState<string>('')
-  useEffect(() => {
-    const playerId = advancedState.searchPlayerId
-    if (playerId) {
-      ;(async () => {
-        const player = await rifDB.getPlayer(playerId)
-        const playerName = player ? `${player.name.trim()} ${player.surname.trim()}` : ''
-        setValue(playerName)
-      })()
-    } else {
-      setValue('')
-    }
-  }, [advancedState.searchPlayerId])
-
-  const popoverDisclosure = useDisclosure()
   const [players, setPlayers] = useState<RIFPlayer[]>([])
+  const popoverDisclosure = useDisclosure()
   const onChange = (value: string) => {
     setValue(value)
     ;(async () => {
@@ -89,9 +80,20 @@ const PlayerInput: FC = () => {
     popoverDisclosure.onClose()
   }
   const onUnsetPlayer = () => {
-    setAdvancedState(advancedState.unsetSearchPlayerId())
+    setAdvancedState(advancedState.setSearchPlayerId(undefined))
+    setValue('')
     popoverDisclosure.onClose()
   }
+
+  const playerId = advancedState.searchPlayerId
+  useEffect(() => {
+    if (typeof playerId !== 'number') return
+    ;(async () => {
+      const player = await rifDB.getPlayer(playerId)
+      const playerName = player ? `${player.name.trim()} ${player.surname.trim()}` : ''
+      setValue(playerName)
+    })()
+  }, [playerId])
 
   const playerInputRef = useRef(null)
   return (
@@ -113,7 +115,7 @@ const PlayerInput: FC = () => {
             <CloseButton
               size="sm"
               onClick={onUnsetPlayer}
-              disabled={advancedState.searchPlayerId === undefined}
+              disabled={advancedState.searchPlayerId === undefined && !popoverDisclosure.isOpen}
             />
           </InputRightElement>
         </InputGroup>
@@ -121,15 +123,15 @@ const PlayerInput: FC = () => {
       <PopoverContent>
         <PopoverArrow />
         <PopoverBody>
-          <table className="search-result">
-            <tbody>
+          <Table variant="unstyled" size="sm">
+            <Tbody>
               {players.map((p, i) => (
-                <tr key={i} onClick={() => onSetPlayer(p)}>
-                  <td>{`${p.name.trim()} ${p.surname.trim()}`}</td>
-                </tr>
+                <Tr key={i} onClick={() => onSetPlayer(p)} _hover={{ bg: 'gray.100' }}>
+                  <Td>{`${p.name.trim()} ${p.surname.trim()}`}</Td>
+                </Tr>
               ))}
-            </tbody>
-          </table>
+            </Tbody>
+          </Table>
         </PopoverBody>
       </PopoverContent>
     </Popover>

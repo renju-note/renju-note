@@ -1,4 +1,4 @@
-import { Box, Button, Heading, Link, Stack, Text } from '@chakra-ui/react'
+import { Box, Button, Heading, Link, Stack, Table, Tbody, Td, Text, Th, Tr } from '@chakra-ui/react'
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { GameView, RIFCity, RIFCountry, RIFDatabase, RIFPlayer } from '../../../../database'
 import { TabName } from '../../../../state'
@@ -43,55 +43,55 @@ const Default: FC = () => {
   const { black, white, tournament, rule, publisher } = gameView
   const url = `https://www.renju.net/media/games.php?gameid=${gameView.id}`
   return (
-    <Stack px="1rem" fontFamily="Noto Serif" color="gray.800">
+    <Stack px="1rem" fontFamily="Noto Serif">
       <Heading as="h2" size="sm">
         Game
       </Heading>
       <Stack pl="1rem" isInline>
         <Box width={(system.W * 4) / 16}>
-          <table className="detail-game">
+          <Table size="rjn-info" variant="rjn-info">
             <colgroup span={1} style={{ width: (system.W * 1) / 16 }} />
             <colgroup span={1} style={{ width: (system.W * 1) / 16 }} />
             <colgroup span={1} style={{ width: (system.W * 2) / 16 }} />
-            <tbody>
-              <tr>
-                <th>Black</th>
-                <td>
+            <Tbody>
+              <Tr>
+                <Th>Black</Th>
+                <Td>
                   <WonIcon won={gameView.blackWon} />
-                </td>
-                <td>{gameView.btime || '?'} min</td>
-              </tr>
-              <tr>
-                <th>White</th>
-                <td>
+                </Td>
+                <Td isNumeric>{gameView.btime || '?'} min</Td>
+              </Tr>
+              <Tr>
+                <Th>White</Th>
+                <Td>
                   <WonIcon won={gameView.whiteWon} />
-                </td>
-                <td>{gameView.wtime || '?'} min</td>
-              </tr>
-            </tbody>
-          </table>
+                </Td>
+                <Td isNumeric>{gameView.wtime || '?'} min</Td>
+              </Tr>
+            </Tbody>
+          </Table>
         </Box>
         <Box width={(system.W * 10) / 16}>
-          <table className="detail-game">
+          <Table size="rjn-info" variant="rjn-info">
             <colgroup span={1} style={{ width: (system.W * 1) / 16 }} />
             <colgroup span={1} style={{ width: (system.W * 3) / 16 }} />
             <colgroup span={1} style={{ width: (system.W * 1) / 16 }} />
             <colgroup span={1} style={{ width: (system.W * 5) / 16 }} />
-            <tbody>
-              <tr>
-                <th>Rule</th>
-                <td>{rule.name}</td>
-                <th>Alt</th>
-                <td>{gameView.alt}</td>
-              </tr>
-              <tr>
-                <th>Swap</th>
-                <td>{gameView.swap}</td>
-                <th>Info</th>
-                <td>{gameView.info}</td>
-              </tr>
-            </tbody>
-          </table>
+            <Tbody>
+              <Tr>
+                <Th>Rule</Th>
+                <Td isNumeric>{rule.name}</Td>
+                <Th>Alt</Th>
+                <Td isNumeric>{gameView.alt}</Td>
+              </Tr>
+              <Tr>
+                <Th>Swap</Th>
+                <Td isNumeric>{gameView.swap}</Td>
+                <Th>Info</Th>
+                <Td isNumeric>{gameView.info}</Td>
+              </Tr>
+            </Tbody>
+          </Table>
         </Box>
       </Stack>
 
