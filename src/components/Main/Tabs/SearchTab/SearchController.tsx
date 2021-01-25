@@ -14,7 +14,7 @@ import {
   SimpleGrid,
   useDisclosure,
 } from '@chakra-ui/react'
-import React, { FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, useContext, useMemo, useRef, useState } from 'react'
 import { RiRadioButtonLine, RiUser3Fill } from 'react-icons/ri'
 import { RIFDatabase, RIFPlayer } from '../../../../database'
 import { AdvancedStateContext, BoardStateContext, SystemContext } from '../../../contexts'
@@ -62,21 +62,8 @@ const PlayerInput: FC = () => {
   const rifDB = useMemo(() => new RIFDatabase(), [])
 
   const [value, setValue] = useState<string>('')
-  useEffect(() => {
-    const playerId = advancedState.searchPlayerId
-    if (playerId) {
-      ;(async () => {
-        const player = await rifDB.getPlayer(playerId)
-        const playerName = player ? `${player.name.trim()} ${player.surname.trim()}` : ''
-        setValue(playerName)
-      })()
-    } else {
-      setValue('')
-    }
-  }, [advancedState.searchPlayerId])
-
-  const popoverDisclosure = useDisclosure()
   const [players, setPlayers] = useState<RIFPlayer[]>([])
+  const popoverDisclosure = useDisclosure()
   const onChange = (value: string) => {
     setValue(value)
     ;(async () => {
@@ -85,11 +72,18 @@ const PlayerInput: FC = () => {
     })()
   }
   const onSetPlayer = (player: RIFPlayer) => {
-    setAdvancedState(advancedState.setSearchPlayerId(player.id))
+    const playerId = player.id
+    setAdvancedState(advancedState.setSearchPlayerId(playerId))
+    ;(async () => {
+      const player = await rifDB.getPlayer(playerId)
+      const playerName = player ? `${player.name.trim()} ${player.surname.trim()}` : ''
+      setValue(playerName)
+    })()
     popoverDisclosure.onClose()
   }
   const onUnsetPlayer = () => {
-    setAdvancedState(advancedState.unsetSearchPlayerId())
+    setAdvancedState(advancedState.setSearchPlayerId(undefined))
+    setValue('')
     popoverDisclosure.onClose()
   }
 
@@ -113,7 +107,7 @@ const PlayerInput: FC = () => {
             <CloseButton
               size="sm"
               onClick={onUnsetPlayer}
-              disabled={advancedState.searchPlayerId === undefined}
+              disabled={advancedState.searchPlayerId === undefined && !popoverDisclosure.isOpen}
             />
           </InputRightElement>
         </InputGroup>
