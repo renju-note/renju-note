@@ -1,38 +1,40 @@
-import { Heading, Stack, Text } from '@chakra-ui/react'
+import { Button, Heading, Stack, Text } from '@chakra-ui/react'
 import React, { FC, useContext, useEffect, useState } from 'react'
 import { encodePoints, Point } from '../../../../rule'
 import { BoardStateContext } from '../../../contexts'
 
+const DEPTH_LIMIT = 25
+
 const Default: FC = () => {
-  const { boardState, gameState } = useContext(BoardStateContext)
-  const [quintetModule, setQuintetModule] = useState<any>()
-  const [quintetMessage, setQuintetMessage] = useState<string>('')
+  const { boardState } = useContext(BoardStateContext)
+  const [quintet, setQuintet] = useState<any>()
   useEffect(() => {
-    import('@renju-note/quintet').then(m => setQuintetModule(m))
+    import('@renju-note/quintet').then(quintet => setQuintet(quintet))
   }, [])
-  useEffect(() => {
-    if (quintetModule === undefined) return
+
+  const [blackSolution, setBlackSolution] = useState<Point[]>([])
+  const [whiteSolution, setWhiteSolution] = useState<Point[]>([])
+  const onSolve = (black: boolean) => {
+    if (quintet === undefined) return
     const blacks = new Uint8Array(boardState.current.blacks.map(encodeXY))
     const whites = new Uint8Array(boardState.current.whites.map(encodeXY))
-    const result: Uint8Array = quintetModule.solve_vcf(
-      blacks,
-      whites,
-      gameState.isBlackTurn,
-      10,
-      false
-    )
-    if (result) {
-      setQuintetMessage(encodePoints(Array.from(result).map(decodeXY)))
+    const rawSolution: Uint8Array = quintet.solve_vcf(blacks, whites, black, DEPTH_LIMIT, false)
+    const solution = rawSolution === undefined ? [] : Array.from(rawSolution).map(decodeXY)
+    if (black) {
+      setBlackSolution(solution)
     } else {
-      setQuintetMessage('')
+      setWhiteSolution(solution)
     }
-  }, [gameState.current.size])
+  }
   return (
     <Stack px="1rem" fontFamily="Noto Serif" color="gray.800">
       <Heading as="h2" size="sm">
         VCF
       </Heading>
-      <Text pl="1rem">{quintetMessage}</Text>
+      <Button onClick={() => onSolve(true)}>Black</Button>
+      <Text pl="1rem">{encodePoints(blackSolution)}</Text>
+      <Button onClick={() => onSolve(false)}>White</Button>
+      <Text pl="1rem">{encodePoints(whiteSolution)}</Text>
     </Stack>
   )
 }
