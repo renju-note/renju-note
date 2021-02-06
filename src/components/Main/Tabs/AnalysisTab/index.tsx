@@ -1,4 +1,13 @@
-import { Button, Heading, Stack, Text } from '@chakra-ui/react'
+import {
+  Button,
+  Heading,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Stack,
+  Text,
+  useClipboard,
+} from '@chakra-ui/react'
 import React, { FC, useContext, useEffect, useState } from 'react'
 import { encodePoints, Point } from '../../../../rule'
 import { BoardStateContext } from '../../../contexts'
@@ -26,8 +35,27 @@ const Default: FC = () => {
       setWhiteSolution(solution)
     }
   }
+
+  const boardCode =
+    encodePoints(boardState.current.blacks, ',') +
+    '/' +
+    encodePoints(boardState.current.whites, ',')
+  const { onCopy } = useClipboard(boardCode)
   return (
-    <Stack px="1rem" fontFamily="Noto Serif" color="gray.800">
+    <Stack px="1rem">
+      <InputGroup size="sm">
+        <Input
+          size="sm"
+          type="string"
+          placeholder="blacks/whites"
+          value={boardCode}
+          isReadOnly
+          onClick={onCopy}
+        />
+        <InputRightElement>
+          <Button size="xs">copy</Button>
+        </InputRightElement>
+      </InputGroup>
       <Heading as="h2" size="sm">
         VCF
       </Heading>
