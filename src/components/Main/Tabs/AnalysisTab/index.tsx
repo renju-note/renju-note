@@ -1,6 +1,7 @@
 import {
   Button,
   Heading,
+  IconButton,
   Input,
   InputGroup,
   InputRightElement,
@@ -9,6 +10,7 @@ import {
   useClipboard,
 } from '@chakra-ui/react'
 import React, { FC, useContext, useEffect, useState } from 'react'
+import { RiClipboardLine } from 'react-icons/ri'
 import { encodePoints, Point } from '../../../../rule'
 import { BoardStateContext } from '../../../contexts'
 
@@ -44,16 +46,9 @@ const Default: FC = () => {
   return (
     <Stack px="1rem">
       <InputGroup size="sm">
-        <Input
-          size="sm"
-          type="string"
-          placeholder="blacks/whites"
-          value={boardCode}
-          isReadOnly
-          onClick={onCopy}
-        />
+        <Input size="sm" type="string" placeholder="blacks/whites" value={boardCode} isReadOnly />
         <InputRightElement>
-          <Button size="xs">copy</Button>
+          <IconButton aria-label="copy" size="xs" icon={<RiClipboardLine />} onClick={onCopy} />
         </InputRightElement>
       </InputGroup>
       <Heading as="h2" size="sm">
