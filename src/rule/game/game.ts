@@ -78,8 +78,8 @@ export class Game {
     return this.moves.length === 0
   }
 
-  encode(): string {
-    return encodePoints(this.moves)
+  encode(separator: string = ''): string {
+    return encodePoints(this.moves, separator)
   }
 
   static decode(code: string): Game | undefined {

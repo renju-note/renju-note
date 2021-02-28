@@ -3,6 +3,7 @@ import React, { FC, useContext } from 'react'
 import { TabName } from '../../../state/advanced'
 import { AdvancedStateContext } from '../../contexts'
 import DetailTab from './DetailTab'
+import MateTab from './MateTab'
 import SearchTab from './SearchTab'
 import SetupTab from './SetupTab'
 
@@ -31,6 +32,12 @@ const Default: FC = () => {
               return (
                 <TabPanel key={key}>
                   <DetailTab />
+                </TabPanel>
+              )
+            case TabName.mate:
+              return (
+                <TabPanel key={key}>
+                  <MateTab />
                 </TabPanel>
               )
             case TabName.setup:

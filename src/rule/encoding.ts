@@ -4,12 +4,8 @@ export const xCode = (x: number) => X_CODES.charAt(x - 1)
 
 export const yCode = (x: number) => x.toString()
 
-export const encodePoints = (ps: Point[]): string => {
-  let ret = ''
-  for (const p of ps) {
-    ret += encode(p)
-  }
-  return ret
+export const encodePoints = (ps: Point[], separator: string = ''): string => {
+  return ps.map(encode).join(separator)
 }
 
 export const decodePoints = (code: string): Point[] | undefined => {

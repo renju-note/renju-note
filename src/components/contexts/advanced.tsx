@@ -19,7 +19,7 @@ export const AdvancedStateProvider: FC = ({ children }) => {
       if (await ready()) {
         setAdvancedState(
           advancedState
-            .setTabs([TabName.search, TabName.detail, TabName.setup])
+            .setTabs([TabName.search, TabName.detail, TabName.mate, TabName.setup])
             .setTab(TabName.search)
         )
       }
