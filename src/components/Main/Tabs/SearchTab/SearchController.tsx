@@ -49,7 +49,7 @@ const MovesInput: FC = () => {
         type="string"
         placeholder="put moves on board"
         isReadOnly
-        value={gameState.current.encode()}
+        value={gameState.current.encode(',')}
       />
       <InputRightElement>
         <Checkbox
