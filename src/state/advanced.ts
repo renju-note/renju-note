@@ -1,17 +1,17 @@
 import { GameState } from './common'
 
-const tabNames = ['search', 'detail', 'analysis', 'setup'] as const
+const tabNames = ['search', 'detail', 'mate', 'setup'] as const
 export type TabName = typeof tabNames[number]
 export const TabName: Record<TabName, TabName> = {
   search: 'search',
   detail: 'detail',
-  analysis: 'analysis',
+  mate: 'mate',
   setup: 'setup',
 } as const
 
 export class AdvancedState {
   readonly tab: TabName = TabName.setup
-  readonly tabs: TabName[] = [TabName.analysis, TabName.setup]
+  readonly tabs: TabName[] = [TabName.mate, TabName.setup]
   readonly previewingGame: GameState | undefined
   readonly searchPlayerId?: number
   readonly searchWithMoves: boolean = true
