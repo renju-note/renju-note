@@ -14,7 +14,7 @@ import { RiClipboardLine } from 'react-icons/ri'
 import { encodePoints, Point } from '../../../../rule'
 import { BoardStateContext } from '../../../contexts'
 
-const DEPTH_LIMIT = 25
+const DEPTH_LIMIT = 100
 
 const Default: FC = () => {
   const { boardState } = useContext(BoardStateContext)

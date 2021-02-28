@@ -2446,10 +2446,10 @@
   dependencies:
     tslib "^2.0.0"
 
-"@renju-note/quintet@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@renju-note/quintet/-/quintet-0.2.0.tgz#bbce2908eb1b0f684888f32838637ec2482ce65e"
-  integrity sha512-e4vrMbtO3a8Zl6tSTo9LATw54IfjYbeFZfDZV6sD9ZglnlnPsnihL7KNKYGo44RQroG7wZs097tBuIAWaKvi5A==
+"@renju-note/quintet@^0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@renju-note/quintet/-/quintet-0.3.2.tgz#d8f8990197b00e9505c6d937202276061158a564"
+  integrity sha512-b1/Q/24+zK72YYs0nQAnHNgyDqVnXR7K60ei6TevDSVS37vCwkuflBGh6fgYfdnHQPr0q25u/UEB+dVRTI+VxQ==
 
 "@sheerun/mutationobserver-shim@^0.3.2":
   version "0.3.3"
