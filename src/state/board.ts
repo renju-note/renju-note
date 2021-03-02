@@ -28,6 +28,7 @@ export class BoardState {
   readonly freeWhites: PointsState = new PointsState()
   readonly markerPoints: PointsState = new PointsState()
   readonly markerLines: LinesState = new LinesState()
+  readonly numberedPoints: PointsState = new PointsState()
   private cache: Board | undefined
 
   constructor(init?: undefined | Partial<BoardState>) {
@@ -172,6 +173,10 @@ export class BoardState {
   }
 
   /* general */
+
+  setNumberdedPoints(points: Point[]): BoardState {
+    return this.update({ numberedPoints: new PointsState({ points }) })
+  }
 
   get current(): Board {
     if (this.cache === undefined) {

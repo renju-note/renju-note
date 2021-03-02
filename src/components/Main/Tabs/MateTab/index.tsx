@@ -61,7 +61,7 @@ const CurrentStateComponent: FC = () => {
 }
 
 const VCFComponent: FC = () => {
-  const { boardState } = useContext(BoardStateContext)
+  const { boardState, setBoardState } = useContext(BoardStateContext)
   const [quintet, setQuintet] = useState<any>()
   useEffect(() => {
     import('@renju-note/quintet').then(quintet => setQuintet(quintet))
@@ -79,6 +79,11 @@ const VCFComponent: FC = () => {
     const solution = rawSolution === undefined ? [] : Array.from(rawSolution).map(decodeXY)
     setSolution(solution)
     setSolving(false)
+    setBoardState(boardState.setNumberdedPoints(solution.filter((_, i) => i % 2 === 0)))
+  }
+  const onClear = () => {
+    setSolution(undefined)
+    setBoardState(boardState.setNumberdedPoints([]))
   }
   return (
     <>
@@ -105,7 +110,7 @@ const VCFComponent: FC = () => {
               Solve
             </Button>
           ) : (
-            <Button size="sm" onClick={() => setSolution(undefined)}>
+            <Button size="sm" onClick={onClear}>
               Clear
             </Button>
           )}

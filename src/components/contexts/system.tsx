@@ -137,6 +137,17 @@ export class System {
     }
   }
 
+  get markerFontSize(): string {
+    switch (this.W) {
+      case 320:
+        return '12px'
+      case 360:
+        return '12px'
+      case 640:
+        return '20px'
+    }
+  }
+
   get forbiddenStrokeWidth(): number {
     switch (this.W) {
       case 320:
