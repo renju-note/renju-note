@@ -9,15 +9,16 @@ const Default: FC = () => {
     <g>
       <Lines lines={boardState.markerLines.lines} />
       {boardState.markerLines.start && <LineStart point={boardState.markerLines.start} />}
-      <Points
+      <LabeledPoints
         points={boardState.markerPoints.points}
         label={boardState.options.has(BoardOption.labelMarkers)}
       />
+      <NumberedPoints points={boardState.numberedPoints.points} />
     </g>
   )
 }
 
-const Points: FC<{ points: Point[]; label: boolean }> = ({ points, label }) => {
+const LabeledPoints: FC<{ points: Point[]; label: boolean }> = ({ points, label }) => {
   const system = useContext(SystemContext)
   const r = (system.C * 3) / 8
   const markers = points.map((p, key) => {
@@ -32,12 +33,47 @@ const Points: FC<{ points: Point[]; label: boolean }> = ({ points, label }) => {
             fill="#333333"
             textAnchor="middle"
             dominantBaseline="central"
-            fontSize={system.orderFontSize}
+            fontSize={system.markerFontSize}
             fontFamily="Noto Serif"
           >
             {'abcdefghijklmnopqrstuvwxyz'.charAt(key)}
           </text>
         )}
+      </g>
+    )
+  })
+  return <g>{markers}</g>
+}
+
+const NumberedPoints: FC<{ points: Point[] }> = ({ points }) => {
+  const system = useContext(SystemContext)
+  const r = (system.C * 3) / 8
+  const markers = points.map((p, key) => {
+    const isFirst = key === 0
+    const isLast = key === points.length - 1
+    const [cx, cy] = system.c(p)
+    return (
+      <g key={key}>
+        <circle
+          cx={cx}
+          cy={cy}
+          r={r}
+          fill="white"
+          stroke={isFirst || isLast ? 'indigo' : undefined}
+          strokeWidth={2}
+          opacity="0.8"
+        />
+        <text
+          x={cx}
+          y={cy}
+          fill="indigo"
+          textAnchor="middle"
+          dominantBaseline="central"
+          fontSize={system.markerFontSize}
+          fontFamily="Roboto"
+        >
+          {key + 1}
+        </text>
       </g>
     )
   })
