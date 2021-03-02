@@ -86,7 +86,7 @@ const VCFComponent: FC = () => {
     setBoardState(boardState.setNumberdedPoints([]))
   }
   return (
-    <>
+    <Stack>
       <Flex>
         <Stack isInline>
           <ButtonGroup size="sm" isAttached>
@@ -129,7 +129,7 @@ const VCFComponent: FC = () => {
           <StonesInput icon={<RiRadioButtonLine />} ps={solution} />
         </Box>
       )}
-    </>
+    </Stack>
   )
 }
 
