@@ -2,11 +2,10 @@ import { Box, Button, Heading, Link, Stack, Table, Tbody, Td, Text, Th, Tr } fro
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { GameView, RIFCity, RIFCountry, RIFDatabase, RIFPlayer } from '../../../../database'
 import { TabName } from '../../../../state'
-import { AdvancedStateContext, BoardStateContext, SystemContext } from '../../../contexts'
+import { AdvancedStateContext, BoardStateContext } from '../../../contexts'
 import { WonIcon } from '../common'
 
 const Default: FC = () => {
-  const system = useContext(SystemContext)
   const db = useMemo(() => new RIFDatabase(), [])
   const [countriesMap, setCountriesMap] = useState<Map<RIFCountry['id'], RIFCountry>>(new Map())
   const [citiesMap, setCitiesMap] = useState<Map<RIFCity['id'], RIFCity>>(new Map())
@@ -43,16 +42,16 @@ const Default: FC = () => {
   const { black, white, tournament, rule, publisher } = gameView
   const url = `https://www.renju.net/media/games.php?gameid=${gameView.id}`
   return (
-    <Stack px="1rem" fontFamily="Noto Serif">
+    <Stack fontFamily="Noto Serif">
       <Heading as="h2" size="sm">
         Game
       </Heading>
       <Stack pl="1rem" isInline>
-        <Box width={(system.W * 4) / 16}>
+        <Box width="25%">
           <Table size="rjn-info" variant="rjn-info">
-            <colgroup span={1} style={{ width: (system.W * 1) / 16 }} />
-            <colgroup span={1} style={{ width: (system.W * 1) / 16 }} />
-            <colgroup span={1} style={{ width: (system.W * 2) / 16 }} />
+            <colgroup span={1} style={{ width: '25%' }} />
+            <colgroup span={1} style={{ width: '25%' }} />
+            <colgroup span={1} style={{ width: '50%' }} />
             <Tbody>
               <Tr>
                 <Th>Black</Th>
@@ -71,12 +70,12 @@ const Default: FC = () => {
             </Tbody>
           </Table>
         </Box>
-        <Box width={(system.W * 10) / 16}>
+        <Box width="62.5%">
           <Table size="rjn-info" variant="rjn-info">
-            <colgroup span={1} style={{ width: (system.W * 1) / 16 }} />
-            <colgroup span={1} style={{ width: (system.W * 3) / 16 }} />
-            <colgroup span={1} style={{ width: (system.W * 1) / 16 }} />
-            <colgroup span={1} style={{ width: (system.W * 5) / 16 }} />
+            <colgroup span={1} style={{ width: '10%' }} />
+            <colgroup span={1} style={{ width: '30%' }} />
+            <colgroup span={1} style={{ width: '10%' }} />
+            <colgroup span={1} style={{ width: '50%' }} />
             <Tbody>
               <Tr>
                 <Th>Rule</Th>

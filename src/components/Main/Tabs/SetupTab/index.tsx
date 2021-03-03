@@ -1,9 +1,10 @@
 import {
   Box,
   Button,
-  Flex,
   Heading,
   Input,
+  InputGroup,
+  InputLeftAddon,
   Link,
   ListItem,
   Modal,
@@ -18,6 +19,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 import React, { FC, useState } from 'react'
+import { RiFileLine } from 'react-icons/ri'
 import { AnalyzedDatabase, RIFDatabase } from '../../../../database'
 
 const Default: FC = () => {
@@ -48,24 +50,30 @@ const Default: FC = () => {
   }
   return (
     <>
-      <Stack px="1rem">
+      <Stack>
         <Heading as="h2" size="sm">
-          Load .rif file
+          Load RIF database
         </Heading>
-        <Flex alignItems="center">
-          <Input
-            id="rif-file"
-            type="file"
-            isInvalid={fileIsInvalid}
-            onChange={() => setFileIsInvalid(false)}
-            mr="1rem"
-          />
-          <Button onClick={onLoadFile}>Load</Button>
-        </Flex>
-        <Heading as="h2" size="sm">
+        <Stack isInline>
+          <InputGroup size="sm">
+            <InputLeftAddon width="5rem">
+              <RiFileLine /> &nbsp; .rif
+            </InputLeftAddon>
+            <Input
+              id="rif-file"
+              type="file"
+              isInvalid={fileIsInvalid}
+              onChange={() => setFileIsInvalid(false)}
+            />
+          </InputGroup>
+          <Button size="sm" colorScheme="blue" onClick={onLoadFile}>
+            Load
+          </Button>
+        </Stack>
+        <Heading as="h3" size="sm">
           Remarks
         </Heading>
-        <Box mx="1rem">
+        <Box>
           <UnorderedList>
             <ListItem>
               It seems that this feature works only on PC with the latest version of either Chrome

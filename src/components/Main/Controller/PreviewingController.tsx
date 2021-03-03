@@ -8,9 +8,10 @@ const Default: FC = () => {
   const { setBoardState } = useContext(BoardStateContext)
   const { advancedState, setAdvancedState } = useContext(AdvancedStateContext)
   return (
-    <Flex width={system.W} justifyContent="space-evenly" alignItems="center">
+    <Flex width="100%" justifyContent="space-evenly" alignItems="center">
       <Button
-        width={system.W / 4}
+        size={system.buttonSize}
+        width="25%"
         colorScheme="blue"
         onClick={() => {
           if (advancedState.previewingGame === undefined) return
@@ -21,7 +22,8 @@ const Default: FC = () => {
         Open
       </Button>
       <Button
-        width={system.W / 4}
+        size={system.buttonSize}
+        width="25%"
         onClick={() => setAdvancedState(advancedState.setPreviewingGame(undefined))}
       >
         Cancel
