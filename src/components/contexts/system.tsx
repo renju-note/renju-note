@@ -71,17 +71,6 @@ export class System {
     }
   }
 
-  get buttonSizeSmaller(): ButtonProps['size'] {
-    switch (this.W) {
-      case 320:
-        return 'xs'
-      case 360:
-        return 'xs'
-      case 640:
-        return 'sm'
-    }
-  }
-
   get rulerStrokeWidth(): number {
     switch (this.W) {
       case 320:

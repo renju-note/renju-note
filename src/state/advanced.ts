@@ -10,7 +10,7 @@ export const TabName: Record<TabName, TabName> = {
 } as const
 
 export class AdvancedState {
-  readonly tab: TabName = TabName.setup
+  readonly tab: TabName = TabName.mate
   readonly tabs: TabName[] = [TabName.mate, TabName.setup]
   readonly previewingGame: GameState | undefined
   readonly searchPlayerId?: number

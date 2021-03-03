@@ -14,7 +14,7 @@ const Default: FC<Props> = ({ page, setPage, hit, pageSize }) => {
   const system = useContext(SystemContext)
   const lastPage = ~~((hit - 1) / pageSize)
   return (
-    <ButtonGroup spacing={1} size={system.buttonSizeSmaller} variant="ghost">
+    <ButtonGroup spacing={1} size="sm" variant="ghost">
       <IconButton
         aria-label="first"
         icon={<FiChevronsLeft />}

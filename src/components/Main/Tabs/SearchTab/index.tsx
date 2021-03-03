@@ -1,4 +1,4 @@
-import { Box, Stack, Text } from '@chakra-ui/react'
+import { Box, Center, Stack, Text } from '@chakra-ui/react'
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { AnalyzedDatabase } from '../../../../database'
 import { Point } from '../../../../rule'
@@ -49,7 +49,7 @@ const Default: FC = () => {
   }, [page])
   return (
     <Stack justify="center" align="center">
-      <Box>
+      <Box width="100%">
         <SearchController />
       </Box>
       {!ready && (
@@ -65,12 +65,12 @@ const Default: FC = () => {
         </Text>
       )}
       {ids.length > 0 && (
-        <Box>
+        <Center>
           <GamesPager page={page} setPage={setPage} hit={hit} pageSize={pageSize} />
-        </Box>
+        </Center>
       )}
       {ids.length > 0 && (
-        <Box>
+        <Box width="100%">
           <GamesTable gameIds={ids} />
         </Box>
       )}

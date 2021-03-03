@@ -11,10 +11,11 @@ const Default: FC = () => {
   const { advancedState, setAdvancedState } = useContext(AdvancedStateContext)
   return (
     <Tabs
+      width="100%"
       index={advancedState.tabIndex}
       onChange={index => setAdvancedState(advancedState.setTabIndex(index))}
     >
-      <TabList mx="1rem">
+      <TabList>
         {advancedState.tabs.map((tab, key) => (
           <Tab key={key}>{upperFirst(tab)}</Tab>
         ))}
@@ -30,19 +31,19 @@ const Default: FC = () => {
               )
             case TabName.detail:
               return (
-                <TabPanel key={key}>
+                <TabPanel key={key} px={0}>
                   <DetailTab />
                 </TabPanel>
               )
             case TabName.mate:
               return (
-                <TabPanel key={key}>
+                <TabPanel key={key} px={0}>
                   <MateTab />
                 </TabPanel>
               )
             case TabName.setup:
               return (
-                <TabPanel key={key}>
+                <TabPanel key={key} px={0}>
                   <SetupTab />
                 </TabPanel>
               )

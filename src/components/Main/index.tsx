@@ -1,4 +1,4 @@
-import { Box, Flex, Stack } from '@chakra-ui/react'
+import { Center, Stack, Wrap, WrapItem } from '@chakra-ui/react'
 import React, { FC, useContext } from 'react'
 import {
   AdvancedStateProvider,
@@ -15,21 +15,21 @@ const Default: FC = () => {
   const { preference } = useContext(PreferenceContext)
   return (
     <AdvancedStateProvider>
-      <Flex justify="center" align="top" wrap="wrap" mt="0.5rem">
-        <Stack width={system.W} spacing="1rem">
-          <Box>
-            <Board />
-          </Box>
-          <Box>
-            <Controller />
-          </Box>
-        </Stack>
-        {preference.has(PreferenceOption.advancedMode) && (
-          <Box width={system.W} mt="0.5rem">
-            <Tabs />
-          </Box>
-        )}
-      </Flex>
+      <Center my="0.5rem">
+        <Wrap justify="center" spacing="0.5rem">
+          <WrapItem w={system.W}>
+            <Stack spacing="1rem">
+              <Board />
+              <Controller />
+            </Stack>
+          </WrapItem>
+          {preference.has(PreferenceOption.advancedMode) && (
+            <WrapItem w={system.W}>
+              <Tabs />
+            </WrapItem>
+          )}
+        </Wrap>
+      </Center>
     </AdvancedStateProvider>
   )
 }

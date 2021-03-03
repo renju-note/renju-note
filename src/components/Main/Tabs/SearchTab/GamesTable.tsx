@@ -3,11 +3,10 @@ import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { GameView, RIFDatabase, RIFPlayer } from '../../../../database'
 import { Game } from '../../../../rule'
 import { GameState } from '../../../../state'
-import { AdvancedStateContext, BoardStateContext, SystemContext } from '../../../contexts'
+import { AdvancedStateContext, BoardStateContext } from '../../../contexts'
 import { WonIcon } from '../common'
 
 const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
-  const system = useContext(SystemContext)
   const db = useMemo(() => new RIFDatabase(), [])
   const { boardState } = useContext(BoardStateContext)
   const { advancedState, setAdvancedState } = useContext(AdvancedStateContext)
@@ -35,14 +34,14 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
           <Th>Op.</Th>
         </Tr>
       </Thead>
-      <colgroup span={1} style={{ width: (system.W * 4) / 20 }} />
-      <colgroup span={1} style={{ width: (system.W * 5) / 20 }} />
-      <colgroup span={1} style={{ width: (system.W * 1) / 40 }} />
-      <colgroup span={1} style={{ width: (system.W * 1) / 20 }} />
-      <colgroup span={1} style={{ width: (system.W * 1) / 40 }} />
-      <colgroup span={1} style={{ width: (system.W * 5) / 20 }} />
-      <colgroup span={1} style={{ width: (system.W * 2) / 20 }} />
-      <colgroup span={1} style={{ width: (system.W * 2) / 20 }} />
+      <colgroup span={1} style={{ width: '20%' }} />
+      <colgroup span={1} style={{ width: '25%' }} />
+      <colgroup span={1} style={{ width: '2.5%' }} />
+      <colgroup span={1} style={{ width: '5%' }} />
+      <colgroup span={1} style={{ width: '2.5%' }} />
+      <colgroup span={1} style={{ width: '25%' }} />
+      <colgroup span={1} style={{ width: '10%' }} />
+      <colgroup span={1} style={{ width: '10%' }} />
       <Tbody>
         {items.map((g, key) => {
           const [mgid, pgid] = [boardState.mainGame.gameid, advancedState.previewingGame?.gameid]
