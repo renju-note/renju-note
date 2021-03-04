@@ -169,17 +169,6 @@ export class System {
         return '3 5'
     }
   }
-
-  get seachPageSize(): number {
-    switch (this.W) {
-      case 320:
-        return 10
-      case 360:
-        return 10
-      case 640:
-        return 20
-    }
-  }
 }
 
 export const SystemContext = createContext<System>(new System(640))
