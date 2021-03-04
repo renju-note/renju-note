@@ -125,9 +125,7 @@ const VCFComponent: FC = () => {
         </Box>
       </Flex>
       {solution !== undefined && solution.length !== 0 && (
-        <Box>
-          <StonesInput icon={<RiRadioButtonLine />} ps={solution} />
-        </Box>
+        <StonesInput icon={<RiRadioButtonLine />} ps={solution} />
       )}
     </Stack>
   )

@@ -27,18 +27,11 @@ import {
   RiMenuLine,
   RiQuestionLine,
 } from 'react-icons/ri'
-import {
-  BoardStateContext,
-  PreferenceContext,
-  PreferenceOption,
-  SystemContext,
-} from '../../../contexts'
+import { BoardStateContext, PreferenceContext, PreferenceOption } from '../../../contexts'
 import AboutModal from './AboutModal'
 import DownloadHidden, { onDownload } from './DownloadHidden'
 
 const Default: FC = () => {
-  const system = useContext(SystemContext)
-
   const downloadHiddenId = 'download-hidden'
   const { boardState } = useContext(BoardStateContext)
 
@@ -59,12 +52,7 @@ const Default: FC = () => {
   return (
     <>
       <Menu autoSelect={false} placement="top-start">
-        <MenuButton
-          as={IconButton}
-          size={system.buttonSize}
-          variant="ghost"
-          icon={<RiMenuLine />}
-        />
+        <MenuButton as={IconButton} icon={<RiMenuLine />} />
         <MenuList>
           <MenuItem
             onClick={() => {

@@ -27,21 +27,14 @@ import {
   RiRadioButtonLine,
 } from 'react-icons/ri'
 import { BoardOption, BoardState, EditMode } from '../../../state'
-import { BoardStateContext, SystemContext } from '../../contexts'
+import { BoardStateContext } from '../../contexts'
 
 const Default: FC = () => {
-  const system = useContext(SystemContext)
   const { boardState, setBoardState } = useContext(BoardStateContext)
   return (
     <>
       <Menu autoSelect={false} placement="auto">
-        <MenuButton
-          as={IconButton}
-          icon={<ModeIcon mode={boardState.mode} />}
-          aria-label="edit"
-          size={system.buttonSize}
-          variant="ghost"
-        />
+        <MenuButton as={IconButton} icon={<ModeIcon mode={boardState.mode} />} aria-label="edit" />
         <MenuList>
           <MenuOptionGroup
             defaultValue={boardState.mode}

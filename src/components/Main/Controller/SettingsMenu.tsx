@@ -20,10 +20,9 @@ import {
   RiSettings2Line,
   RiStopMiniFill,
 } from 'react-icons/ri'
-import { PreferenceContext, PreferenceOption, SystemContext } from '../../contexts'
+import { PreferenceContext, PreferenceOption } from '../../contexts'
 
 const Default: FC = () => {
-  const system = useContext(SystemContext)
   const { preference, setPreference } = useContext(PreferenceContext)
   const boardAndMovesPreferences = [
     PreferenceOption.showIndices,
@@ -38,13 +37,7 @@ const Default: FC = () => {
   return (
     <>
       <Menu autoSelect={false} placement="top-end">
-        <MenuButton
-          as={IconButton}
-          icon={<RiSettings2Line />}
-          aria-label="more"
-          size={system.buttonSize}
-          variant="ghost"
-        />
+        <MenuButton as={IconButton} icon={<RiSettings2Line />} aria-label="more" />
         <MenuList>
           <MenuOptionGroup
             title="Board and Moves"

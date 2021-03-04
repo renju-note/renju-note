@@ -54,7 +54,7 @@ const Default: FC<DefaultProps> = ({ isOpen, onClose }) => {
             <Heading as="h2" size="sm">
               Remarks
             </Heading>
-            <Box ml="1rem">
+            <Box>
               <UnorderedList>
                 <ListItem>Use on your own responsibility.</ListItem>
                 <ListItem>

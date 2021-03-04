@@ -1,5 +1,4 @@
 import {
-  Box,
   Checkbox,
   CloseButton,
   Input,
@@ -26,12 +25,8 @@ import { AdvancedStateContext, BoardStateContext } from '../../../contexts'
 const Default: FC = () => {
   return (
     <SimpleGrid width="100%" columns={2} spacing={1} minChildWidth="240px">
-      <Box>
-        <MovesInput />
-      </Box>
-      <Box>
-        <PlayerInput />
-      </Box>
+      <MovesInput />
+      <PlayerInput />
     </SimpleGrid>
   )
 }

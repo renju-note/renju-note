@@ -1,4 +1,4 @@
-import { Button, Flex } from '@chakra-ui/react'
+import { Button, ButtonGroup } from '@chakra-ui/react'
 import React, { FC, useContext } from 'react'
 import { BoardState, TabName } from '../../../state'
 import { AdvancedStateContext, BoardStateContext, SystemContext } from '../../contexts'
@@ -8,9 +8,13 @@ const Default: FC = () => {
   const { setBoardState } = useContext(BoardStateContext)
   const { advancedState, setAdvancedState } = useContext(AdvancedStateContext)
   return (
-    <Flex width="100%" justifyContent="space-evenly" alignItems="center">
+    <ButtonGroup
+      width="100%"
+      justifyContent="space-evenly"
+      alignItems="center"
+      size={system.buttonSize}
+    >
       <Button
-        size={system.buttonSize}
         width="25%"
         colorScheme="blue"
         onClick={() => {
@@ -22,13 +26,12 @@ const Default: FC = () => {
         Open
       </Button>
       <Button
-        size={system.buttonSize}
         width="25%"
         onClick={() => setAdvancedState(advancedState.setPreviewingGame(undefined))}
       >
         Cancel
       </Button>
-    </Flex>
+    </ButtonGroup>
   )
 }
 
