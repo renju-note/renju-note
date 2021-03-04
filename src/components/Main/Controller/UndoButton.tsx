@@ -11,10 +11,9 @@ import {
 } from 'react-icons/ri'
 import { EditMode, GameState } from '../../../state'
 import { TabName } from '../../../state/advanced'
-import { AdvancedStateContext, BoardStateContext, SystemContext } from '../../contexts'
+import { AdvancedStateContext, BoardStateContext } from '../../contexts'
 
 const Default: FC = () => {
-  const system = useContext(SystemContext)
   const { boardState, setBoardState } = useContext(BoardStateContext)
   if (boardState.canClearRestOfMoves) return <ClearRestOfMovesMenu />
   if (boardState.canClearMainGame) return <ClearMainGameMenu />
@@ -24,8 +23,6 @@ const Default: FC = () => {
       onTouchStart={e => e.preventDefault()}
       icon={<UndoIcon mode={boardState.mode} />}
       aria-label="undo"
-      size={system.buttonSize}
-      variant="ghost"
       colorScheme={boardState.mainGame.isBranching ? 'purple' : undefined}
       isDisabled={!boardState.canUndo}
     />
@@ -50,14 +47,11 @@ const UndoIcon: FC<{ mode: EditMode }> = ({ mode }) => {
 }
 
 const ClearRestOfMovesMenu: FC = () => {
-  const system = useContext(SystemContext)
   const { gameState, setGameState } = useContext(BoardStateContext)
   return (
     <Menu autoSelect={false} placement="top">
       <MenuButton
-        size={system.buttonSize}
         as={IconButton}
-        variant="ghost"
         icon={<RiDeleteBack2Line style={{ transform: 'rotate(180deg)' }} />}
       />
       <MenuList>
@@ -73,7 +67,6 @@ const ClearRestOfMovesMenu: FC = () => {
 }
 
 const ClearMainGameMenu: FC = () => {
-  const system = useContext(SystemContext)
   const { setGameState } = useContext(BoardStateContext)
   const { advancedState, setAdvancedState } = useContext(AdvancedStateContext)
   const onClearGame = () => {
@@ -82,7 +75,7 @@ const ClearMainGameMenu: FC = () => {
   }
   return (
     <Menu autoSelect={false} placement="top">
-      <MenuButton size={system.buttonSize} as={IconButton} variant="ghost" icon={<FiXSquare />} />
+      <MenuButton as={IconButton} icon={<FiXSquare />} />
       <MenuList>
         <MenuItem onClick={onClearGame}>
           <Icon boxSize="small" as={FiXSquare} />
