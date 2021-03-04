@@ -11,6 +11,7 @@ import {
   InputLeftAddon,
   InputRightElement,
   Link,
+  SimpleGrid,
   Stack,
   Text,
   useClipboard,
@@ -30,9 +31,6 @@ const DEPTH_LIMIT = 100
 const Default: FC = () => {
   return (
     <Stack>
-      <Heading as="h2" size="sm">
-        Current state
-      </Heading>
       <CurrentStateComponent />
       <Heading as="h2" size="sm" pt="1rem">
         VCF
@@ -43,20 +41,26 @@ const Default: FC = () => {
         <Link href="https://github.com/renju-note/quintet" color="teal.500" isExternal>
           quintet
         </Link>
-        .
       </Text>
     </Stack>
   )
 }
 
 const CurrentStateComponent: FC = () => {
-  const { boardState, gameState } = useContext(BoardStateContext)
+  const { boardState } = useContext(BoardStateContext)
   return (
-    <Stack>
-      <StonesInput icon={<RiRadioButtonLine />} ps={gameState.current.moves} />
-      <StonesInput icon={<RiCheckboxBlankCircleFill />} ps={boardState.current.blacks} />
-      <StonesInput icon={<RiCheckboxBlankCircleLine />} ps={boardState.current.whites} />
-    </Stack>
+    <SimpleGrid width="100%" columns={2} spacing={1} minChildWidth="240px">
+      <StonesInput
+        icon={<RiCheckboxBlankCircleFill />}
+        ps={boardState.current.blacks}
+        placeholder="black stones"
+      />
+      <StonesInput
+        icon={<RiCheckboxBlankCircleLine />}
+        ps={boardState.current.whites}
+        placeholder="white stones"
+      />
+    </SimpleGrid>
   )
 }
 
@@ -125,13 +129,17 @@ const VCFComponent: FC = () => {
         </Box>
       </Flex>
       {solution !== undefined && solution.length !== 0 && (
-        <StonesInput icon={<RiRadioButtonLine />} ps={solution} />
+        <StonesInput icon={<RiRadioButtonLine />} ps={solution} placeholder="solution" />
       )}
     </Stack>
   )
 }
 
-const StonesInput: FC<{ icon: React.ReactElement; ps: Point[] }> = ({ icon, ps }) => {
+const StonesInput: FC<{ icon: React.ReactElement; ps: Point[]; placeholder: string }> = ({
+  icon,
+  ps,
+  placeholder,
+}) => {
   const code = encodePoints(ps, ',')
   const { onCopy } = useClipboard(code)
   return (
@@ -139,7 +147,7 @@ const StonesInput: FC<{ icon: React.ReactElement; ps: Point[] }> = ({ icon, ps }
       <InputLeftAddon width="5rem">
         {icon} &nbsp; {ps.length}
       </InputLeftAddon>
-      <Input type="string" isReadOnly value={code} />
+      <Input type="string" isReadOnly value={code} placeholder={placeholder} />
       <InputRightElement>
         <IconButton aria-label="copy" size="xs" icon={<RiClipboardLine />} onClick={onCopy} />
       </InputRightElement>
