@@ -1,4 +1,19 @@
-import { Box, Button, Heading, Link, Stack, Table, Tbody, Td, Text, Th, Tr } from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  Center,
+  Heading,
+  Link,
+  Stack,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Tr,
+  Wrap,
+  WrapItem,
+} from '@chakra-ui/react'
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { GameView, RIFCity, RIFCountry, RIFDatabase, RIFPlayer } from '../../../../database'
 import { TabName } from '../../../../state'
@@ -32,11 +47,11 @@ const Default: FC = () => {
 
   if (gameView === undefined) {
     return (
-      <Stack justify="center" align="center">
+      <Center>
         <Text color="gray.600" my="1rem">
           No game is selected
         </Text>
-      </Stack>
+      </Center>
     )
   }
   const { black, white, tournament, rule, publisher } = gameView
@@ -46,8 +61,8 @@ const Default: FC = () => {
       <Heading as="h2" size="sm">
         Game
       </Heading>
-      <Stack pl="1rem" isInline>
-        <Box width="25%">
+      <Wrap pl="1rem">
+        <WrapItem width="25%" minWidth="120px">
           <Table size="rjn-info" variant="rjn-info">
             <colgroup span={1} style={{ width: '25%' }} />
             <colgroup span={1} style={{ width: '25%' }} />
@@ -69,30 +84,40 @@ const Default: FC = () => {
               </Tr>
             </Tbody>
           </Table>
-        </Box>
-        <Box width="62.5%">
+        </WrapItem>
+        <WrapItem width="20%" minWidth="120px">
           <Table size="rjn-info" variant="rjn-info">
-            <colgroup span={1} style={{ width: '10%' }} />
-            <colgroup span={1} style={{ width: '30%' }} />
-            <colgroup span={1} style={{ width: '10%' }} />
-            <colgroup span={1} style={{ width: '50%' }} />
+            <colgroup span={1} style={{ width: '25%' }} />
+            <colgroup span={1} style={{ width: '75%' }} />
             <Tbody>
               <Tr>
                 <Th>Rule</Th>
                 <Td isNumeric>{rule.name}</Td>
-                <Th>Alt</Th>
-                <Td isNumeric>{gameView.alt}</Td>
               </Tr>
               <Tr>
                 <Th>Swap</Th>
                 <Td isNumeric>{gameView.swap}</Td>
+              </Tr>
+            </Tbody>
+          </Table>
+        </WrapItem>
+        <WrapItem width="30%" minWidth="240px">
+          <Table size="rjn-info" variant="rjn-info">
+            <colgroup span={1} style={{ width: '15%' }} />
+            <colgroup span={1} style={{ width: '85%' }} />
+            <Tbody>
+              <Tr>
+                <Th>Alt</Th>
+                <Td isNumeric>{gameView.alt}</Td>
+              </Tr>
+              <Tr>
                 <Th>Info</Th>
                 <Td isNumeric>{gameView.info}</Td>
               </Tr>
             </Tbody>
           </Table>
-        </Box>
-      </Stack>
+        </WrapItem>
+      </Wrap>
 
       <Heading as="h2" size="sm">
         Black Player
@@ -111,15 +136,17 @@ const Default: FC = () => {
       <Heading as="h2" size="sm">
         Tournament
       </Heading>
-      <Text pl="1rem">
-        {!tournament.rated && '(Unrated)'} {`${tournament.name.trim()}`}
-        <br />
-        {`${tournament.start} - ${tournament.end}`}
-        &emsp;
-        {citiesMap.get(tournament.city)?.name}, {countriesMap.get(tournament.country)?.name}
-        <br />
-        Round {gameView.round}
-      </Text>
+      <Box pl="1rem">
+        <Text>
+          {!tournament.rated && '(Unrated)'} {`${tournament.name.trim()}`}
+          <br />
+          {`${tournament.start} - ${tournament.end}`}
+          &emsp;
+          {citiesMap.get(tournament.city)?.name}, {countriesMap.get(tournament.country)?.name}
+          <br />
+          Round {gameView.round}
+        </Text>
+      </Box>
 
       <Heading as="h2" size="sm">
         Publisher
@@ -131,12 +158,11 @@ const Default: FC = () => {
       <Heading as="h2" size="sm">
         Generated Link
       </Heading>
-
-      <Text pl="1rem">
+      <Box pl="1rem">
         <Link href={url} isExternal color="teal.500" fontFamily="Roboto">
           {url}
         </Link>
-      </Text>
+      </Box>
     </Stack>
   )
 }
