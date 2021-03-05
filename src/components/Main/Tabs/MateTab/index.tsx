@@ -23,8 +23,12 @@ import {
   RiClipboardLine,
   RiRadioButtonLine,
 } from 'react-icons/ri'
+// eslint-disable-next-line
+import Worker from 'worker-loader!./quintet'
 import { encodePoints, Point } from '../../../../rule'
 import { BoardStateContext } from '../../../contexts'
+
+const worker = new Worker()
 
 const DEPTH_LIMIT = 100
 
@@ -75,6 +79,7 @@ const VCFComponent: FC = () => {
   const [solution, setSolution] = useState<Point[]>()
   const [solving, setSolving] = useState<boolean>(false)
   const onSolve = () => {
+    worker.postMessage({ a: 1 })
     if (quintet === undefined) return
     const blacks = new Uint8Array(boardState.current.blacks.map(encodeXY))
     const whites = new Uint8Array(boardState.current.whites.map(encodeXY))
