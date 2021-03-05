@@ -16,7 +16,7 @@ import {
   Text,
   useClipboard,
 } from '@chakra-ui/react'
-import React, { FC, useContext, useEffect, useState } from 'react'
+import React, { FC, useContext, useState } from 'react'
 import {
   RiCheckboxBlankCircleFill,
   RiCheckboxBlankCircleLine,
@@ -70,25 +70,27 @@ const CurrentStateComponent: FC = () => {
 
 const VCFComponent: FC = () => {
   const { boardState, setBoardState } = useContext(BoardStateContext)
-  const [quintet, setQuintet] = useState<any>()
-  useEffect(() => {
-    import('@renju-note/quintet').then(quintet => setQuintet(quintet))
-  }, [])
 
   const [vcfTurn, setVcfTurn] = useState<boolean>(true)
   const [solution, setSolution] = useState<Point[]>()
   const [solving, setSolving] = useState<boolean>(false)
-  const onSolve = () => {
-    worker.postMessage({ a: 1 })
-    if (quintet === undefined) return
-    const blacks = new Uint8Array(boardState.current.blacks.map(encodeXY))
-    const whites = new Uint8Array(boardState.current.whites.map(encodeXY))
-    setSolving(true)
-    const rawSolution: Uint8Array = quintet.solve_vcf(blacks, whites, vcfTurn, DEPTH_LIMIT, false)
+
+  worker.onmessage = (event: MessageEvent) => {
+    const { rawSolution } = event.data as { rawSolution: Uint8Array | undefined }
     const solution = rawSolution === undefined ? [] : Array.from(rawSolution).map(decodeXY)
     setSolution(solution)
-    setSolving(false)
     setBoardState(boardState.setNumberdedPoints(solution.filter((_, i) => i % 2 === 0)))
+    setSolving(false)
+  }
+  const onSolve = () => {
+    const data = {
+      blacks: new Uint8Array(boardState.current.blacks.map(encodeXY)),
+      whites: new Uint8Array(boardState.current.whites.map(encodeXY)),
+      turn: vcfTurn,
+      depthLimit: DEPTH_LIMIT,
+    }
+    worker.postMessage(data)
+    setSolving(true)
   }
   const onClear = () => {
     setSolution(undefined)

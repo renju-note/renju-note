@@ -2,10 +2,18 @@
 // https://github.com/webpack-contrib/worker-loader/issues/176
 const ctx: Worker = self as any
 
-// Post data to parent thread
-ctx.postMessage({ foo: 'foo' })
+interface SolveArguments {
+  blacks: Uint8Array
+  whites: Uint8Array
+  turn: boolean
+  depthLimit: number
+}
 
-// Respond to message from parent thread
-ctx.addEventListener('message', event => console.log(event))
+ctx.onmessage = async (event: MessageEvent) => {
+  const quintet = await import('@renju-note/quintet')
+  const { blacks, whites, turn, depthLimit } = event.data as SolveArguments
+  const rawSolution = quintet.solve_vcf(blacks, whites, turn, depthLimit)
+  ctx.postMessage({ rawSolution })
+}
 
 export default {}
