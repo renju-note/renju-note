@@ -46,6 +46,9 @@
       "error",
       "only-multiline"
     ],
+    "multiline-ternary": "off",
+    "no-redeclare": "off",
+    "no-use-before-define": "off",
     "no-useless-constructor": [
       "off"
     ],

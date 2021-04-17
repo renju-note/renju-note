@@ -17,7 +17,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 import 'firebase/analytics'
-import * as firebase from 'firebase/app'
+import firebase from 'firebase/app'
 import React, { FC, useContext } from 'react'
 import {
   RiDownload2Line,

@@ -47,6 +47,8 @@ const Default: FC = () => {
                   <SetupTab />
                 </TabPanel>
               )
+            default:
+              return <></>
           }
         })}
       </TabPanels>
