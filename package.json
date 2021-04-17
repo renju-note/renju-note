@@ -19,7 +19,7 @@
     "@emotion/styled": "^11.0.0",
     "@renju-note/quintet": "^0.3.2",
     "dexie": "^3.0.2",
-    "firebase": "^7.24.0",
+    "firebase": "^8.4.1",
     "framer-motion": "^4.0.0",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
