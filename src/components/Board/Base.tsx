@@ -1,13 +1,16 @@
 import React, { FC, useContext } from 'react'
-import { PreferenceContext, PreferenceOption, SystemContext } from '../contexts'
+import { EditMode } from '../../state'
+import { BoardStateContext, PreferenceContext, PreferenceOption, SystemContext } from '../contexts'
 
 const Default: FC = () => {
+  const { boardState } = useContext(BoardStateContext)
   const { preference } = useContext(PreferenceContext)
   return (
     <g>
       <Rulers />
       <Stars />
       {preference.has(PreferenceOption.showIndices) && <Indices />}
+      {boardState.mode === EditMode.preview && <Overlay />}
     </g>
   )
 }
@@ -105,6 +108,22 @@ const Indices: FC = () => {
       {xIndices}
       {yIndices}
     </g>
+  )
+}
+
+const Overlay: FC = () => {
+  const system = useContext(SystemContext)
+  return (
+    <rect
+      x={0}
+      y={0}
+      width={system.W}
+      height={system.W}
+      rx={system.C / 4}
+      ry={system.C / 4}
+      fill="lavender"
+      opacity={0.7}
+    />
   )
 }
 

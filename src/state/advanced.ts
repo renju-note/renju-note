@@ -12,7 +12,7 @@ export const TabName: Record<TabName, TabName> = {
 export class AdvancedState {
   readonly tab: TabName = TabName.mate
   readonly tabs: TabName[] = [TabName.mate, TabName.setup]
-  readonly previewingGame: GameState | undefined
+  readonly hiddenGame: GameState | undefined
   readonly searchPlayerId?: number
   readonly searchWithMoves: boolean = true
 
@@ -40,8 +40,8 @@ export class AdvancedState {
     return this.tabs.indexOf(this.tab)
   }
 
-  setPreviewingGame(gameState: GameState | undefined): AdvancedState {
-    return this.update({ previewingGame: gameState })
+  setHiddenGame(gameState: GameState | undefined): AdvancedState {
+    return this.update({ hiddenGame: gameState })
   }
 
   setSearchPlayerId(id: number | undefined): AdvancedState {
