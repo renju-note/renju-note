@@ -2,13 +2,13 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { GameView, RIFDatabase, RIFPlayer } from '../../../../database'
 import { Game } from '../../../../rule'
-import { GameState } from '../../../../state'
+import { EditMode, GameState } from '../../../../state'
 import { AdvancedStateContext, BoardStateContext } from '../../../contexts'
 import { WonIcon } from '../common'
 
 const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
   const db = useMemo(() => new RIFDatabase(), [])
-  const { boardState } = useContext(BoardStateContext)
+  const { boardState, setBoardState } = useContext(BoardStateContext)
   const { advancedState, setAdvancedState } = useContext(AdvancedStateContext)
   const [items, setItems] = useState<GameView[]>([])
   useEffect(() => {
@@ -19,8 +19,17 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
     ;(async () => setItems(await db.getGameViews(gameIds)))()
   }, [gameIds])
   const onClick = (gv: GameView) => {
-    const gameState = new GameState({ main: new Game({ moves: gv.moves }), gameid: gv.id })
-    setAdvancedState(advancedState.setPreviewingGame(gameState))
+    const previewGame = new GameState({
+      main: new Game({ moves: gv.moves }),
+      gameid: gv.id,
+      cursor: boardState.mainGame.cursor,
+    })
+    if (boardState.mode !== EditMode.preview) {
+      setAdvancedState(advancedState.setHiddenGame(boardState.mainGame))
+      setBoardState(boardState.setMode(EditMode.preview).setMainGame(previewGame))
+    } else {
+      setBoardState(boardState.setMainGame(previewGame))
+    }
   }
   return (
     <Table size="rjn-info" variant="rjn-info">
@@ -44,7 +53,11 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
       <colgroup span={1} style={{ width: '10%' }} />
       <Tbody>
         {items.map((g, key) => {
-          const [mgid, pgid] = [boardState.mainGame.gameid, advancedState.previewingGame?.gameid]
+          const mgid =
+            boardState.mode === EditMode.preview
+              ? advancedState.hiddenGame?.gameid
+              : boardState.mainGame.gameid
+          const pgid = boardState.mode === EditMode.preview ? boardState.mainGame.gameid : undefined
           return (
             <Tr
               key={key}

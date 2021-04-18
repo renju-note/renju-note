@@ -1,7 +1,14 @@
 import { Board, N_LINES, Point } from '../rule'
 import { GameState, LinesState, OptionsState, PointsState } from './common'
 
-const editModes = ['mainMoves', 'freeBlacks', 'freeWhites', 'markerPoints', 'markerLines'] as const
+const editModes = [
+  'mainMoves',
+  'freeBlacks',
+  'freeWhites',
+  'markerPoints',
+  'markerLines',
+  'preview',
+] as const
 export type EditMode = typeof editModes[number]
 export const EditMode: Record<EditMode, EditMode> = {
   mainMoves: 'mainMoves',
@@ -9,6 +16,7 @@ export const EditMode: Record<EditMode, EditMode> = {
   freeWhites: 'freeWhites',
   markerPoints: 'markerPoints',
   markerLines: 'markerLines',
+  preview: 'preview',
 } as const
 
 const boardOptions = ['invertMoves', 'labelMarkers'] as const

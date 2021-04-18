@@ -1,6 +1,7 @@
 import { ButtonGroup } from '@chakra-ui/react'
 import React, { FC, useContext } from 'react'
-import { AdvancedStateContext, SystemContext } from '../../contexts'
+import { EditMode } from '../../../state'
+import { BoardStateContext, SystemContext } from '../../contexts'
 import EditMenu from './EditMenu'
 import MainMenu from './MainMenu'
 import Navigator from './Navigator'
@@ -10,8 +11,8 @@ import UndoButton from './UndoButton'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
-  const { advancedState } = useContext(AdvancedStateContext)
-  if (advancedState.previewingGame !== undefined) return <PreviewingController />
+  const { boardState } = useContext(BoardStateContext)
+  if (boardState.mode === EditMode.preview) return <PreviewingController />
   return (
     <ButtonGroup
       width="100%"

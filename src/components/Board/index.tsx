@@ -5,7 +5,6 @@ import Base from './Base'
 import FreeStones from './FreeStones'
 import Game from './Game'
 import Markers from './Markers'
-import Preview from './Preview'
 import Properties from './Properties'
 
 type DefaultProps = {
@@ -29,7 +28,6 @@ const Default: FC<DefaultProps> = ({ id, onClickPoint }) => {
       <Markers />
       <FreeStones />
       <Game />
-      <Preview />
     </svg>
   )
 }
