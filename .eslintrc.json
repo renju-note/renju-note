@@ -5,7 +5,8 @@
   },
   "extends": [
     "plugin:react/recommended",
-    "standard"
+    "standard",
+    "prettier"
   ],
   "globals": {
     "Atomics": "readonly",
@@ -34,34 +35,10 @@
     "@typescript-eslint"
   ],
   "rules": {
-    "@typescript-eslint/no-unused-vars": [
-      "error",
-      {
-        "argsIgnorePattern": "^_$",
-        "varsIgnorePattern": "^_$"
-      }
-    ],
-    "@typescript-eslint/no-useless-constructor": "error",
-    "comma-dangle": [
-      "error",
-      "only-multiline"
-    ],
-    "multiline-ternary": "off",
     "no-redeclare": "off",
     "no-use-before-define": "off",
-    "no-useless-constructor": [
-      "off"
-    ],
     "react/prop-types": [
       "off"
-    ],
-    "space-before-function-paren": [
-      "error",
-      {
-        "anonymous": "always",
-        "asyncArrow": "always",
-        "named": "never"
-      }
     ]
   },
   "settings": {
