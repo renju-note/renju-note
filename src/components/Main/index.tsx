@@ -1,5 +1,5 @@
 import { Center, Stack, Wrap, WrapItem } from '@chakra-ui/react'
-import React, { FC, useContext } from 'react'
+import { FC, useContext } from 'react'
 import { EditMode } from '../../state'
 import {
   AdvancedStateProvider,

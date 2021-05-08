@@ -1,5 +1,5 @@
 import { ButtonProps } from '@chakra-ui/react'
-import React, { createContext, FC, useMemo } from 'react'
+import { createContext, FC, useMemo } from 'react'
 import { encode, N_LINES, Point, xCode, yCode } from '../../rule'
 
 export type BoardWidth = 640 | 360 | 320

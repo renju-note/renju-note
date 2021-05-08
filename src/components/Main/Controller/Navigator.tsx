@@ -10,7 +10,7 @@ import {
   MenuList,
   Text,
 } from '@chakra-ui/react'
-import React, { FC, useContext } from 'react'
+import { FC, useContext } from 'react'
 import {
   FiChevronLeft,
   FiChevronRight,

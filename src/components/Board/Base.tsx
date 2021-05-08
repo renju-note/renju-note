@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import { FC, useContext } from 'react'
 import { EditMode } from '../../state'
 import { BoardStateContext, PreferenceContext, PreferenceOption, SystemContext } from '../contexts'
 

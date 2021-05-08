@@ -1,4 +1,4 @@
-import React, { createContext, FC, useState } from 'react'
+import { createContext, FC, useState } from 'react'
 import { OptionsState } from '../../state'
 
 const preferenceOptions = [

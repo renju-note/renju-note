@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import { FC, useContext } from 'react'
 import { Point } from '../../rule'
 import Board from '../Board'
 import { BoardStateContext } from '../contexts'

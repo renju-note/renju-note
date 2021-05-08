@@ -1,5 +1,5 @@
 import { Box, Center, Stack, Text } from '@chakra-ui/react'
-import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
+import { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { AnalyzedDatabase } from '../../../../database'
 import { Point } from '../../../../rule'
 import { AdvancedStateContext, BoardStateContext } from '../../../contexts'

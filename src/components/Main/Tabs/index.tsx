@@ -1,5 +1,5 @@
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
-import React, { FC, useContext } from 'react'
+import { FC, useContext } from 'react'
 import { TabName } from '../../../state/advanced'
 import { AdvancedStateContext } from '../../contexts'
 import DetailTab from './DetailTab'

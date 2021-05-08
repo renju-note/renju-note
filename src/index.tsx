@@ -1,6 +1,6 @@
 import 'firebase/analytics'
 import firebase from 'firebase/app'
-import React from 'react'
+import { StrictMode } from 'react'
 import ReactDOM from 'react-dom'
 import App from './components/App'
 import './index.css'
@@ -12,9 +12,9 @@ fetch('/__/firebase/init.json').then(async response => {
 })
 
 ReactDOM.render(
-  <React.StrictMode>
+  <StrictMode>
     <App />
-  </React.StrictMode>,
+  </StrictMode>,
   document.getElementById('root')
 )
 
