@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import { FC, useContext } from 'react'
 import { Point } from '../../../rule'
 import { SystemContext } from '../../contexts'
 

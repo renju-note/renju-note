@@ -1,4 +1,4 @@
-import React, { createContext, FC, useEffect, useState } from 'react'
+import { createContext, FC, useEffect, useState } from 'react'
 import { ready } from '../../database'
 import { AdvancedState, TabName } from '../../state/advanced'
 

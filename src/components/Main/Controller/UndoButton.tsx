@@ -1,5 +1,5 @@
 import { Icon, IconButton, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react'
-import React, { FC, useContext } from 'react'
+import { FC, useContext } from 'react'
 import { FiXSquare } from 'react-icons/fi'
 import {
   RiCloseCircleLine,

@@ -18,7 +18,7 @@ import {
   UnorderedList,
   useDisclosure,
 } from '@chakra-ui/react'
-import React, { FC, useState } from 'react'
+import { FC, useState } from 'react'
 import { RiFileLine } from 'react-icons/ri'
 import { AnalyzedDatabase, RIFDatabase } from '../../../../database'
 

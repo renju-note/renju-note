@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import { FC, useContext } from 'react'
 import { Point, Property, RowKind } from '../../rule'
 import { BoardStateContext, PreferenceContext, PreferenceOption, SystemContext } from '../contexts'
 

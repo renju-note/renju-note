@@ -1,5 +1,5 @@
 import { Button, ButtonGroup, IconButton } from '@chakra-ui/react'
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { FiChevronLeft, FiChevronRight, FiChevronsLeft, FiChevronsRight } from 'react-icons/fi'
 
 type Props = {

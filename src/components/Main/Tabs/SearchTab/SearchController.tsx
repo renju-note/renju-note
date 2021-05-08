@@ -17,7 +17,7 @@ import {
   Tr,
   useDisclosure,
 } from '@chakra-ui/react'
-import React, { FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { RiRadioButtonLine, RiUser3Fill } from 'react-icons/ri'
 import { RIFDatabase, RIFPlayer } from '../../../../database'
 import { AdvancedStateContext, BoardStateContext } from '../../../contexts'

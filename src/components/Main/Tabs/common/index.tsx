@@ -1,5 +1,5 @@
 import { Flex, Icon } from '@chakra-ui/react'
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { RiCheckboxCircleFill, RiCloseLine, RiSubtractFill } from 'react-icons/ri'
 
 export const WonIcon: FC<{ won: boolean | null }> = ({ won }) => {

@@ -1,5 +1,5 @@
 import { Button, ButtonGroup } from '@chakra-ui/react'
-import React, { FC, useContext } from 'react'
+import { FC, useContext } from 'react'
 import { BoardState, EditMode, GameState } from '../../state'
 import { AdvancedStateContext, BoardStateContext, SystemContext } from '../contexts'
 

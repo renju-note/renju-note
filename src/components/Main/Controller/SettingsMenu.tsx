@@ -10,7 +10,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import 'firebase/analytics'
-import React, { FC, useContext } from 'react'
+import { FC, useContext } from 'react'
 import {
   RiCloseLine,
   RiFocus2Fill,

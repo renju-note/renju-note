@@ -16,7 +16,8 @@ import {
   Text,
   useClipboard,
 } from '@chakra-ui/react'
-import React, { FC, useContext, useState } from 'react'
+import { FC, useContext, useState } from 'react'
+import * as React from 'react'
 import {
   RiCheckboxBlankCircleFill,
   RiCheckboxBlankCircleLine,

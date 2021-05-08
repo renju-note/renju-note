@@ -15,7 +15,7 @@ import {
   Stack,
   UnorderedList,
 } from '@chakra-ui/react'
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { FiGithub, FiTwitter } from 'react-icons/fi'
 
 type DefaultProps = {
