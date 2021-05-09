@@ -1,7 +1,8 @@
-import { FC, useContext } from 'react'
 import * as React from 'react'
+import { FC, useContext } from 'react'
 import { Point } from '../../rule'
-import { SystemContext } from '../contexts'
+import { EditMode } from '../../state'
+import { BoardStateContext, PreferenceContext, PreferenceOption, SystemContext } from '../contexts'
 import Base from './Base'
 import FreeStones from './FreeStones'
 import Game from './Game'
@@ -15,6 +16,8 @@ type DefaultProps = {
 
 const Default: FC<DefaultProps> = ({ id, onClickPoint }) => {
   const system = useContext(SystemContext)
+  const { boardState } = useContext(BoardStateContext)
+  const { preference } = useContext(PreferenceContext)
   const onClick =
     onClickPoint &&
     ((e: React.MouseEvent<SVGElement, MouseEvent>) => {
@@ -24,8 +27,16 @@ const Default: FC<DefaultProps> = ({ id, onClickPoint }) => {
     })
   return (
     <svg id={id} width={system.W} height={system.W} onClick={onClick}>
-      <Base />
-      <Properties />
+      <Base
+        showIndices={preference.has(PreferenceOption.showIndices)}
+        showOverlay={boardState.mode === EditMode.preview}
+      />
+      <Properties
+        board={boardState.current}
+        showRows={preference.has(PreferenceOption.showPropertyRows)}
+        showEyes={preference.has(PreferenceOption.showPropertyEyes)}
+        showForbiddens={preference.has(PreferenceOption.showForbiddens)}
+      />
       <Markers />
       <FreeStones />
       <Game />
