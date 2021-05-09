@@ -1,126 +1,99 @@
 import { FC, useContext } from 'react'
-import { Point } from '../../rule'
-import { BoardOption } from '../../state'
-import { BoardStateContext, SystemContext } from '../contexts'
+import { LinesState, PointsState } from '../../state'
+import { SystemContext } from '../contexts'
+import { PointMarker, SegmentMarker } from './common'
 
-const Default: FC = () => {
-  const { boardState } = useContext(BoardStateContext)
+type Props = {
+  segments: LinesState
+  points: PointsState
+  sequence: PointsState
+  showPointsLabel: boolean
+}
+
+const Default: FC<Props> = ({ segments, points, sequence, showPointsLabel }) => (
+  <g>
+    <Segments state={segments} />
+    <Points state={points} showLabel={showPointsLabel} />
+    <Sequence state={sequence} />
+  </g>
+)
+
+const Segments: FC<{ state: LinesState }> = ({ state }) => {
+  const system = useContext(SystemContext)
+  const segments = state.lines.map(([start, end], key) => (
+    <SegmentMarker
+      key={key}
+      start={system.c(start)}
+      end={system.c(end)}
+      stroke="darkviolet"
+      strokeWidth={system.propertyRowStrokeWidth}
+      strokeDasharray={system.propertyRowStrokeDasharray}
+    />
+  ))
+  const start = (() => {
+    if (state.start === undefined) return undefined
+    const [cx, cy] = system.c(state.start)
+    const r = (system.C / 16) * 3
+    return <PointMarker shape="circle" cx={cx} cy={cy} r={r} color="darkviolet" opacity={0.8} />
+  })()
   return (
     <g>
-      <Lines lines={boardState.markerLines.lines} />
-      {boardState.markerLines.start && <LineStart point={boardState.markerLines.start} />}
-      <LabeledPoints
-        points={boardState.markerPoints.points}
-        label={boardState.options.has(BoardOption.labelMarkers)}
-      />
-      <NumberedPoints points={boardState.numberedPoints.points} />
+      {segments}
+      {start}
     </g>
   )
 }
 
-const LabeledPoints: FC<{ points: Point[]; label: boolean }> = ({ points, label }) => {
+const Points: FC<{ state: PointsState; showLabel: boolean }> = ({ state, showLabel }) => {
   const system = useContext(SystemContext)
   const r = (system.C * 3) / 8
-  const markers = points.map((p, key) => {
+  const markers = state.points.map((p, key) => {
     const [cx, cy] = system.c(p)
+    const text = showLabel ? 'abcdefghijklmnopqrstuvwxyz'.charAt(key) : undefined
     return (
-      <g key={key}>
-        <circle cx={cx} cy={cy} r={r} fill="silver" opacity="0.8" />
-        {label && (
-          <text
-            x={cx}
-            y={cy}
-            fill="#333333"
-            textAnchor="middle"
-            dominantBaseline="central"
-            fontSize={system.markerFontSize}
-            fontFamily="Noto Serif"
-          >
-            {'abcdefghijklmnopqrstuvwxyz'.charAt(key)}
-          </text>
-        )}
-      </g>
+      <PointMarker
+        key={key}
+        shape="circle"
+        cx={cx}
+        cy={cy}
+        r={r}
+        color="silver"
+        opacity={0.8}
+        text={text}
+        fontColor="#333333"
+        fontSize={system.markerFontSize}
+        fontFamily="Noto Serif"
+      />
     )
   })
   return <g>{markers}</g>
 }
 
-const NumberedPoints: FC<{ points: Point[] }> = ({ points }) => {
+const Sequence: FC<{ state: PointsState }> = ({ state }) => {
   const system = useContext(SystemContext)
   const r = (system.C * 3) / 8
-  const markers = points.map((p, key) => {
+  const last = state.points.length - 1
+  const markers = state.points.map((p, key) => {
     const isFirst = key === 0
-    const isLast = key === points.length - 1
+    const isLast = key === last
     const [cx, cy] = system.c(p)
     return (
-      <g key={key}>
-        <circle
-          cx={cx}
-          cy={cy}
-          r={r}
-          fill="white"
-          stroke={isFirst || isLast ? 'indigo' : undefined}
-          strokeWidth={2}
-          opacity="0.8"
-        />
-        <text
-          x={cx}
-          y={cy}
-          fill="indigo"
-          textAnchor="middle"
-          dominantBaseline="central"
-          fontSize={system.markerFontSize}
-          fontFamily="Roboto"
-        >
-          {key + 1}
-        </text>
-      </g>
+      <PointMarker
+        key={key}
+        shape="circle"
+        cx={cx}
+        cy={cy}
+        r={r}
+        color={isFirst || isLast ? 'indigo' : 'white'}
+        opacity={0.8}
+        text={`${key + 1}`}
+        fontColor={isFirst || isLast ? 'white' : 'indigo'}
+        fontSize={system.markerFontSize}
+        fontFamily="Roboto"
+      />
     )
   })
   return <g>{markers}</g>
-}
-
-const Lines: FC<{ lines: [Point, Point][] }> = ({ lines }) => {
-  const system = useContext(SystemContext)
-  const markers = lines.map(([start, end], key) => {
-    const [x1, y1] = system.c(start)
-    const [x2, y2] = system.c(end)
-    return (
-      <g key={key}>
-        {(x1 === x2 || y1 === y2) && (
-          <line
-            x1={x1}
-            y1={y1}
-            x2={x2}
-            y2={y2}
-            stroke="white"
-            strokeWidth={system.propertyRowStrokeWidth}
-            strokeLinecap="butt"
-            opacity="0.6"
-          />
-        )}
-        <line
-          x1={x1}
-          y1={y1}
-          x2={x2}
-          y2={y2}
-          stroke="darkviolet"
-          strokeWidth={system.propertyRowStrokeWidth}
-          strokeLinecap="round"
-          strokeDasharray={system.propertyRowStrokeDasharray}
-          opacity="0.4"
-        />
-      </g>
-    )
-  })
-  return <g>{markers}</g>
-}
-
-const LineStart: FC<{ point: Point }> = ({ point }) => {
-  const system = useContext(SystemContext)
-  const [cx, cy] = system.c(point)
-  const r = (system.C / 16) * 3
-  return <circle cx={cx} cy={cy} r={r} fill="darkviolet" opacity="0.8" />
 }
 
 export default Default
