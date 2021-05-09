@@ -1,5 +1,5 @@
 import { Board, N_LINES, Point } from '../rule'
-import { GameState, LinesState, OptionsState, PointsState } from './common'
+import { GameState, OptionsState, PointsState, SegmentsState } from './common'
 
 const editModes = [
   'mainMoves',
@@ -35,7 +35,7 @@ export class BoardState {
   readonly freeBlacks: PointsState = new PointsState()
   readonly freeWhites: PointsState = new PointsState()
   readonly markerPoints: PointsState = new PointsState()
-  readonly markerLines: LinesState = new LinesState()
+  readonly markerLines: SegmentsState = new SegmentsState()
   readonly numberedPoints: PointsState = new PointsState()
   private cache: Board | undefined
 
@@ -131,7 +131,7 @@ export class BoardState {
   clearMarkers(): BoardState {
     return this.update({
       markerPoints: new PointsState(),
-      markerLines: new LinesState(),
+      markerLines: new SegmentsState(),
     })
   }
 
@@ -245,7 +245,7 @@ export class BoardState {
       freeBlacks: PointsState.decode(freeBlacksCode) ?? new PointsState(),
       freeWhites: PointsState.decode(freeWhitesCode) ?? new PointsState(),
       markerPoints: PointsState.decode(markerPointsCode) ?? new PointsState(),
-      markerLines: LinesState.decode(markerLinesCode) ?? new LinesState(),
+      markerLines: SegmentsState.decode(markerLinesCode) ?? new SegmentsState(),
     })
   }
 }

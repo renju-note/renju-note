@@ -1,10 +1,10 @@
 import { FC, useContext } from 'react'
-import { LinesState, PointsState } from '../../state'
+import { PointsState, SegmentsState } from '../../state'
 import { SystemContext } from '../contexts'
 import { PointMarker, SegmentMarker } from './common'
 
 type Props = {
-  segments: LinesState
+  segments: SegmentsState
   points: PointsState
   sequence: PointsState
   showPointsLabel: boolean
@@ -18,9 +18,9 @@ const Default: FC<Props> = ({ segments, points, sequence, showPointsLabel }) => 
   </g>
 )
 
-const Segments: FC<{ state: LinesState }> = ({ state }) => {
+const Segments: FC<{ state: SegmentsState }> = ({ state }) => {
   const system = useContext(SystemContext)
-  const segments = state.lines.map(([start, end], key) => (
+  const segments = state.segments.map(([start, end], key) => (
     <SegmentMarker
       key={key}
       start={system.c(start)}
