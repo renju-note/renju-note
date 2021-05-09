@@ -15,8 +15,9 @@ type Props = {
 
 const Default: FC<Props> = ({ id, onClickPoint }) => {
   const system = useContext(SystemContext)
-  const { boardState } = useContext(BoardStateContext)
+  const { boardState, gameState } = useContext(BoardStateContext)
   const { preference } = useContext(PreferenceContext)
+  const game = boardState.mode === EditMode.preview ? gameState.main : gameState.current
   const onClick =
     onClickPoint &&
     ((e: React.MouseEvent<SVGElement, MouseEvent>) => {
@@ -42,8 +43,13 @@ const Default: FC<Props> = ({ id, onClickPoint }) => {
         sequence={boardState.numberedPoints}
         showPointsLabel={boardState.options.has(BoardOption.labelMarkers)}
       />
-      <FreeStones />
-      <Game />
+      <Game
+        game={game}
+        invert={boardState.options.has(BoardOption.invertMoves)}
+        showOrders={preference.has(PreferenceOption.showOrders)}
+        showLastMove={preference.has(PreferenceOption.emphasizeLastMove)}
+      />
+      <FreeStones blacks={boardState.freeBlacks} whites={boardState.freeWhites} />
     </svg>
   )
 }

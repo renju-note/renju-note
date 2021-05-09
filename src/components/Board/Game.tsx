@@ -1,27 +1,40 @@
 import { FC, useContext } from 'react'
-import { Point } from '../../rule'
-import { BoardOption, EditMode } from '../../state'
-import { BoardStateContext, PreferenceContext, PreferenceOption, SystemContext } from '../contexts'
-import { Moves, Orders, PointMarker } from './common'
+import { Game, Point } from '../../rule'
+import { SystemContext } from '../contexts'
+import { PointMarker, Stone } from './common'
 
-const Default: FC = () => {
-  const { preference } = useContext(PreferenceContext)
-  const { boardState, gameState } = useContext(BoardStateContext)
-  const game = boardState.mode === EditMode.preview ? gameState.main : gameState.current
+type Props = {
+  game: Game
+  invert: boolean
+  showOrders: boolean
+  showLastMove: boolean
+}
+
+const Default: FC<Props> = ({ game, invert, showOrders, showLastMove }) => {
   return (
     <g>
-      {preference.has(PreferenceOption.emphasizeLastMove) && game.lastMove && (
-        <LastMove point={game.lastMove} />
-      )}
-      <Moves moves={game.moves} invert={boardState.options.has(BoardOption.invertMoves)} />
-      {preference.has(PreferenceOption.showOrders) && (
-        <Orders moves={game.moves} invert={boardState.options.has(BoardOption.invertMoves)} />
-      )}
+      {showLastMove && game.lastMove && <LastMove point={game.lastMove} />}
+      <Moves points={game.moves} invert={invert} showOrders={showOrders} />
     </g>
   )
 }
 
-export const LastMove: FC<{ point: Point }> = ({ point }) => {
+const Moves: FC<{ points: Point[]; invert: boolean; showOrders: boolean }> = ({
+  points,
+  invert,
+  showOrders,
+}) => (
+  <g>
+    {points.map((p, key) => {
+      const black = invert ? key % 2 === 1 : key % 2 === 0
+      return (
+        <Stone key={key} point={p} black={black} label={showOrders ? `${key + 1}` : undefined} />
+      )
+    })}
+  </g>
+)
+
+const LastMove: FC<{ point: Point }> = ({ point }) => {
   const system = useContext(SystemContext)
   const [cx, cy] = system.c(point)
   const r = ((system.C / 2) * 21) / 20

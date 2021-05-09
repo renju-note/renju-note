@@ -1,21 +1,21 @@
-import { FC, useContext } from 'react'
-import { BoardStateContext } from '../contexts'
+import { FC } from 'react'
+import { PointsState } from '../../state'
 import { Stone } from './common'
 
-const Default: FC = () => {
-  const { boardState } = useContext(BoardStateContext)
-  const blacks = boardState.freeBlacks.points.map((p, key) => (
-    <Stone key={key} point={p} black={true} />
-  ))
-  const whites = boardState.freeWhites.points.map((p, key) => (
-    <Stone key={key} point={p} black={false} />
-  ))
-  return (
-    <g>
-      {blacks}
-      {whites}
-    </g>
-  )
+type Props = {
+  blacks: PointsState
+  whites: PointsState
 }
+
+const Default: FC<Props> = ({ blacks, whites }) => (
+  <g>
+    {blacks.points.map((p, key) => (
+      <Stone key={key} point={p} black={true} />
+    ))}
+    {whites.points.map((p, key) => (
+      <Stone key={key} point={p} black={false} />
+    ))}
+  </g>
+)
 
 export default Default
