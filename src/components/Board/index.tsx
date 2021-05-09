@@ -3,10 +3,9 @@ import { Point } from '../../rule'
 import { BoardOption, EditMode } from '../../state'
 import { BoardStateContext, PreferenceContext, PreferenceOption, SystemContext } from '../contexts'
 import Base from './Base'
-import FreeStones from './FreeStones'
-import Game from './Game'
 import Markers from './Markers'
 import Properties from './Properties'
+import Stones from './Stones'
 
 type Props = {
   id: string
@@ -43,13 +42,14 @@ const Default: FC<Props> = ({ id, onClickPoint }) => {
         sequence={boardState.numberedPoints}
         showPointsLabel={boardState.options.has(BoardOption.labelMarkers)}
       />
-      <Game
+      <Stones
         game={game}
         invert={boardState.options.has(BoardOption.invertMoves)}
         showOrders={preference.has(PreferenceOption.showOrders)}
         showLastMove={preference.has(PreferenceOption.emphasizeLastMove)}
+        freeBlacks={boardState.freeBlacks}
+        freeWhites={boardState.freeWhites}
       />
-      <FreeStones blacks={boardState.freeBlacks} whites={boardState.freeWhites} />
     </svg>
   )
 }

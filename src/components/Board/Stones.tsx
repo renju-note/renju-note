@@ -1,5 +1,6 @@
 import { FC, useContext } from 'react'
 import { Game, Point } from '../../rule'
+import { PointsState } from '../../state'
 import { SystemContext } from '../contexts'
 import { PointMarker, Stone } from './common'
 
@@ -8,13 +9,17 @@ type Props = {
   invert: boolean
   showOrders: boolean
   showLastMove: boolean
+  freeBlacks: PointsState
+  freeWhites: PointsState
 }
 
-const Default: FC<Props> = ({ game, invert, showOrders, showLastMove }) => {
+const Default: FC<Props> = ({ game, invert, showOrders, showLastMove, freeBlacks, freeWhites }) => {
   return (
     <g>
       {showLastMove && game.lastMove && <LastMove point={game.lastMove} />}
       <Moves points={game.moves} invert={invert} showOrders={showOrders} />
+      <FreeStones points={freeBlacks.points} black={true} />
+      <FreeStones points={freeWhites.points} black={false} />
     </g>
   )
 }
@@ -31,6 +36,14 @@ const Moves: FC<{ points: Point[]; invert: boolean; showOrders: boolean }> = ({
         <Stone key={key} point={p} black={black} label={showOrders ? `${key + 1}` : undefined} />
       )
     })}
+  </g>
+)
+
+const FreeStones: FC<{ points: Point[]; black: boolean }> = ({ points, black }) => (
+  <g>
+    {points.map((p, key) => (
+      <Stone key={key} point={p} black={black} />
+    ))}
   </g>
 )
 
