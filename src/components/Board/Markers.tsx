@@ -59,7 +59,7 @@ const Points: FC<{ state: PointsState; showLabel: boolean }> = ({ state, showLab
         r={r}
         color="silver"
         opacity={0.8}
-        text={text}
+        label={text}
         fontColor="#333333"
         fontSize={system.markerFontSize}
         fontFamily="Noto Serif"
@@ -86,7 +86,7 @@ const Sequence: FC<{ state: PointsState }> = ({ state }) => {
         r={r}
         color={isFirst || isLast ? 'indigo' : 'white'}
         opacity={0.8}
-        text={`${key + 1}`}
+        label={`${key + 1}`}
         fontColor={isFirst || isLast ? 'white' : 'indigo'}
         fontSize={system.markerFontSize}
         fontFamily="Roboto"

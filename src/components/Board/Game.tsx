@@ -1,7 +1,8 @@
 import { FC, useContext } from 'react'
+import { Point } from '../../rule'
 import { BoardOption, EditMode } from '../../state'
-import { BoardStateContext, PreferenceContext, PreferenceOption } from '../contexts'
-import { LastMove, Moves, Orders } from './common'
+import { BoardStateContext, PreferenceContext, PreferenceOption, SystemContext } from '../contexts'
+import { Moves, Orders, PointMarker } from './common'
 
 const Default: FC = () => {
   const { preference } = useContext(PreferenceContext)
@@ -18,6 +19,13 @@ const Default: FC = () => {
       )}
     </g>
   )
+}
+
+export const LastMove: FC<{ point: Point }> = ({ point }) => {
+  const system = useContext(SystemContext)
+  const [cx, cy] = system.c(point)
+  const r = ((system.C / 2) * 21) / 20
+  return <PointMarker shape="circle" cx={cx} cy={cy} r={r} color="violet" opacity={1.0} />
 }
 
 export default Default

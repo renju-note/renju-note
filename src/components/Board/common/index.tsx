@@ -10,11 +10,6 @@ export const Moves: FC<{ moves: Point[]; invert?: boolean }> = ({ moves, invert 
   return <g>{stones}</g>
 }
 
-export const Stones: FC<{ black: boolean; points: Point[] }> = ({ black, points }) => {
-  const stones = points.map((p, key) => <Stone key={key} black={black} point={p} />)
-  return <g>{stones}</g>
-}
-
 export const Orders: FC<{ moves: Point[]; invert?: boolean }> = ({ moves, invert = false }) => {
   const orders = moves.map((p, key) => {
     const black = invert ? key % 2 !== 0 : key % 2 === 0
@@ -23,11 +18,21 @@ export const Orders: FC<{ moves: Point[]; invert?: boolean }> = ({ moves, invert
   return <g>{orders}</g>
 }
 
-export const LastMove: FC<{ point: Point }> = ({ point }) => {
+export const Stone: FC<{ black: boolean; point: Point }> = ({ black, point }) => {
   const system = useContext(SystemContext)
   const [cx, cy] = system.c(point)
-  const r = ((system.C / 2) * 21) / 20
-  return <circle cx={cx} cy={cy} r={r} fill="violet" />
+  const r = ((system.C / 2) * 9) / 10
+  return (
+    <circle
+      cx={cx}
+      cy={cy}
+      r={r}
+      strokeWidth={system.stoneStrokeWidth}
+      stroke="#333333"
+      strokeOpacity="0.7"
+      fill={black ? '#333333' : 'white'}
+    />
+  )
 }
 
 export const SegmentMarker: FC<{
@@ -69,18 +74,18 @@ export const SegmentMarker: FC<{
   )
 }
 
-export const PointMarker: FC<{
-  shape: 'circle' | 'diamond' | 'cross'
-  text?: string
-  cx: number
-  cy: number
-  r: number
-  color: string
-  opacity: number
-  fontSize?: string
-  fontColor?: string
-  fontFamily?: string
-}> = ({ shape, text, cx, cy, r, color, opacity, fontSize, fontFamily, fontColor }) => {
+export const PointMarker: FC<ShapeProps & FigureProps & TextProps> = ({
+  shape,
+  cx,
+  cy,
+  r,
+  color,
+  opacity,
+  label,
+  fontSize,
+  fontFamily,
+  fontColor,
+}) => {
   const figure = (() => {
     switch (shape) {
       case 'circle':
@@ -91,28 +96,29 @@ export const PointMarker: FC<{
         return <Cross cx={cx} cy={cy} r={r} color={color} opacity={opacity} />
     }
   })()
-  const label = text !== undefined && (
-    <text
-      x={cx}
-      y={cy}
-      textAnchor="middle"
-      dominantBaseline="central"
-      fill={fontColor}
+  const text = label !== undefined && (
+    <Text
+      label={label}
+      cx={cx}
+      cy={cy}
+      fontColor={fontColor}
       fontSize={fontSize}
       fontFamily={fontFamily}
-    >
-      {text}
-    </text>
+    />
   )
   return (
     <g>
       {figure}
-      {label}
+      {text}
     </g>
   )
 }
 
-type MarkerProps = {
+type ShapeProps = {
+  shape: 'circle' | 'diamond' | 'cross'
+}
+
+type FigureProps = {
   cx: number
   cy: number
   r: number
@@ -120,7 +126,22 @@ type MarkerProps = {
   opacity: number
 }
 
-const Diamond: FC<MarkerProps> = ({ cx, cy, r, color, opacity }) => (
+type TextProps = {
+  cx: number
+  cy: number
+  label?: string
+  fontSize?: string
+  fontColor?: string
+  fontFamily?: string
+}
+
+const Circle: FC<FigureProps> = ({ cx, cy, r, color, opacity }) => (
+  <g>
+    <circle cx={cx} cy={cy} r={r} stroke="none" fill={color} fillOpacity={opacity} />
+  </g>
+)
+
+const Diamond: FC<FigureProps> = ({ cx, cy, r, color, opacity }) => (
   <g transform={`rotate(45, ${cx}, ${cy})`}>
     <rect
       x={cx - r}
@@ -134,13 +155,7 @@ const Diamond: FC<MarkerProps> = ({ cx, cy, r, color, opacity }) => (
   </g>
 )
 
-const Circle: FC<MarkerProps> = ({ cx, cy, r, color, opacity }) => (
-  <g>
-    <circle cx={cx} cy={cy} r={r} stroke="none" fill={color} fillOpacity={opacity} />
-  </g>
-)
-
-const Cross: FC<MarkerProps> = ({ cx, cy, r, color, opacity }) => {
+const Cross: FC<FigureProps> = ({ cx, cy, r, color, opacity }) => {
   const [x1, x2, y1, y2] = [cx - r, cx + r, cy + r, cy - r]
   const strokeWidth = (r * 6) / 10
   return (
@@ -167,22 +182,19 @@ const Cross: FC<MarkerProps> = ({ cx, cy, r, color, opacity }) => {
   )
 }
 
-const Stone: FC<{ black: boolean; point: Point }> = ({ black, point }) => {
-  const system = useContext(SystemContext)
-  const [cx, cy] = system.c(point)
-  const r = ((system.C / 2) * 9) / 10
-  return (
-    <circle
-      cx={cx}
-      cy={cy}
-      r={r}
-      strokeWidth={system.stoneStrokeWidth}
-      stroke="#333333"
-      strokeOpacity="0.7"
-      fill={black ? '#333333' : 'white'}
-    />
-  )
-}
+const Text: FC<TextProps> = ({ label, cx, cy, fontColor, fontSize, fontFamily }) => (
+  <text
+    x={cx}
+    y={cy}
+    textAnchor="middle"
+    dominantBaseline="central"
+    fill={fontColor}
+    fontSize={fontSize}
+    fontFamily={fontFamily}
+  >
+    {label}
+  </text>
+)
 
 const Order: FC<{ black: boolean; point: Point; order: number }> = ({ black, point, order }) => {
   const system = useContext(SystemContext)

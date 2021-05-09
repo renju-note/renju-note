@@ -1,13 +1,19 @@
 import { FC, useContext } from 'react'
 import { BoardStateContext } from '../contexts'
-import { Stones } from './common'
+import { Stone } from './common'
 
 const Default: FC = () => {
   const { boardState } = useContext(BoardStateContext)
+  const blacks = boardState.freeBlacks.points.map((p, key) => (
+    <Stone key={key} point={p} black={true} />
+  ))
+  const whites = boardState.freeWhites.points.map((p, key) => (
+    <Stone key={key} point={p} black={false} />
+  ))
   return (
     <g>
-      <Stones black={true} points={boardState.freeBlacks.points} />
-      <Stones black={false} points={boardState.freeWhites.points} />
+      {blacks}
+      {whites}
     </g>
   )
 }
