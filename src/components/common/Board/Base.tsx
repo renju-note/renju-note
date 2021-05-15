@@ -1,19 +1,19 @@
 import { FC, useContext } from 'react'
-import { EditMode } from '../../state'
-import { BoardStateContext, PreferenceContext, PreferenceOption, SystemContext } from '../contexts'
+import { SystemContext } from '../../contexts'
 
-const Default: FC = () => {
-  const { boardState } = useContext(BoardStateContext)
-  const { preference } = useContext(PreferenceContext)
-  return (
-    <g>
-      <Rulers />
-      <Stars />
-      {preference.has(PreferenceOption.showIndices) && <Indices />}
-      {boardState.mode === EditMode.preview && <Overlay />}
-    </g>
-  )
+type Props = {
+  showIndices: boolean
+  showOverlay: boolean
 }
+
+const Default: FC<Props> = ({ showIndices, showOverlay }) => (
+  <g>
+    <Rulers />
+    <Stars />
+    {showIndices && <Indices />}
+    {showOverlay && <Overlay />}
+  </g>
+)
 
 const Rulers: FC = () => {
   const system = useContext(SystemContext)

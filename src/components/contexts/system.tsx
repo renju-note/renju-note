@@ -137,17 +137,6 @@ export class System {
     }
   }
 
-  get forbiddenStrokeWidth(): number {
-    switch (this.W) {
-      case 320:
-        return 4
-      case 360:
-        return 4
-      case 640:
-        return 5
-    }
-  }
-
   get propertyRowStrokeWidth(): number {
     switch (this.W) {
       case 320:
