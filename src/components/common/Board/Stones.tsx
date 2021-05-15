@@ -1,7 +1,7 @@
 import { FC, useContext } from 'react'
-import { Game, Point } from '../../rule'
-import { PointsState } from '../../state'
-import { SystemContext } from '../contexts'
+import { Game, Point } from '../../../rule'
+import { PointsState } from '../../../state'
+import { SystemContext } from '../../contexts'
 import { PointMarker, Stone } from './common'
 
 type Props = {

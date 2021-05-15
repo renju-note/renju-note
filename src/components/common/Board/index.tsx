@@ -1,7 +1,7 @@
 import React, { FC, useContext } from 'react'
-import { Point } from '../../rule'
-import { BoardOption, EditMode } from '../../state'
-import { BoardStateContext, PreferenceContext, PreferenceOption, SystemContext } from '../contexts'
+import { Point } from '../../../rule'
+import { BoardOption, BoardState, EditMode, GameState } from '../../../state'
+import { PreferenceContext, PreferenceOption, SystemContext } from '../../contexts'
 import Base from './Base'
 import Markers from './Markers'
 import Properties from './Properties'
@@ -9,12 +9,13 @@ import Stones from './Stones'
 
 type Props = {
   id: string
+  boardState: BoardState
+  gameState: GameState
   onClickPoint?: ([x, y]: Point) => void
 }
 
-const Default: FC<Props> = ({ id, onClickPoint }) => {
+const Default: FC<Props> = ({ id, onClickPoint, boardState, gameState }) => {
   const system = useContext(SystemContext)
-  const { boardState, gameState } = useContext(BoardStateContext)
   const { preference } = useContext(PreferenceContext)
   const game = boardState.mode === EditMode.preview ? gameState.main : gameState.current
   const onClick =

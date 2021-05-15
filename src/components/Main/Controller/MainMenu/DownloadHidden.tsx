@@ -1,17 +1,18 @@
 import { Box } from '@chakra-ui/react'
-import { FC } from 'react'
-import Board from '../../../Board'
-import { System, SystemContext } from '../../../contexts'
+import { FC, useContext } from 'react'
+import Board from '../../../common/Board'
+import { BoardStateContext, System, SystemContext } from '../../../contexts'
 
 type DefaultProps = {
   id: string
 }
 
 const Default: FC<DefaultProps> = ({ id }) => {
+  const { boardState, gameState } = useContext(BoardStateContext)
   return (
     <Box hidden>
       <SystemContext.Provider value={new System(640)}>
-        <Board id={id} />
+        <Board id={id} boardState={boardState} gameState={gameState} />
       </SystemContext.Provider>
     </Box>
   )

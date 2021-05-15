@@ -1,6 +1,6 @@
 import { FC, useContext } from 'react'
-import { PointsState, SegmentsState } from '../../state'
-import { SystemContext } from '../contexts'
+import { PointsState, SegmentsState } from '../../../state'
+import { SystemContext } from '../../contexts'
 import { PointMarker, SegmentMarker } from './common'
 
 type Props = {

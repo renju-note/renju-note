@@ -1,5 +1,5 @@
 import { FC, useContext } from 'react'
-import { SystemContext } from '../contexts'
+import { SystemContext } from '../../contexts'
 
 type Props = {
   showIndices: boolean

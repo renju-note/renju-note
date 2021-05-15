@@ -1,6 +1,6 @@
 import { FC, useContext } from 'react'
-import { Board, Point, Property, RowKind } from '../../rule'
-import { SystemContext } from '../contexts'
+import { Board, Point, Property, RowKind } from '../../../rule'
+import { SystemContext } from '../../contexts'
 import { PointMarker, SegmentMarker } from './common'
 
 type Props = {
