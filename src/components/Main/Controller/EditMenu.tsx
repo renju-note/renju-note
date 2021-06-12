@@ -17,13 +17,10 @@ import {
   RiAddCircleFill,
   RiAddCircleLine,
   RiAtLine,
-  RiCloseCircleLine,
   RiContrastFill,
   RiDeleteBinFill,
   RiEditCircleFill,
   RiEditLine,
-  RiEraserLine,
-  RiIndeterminateCircleLine,
   RiRadioButtonLine,
 } from 'react-icons/ri'
 import { BoardOption, BoardState, EditMode } from '../../../state'
@@ -33,7 +30,7 @@ const Default: FC = () => {
   const { boardState, setBoardState } = useContext(BoardStateContext)
   return (
     <>
-      <Menu autoSelect={false} placement="auto">
+      <Menu autoSelect={false} placement="top">
         <MenuButton as={IconButton} icon={<ModeIcon mode={boardState.mode} />} aria-label="edit" />
         <MenuList>
           <MenuOptionGroup
@@ -45,7 +42,7 @@ const Default: FC = () => {
             <MenuItemOption value={EditMode.mainMoves}>
               <Flex alignItems="center">
                 <ModeIcon mode={EditMode.mainMoves} />
-                <Text ml={2}>Move (default)</Text>
+                <Text ml={2}>Move</Text>
               </Flex>
             </MenuItemOption>
             <MenuDivider ml="2rem" />
@@ -96,18 +93,6 @@ const Default: FC = () => {
             </MenuItemOption>
           </MenuOptionGroup>
           <MenuDivider />
-          <MenuItem onClick={() => setBoardState(boardState.clearMoves())}>
-            <Icon boxSize="small" as={RiCloseCircleLine} />
-            <Text ml={2}>Clear Moves</Text>
-          </MenuItem>
-          <MenuItem onClick={() => setBoardState(boardState.clearFreeStones())}>
-            <Icon boxSize="small" as={RiIndeterminateCircleLine} />
-            <Text ml={2}>Clear Added Stones</Text>
-          </MenuItem>
-          <MenuItem onClick={() => setBoardState(boardState.clearMarkers())}>
-            <Icon boxSize="small" as={RiEraserLine} />
-            <Text ml={2}>Clear Markers</Text>
-          </MenuItem>
           <MenuItem
             onClick={() => {
               const message = 'All moves, added stones and markers will be cleared. Sure?'

@@ -69,7 +69,7 @@ const Default: FC = () => {
             </MenuItemOption>
           </MenuOptionGroup>
           <MenuOptionGroup
-            title="Visualization"
+            title="Properties"
             type="checkbox"
             defaultValue={preference.values}
             onChange={(values: any) =>

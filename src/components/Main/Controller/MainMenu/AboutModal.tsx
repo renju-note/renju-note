@@ -18,12 +18,12 @@ import {
 import { FC } from 'react'
 import { FiGithub, FiTwitter } from 'react-icons/fi'
 
-type DefaultProps = {
+type Props = {
   isOpen: boolean
   onClose: () => void
 }
 
-const Default: FC<DefaultProps> = ({ isOpen, onClose }) => {
+const Default: FC<Props> = ({ isOpen, onClose }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
