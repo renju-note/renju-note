@@ -16,8 +16,6 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
-import 'firebase/analytics'
-import firebase from 'firebase/app'
 import { FC, useContext } from 'react'
 import {
   RiDownload2Line,
@@ -27,13 +25,12 @@ import {
   RiMenuLine,
   RiQuestionLine,
 } from 'react-icons/ri'
-import { BoardStateContext, PreferenceContext, PreferenceOption } from '../../../contexts'
+import { PreferenceContext, PreferenceOption } from '../../../contexts'
 import AboutModal from './AboutModal'
 import DownloadHidden, { onDownload } from './DownloadHidden'
 
 const Default: FC = () => {
   const downloadHiddenId = 'download-hidden'
-  const { boardState } = useContext(BoardStateContext)
 
   const advancedModeDisclosure = useDisclosure()
   const { preference, setPreference } = useContext(PreferenceContext)
@@ -54,12 +51,7 @@ const Default: FC = () => {
       <Menu autoSelect={false} placement="top-start">
         <MenuButton as={IconButton} icon={<RiMenuLine />} />
         <MenuList>
-          <MenuItem
-            onClick={() => {
-              onDownload(downloadHiddenId)
-              firebase.analytics().logEvent('download_picture', { code: boardState.encode() })
-            }}
-          >
+          <MenuItem onClick={() => onDownload(downloadHiddenId)}>
             <Icon boxSize="small" as={RiDownload2Line} />
             <Text ml={2}>Download Picture</Text>
           </MenuItem>
