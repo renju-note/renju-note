@@ -115,26 +115,6 @@ export class BoardState {
     return this.update({ mainGame })
   }
 
-  clearMoves(): BoardState {
-    return this.update({
-      mainGame: new GameState(),
-    })
-  }
-
-  clearFreeStones(): BoardState {
-    return this.update({
-      freeBlacks: new PointsState(),
-      freeWhites: new PointsState(),
-    })
-  }
-
-  clearMarkers(): BoardState {
-    return this.update({
-      markerPoints: new PointsState(),
-      markerLines: new SegmentsState(),
-    })
-  }
-
   /* undo */
 
   get canUndo(): boolean {
