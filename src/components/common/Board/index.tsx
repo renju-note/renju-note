@@ -25,24 +25,26 @@ const Default: FC<Props> = ({ id, onClickPoint, boardState, gameState }) => {
       const [bx, by] = [e.clientX - base.x, e.clientY - base.y]
       onClickPoint(system.p([bx, by]))
     })
+  const isPreview = boardState.mode === EditMode.preview
   return (
     <svg id={id} width={system.W} height={system.W} onClick={onClick}>
-      <Base
-        showIndices={preference.has(PreferenceOption.showIndices)}
-        showOverlay={boardState.mode === EditMode.preview}
-      />
-      <Properties
-        board={boardState.current}
-        showRows={preference.has(PreferenceOption.showPropertyRows)}
-        showEyes={preference.has(PreferenceOption.showPropertyEyes)}
-        showForbiddens={preference.has(PreferenceOption.showForbiddens)}
-      />
-      <Markers
-        points={boardState.markerPoints}
-        segments={boardState.markerLines}
-        sequence={boardState.numberedPoints}
-        showPointsLabel={boardState.options.has(BoardOption.labelMarkers)}
-      />
+      <Base showIndices={preference.has(PreferenceOption.showIndices)} showOverlay={isPreview} />
+      {!isPreview && (
+        <Properties
+          board={boardState.current}
+          showRows={preference.has(PreferenceOption.showPropertyRows)}
+          showEyes={preference.has(PreferenceOption.showPropertyEyes)}
+          showForbiddens={preference.has(PreferenceOption.showForbiddens)}
+        />
+      )}
+      {!isPreview && (
+        <Markers
+          points={boardState.markerPoints}
+          segments={boardState.markerLines}
+          sequence={boardState.numberedPoints}
+          showPointsLabel={boardState.options.has(BoardOption.labelMarkers)}
+        />
+      )}
       <Stones
         game={game}
         invert={boardState.options.has(BoardOption.invertMoves)}
