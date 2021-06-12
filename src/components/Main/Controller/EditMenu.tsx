@@ -45,7 +45,7 @@ const Default: FC = () => {
             <MenuItemOption value={EditMode.mainMoves}>
               <Flex alignItems="center">
                 <ModeIcon mode={EditMode.mainMoves} />
-                <Text ml={2}>Move (default)</Text>
+                <Text ml={2}>Move</Text>
               </Flex>
             </MenuItemOption>
             <MenuDivider ml="2rem" />

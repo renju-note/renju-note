@@ -3,11 +3,11 @@ import { FC, useContext } from 'react'
 import Board from '../../../common/Board'
 import { BoardStateContext, System, SystemContext } from '../../../contexts'
 
-type DefaultProps = {
+type Props = {
   id: string
 }
 
-const Default: FC<DefaultProps> = ({ id }) => {
+const Default: FC<Props> = ({ id }) => {
   const { boardState, gameState } = useContext(BoardStateContext)
   return (
     <Box hidden>
