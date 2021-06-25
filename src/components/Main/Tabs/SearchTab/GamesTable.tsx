@@ -2,13 +2,13 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
 import { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { GameView, RIFDatabase, RIFPlayer } from '../../../../database'
 import { Game } from '../../../../rule'
-import { EditMode, GameState } from '../../../../state'
+import { BoardState, ConfirmOption, ConfirmState, EditMode, GameState } from '../../../../state'
 import { AdvancedStateContext, BoardStateContext } from '../../../contexts'
 import { WonIcon } from '../common'
 
 const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
   const db = useMemo(() => new RIFDatabase(), [])
-  const { boardState, setBoardState } = useContext(BoardStateContext)
+  const { boardState, setBoardState, setConfirmState } = useContext(BoardStateContext)
   const { advancedState, setAdvancedState } = useContext(AdvancedStateContext)
   const [items, setItems] = useState<GameView[]>([])
   useEffect(() => {
@@ -19,17 +19,32 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
     ;(async () => setItems(await db.getGameViews(gameIds)))()
   }, [gameIds])
   const onClick = (gv: GameView) => {
+    const originalGame = advancedState.hiddenGame ?? boardState.mainGame
     const previewGame = new GameState({
       main: new Game({ moves: gv.moves }),
       gameid: gv.id,
-      cursor: boardState.mainGame.cursor,
+      cursor: boardState.mainGame.current.size,
     })
     if (boardState.mode !== EditMode.preview) {
       setAdvancedState(advancedState.setHiddenGame(boardState.mainGame))
-      setBoardState(boardState.setMode(EditMode.preview).setMainGame(previewGame))
-    } else {
-      setBoardState(boardState.setMainGame(previewGame))
     }
+    setBoardState(boardState.setMainGame(previewGame).setMode(EditMode.preview))
+
+    const onOpen = () => {
+      setBoardState(new BoardState({ mainGame: previewGame }))
+      setAdvancedState(advancedState.setHiddenGame(undefined))
+      setConfirmState(undefined)
+    }
+    const onCancel = () => {
+      setBoardState(boardState.setMainGame(originalGame).setMode(EditMode.mainMoves))
+      setAdvancedState(advancedState.setHiddenGame(undefined))
+      setConfirmState(undefined)
+    }
+    const confirmState = new ConfirmState({
+      ok: new ConfirmOption({ text: 'Open', colorScheme: 'blue', onClick: onOpen }),
+      cancel: new ConfirmOption({ text: 'Cancel', onClick: onCancel }),
+    })
+    setConfirmState(confirmState)
   }
   return (
     <Table size="rjn-info" variant="rjn-info">
