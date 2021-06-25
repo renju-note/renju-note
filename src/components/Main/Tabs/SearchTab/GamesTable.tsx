@@ -2,19 +2,13 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
 import { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { GameView, RIFDatabase, RIFPlayer } from '../../../../database'
 import { Game } from '../../../../rule'
-import {
-  BoardState,
-  ConfirmationOption,
-  ConfirmationState,
-  EditMode,
-  GameState,
-} from '../../../../state'
+import { BoardState, ConfirmOption, ConfirmState, EditMode, GameState } from '../../../../state'
 import { AdvancedStateContext, BoardStateContext } from '../../../contexts'
 import { WonIcon } from '../common'
 
 const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
   const db = useMemo(() => new RIFDatabase(), [])
-  const { boardState, setBoardState, setConfirmationState } = useContext(BoardStateContext)
+  const { boardState, setBoardState, setConfirmState } = useContext(BoardStateContext)
   const { advancedState, setAdvancedState } = useContext(AdvancedStateContext)
   const [items, setItems] = useState<GameView[]>([])
   useEffect(() => {
@@ -39,18 +33,18 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
     const onOpen = () => {
       setBoardState(new BoardState({ mainGame: previewGame }))
       setAdvancedState(advancedState.setHiddenGame(undefined))
-      setConfirmationState(undefined)
+      setConfirmState(undefined)
     }
     const onCancel = () => {
       setBoardState(boardState.setMainGame(originalGame).setMode(EditMode.mainMoves))
       setAdvancedState(advancedState.setHiddenGame(undefined))
-      setConfirmationState(undefined)
+      setConfirmState(undefined)
     }
-    const confirmationState = new ConfirmationState({
-      ok: new ConfirmationOption({ text: 'Open', colorScheme: 'blue', onClick: onOpen }),
-      cancel: new ConfirmationOption({ text: 'Cancel', onClick: onCancel }),
+    const confirmState = new ConfirmState({
+      ok: new ConfirmOption({ text: 'Open', colorScheme: 'blue', onClick: onOpen }),
+      cancel: new ConfirmOption({ text: 'Cancel', onClick: onCancel }),
     })
-    setConfirmationState(confirmationState)
+    setConfirmState(confirmState)
   }
   return (
     <Table size="rjn-info" variant="rjn-info">

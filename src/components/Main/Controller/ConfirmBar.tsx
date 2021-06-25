@@ -4,8 +4,8 @@ import { BoardStateContext, SystemContext } from '../../contexts'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
-  const { confirmationState } = useContext(BoardStateContext)
-  if (confirmationState === undefined) {
+  const { confirmState } = useContext(BoardStateContext)
+  if (confirmState === undefined) {
     return <></>
   }
   return (
@@ -17,17 +17,17 @@ const Default: FC = () => {
     >
       <Button
         width="25%"
-        colorScheme={confirmationState.ok.colorScheme}
-        onClick={confirmationState.ok.onClick}
+        colorScheme={confirmState.ok.colorScheme}
+        onClick={confirmState.ok.onClick}
       >
-        {confirmationState.ok.text}
+        {confirmState.ok.text}
       </Button>
       <Button
         width="25%"
-        colorScheme={confirmationState.cancel.colorScheme}
-        onClick={confirmationState.cancel.onClick}
+        colorScheme={confirmState.cancel.colorScheme}
+        onClick={confirmState.cancel.onClick}
       >
-        {confirmationState.cancel.text}
+        {confirmState.cancel.text}
       </Button>
     </ButtonGroup>
   )

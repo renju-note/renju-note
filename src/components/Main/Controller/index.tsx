@@ -9,8 +9,8 @@ import SettingsMenu from './SettingsMenu'
 import UndoButton from './UndoButton'
 
 const Default: FC = () => {
-  const { confirmationState } = useContext(BoardStateContext)
-  return <>{confirmationState !== undefined ? <ConfirmBar /> : <DefaultBar />}</>
+  const { confirmState } = useContext(BoardStateContext)
+  return <>{confirmState !== undefined ? <ConfirmBar /> : <DefaultBar />}</>
 }
 
 const DefaultBar: FC = () => {

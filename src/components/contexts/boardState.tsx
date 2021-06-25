@@ -1,22 +1,22 @@
 import { createContext, FC, useState } from 'react'
-import { BoardState, ConfirmationState, GameState } from '../../state'
+import { BoardState, ConfirmState, GameState } from '../../state'
 
 export type BoardStateContext = {
   boardState: BoardState
   gameState: GameState
-  confirmationState?: ConfirmationState
+  confirmState?: ConfirmState
   setBoardState: (s: BoardState) => void
   setGameState: (s: GameState) => void
-  setConfirmationState: (s?: ConfirmationState) => void
+  setConfirmState: (s?: ConfirmState) => void
 }
 
 export const BoardStateContext = createContext<BoardStateContext>({
   boardState: new BoardState(),
   gameState: new GameState(),
-  confirmationState: undefined,
+  confirmState: undefined,
   setBoardState: () => {},
   setGameState: () => {},
-  setConfirmationState: () => {},
+  setConfirmState: () => {},
 })
 
 export const BoardStateProvider: FC = ({ children }) => {
@@ -30,16 +30,16 @@ export const BoardStateProvider: FC = ({ children }) => {
   const setGameState = (s: GameState) => {
     setBoardState(boardState.setMainGame(s))
   }
-  const [confirmationState, setConfirmationState] = useState<ConfirmationState>()
+  const [confirmState, setConfirmState] = useState<ConfirmState>()
   return (
     <BoardStateContext.Provider
       value={{
         boardState,
         gameState: boardState.mainGame,
-        confirmationState,
+        confirmState,
         setBoardState,
         setGameState,
-        setConfirmationState,
+        setConfirmState,
       }}
     >
       {children}
