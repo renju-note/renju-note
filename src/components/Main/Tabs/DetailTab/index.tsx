@@ -171,9 +171,10 @@ const Player: FC<{ player: RIFPlayer; countriesMap: Map<number, RIFCountry> }> =
   player,
   countriesMap,
 }) => {
-  const { advancedState, setAdvancedState } = useContext(AdvancedContext)
+  const { advancedState, setAdvancedState, tabsState, setTabsState } = useContext(AdvancedContext)
   const onClick = () => {
-    setAdvancedState(advancedState.setSearchPlayerId(player.id).setTab(TabName.search))
+    setAdvancedState(advancedState.setSearchPlayerId(player.id))
+    setTabsState(tabsState.setCurrent(TabName.search))
   }
   return (
     <Text>

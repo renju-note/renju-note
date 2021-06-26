@@ -1,6 +1,6 @@
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
 import { FC, useContext } from 'react'
-import { TabName } from '../../../state/advanced'
+import { TabName } from '../../../state'
 import { AdvancedContext } from '../../contexts'
 import DetailTab from './DetailTab'
 import MateTab from './MateTab'
@@ -8,21 +8,21 @@ import SearchTab from './SearchTab'
 import SetupTab from './SetupTab'
 
 const Default: FC = () => {
-  const { advancedState, setAdvancedState } = useContext(AdvancedContext)
+  const { tabsState, setTabsState } = useContext(AdvancedContext)
   return (
     <Tabs
       width="100%"
-      index={advancedState.tabIndex}
-      onChange={index => setAdvancedState(advancedState.setTabIndex(index))}
+      index={tabsState.index}
+      onChange={index => setTabsState(tabsState.setIndex(index))}
     >
       <TabList>
-        {advancedState.tabs.map((tab, key) => (
-          <Tab key={key}>{upperFirst(tab)}</Tab>
+        {tabsState.names.map((name, key) => (
+          <Tab key={key}>{upperFirst(name)}</Tab>
         ))}
       </TabList>
       <TabPanels>
-        {advancedState.tabs.map((tab, key) => {
-          switch (tab) {
+        {tabsState.names.map((name, key) => {
+          switch (name) {
             case TabName.search:
               return (
                 <TabPanel key={key} px={0}>

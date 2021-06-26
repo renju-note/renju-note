@@ -9,8 +9,7 @@ import {
   RiIndeterminateCircleFill,
   RiIndeterminateCircleLine,
 } from 'react-icons/ri'
-import { EditMode, GameState } from '../../../state'
-import { TabName } from '../../../state/advanced'
+import { EditMode, GameState, TabName } from '../../../state'
 import { AdvancedContext, BasicContext } from '../../contexts'
 
 const Default: FC = () => {
@@ -68,10 +67,10 @@ const ClearRestOfMovesMenu: FC = () => {
 
 const ClearMainGameMenu: FC = () => {
   const { setGameState } = useContext(BasicContext)
-  const { advancedState, setAdvancedState } = useContext(AdvancedContext)
+  const { tabsState, setTabsState } = useContext(AdvancedContext)
   const onClearGame = () => {
     setGameState(new GameState())
-    setAdvancedState(advancedState.setTab(TabName.search))
+    setTabsState(tabsState.setCurrent(TabName.search))
   }
   return (
     <Menu autoSelect={false} placement="top">
