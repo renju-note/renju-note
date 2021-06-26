@@ -19,19 +19,19 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
     ;(async () => setItems(await db.getGameViews(gameIds)))()
   }, [gameIds])
   const onClick = (gv: GameView) => {
-    const originalGame = searchState.hiddenGame ?? boardState.mainGame
+    const originalGame = searchState.hiddenGame ?? boardState.game
     const previewGame = new GameState({
       main: new Game({ moves: gv.moves }),
       gameid: gv.id,
-      cursor: boardState.mainGame.current.size,
+      cursor: boardState.game.current.size,
     })
     if (boardState.mode !== BoardMode.preview) {
-      setAdvancedState(searchState.setHiddenGame(boardState.mainGame))
+      setAdvancedState(searchState.setHiddenGame(boardState.game))
     }
     setBoardState(boardState.setMainGame(previewGame).setMode(BoardMode.preview))
 
     const onOpen = () => {
-      setBoardState(new BoardState({ mainGame: previewGame }))
+      setBoardState(new BoardState({ game: previewGame }))
       setAdvancedState(searchState.setHiddenGame(undefined))
       setConfirmState(undefined)
     }
@@ -71,9 +71,8 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
           const mgid =
             boardState.mode === BoardMode.preview
               ? searchState.hiddenGame?.gameid
-              : boardState.mainGame.gameid
-          const pgid =
-            boardState.mode === BoardMode.preview ? boardState.mainGame.gameid : undefined
+              : boardState.game.gameid
+          const pgid = boardState.mode === BoardMode.preview ? boardState.game.gameid : undefined
           return (
             <Tr
               key={key}

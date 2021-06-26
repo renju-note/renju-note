@@ -37,7 +37,7 @@ export const BoardStateProvider: FC = ({ children }) => {
       value={{
         boardState,
         setBoardState,
-        gameState: boardState.mainGame,
+        gameState: boardState.game,
         setGameState,
         confirmState,
         setConfirmState,

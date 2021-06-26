@@ -31,7 +31,7 @@ export type BoardOptionsState = OptionsState<BoardOption>
 export class BoardState {
   readonly mode: BoardMode = BoardMode.mainMoves
   readonly options: BoardOptionsState = new OptionsState<BoardOption>()
-  readonly mainGame: GameState = new GameState()
+  readonly game: GameState = new GameState()
   readonly freeBlacks: PointsState = new PointsState()
   readonly freeWhites: PointsState = new PointsState()
   readonly markerPoints: PointsState = new PointsState()
@@ -67,9 +67,9 @@ export class BoardState {
   }
 
   private canEditMove(p: Point): boolean {
-    const isBlackTurn = this.inverted ? !this.mainGame.isBlackTurn : this.mainGame.isBlackTurn
+    const isBlackTurn = this.inverted ? !this.game.isBlackTurn : this.game.isBlackTurn
     return (
-      this.mainGame.canMove(p) &&
+      this.game.canMove(p) &&
       !this.freeBlacks.has(p) &&
       !this.freeWhites.has(p) &&
       !(isBlackTurn && this.current.forbidden(p))
@@ -77,14 +77,14 @@ export class BoardState {
   }
 
   private canEditFreeStone(p: Point): boolean {
-    return this.mainGame.isLast && !this.mainGame.isBranching && !this.mainGame.main.has(p)
+    return this.game.isLast && !this.game.isBranching && !this.game.main.has(p)
   }
 
   edit(p: Point): BoardState {
     if (!this.canEdit(p)) return this
     switch (this.mode) {
       case BoardMode.mainMoves:
-        return this.update({ mainGame: this.mainGame.move(p) })
+        return this.update({ game: this.game.move(p) })
       case BoardMode.freeBlacks:
         return this.update({ freeBlacks: this.freeBlacks.edit(p) })
       case BoardMode.freeWhites:
@@ -112,7 +112,7 @@ export class BoardState {
   }
 
   setMainGame(mainGame: GameState): BoardState {
-    return this.update({ mainGame })
+    return this.update({ game: mainGame })
   }
 
   /* undo */
@@ -120,7 +120,7 @@ export class BoardState {
   get canUndo(): boolean {
     switch (this.mode) {
       case BoardMode.mainMoves:
-        return this.mainGame.canUndo
+        return this.game.canUndo
       case BoardMode.freeBlacks:
         return this.freeBlacks.canUndo
       case BoardMode.freeWhites:
@@ -138,7 +138,7 @@ export class BoardState {
     if (!this.canUndo) return this
     switch (this.mode) {
       case BoardMode.mainMoves:
-        return this.update({ mainGame: this.mainGame.undo() })
+        return this.update({ game: this.game.undo() })
       case BoardMode.freeBlacks:
         return this.update({ freeBlacks: this.freeBlacks.undo() })
       case BoardMode.freeWhites:
@@ -153,11 +153,11 @@ export class BoardState {
   }
 
   get canClearRestOfMoves(): boolean {
-    return this.mode === BoardMode.mainMoves && !this.canUndo && this.mainGame.canClearRest
+    return this.mode === BoardMode.mainMoves && !this.canUndo && this.game.canClearRest
   }
 
   get canClearMainGame(): boolean {
-    return this.mode === BoardMode.mainMoves && !this.canUndo && this.mainGame.isReadOnly
+    return this.mode === BoardMode.mainMoves && !this.canUndo && this.game.isReadOnly
   }
 
   /* general */
@@ -178,17 +178,11 @@ export class BoardState {
   }
 
   get blacks(): Point[] {
-    return [
-      ...(this.inverted ? this.mainGame.whites : this.mainGame.blacks),
-      ...this.freeBlacks.points,
-    ]
+    return [...(this.inverted ? this.game.whites : this.game.blacks), ...this.freeBlacks.points]
   }
 
   get whites(): Point[] {
-    return [
-      ...(this.inverted ? this.mainGame.blacks : this.mainGame.whites),
-      ...this.freeWhites.points,
-    ]
+    return [...(this.inverted ? this.game.blacks : this.game.whites), ...this.freeWhites.points]
   }
 
   private get inverted(): boolean {
@@ -199,7 +193,7 @@ export class BoardState {
 
   encode(): string {
     const codes: string[] = []
-    const mainGameCode = this.mainGame.encode()
+    const mainGameCode = this.game.encode()
     if (mainGameCode !== '') codes.push(mainGameCode)
     if (!this.options.empty) codes.push(`o:${encodeBoardOptions(this.options)}`)
     if (!this.freeBlacks.empty) codes.push(`b:${this.freeBlacks.encode()}`)
@@ -221,7 +215,7 @@ export class BoardState {
     return new BoardState({
       mode: BoardMode.mainMoves,
       options: decodeBoardOptions(optionsCode) ?? new OptionsState<BoardOption>(),
-      mainGame: GameState.decode(mainGameCode) ?? new GameState(),
+      game: GameState.decode(mainGameCode) ?? new GameState(),
       freeBlacks: PointsState.decode(freeBlacksCode) ?? new PointsState(),
       freeWhites: PointsState.decode(freeWhitesCode) ?? new PointsState(),
       markerPoints: PointsState.decode(markerPointsCode) ?? new PointsState(),

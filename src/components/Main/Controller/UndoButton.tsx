@@ -22,7 +22,7 @@ const Default: FC = () => {
       onTouchStart={e => e.preventDefault()}
       icon={<UndoIcon mode={boardState.mode} />}
       aria-label="undo"
-      colorScheme={boardState.mainGame.isBranching ? 'purple' : undefined}
+      colorScheme={boardState.game.isBranching ? 'purple' : undefined}
       isDisabled={!boardState.canUndo}
     />
   )
