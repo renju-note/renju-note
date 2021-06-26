@@ -7,21 +7,21 @@ import {
   AdvancedContextProvider,
   BasicContextProvider,
   PreferenceContext,
+  PreferenceContextProvider,
   PreferenceOption,
-  PreferenceProvider,
   SystemContext,
-  SystemProvider,
+  SystemContextProvider,
 } from './contexts'
 import theme from './theme'
 
 const Default: FC = () => {
   return (
     <ChakraProvider theme={theme}>
-      <SystemProvider>
-        <PreferenceProvider>
+      <SystemContextProvider>
+        <PreferenceContextProvider>
           <Main />
-        </PreferenceProvider>
-      </SystemProvider>
+        </PreferenceContextProvider>
+      </SystemContextProvider>
     </ChakraProvider>
   )
 }

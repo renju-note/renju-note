@@ -33,7 +33,7 @@ export const PreferenceContext = createContext<PreferenceContext>({
   setPreference: () => {},
 })
 
-export const PreferenceProvider: FC = ({ children }) => {
+export const PreferenceContextProvider: FC = ({ children }) => {
   const [preference, setPreferenceState] = useState<Preference>(
     () => decode(localStorage.getItem('preference') || '{}') ?? new OptionsState<PreferenceOption>()
   )

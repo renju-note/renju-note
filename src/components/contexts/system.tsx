@@ -162,7 +162,7 @@ export class System {
 
 export const SystemContext = createContext<System>(new System(640))
 
-export const SystemProvider: FC = ({ children }) => {
+export const SystemContextProvider: FC = ({ children }) => {
   const system = useMemo(() => new System(window.innerWidth), [])
   return <SystemContext.Provider value={system}>{children}</SystemContext.Provider>
 }
