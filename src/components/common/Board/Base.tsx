@@ -4,18 +4,43 @@ import { SystemContext } from '../../contexts'
 type Props = {
   showIndices: boolean
   showOverlay: boolean
+  colorBase: boolean
 }
 
-const Default: FC<Props> = ({ showIndices, showOverlay }) => (
-  <g>
-    <Rulers />
-    <Stars />
-    {showIndices && <Indices />}
-    {showOverlay && <Overlay />}
-  </g>
-)
+const Default: FC<Props> = ({ showIndices, showOverlay, colorBase }) => {
+  const stroke = colorBase ? 'gray' : 'darkgray'
+  return (
+    <g>
+      {colorBase && <Base />}
+      <Rulers stroke={stroke} />
+      <Stars />
+      {showIndices && <Indices stroke={stroke} />}
+      {showOverlay && <Overlay />}
+    </g>
+  )
+}
 
-const Rulers: FC = () => {
+const Base: FC = () => {
+  const system = useContext(SystemContext)
+  return (
+    <rect
+      x={0}
+      y={0}
+      width={system.W}
+      height={system.W}
+      rx={system.C / 4}
+      ry={system.C / 4}
+      stroke="none"
+      fill="moccasin"
+    />
+  )
+}
+
+type StrokeProps = {
+  stroke: string
+}
+
+const Rulers: FC<StrokeProps> = ({ stroke }) => {
   const system = useContext(SystemContext)
   const verticalLines = system.indices.map((x, key) => (
     <line
@@ -24,7 +49,7 @@ const Rulers: FC = () => {
       y1={system.cy(1)}
       x2={system.cx(x)}
       y2={system.cy(system.N)}
-      stroke="darkgray"
+      stroke={stroke}
       strokeLinecap="round"
       strokeWidth={system.rulerStrokeWidth}
     />
@@ -36,7 +61,7 @@ const Rulers: FC = () => {
       y1={system.cy(y)}
       x2={system.cx(system.N)}
       y2={system.cy(y)}
-      stroke="darkgray"
+      stroke={stroke}
       strokeLinecap="round"
       strokeWidth={system.rulerStrokeWidth}
     />
@@ -74,7 +99,7 @@ const Stars: FC = () => {
   )
 }
 
-const Indices: FC = () => {
+const Indices: FC<StrokeProps> = ({ stroke }) => {
   const system = useContext(SystemContext)
   const xIndices = system.indices.map((x, key) => (
     <text
@@ -82,7 +107,7 @@ const Indices: FC = () => {
       x={system.cx(x)}
       y={system.cy(1) + (system.P * 19) / 20 - system.indexPadding}
       textAnchor="middle"
-      fill="gray"
+      fill={stroke}
       fontSize={system.indexFontSize}
       fontFamily="Roboto"
     >
@@ -96,7 +121,7 @@ const Indices: FC = () => {
       y={system.cy(y)}
       textAnchor="middle"
       dominantBaseline="central"
-      fill="gray"
+      fill={stroke}
       fontSize={system.indexFontSize}
       fontFamily="Roboto"
     >

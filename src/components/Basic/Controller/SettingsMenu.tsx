@@ -17,6 +17,7 @@ import {
   RiGitCommitFill,
   RiGridLine,
   RiInformationLine,
+  RiMicrosoftFill,
   RiSettings2Line,
   RiStopMiniFill,
 } from 'react-icons/ri'
@@ -25,6 +26,7 @@ import { PreferenceContext, PreferenceOption } from '../../contexts'
 const Default: FC = () => {
   const { preference, setPreference } = useContext(PreferenceContext)
   const boardAndMovesPreferences = [
+    PreferenceOption.colorBase,
     PreferenceOption.showIndices,
     PreferenceOption.showOrders,
     PreferenceOption.emphasizeLastMove,
@@ -49,6 +51,12 @@ const Default: FC = () => {
               )
             }
           >
+            <MenuItemOption value={PreferenceOption.colorBase}>
+              <Flex alignItems="center">
+                <Icon boxSize="small" as={RiMicrosoftFill} />
+                <Text ml={2}>Color Board</Text>
+              </Flex>
+            </MenuItemOption>
             <MenuItemOption value={PreferenceOption.showIndices}>
               <Flex alignItems="center">
                 <Icon boxSize="small" as={RiGridLine} />
