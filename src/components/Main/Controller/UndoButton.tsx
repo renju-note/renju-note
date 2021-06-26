@@ -9,8 +9,8 @@ import {
   RiIndeterminateCircleFill,
   RiIndeterminateCircleLine,
 } from 'react-icons/ri'
-import { BoardMode, GameState, TabName } from '../../../state'
-import { AdvancedContext, BasicContext } from '../../contexts'
+import { BoardMode, GameState } from '../../../state'
+import { BasicContext } from '../../contexts'
 
 const Default: FC = () => {
   const { boardState, setBoardState } = useContext(BasicContext)
@@ -67,16 +67,11 @@ const ClearRestOfMovesMenu: FC = () => {
 
 const ClearMainGameMenu: FC = () => {
   const { boardState, setBoardState } = useContext(BasicContext)
-  const { tabsState, setTabsState } = useContext(AdvancedContext)
-  const onClearGame = () => {
-    setBoardState(boardState.setGame(new GameState()))
-    setTabsState(tabsState.setCurrent(TabName.search))
-  }
   return (
     <Menu autoSelect={false} placement="top">
       <MenuButton as={IconButton} icon={<FiXSquare />} />
       <MenuList>
-        <MenuItem onClick={onClearGame}>
+        <MenuItem onClick={() => setBoardState(boardState.setGame(new GameState()))}>
           <Icon boxSize="small" as={FiXSquare} />
           <Text ml={2} mr={1}>
             Clear Game
