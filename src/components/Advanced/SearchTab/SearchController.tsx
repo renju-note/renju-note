@@ -19,8 +19,8 @@ import {
 } from '@chakra-ui/react'
 import { FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { RiRadioButtonLine, RiUser3Fill } from 'react-icons/ri'
-import { RIFDatabase, RIFPlayer } from '../../../../database'
-import { AdvancedStateContext, BoardStateContext } from '../../../contexts'
+import { RIFDatabase, RIFPlayer } from '../../../database'
+import { AdvancedContext, BasicContext } from '../../contexts'
 
 const Default: FC = () => {
   return (
@@ -32,8 +32,8 @@ const Default: FC = () => {
 }
 
 const MovesInput: FC = () => {
-  const { advancedState, setAdvancedState } = useContext(AdvancedStateContext)
-  const { gameState } = useContext(BoardStateContext)
+  const { boardState } = useContext(BasicContext)
+  const { searchState, setSearchState } = useContext(AdvancedContext)
   return (
     <InputGroup size="sm">
       <InputLeftAddon>
@@ -43,12 +43,12 @@ const MovesInput: FC = () => {
         type="string"
         placeholder="put moves on board"
         isReadOnly
-        value={gameState.current.encode(',')}
+        value={boardState.game.current.encode(',')}
       />
       <InputRightElement>
         <Checkbox
-          isChecked={advancedState.searchWithMoves}
-          onChange={e => setAdvancedState(advancedState.setSearchWithMoves(e.target.checked))}
+          isChecked={searchState.followMoves}
+          onChange={e => setSearchState(searchState.setFollowMoves(e.target.checked))}
         />
       </InputRightElement>
     </InputGroup>
@@ -56,7 +56,7 @@ const MovesInput: FC = () => {
 }
 
 const PlayerInput: FC = () => {
-  const { advancedState, setAdvancedState } = useContext(AdvancedStateContext)
+  const { searchState, setSearchState } = useContext(AdvancedContext)
   const rifDB = useMemo(() => new RIFDatabase(), [])
 
   const [value, setValue] = useState<string>('')
@@ -70,16 +70,16 @@ const PlayerInput: FC = () => {
     })()
   }
   const onSetPlayer = (player: RIFPlayer) => {
-    setAdvancedState(advancedState.setSearchPlayerId(player.id))
+    setSearchState(searchState.setPlayerId(player.id))
     popoverDisclosure.onClose()
   }
   const onUnsetPlayer = () => {
-    setAdvancedState(advancedState.setSearchPlayerId(undefined))
+    setSearchState(searchState.setPlayerId(undefined))
     setValue('')
     popoverDisclosure.onClose()
   }
 
-  const playerId = advancedState.searchPlayerId
+  const playerId = searchState.playerId
   useEffect(() => {
     if (typeof playerId !== 'number') return
     ;(async () => {
@@ -109,7 +109,7 @@ const PlayerInput: FC = () => {
             <CloseButton
               size="sm"
               onClick={onUnsetPlayer}
-              disabled={advancedState.searchPlayerId === undefined && !popoverDisclosure.isOpen}
+              disabled={searchState.playerId === undefined && !popoverDisclosure.isOpen}
             />
           </InputRightElement>
         </InputGroup>

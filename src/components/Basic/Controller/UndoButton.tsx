@@ -9,12 +9,11 @@ import {
   RiIndeterminateCircleFill,
   RiIndeterminateCircleLine,
 } from 'react-icons/ri'
-import { EditMode, GameState } from '../../../state'
-import { TabName } from '../../../state/advanced'
-import { AdvancedStateContext, BoardStateContext } from '../../contexts'
+import { BoardMode, GameState } from '../../../state'
+import { BasicContext } from '../../contexts'
 
 const Default: FC = () => {
-  const { boardState, setBoardState } = useContext(BoardStateContext)
+  const { boardState, setBoardState } = useContext(BasicContext)
   if (boardState.canClearRestOfMoves) return <ClearRestOfMovesMenu />
   if (boardState.canClearMainGame) return <ClearMainGameMenu />
   return (
@@ -23,23 +22,23 @@ const Default: FC = () => {
       onTouchStart={e => e.preventDefault()}
       icon={<UndoIcon mode={boardState.mode} />}
       aria-label="undo"
-      colorScheme={boardState.mainGame.isBranching ? 'purple' : undefined}
+      colorScheme={boardState.game.isBranching ? 'purple' : undefined}
       isDisabled={!boardState.canUndo}
     />
   )
 }
 
-const UndoIcon: FC<{ mode: EditMode }> = ({ mode }) => {
+const UndoIcon: FC<{ mode: BoardMode }> = ({ mode }) => {
   switch (mode) {
-    case EditMode.mainMoves:
+    case BoardMode.game:
       return <RiCloseCircleLine />
-    case EditMode.freeBlacks:
+    case BoardMode.freeBlacks:
       return <RiIndeterminateCircleFill />
-    case EditMode.freeWhites:
+    case BoardMode.freeWhites:
       return <RiIndeterminateCircleLine />
-    case EditMode.markerPoints:
+    case BoardMode.markerPoints:
       return <RiEraserFill />
-    case EditMode.markerLines:
+    case BoardMode.markerLines:
       return <RiEraserLine />
     default:
       return <RiCloseCircleLine />
@@ -47,7 +46,7 @@ const UndoIcon: FC<{ mode: EditMode }> = ({ mode }) => {
 }
 
 const ClearRestOfMovesMenu: FC = () => {
-  const { gameState, setGameState } = useContext(BoardStateContext)
+  const { boardState, setBoardState } = useContext(BasicContext)
   return (
     <Menu autoSelect={false} placement="top">
       <MenuButton
@@ -55,7 +54,7 @@ const ClearRestOfMovesMenu: FC = () => {
         icon={<RiDeleteBack2Line style={{ transform: 'rotate(180deg)' }} />}
       />
       <MenuList>
-        <MenuItem onClick={() => setGameState(gameState.clearRest())}>
+        <MenuItem onClick={() => setBoardState(boardState.setGame(boardState.game.clearRest()))}>
           <Icon boxSize="small" as={RiDeleteBack2Line} style={{ transform: 'rotate(180deg)' }} />
           <Text ml={2} mr={1}>
             Clear Rest of Moves
@@ -67,17 +66,12 @@ const ClearRestOfMovesMenu: FC = () => {
 }
 
 const ClearMainGameMenu: FC = () => {
-  const { setGameState } = useContext(BoardStateContext)
-  const { advancedState, setAdvancedState } = useContext(AdvancedStateContext)
-  const onClearGame = () => {
-    setGameState(new GameState())
-    setAdvancedState(advancedState.setTab(TabName.search))
-  }
+  const { boardState, setBoardState } = useContext(BasicContext)
   return (
     <Menu autoSelect={false} placement="top">
       <MenuButton as={IconButton} icon={<FiXSquare />} />
       <MenuList>
-        <MenuItem onClick={onClearGame}>
+        <MenuItem onClick={() => setBoardState(boardState.setGame(new GameState()))}>
           <Icon boxSize="small" as={FiXSquare} />
           <Text ml={2} mr={1}>
             Clear Game

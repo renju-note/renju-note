@@ -1,15 +1,15 @@
 import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
 import { FC, useContext, useEffect, useMemo, useState } from 'react'
-import { GameView, RIFDatabase, RIFPlayer } from '../../../../database'
-import { Game } from '../../../../rule'
-import { BoardState, ConfirmOption, ConfirmState, EditMode, GameState } from '../../../../state'
-import { AdvancedStateContext, BoardStateContext } from '../../../contexts'
+import { GameView, RIFDatabase, RIFPlayer } from '../../../database'
+import { Game } from '../../../rule'
+import { BoardMode, BoardState, ConfirmOption, ConfirmState, GameState } from '../../../state'
+import { AdvancedContext, BasicContext } from '../../contexts'
 import { WonIcon } from '../common'
 
 const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
   const db = useMemo(() => new RIFDatabase(), [])
-  const { boardState, setBoardState, setConfirmState } = useContext(BoardStateContext)
-  const { advancedState, setAdvancedState } = useContext(AdvancedStateContext)
+  const { boardState, setBoardState, setConfirmState } = useContext(BasicContext)
+  const { searchState, setSearchState: setAdvancedState } = useContext(AdvancedContext)
   const [items, setItems] = useState<GameView[]>([])
   useEffect(() => {
     if (gameIds.length === 0) {
@@ -19,25 +19,25 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
     ;(async () => setItems(await db.getGameViews(gameIds)))()
   }, [gameIds])
   const onClick = (gv: GameView) => {
-    const originalGame = advancedState.hiddenGame ?? boardState.mainGame
+    const originalGame = searchState.hiddenGame ?? boardState.game
     const previewGame = new GameState({
       main: new Game({ moves: gv.moves }),
       gameid: gv.id,
-      cursor: boardState.mainGame.current.size,
+      cursor: boardState.game.current.size,
     })
-    if (boardState.mode !== EditMode.preview) {
-      setAdvancedState(advancedState.setHiddenGame(boardState.mainGame))
+    if (boardState.mode !== BoardMode.preview) {
+      setAdvancedState(searchState.setHiddenGame(boardState.game))
     }
-    setBoardState(boardState.setMainGame(previewGame).setMode(EditMode.preview))
+    setBoardState(boardState.setGame(previewGame).setMode(BoardMode.preview))
 
     const onOpen = () => {
-      setBoardState(new BoardState({ mainGame: previewGame }))
-      setAdvancedState(advancedState.setHiddenGame(undefined))
+      setBoardState(new BoardState({ game: previewGame }))
+      setAdvancedState(searchState.setHiddenGame(undefined))
       setConfirmState(undefined)
     }
     const onCancel = () => {
-      setBoardState(boardState.setMainGame(originalGame).setMode(EditMode.mainMoves))
-      setAdvancedState(advancedState.setHiddenGame(undefined))
+      setBoardState(boardState.setGame(originalGame).setMode(BoardMode.game))
+      setAdvancedState(searchState.setHiddenGame(undefined))
       setConfirmState(undefined)
     }
     const confirmState = new ConfirmState({
@@ -69,10 +69,10 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
       <Tbody>
         {items.map((g, key) => {
           const mgid =
-            boardState.mode === EditMode.preview
-              ? advancedState.hiddenGame?.gameid
-              : boardState.mainGame.gameid
-          const pgid = boardState.mode === EditMode.preview ? boardState.mainGame.gameid : undefined
+            boardState.mode === BoardMode.preview
+              ? searchState.hiddenGame?.gameid
+              : boardState.game.gameid
+          const pgid = boardState.mode === BoardMode.preview ? boardState.game.gameid : undefined
           return (
             <Tr
               key={key}

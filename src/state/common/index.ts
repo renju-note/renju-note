@@ -1,4 +1,3 @@
-export * from './confirm'
 export * from './game'
 export * from './options'
 export * from './points'

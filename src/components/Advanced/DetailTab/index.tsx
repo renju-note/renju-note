@@ -15,9 +15,9 @@ import {
   WrapItem,
 } from '@chakra-ui/react'
 import { FC, useContext, useEffect, useMemo, useState } from 'react'
-import { GameView, RIFCity, RIFCountry, RIFDatabase, RIFPlayer } from '../../../../database'
-import { TabName } from '../../../../state'
-import { AdvancedStateContext, BoardStateContext } from '../../../contexts'
+import { GameView, RIFCity, RIFCountry, RIFDatabase, RIFPlayer } from '../../../database'
+import { TabName } from '../../../state'
+import { AdvancedContext, BasicContext } from '../../contexts'
 import { WonIcon } from '../common'
 
 const Default: FC = () => {
@@ -31,8 +31,8 @@ const Default: FC = () => {
     })()
   }, [])
 
-  const { boardState } = useContext(BoardStateContext)
-  const gid = boardState.mainGame.gameid
+  const { boardState } = useContext(BasicContext)
+  const gid = boardState.game.gameid
   const [gameView, setGameView] = useState<GameView>()
   useEffect(() => {
     if (gid === undefined) {
@@ -171,9 +171,10 @@ const Player: FC<{ player: RIFPlayer; countriesMap: Map<number, RIFCountry> }> =
   player,
   countriesMap,
 }) => {
-  const { advancedState, setAdvancedState } = useContext(AdvancedStateContext)
+  const { searchState, setSearchState, tabsState, setTabsState } = useContext(AdvancedContext)
   const onClick = () => {
-    setAdvancedState(advancedState.setSearchPlayerId(player.id).setTab(TabName.search))
+    setSearchState(searchState.setPlayerId(player.id))
+    setTabsState(tabsState.setCurrent(TabName.search))
   }
   return (
     <Text>

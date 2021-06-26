@@ -1,33 +1,38 @@
 import { createContext, FC, useEffect, useState } from 'react'
 import { ready } from '../../database'
-import { AdvancedState, TabName } from '../../state/advanced'
+import { SearchState, TabName, TabsState } from '../../state'
 
-export type AdvancedStateContext = {
-  advancedState: AdvancedState
-  setAdvancedState: (s: AdvancedState) => void
+export type AdvancedContext = {
+  tabsState: TabsState
+  setTabsState: (s: TabsState) => void
+  searchState: SearchState
+  setSearchState: (s: SearchState) => void
 }
 
-export const AdvancedStateContext = createContext<AdvancedStateContext>({
-  advancedState: new AdvancedState(),
-  setAdvancedState: () => {},
+export const AdvancedContext = createContext<AdvancedContext>({
+  tabsState: new TabsState(),
+  setTabsState: () => {},
+  searchState: new SearchState(),
+  setSearchState: () => {},
 })
 
-export const AdvancedStateProvider: FC = ({ children }) => {
-  const [advancedState, setAdvancedState] = useState<AdvancedState>(new AdvancedState())
+export const AdvancedContextProvider: FC = ({ children }) => {
+  const [tabsState, setTabsState] = useState<TabsState>(new TabsState())
+  const [searchState, setSearchState] = useState<SearchState>(new SearchState())
   useEffect(() => {
     ;(async () => {
       if (await ready()) {
-        setAdvancedState(
-          advancedState
-            .setTabs([TabName.search, TabName.detail, TabName.mate, TabName.setup])
-            .setTab(TabName.search)
+        setTabsState(
+          tabsState
+            .setNames([TabName.search, TabName.detail, TabName.mate, TabName.setup])
+            .setCurrent(TabName.search)
         )
       }
     })()
   }, [])
   return (
-    <AdvancedStateContext.Provider value={{ advancedState, setAdvancedState }}>
+    <AdvancedContext.Provider value={{ tabsState, setTabsState, searchState, setSearchState }}>
       {children}
-    </AdvancedStateContext.Provider>
+    </AdvancedContext.Provider>
   )
 }

@@ -1,17 +1,17 @@
 import { Board, N_LINES, Point } from '../rule'
 import { GameState, OptionsState, PointsState, SegmentsState } from './common'
 
-const editModes = [
-  'mainMoves',
+const boardModes = [
+  'game',
   'freeBlacks',
   'freeWhites',
   'markerPoints',
   'markerLines',
   'preview',
 ] as const
-export type EditMode = typeof editModes[number]
-export const EditMode: Record<EditMode, EditMode> = {
-  mainMoves: 'mainMoves',
+export type BoardMode = typeof boardModes[number]
+export const BoardMode: Record<BoardMode, BoardMode> = {
+  game: 'game',
   freeBlacks: 'freeBlacks',
   freeWhites: 'freeWhites',
   markerPoints: 'markerPoints',
@@ -29,9 +29,9 @@ export const BoardOption: Record<BoardOption, BoardOption> = {
 export type BoardOptionsState = OptionsState<BoardOption>
 
 export class BoardState {
-  readonly mode: EditMode = EditMode.mainMoves
+  readonly mode: BoardMode = BoardMode.game
   readonly options: BoardOptionsState = new OptionsState<BoardOption>()
-  readonly mainGame: GameState = new GameState()
+  readonly game: GameState = new GameState()
   readonly freeBlacks: PointsState = new PointsState()
   readonly freeWhites: PointsState = new PointsState()
   readonly markerPoints: PointsState = new PointsState()
@@ -51,15 +51,15 @@ export class BoardState {
 
   private canEdit(p: Point): boolean {
     switch (this.mode) {
-      case EditMode.mainMoves:
+      case BoardMode.game:
         return this.canEditMove(p)
-      case EditMode.freeBlacks:
+      case BoardMode.freeBlacks:
         return this.canEditFreeStone(p) && !this.freeWhites.has(p)
-      case EditMode.freeWhites:
+      case BoardMode.freeWhites:
         return this.canEditFreeStone(p) && !this.freeBlacks.has(p)
-      case EditMode.markerPoints:
+      case BoardMode.markerPoints:
         return true
-      case EditMode.markerLines:
+      case BoardMode.markerLines:
         return true
       default:
         return false
@@ -67,9 +67,9 @@ export class BoardState {
   }
 
   private canEditMove(p: Point): boolean {
-    const isBlackTurn = this.inverted ? !this.mainGame.isBlackTurn : this.mainGame.isBlackTurn
+    const isBlackTurn = this.inverted ? !this.game.isBlackTurn : this.game.isBlackTurn
     return (
-      this.mainGame.canMove(p) &&
+      this.game.canMove(p) &&
       !this.freeBlacks.has(p) &&
       !this.freeWhites.has(p) &&
       !(isBlackTurn && this.current.forbidden(p))
@@ -77,21 +77,21 @@ export class BoardState {
   }
 
   private canEditFreeStone(p: Point): boolean {
-    return this.mainGame.isLast && !this.mainGame.isBranching && !this.mainGame.main.has(p)
+    return this.game.isLast && !this.game.isBranching && !this.game.main.has(p)
   }
 
   edit(p: Point): BoardState {
     if (!this.canEdit(p)) return this
     switch (this.mode) {
-      case EditMode.mainMoves:
-        return this.update({ mainGame: this.mainGame.move(p) })
-      case EditMode.freeBlacks:
+      case BoardMode.game:
+        return this.update({ game: this.game.move(p) })
+      case BoardMode.freeBlacks:
         return this.update({ freeBlacks: this.freeBlacks.edit(p) })
-      case EditMode.freeWhites:
+      case BoardMode.freeWhites:
         return this.update({ freeWhites: this.freeWhites.edit(p) })
-      case EditMode.markerPoints:
+      case BoardMode.markerPoints:
         return this.update({ markerPoints: this.markerPoints.edit(p) })
-      case EditMode.markerLines:
+      case BoardMode.markerLines:
         return this.update({ markerLines: this.markerLines.draw(p) })
       default:
         return this
@@ -100,10 +100,10 @@ export class BoardState {
 
   /* edit menu */
 
-  setMode(mode: EditMode): BoardState {
+  setMode(mode: BoardMode): BoardState {
     return this.update({
       mode: mode,
-      markerLines: mode === EditMode.markerPoints ? this.markerLines : this.markerLines.unstart(),
+      markerLines: mode === BoardMode.markerPoints ? this.markerLines : this.markerLines.unstart(),
     })
   }
 
@@ -111,23 +111,23 @@ export class BoardState {
     return this.update({ options: new OptionsState<BoardOption>().on(options) })
   }
 
-  setMainGame(mainGame: GameState): BoardState {
-    return this.update({ mainGame })
+  setGame(game: GameState): BoardState {
+    return this.update({ game })
   }
 
   /* undo */
 
   get canUndo(): boolean {
     switch (this.mode) {
-      case EditMode.mainMoves:
-        return this.mainGame.canUndo
-      case EditMode.freeBlacks:
+      case BoardMode.game:
+        return this.game.canUndo
+      case BoardMode.freeBlacks:
         return this.freeBlacks.canUndo
-      case EditMode.freeWhites:
+      case BoardMode.freeWhites:
         return this.freeWhites.canUndo
-      case EditMode.markerPoints:
+      case BoardMode.markerPoints:
         return this.markerPoints.canUndo
-      case EditMode.markerLines:
+      case BoardMode.markerLines:
         return this.markerLines.canUndo
       default:
         return false
@@ -137,15 +137,15 @@ export class BoardState {
   undo(): BoardState {
     if (!this.canUndo) return this
     switch (this.mode) {
-      case EditMode.mainMoves:
-        return this.update({ mainGame: this.mainGame.undo() })
-      case EditMode.freeBlacks:
+      case BoardMode.game:
+        return this.update({ game: this.game.undo() })
+      case BoardMode.freeBlacks:
         return this.update({ freeBlacks: this.freeBlacks.undo() })
-      case EditMode.freeWhites:
+      case BoardMode.freeWhites:
         return this.update({ freeWhites: this.freeWhites.undo() })
-      case EditMode.markerPoints:
+      case BoardMode.markerPoints:
         return this.update({ markerPoints: this.markerPoints.undo() })
-      case EditMode.markerLines:
+      case BoardMode.markerLines:
         return this.update({ markerLines: this.markerLines.undo() })
       default:
         return this
@@ -153,11 +153,11 @@ export class BoardState {
   }
 
   get canClearRestOfMoves(): boolean {
-    return this.mode === EditMode.mainMoves && !this.canUndo && this.mainGame.canClearRest
+    return this.mode === BoardMode.game && !this.canUndo && this.game.canClearRest
   }
 
   get canClearMainGame(): boolean {
-    return this.mode === EditMode.mainMoves && !this.canUndo && this.mainGame.isReadOnly
+    return this.mode === BoardMode.game && !this.canUndo && this.game.isReadOnly
   }
 
   /* general */
@@ -178,17 +178,11 @@ export class BoardState {
   }
 
   get blacks(): Point[] {
-    return [
-      ...(this.inverted ? this.mainGame.whites : this.mainGame.blacks),
-      ...this.freeBlacks.points,
-    ]
+    return [...(this.inverted ? this.game.whites : this.game.blacks), ...this.freeBlacks.points]
   }
 
   get whites(): Point[] {
-    return [
-      ...(this.inverted ? this.mainGame.blacks : this.mainGame.whites),
-      ...this.freeWhites.points,
-    ]
+    return [...(this.inverted ? this.game.blacks : this.game.whites), ...this.freeWhites.points]
   }
 
   private get inverted(): boolean {
@@ -199,7 +193,7 @@ export class BoardState {
 
   encode(): string {
     const codes: string[] = []
-    const mainGameCode = this.mainGame.encode()
+    const mainGameCode = this.game.encode()
     if (mainGameCode !== '') codes.push(mainGameCode)
     if (!this.options.empty) codes.push(`o:${encodeBoardOptions(this.options)}`)
     if (!this.freeBlacks.empty) codes.push(`b:${this.freeBlacks.encode()}`)
@@ -219,9 +213,9 @@ export class BoardState {
     const markerPointsCode = find('p:')
     const markerLinesCode = find('l:')
     return new BoardState({
-      mode: EditMode.mainMoves,
+      mode: BoardMode.game,
       options: decodeBoardOptions(optionsCode) ?? new OptionsState<BoardOption>(),
-      mainGame: GameState.decode(mainGameCode) ?? new GameState(),
+      game: GameState.decode(mainGameCode) ?? new GameState(),
       freeBlacks: PointsState.decode(freeBlacksCode) ?? new PointsState(),
       freeWhites: PointsState.decode(freeWhitesCode) ?? new PointsState(),
       markerPoints: PointsState.decode(markerPointsCode) ?? new PointsState(),

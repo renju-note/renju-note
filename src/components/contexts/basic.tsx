@@ -1,25 +1,21 @@
 import { createContext, FC, useState } from 'react'
-import { BoardState, ConfirmState, GameState } from '../../state'
+import { BoardState, ConfirmState } from '../../state'
 
-export type BoardStateContext = {
+export type BasicContext = {
   boardState: BoardState
-  gameState: GameState
-  confirmState?: ConfirmState
   setBoardState: (s: BoardState) => void
-  setGameState: (s: GameState) => void
+  confirmState?: ConfirmState
   setConfirmState: (s?: ConfirmState) => void
 }
 
-export const BoardStateContext = createContext<BoardStateContext>({
+export const BasicContext = createContext<BasicContext>({
   boardState: new BoardState(),
-  gameState: new GameState(),
-  confirmState: undefined,
   setBoardState: () => {},
-  setGameState: () => {},
+  confirmState: undefined,
   setConfirmState: () => {},
 })
 
-export const BoardStateProvider: FC = ({ children }) => {
+export const BasicContextProvider: FC = ({ children }) => {
   const [boardState, setBoardStateState] = useState<BoardState>(
     () => BoardState.decode(window.location.hash.slice(1)) || new BoardState()
   )
@@ -27,22 +23,17 @@ export const BoardStateProvider: FC = ({ children }) => {
     setBoardStateState(s)
     window.history.replaceState(null, '', `#${s.encode()}`)
   }
-  const setGameState = (s: GameState) => {
-    setBoardState(boardState.setMainGame(s))
-  }
   const [confirmState, setConfirmState] = useState<ConfirmState>()
   return (
-    <BoardStateContext.Provider
+    <BasicContext.Provider
       value={{
         boardState,
-        gameState: boardState.mainGame,
-        confirmState,
         setBoardState,
-        setGameState,
+        confirmState,
         setConfirmState,
       }}
     >
       {children}
-    </BoardStateContext.Provider>
+    </BasicContext.Provider>
   )
 }

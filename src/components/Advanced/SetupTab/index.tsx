@@ -20,7 +20,7 @@ import {
 } from '@chakra-ui/react'
 import { FC, useState } from 'react'
 import { RiFileLine } from 'react-icons/ri'
-import { AnalyzedDatabase, RIFDatabase } from '../../../../database'
+import { AnalyzedDatabase, RIFDatabase } from '../../../database'
 
 const Default: FC = () => {
   const [fileIsInvalid, setFileIsInvalid] = useState<boolean>(false)
