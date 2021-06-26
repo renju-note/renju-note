@@ -26,8 +26,8 @@ import {
 } from 'react-icons/ri'
 // eslint-disable-next-line
 import Worker from 'worker-loader!./quintet'
-import { encodePoints, Point } from '../../../../rule'
-import { BasicContext } from '../../../contexts'
+import { encodePoints, Point } from '../../../rule'
+import { BasicContext } from '../../contexts'
 
 const worker = new Worker()
 

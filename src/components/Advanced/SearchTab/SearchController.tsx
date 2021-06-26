@@ -19,8 +19,8 @@ import {
 } from '@chakra-ui/react'
 import { FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { RiRadioButtonLine, RiUser3Fill } from 'react-icons/ri'
-import { RIFDatabase, RIFPlayer } from '../../../../database'
-import { AdvancedContext, BasicContext } from '../../../contexts'
+import { RIFDatabase, RIFPlayer } from '../../../database'
+import { AdvancedContext, BasicContext } from '../../contexts'
 
 const Default: FC = () => {
   return (

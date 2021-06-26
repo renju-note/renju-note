@@ -15,9 +15,9 @@ import {
   WrapItem,
 } from '@chakra-ui/react'
 import { FC, useContext, useEffect, useMemo, useState } from 'react'
-import { GameView, RIFCity, RIFCountry, RIFDatabase, RIFPlayer } from '../../../../database'
-import { TabName } from '../../../../state'
-import { AdvancedContext, BasicContext } from '../../../contexts'
+import { GameView, RIFCity, RIFCountry, RIFDatabase, RIFPlayer } from '../../../database'
+import { TabName } from '../../../state'
+import { AdvancedContext, BasicContext } from '../../contexts'
 import { WonIcon } from '../common'
 
 const Default: FC = () => {

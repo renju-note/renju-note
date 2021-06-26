@@ -15,7 +15,7 @@ export const BasicContext = createContext<BasicContext>({
   setConfirmState: () => {},
 })
 
-export const BoardStateProvider: FC = ({ children }) => {
+export const BasicContextProvider: FC = ({ children }) => {
   const [boardState, setBoardStateState] = useState<BoardState>(
     () => BoardState.decode(window.location.hash.slice(1)) || new BoardState()
   )

@@ -1,9 +1,9 @@
 import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
 import { FC, useContext, useEffect, useMemo, useState } from 'react'
-import { GameView, RIFDatabase, RIFPlayer } from '../../../../database'
-import { Game } from '../../../../rule'
-import { BoardMode, BoardState, ConfirmOption, ConfirmState, GameState } from '../../../../state'
-import { AdvancedContext, BasicContext } from '../../../contexts'
+import { GameView, RIFDatabase, RIFPlayer } from '../../../database'
+import { Game } from '../../../rule'
+import { BoardMode, BoardState, ConfirmOption, ConfirmState, GameState } from '../../../state'
+import { AdvancedContext, BasicContext } from '../../contexts'
 import { WonIcon } from '../common'
 
 const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {

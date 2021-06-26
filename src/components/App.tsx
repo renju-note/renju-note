@@ -1,8 +1,17 @@
-import { ChakraProvider } from '@chakra-ui/react'
-import { FC } from 'react'
+import { Center, ChakraProvider, Wrap, WrapItem } from '@chakra-ui/react'
+import { FC, useContext } from 'react'
+import Advanced from './Advanced'
 import './App.css'
-import { BoardStateProvider, PreferenceProvider, SystemProvider } from './contexts'
-import Main from './Main'
+import Basic from './Basic'
+import {
+  AdvancedContextProvider,
+  BasicContextProvider,
+  PreferenceContext,
+  PreferenceOption,
+  PreferenceProvider,
+  SystemContext,
+  SystemProvider,
+} from './contexts'
 import theme from './theme'
 
 const Default: FC = () => {
@@ -10,12 +19,33 @@ const Default: FC = () => {
     <ChakraProvider theme={theme}>
       <SystemProvider>
         <PreferenceProvider>
-          <BoardStateProvider>
-            <Main />
-          </BoardStateProvider>
+          <Main />
         </PreferenceProvider>
       </SystemProvider>
     </ChakraProvider>
+  )
+}
+
+const Main: FC = () => {
+  const system = useContext(SystemContext)
+  const { preference } = useContext(PreferenceContext)
+  return (
+    <BasicContextProvider>
+      <Center my="0.5rem">
+        <Wrap justify="center" spacing="0.5rem">
+          <WrapItem w={system.W}>
+            <Basic />
+          </WrapItem>
+          {preference.has(PreferenceOption.advancedMode) && (
+            <WrapItem w={system.W}>
+              <AdvancedContextProvider>
+                <Advanced />
+              </AdvancedContextProvider>
+            </WrapItem>
+          )}
+        </Wrap>
+      </Center>
+    </BasicContextProvider>
   )
 }
 
