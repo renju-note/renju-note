@@ -11,7 +11,7 @@ import {
 } from 'react-icons/ri'
 import { EditMode, GameState } from '../../../state'
 import { TabName } from '../../../state/advanced'
-import { AdvancedStateContext, BoardStateContext } from '../../contexts'
+import { AdvancedContext, BoardStateContext } from '../../contexts'
 
 const Default: FC = () => {
   const { boardState, setBoardState } = useContext(BoardStateContext)
@@ -68,7 +68,7 @@ const ClearRestOfMovesMenu: FC = () => {
 
 const ClearMainGameMenu: FC = () => {
   const { setGameState } = useContext(BoardStateContext)
-  const { advancedState, setAdvancedState } = useContext(AdvancedStateContext)
+  const { advancedState, setAdvancedState } = useContext(AdvancedContext)
   const onClearGame = () => {
     setGameState(new GameState())
     setAdvancedState(advancedState.setTab(TabName.search))

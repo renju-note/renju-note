@@ -2,17 +2,17 @@ import { createContext, FC, useEffect, useState } from 'react'
 import { ready } from '../../database'
 import { AdvancedState, TabName } from '../../state/advanced'
 
-export type AdvancedStateContext = {
+export type AdvancedContext = {
   advancedState: AdvancedState
   setAdvancedState: (s: AdvancedState) => void
 }
 
-export const AdvancedStateContext = createContext<AdvancedStateContext>({
+export const AdvancedContext = createContext<AdvancedContext>({
   advancedState: new AdvancedState(),
   setAdvancedState: () => {},
 })
 
-export const AdvancedStateProvider: FC = ({ children }) => {
+export const AdvancedContextProvider: FC = ({ children }) => {
   const [advancedState, setAdvancedState] = useState<AdvancedState>(new AdvancedState())
   useEffect(() => {
     ;(async () => {
@@ -26,8 +26,8 @@ export const AdvancedStateProvider: FC = ({ children }) => {
     })()
   }, [])
   return (
-    <AdvancedStateContext.Provider value={{ advancedState, setAdvancedState }}>
+    <AdvancedContext.Provider value={{ advancedState, setAdvancedState }}>
       {children}
-    </AdvancedStateContext.Provider>
+    </AdvancedContext.Provider>
   )
 }

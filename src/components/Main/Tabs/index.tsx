@@ -1,14 +1,14 @@
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
 import { FC, useContext } from 'react'
 import { TabName } from '../../../state/advanced'
-import { AdvancedStateContext } from '../../contexts'
+import { AdvancedContext } from '../../contexts'
 import DetailTab from './DetailTab'
 import MateTab from './MateTab'
 import SearchTab from './SearchTab'
 import SetupTab from './SetupTab'
 
 const Default: FC = () => {
-  const { advancedState, setAdvancedState } = useContext(AdvancedStateContext)
+  const { advancedState, setAdvancedState } = useContext(AdvancedContext)
   return (
     <Tabs
       width="100%"

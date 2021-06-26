@@ -20,7 +20,7 @@ import {
 import { FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { RiRadioButtonLine, RiUser3Fill } from 'react-icons/ri'
 import { RIFDatabase, RIFPlayer } from '../../../../database'
-import { AdvancedStateContext, BoardStateContext } from '../../../contexts'
+import { AdvancedContext, BoardStateContext } from '../../../contexts'
 
 const Default: FC = () => {
   return (
@@ -32,7 +32,7 @@ const Default: FC = () => {
 }
 
 const MovesInput: FC = () => {
-  const { advancedState, setAdvancedState } = useContext(AdvancedStateContext)
+  const { advancedState, setAdvancedState } = useContext(AdvancedContext)
   const { gameState } = useContext(BoardStateContext)
   return (
     <InputGroup size="sm">
@@ -56,7 +56,7 @@ const MovesInput: FC = () => {
 }
 
 const PlayerInput: FC = () => {
-  const { advancedState, setAdvancedState } = useContext(AdvancedStateContext)
+  const { advancedState, setAdvancedState } = useContext(AdvancedContext)
   const rifDB = useMemo(() => new RIFDatabase(), [])
 
   const [value, setValue] = useState<string>('')

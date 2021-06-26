@@ -1,7 +1,7 @@
 import { Center, Stack, Wrap, WrapItem } from '@chakra-ui/react'
 import { FC, useContext } from 'react'
 import {
-  AdvancedStateProvider,
+  AdvancedContextProvider,
   PreferenceContext,
   PreferenceOption,
   SystemContext,
@@ -14,7 +14,7 @@ const Default: FC = () => {
   const system = useContext(SystemContext)
   const { preference } = useContext(PreferenceContext)
   return (
-    <AdvancedStateProvider>
+    <AdvancedContextProvider>
       <Center my="0.5rem">
         <Wrap justify="center" spacing="0.5rem">
           <WrapItem w={system.W}>
@@ -30,7 +30,7 @@ const Default: FC = () => {
           )}
         </Wrap>
       </Center>
-    </AdvancedStateProvider>
+    </AdvancedContextProvider>
   )
 }
 

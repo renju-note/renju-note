@@ -17,7 +17,7 @@ import {
 import { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { GameView, RIFCity, RIFCountry, RIFDatabase, RIFPlayer } from '../../../../database'
 import { TabName } from '../../../../state'
-import { AdvancedStateContext, BoardStateContext } from '../../../contexts'
+import { AdvancedContext, BoardStateContext } from '../../../contexts'
 import { WonIcon } from '../common'
 
 const Default: FC = () => {
@@ -171,7 +171,7 @@ const Player: FC<{ player: RIFPlayer; countriesMap: Map<number, RIFCountry> }> =
   player,
   countriesMap,
 }) => {
-  const { advancedState, setAdvancedState } = useContext(AdvancedStateContext)
+  const { advancedState, setAdvancedState } = useContext(AdvancedContext)
   const onClick = () => {
     setAdvancedState(advancedState.setSearchPlayerId(player.id).setTab(TabName.search))
   }
