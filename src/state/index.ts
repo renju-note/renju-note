@@ -1,5 +1,5 @@
-export * from './advanced'
 export * from './board'
 export * from './common'
 export * from './confirm'
+export * from './search'
 export * from './tabs'

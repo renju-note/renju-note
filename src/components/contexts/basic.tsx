@@ -3,19 +3,19 @@ import { BoardState, ConfirmState, GameState } from '../../state'
 
 export type BasicContext = {
   boardState: BoardState
-  gameState: GameState
-  confirmState?: ConfirmState
   setBoardState: (s: BoardState) => void
+  gameState: GameState
   setGameState: (s: GameState) => void
+  confirmState?: ConfirmState
   setConfirmState: (s?: ConfirmState) => void
 }
 
 export const BasicContext = createContext<BasicContext>({
   boardState: new BoardState(),
-  gameState: new GameState(),
-  confirmState: undefined,
   setBoardState: () => {},
+  gameState: new GameState(),
   setGameState: () => {},
+  confirmState: undefined,
   setConfirmState: () => {},
 })
 
@@ -27,6 +27,7 @@ export const BoardStateProvider: FC = ({ children }) => {
     setBoardStateState(s)
     window.history.replaceState(null, '', `#${s.encode()}`)
   }
+  // proxy
   const setGameState = (s: GameState) => {
     setBoardState(boardState.setMainGame(s))
   }
@@ -35,10 +36,10 @@ export const BoardStateProvider: FC = ({ children }) => {
     <BasicContext.Provider
       value={{
         boardState,
-        gameState: boardState.mainGame,
-        confirmState,
         setBoardState,
+        gameState: boardState.mainGame,
         setGameState,
+        confirmState,
         setConfirmState,
       }}
     >

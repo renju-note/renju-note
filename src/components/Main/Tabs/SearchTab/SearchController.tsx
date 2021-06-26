@@ -32,7 +32,7 @@ const Default: FC = () => {
 }
 
 const MovesInput: FC = () => {
-  const { advancedState, setAdvancedState } = useContext(AdvancedContext)
+  const { searchState, setSearchState } = useContext(AdvancedContext)
   const { gameState } = useContext(BasicContext)
   return (
     <InputGroup size="sm">
@@ -47,8 +47,8 @@ const MovesInput: FC = () => {
       />
       <InputRightElement>
         <Checkbox
-          isChecked={advancedState.searchWithMoves}
-          onChange={e => setAdvancedState(advancedState.setSearchWithMoves(e.target.checked))}
+          isChecked={searchState.followMoves}
+          onChange={e => setSearchState(searchState.setFollowMoves(e.target.checked))}
         />
       </InputRightElement>
     </InputGroup>
@@ -56,7 +56,7 @@ const MovesInput: FC = () => {
 }
 
 const PlayerInput: FC = () => {
-  const { advancedState, setAdvancedState } = useContext(AdvancedContext)
+  const { searchState, setSearchState } = useContext(AdvancedContext)
   const rifDB = useMemo(() => new RIFDatabase(), [])
 
   const [value, setValue] = useState<string>('')
@@ -70,16 +70,16 @@ const PlayerInput: FC = () => {
     })()
   }
   const onSetPlayer = (player: RIFPlayer) => {
-    setAdvancedState(advancedState.setSearchPlayerId(player.id))
+    setSearchState(searchState.setPlayerId(player.id))
     popoverDisclosure.onClose()
   }
   const onUnsetPlayer = () => {
-    setAdvancedState(advancedState.setSearchPlayerId(undefined))
+    setSearchState(searchState.setPlayerId(undefined))
     setValue('')
     popoverDisclosure.onClose()
   }
 
-  const playerId = advancedState.searchPlayerId
+  const playerId = searchState.playerId
   useEffect(() => {
     if (typeof playerId !== 'number') return
     ;(async () => {
@@ -109,7 +109,7 @@ const PlayerInput: FC = () => {
             <CloseButton
               size="sm"
               onClick={onUnsetPlayer}
-              disabled={advancedState.searchPlayerId === undefined && !popoverDisclosure.isOpen}
+              disabled={searchState.playerId === undefined && !popoverDisclosure.isOpen}
             />
           </InputRightElement>
         </InputGroup>

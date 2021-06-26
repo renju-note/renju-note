@@ -9,7 +9,7 @@ import SearchController from './SearchController'
 
 const Default: FC = () => {
   const { gameState } = useContext(BasicContext)
-  const { advancedState } = useContext(AdvancedContext)
+  const { searchState } = useContext(AdvancedContext)
   const analyzedDB = useMemo(() => new AnalyzedDatabase(), [])
   const pageSize = 20
 
@@ -19,10 +19,8 @@ const Default: FC = () => {
   }, [])
 
   const searchMoves =
-    advancedState.searchWithMoves && gameState.current.size > 0
-      ? gameState.current.moves
-      : undefined
-  const searchPlayerId = advancedState.searchPlayerId
+    searchState.followMoves && gameState.current.size > 0 ? gameState.current.moves : undefined
+  const searchPlayerId = searchState.playerId
   const [page, setPage] = useState<number>(0)
 
   const [ids, setIds] = useState<number[]>([])
