@@ -13,8 +13,8 @@ export class SearchState {
     return new SearchState({ ...this, ...fields })
   }
 
-  setHiddenGame(gameState: GameState | undefined): SearchState {
-    return this.update({ hiddenGame: gameState })
+  setHiddenGame(game: GameState | undefined): SearchState {
+    return this.update({ hiddenGame: game })
   }
 
   setPlayerId(id: number | undefined): SearchState {

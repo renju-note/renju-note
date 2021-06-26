@@ -32,8 +32,8 @@ const Default: FC = () => {
 }
 
 const MovesInput: FC = () => {
+  const { boardState } = useContext(BasicContext)
   const { searchState, setSearchState } = useContext(AdvancedContext)
-  const { gameState } = useContext(BasicContext)
   return (
     <InputGroup size="sm">
       <InputLeftAddon>
@@ -43,7 +43,7 @@ const MovesInput: FC = () => {
         type="string"
         placeholder="put moves on board"
         isReadOnly
-        value={gameState.current.encode(',')}
+        value={boardState.game.current.encode(',')}
       />
       <InputRightElement>
         <Checkbox

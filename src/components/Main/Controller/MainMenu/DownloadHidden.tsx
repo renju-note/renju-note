@@ -8,11 +8,11 @@ type Props = {
 }
 
 const Default: FC<Props> = ({ id }) => {
-  const { boardState, gameState } = useContext(BasicContext)
+  const { boardState } = useContext(BasicContext)
   return (
     <Box hidden>
       <SystemContext.Provider value={new System(640)}>
-        <Board id={id} boardState={boardState} gameState={gameState} />
+        <Board id={id} state={boardState} />
       </SystemContext.Provider>
     </Box>
   )

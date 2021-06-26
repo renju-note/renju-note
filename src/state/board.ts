@@ -111,8 +111,8 @@ export class BoardState {
     return this.update({ options: new OptionsState<BoardOption>().on(options) })
   }
 
-  setMainGame(mainGame: GameState): BoardState {
-    return this.update({ game: mainGame })
+  setGame(game: GameState): BoardState {
+    return this.update({ game })
   }
 
   /* undo */

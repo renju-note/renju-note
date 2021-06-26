@@ -8,7 +8,7 @@ import GamesTable from './GamesTable'
 import SearchController from './SearchController'
 
 const Default: FC = () => {
-  const { gameState } = useContext(BasicContext)
+  const { boardState } = useContext(BasicContext)
   const { searchState } = useContext(AdvancedContext)
   const analyzedDB = useMemo(() => new AnalyzedDatabase(), [])
   const pageSize = 20
@@ -19,7 +19,9 @@ const Default: FC = () => {
   }, [])
 
   const searchMoves =
-    searchState.followMoves && gameState.current.size > 0 ? gameState.current.moves : undefined
+    searchState.followMoves && boardState.game.current.size > 0
+      ? boardState.game.current.moves
+      : undefined
   const searchPlayerId = searchState.playerId
   const [page, setPage] = useState<number>(0)
 

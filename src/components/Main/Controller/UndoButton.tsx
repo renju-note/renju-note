@@ -46,7 +46,7 @@ const UndoIcon: FC<{ mode: BoardMode }> = ({ mode }) => {
 }
 
 const ClearRestOfMovesMenu: FC = () => {
-  const { gameState, setGameState } = useContext(BasicContext)
+  const { boardState, setBoardState } = useContext(BasicContext)
   return (
     <Menu autoSelect={false} placement="top">
       <MenuButton
@@ -54,7 +54,7 @@ const ClearRestOfMovesMenu: FC = () => {
         icon={<RiDeleteBack2Line style={{ transform: 'rotate(180deg)' }} />}
       />
       <MenuList>
-        <MenuItem onClick={() => setGameState(gameState.clearRest())}>
+        <MenuItem onClick={() => setBoardState(boardState.setGame(boardState.game.clearRest()))}>
           <Icon boxSize="small" as={RiDeleteBack2Line} style={{ transform: 'rotate(180deg)' }} />
           <Text ml={2} mr={1}>
             Clear Rest of Moves
@@ -66,10 +66,10 @@ const ClearRestOfMovesMenu: FC = () => {
 }
 
 const ClearMainGameMenu: FC = () => {
-  const { setGameState } = useContext(BasicContext)
+  const { boardState, setBoardState } = useContext(BasicContext)
   const { tabsState, setTabsState } = useContext(AdvancedContext)
   const onClearGame = () => {
-    setGameState(new GameState())
+    setBoardState(boardState.setGame(new GameState()))
     setTabsState(tabsState.setCurrent(TabName.search))
   }
   return (

@@ -28,7 +28,7 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
     if (boardState.mode !== BoardMode.preview) {
       setAdvancedState(searchState.setHiddenGame(boardState.game))
     }
-    setBoardState(boardState.setMainGame(previewGame).setMode(BoardMode.preview))
+    setBoardState(boardState.setGame(previewGame).setMode(BoardMode.preview))
 
     const onOpen = () => {
       setBoardState(new BoardState({ game: previewGame }))
@@ -36,7 +36,7 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
       setConfirmState(undefined)
     }
     const onCancel = () => {
-      setBoardState(boardState.setMainGame(originalGame).setMode(BoardMode.game))
+      setBoardState(boardState.setGame(originalGame).setMode(BoardMode.game))
       setAdvancedState(searchState.setHiddenGame(undefined))
       setConfirmState(undefined)
     }
