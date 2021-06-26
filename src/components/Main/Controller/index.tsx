@@ -1,6 +1,6 @@
 import { ButtonGroup } from '@chakra-ui/react'
 import { FC, useContext } from 'react'
-import { BoardStateContext, SystemContext } from '../../contexts'
+import { BasicContext, SystemContext } from '../../contexts'
 import ConfirmBar from './ConfirmBar'
 import EditMenu from './EditMenu'
 import MainMenu from './MainMenu'
@@ -9,7 +9,7 @@ import SettingsMenu from './SettingsMenu'
 import UndoButton from './UndoButton'
 
 const Default: FC = () => {
-  const { confirmState } = useContext(BoardStateContext)
+  const { confirmState } = useContext(BasicContext)
   return <>{confirmState !== undefined ? <ConfirmBar /> : <DefaultBar />}</>
 }
 

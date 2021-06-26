@@ -3,12 +3,12 @@ import { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { GameView, RIFDatabase, RIFPlayer } from '../../../../database'
 import { Game } from '../../../../rule'
 import { BoardState, ConfirmOption, ConfirmState, EditMode, GameState } from '../../../../state'
-import { AdvancedContext, BoardStateContext } from '../../../contexts'
+import { AdvancedContext, BasicContext } from '../../../contexts'
 import { WonIcon } from '../common'
 
 const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
   const db = useMemo(() => new RIFDatabase(), [])
-  const { boardState, setBoardState, setConfirmState } = useContext(BoardStateContext)
+  const { boardState, setBoardState, setConfirmState } = useContext(BasicContext)
   const { advancedState, setAdvancedState } = useContext(AdvancedContext)
   const [items, setItems] = useState<GameView[]>([])
   useEffect(() => {

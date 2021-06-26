@@ -20,7 +20,7 @@ import {
 import { FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { RiRadioButtonLine, RiUser3Fill } from 'react-icons/ri'
 import { RIFDatabase, RIFPlayer } from '../../../../database'
-import { AdvancedContext, BoardStateContext } from '../../../contexts'
+import { AdvancedContext, BasicContext } from '../../../contexts'
 
 const Default: FC = () => {
   return (
@@ -33,7 +33,7 @@ const Default: FC = () => {
 
 const MovesInput: FC = () => {
   const { advancedState, setAdvancedState } = useContext(AdvancedContext)
-  const { gameState } = useContext(BoardStateContext)
+  const { gameState } = useContext(BasicContext)
   return (
     <InputGroup size="sm">
       <InputLeftAddon>

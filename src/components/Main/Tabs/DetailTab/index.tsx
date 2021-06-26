@@ -17,7 +17,7 @@ import {
 import { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { GameView, RIFCity, RIFCountry, RIFDatabase, RIFPlayer } from '../../../../database'
 import { TabName } from '../../../../state'
-import { AdvancedContext, BoardStateContext } from '../../../contexts'
+import { AdvancedContext, BasicContext } from '../../../contexts'
 import { WonIcon } from '../common'
 
 const Default: FC = () => {
@@ -31,7 +31,7 @@ const Default: FC = () => {
     })()
   }, [])
 
-  const { boardState } = useContext(BoardStateContext)
+  const { boardState } = useContext(BasicContext)
   const gid = boardState.mainGame.gameid
   const [gameView, setGameView] = useState<GameView>()
   useEffect(() => {

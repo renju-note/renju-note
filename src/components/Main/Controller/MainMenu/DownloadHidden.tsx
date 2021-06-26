@@ -1,14 +1,14 @@
 import { Box } from '@chakra-ui/react'
 import { FC, useContext } from 'react'
 import Board from '../../../common/Board'
-import { BoardStateContext, System, SystemContext } from '../../../contexts'
+import { BasicContext, System, SystemContext } from '../../../contexts'
 
 type Props = {
   id: string
 }
 
 const Default: FC<Props> = ({ id }) => {
-  const { boardState, gameState } = useContext(BoardStateContext)
+  const { boardState, gameState } = useContext(BasicContext)
   return (
     <Box hidden>
       <SystemContext.Provider value={new System(640)}>
@@ -19,7 +19,7 @@ const Default: FC<Props> = ({ id }) => {
 }
 
 export const onDownload = (id: string) => {
-  const svgElem = (document.getElementById(id)! as unknown) as SVGSVGElement
+  const svgElem = document.getElementById(id)! as unknown as SVGSVGElement
   const svgData = new XMLSerializer().serializeToString(svgElem)
   const imageElem = new Image()
   imageElem.src =

@@ -19,11 +19,11 @@ import {
   FiGitBranch,
 } from 'react-icons/fi'
 import { RiDeleteBack2Line, RiRefreshLine } from 'react-icons/ri'
-import { BoardStateContext, SystemContext } from '../../contexts'
+import { BasicContext, SystemContext } from '../../contexts'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
-  const { gameState, setGameState } = useContext(BoardStateContext)
+  const { gameState, setGameState } = useContext(BasicContext)
   return (
     <ButtonGroup spacing={1} variant="ghost" size={system.buttonSize}>
       <IconButton
@@ -67,7 +67,7 @@ const Default: FC = () => {
 }
 
 const BranchingMenu: FC = () => {
-  const { gameState, setGameState } = useContext(BoardStateContext)
+  const { gameState, setGameState } = useContext(BasicContext)
   return (
     <Menu autoSelect={false} placement="top">
       <MenuButton as={IconButton} icon={<FiGitBranch />} colorScheme="purple" />

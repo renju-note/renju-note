@@ -1,10 +1,10 @@
 import { Button, ButtonGroup } from '@chakra-ui/react'
 import { FC, useContext } from 'react'
-import { BoardStateContext, SystemContext } from '../../contexts'
+import { BasicContext, SystemContext } from '../../contexts'
 
 const Default: FC = () => {
   const system = useContext(SystemContext)
-  const { confirmState } = useContext(BoardStateContext)
+  const { confirmState } = useContext(BasicContext)
   if (confirmState === undefined) {
     return <></>
   }

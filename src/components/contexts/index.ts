@@ -1,4 +1,4 @@
 export * from './advanced'
-export * from './boardState'
+export * from './basic'
 export * from './preference'
 export * from './system'

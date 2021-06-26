@@ -16,8 +16,8 @@ import {
   Text,
   useClipboard,
 } from '@chakra-ui/react'
-import { FC, useContext, useState } from 'react'
 import * as React from 'react'
+import { FC, useContext, useState } from 'react'
 import {
   RiCheckboxBlankCircleFill,
   RiCheckboxBlankCircleLine,
@@ -27,7 +27,7 @@ import {
 // eslint-disable-next-line
 import Worker from 'worker-loader!./quintet'
 import { encodePoints, Point } from '../../../../rule'
-import { BoardStateContext } from '../../../contexts'
+import { BasicContext } from '../../../contexts'
 
 const worker = new Worker()
 
@@ -52,7 +52,7 @@ const Default: FC = () => {
 }
 
 const CurrentStateComponent: FC = () => {
-  const { boardState } = useContext(BoardStateContext)
+  const { boardState } = useContext(BasicContext)
   return (
     <SimpleGrid width="100%" columns={2} spacing={1} minChildWidth="240px">
       <StonesInput
@@ -70,7 +70,7 @@ const CurrentStateComponent: FC = () => {
 }
 
 const VCFComponent: FC = () => {
-  const { boardState, setBoardState } = useContext(BoardStateContext)
+  const { boardState, setBoardState } = useContext(BasicContext)
 
   const [vcfTurn, setVcfTurn] = useState<boolean>(true)
   const [solution, setSolution] = useState<Point[]>()

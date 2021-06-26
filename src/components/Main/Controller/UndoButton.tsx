@@ -11,10 +11,10 @@ import {
 } from 'react-icons/ri'
 import { EditMode, GameState } from '../../../state'
 import { TabName } from '../../../state/advanced'
-import { AdvancedContext, BoardStateContext } from '../../contexts'
+import { AdvancedContext, BasicContext } from '../../contexts'
 
 const Default: FC = () => {
-  const { boardState, setBoardState } = useContext(BoardStateContext)
+  const { boardState, setBoardState } = useContext(BasicContext)
   if (boardState.canClearRestOfMoves) return <ClearRestOfMovesMenu />
   if (boardState.canClearMainGame) return <ClearMainGameMenu />
   return (
@@ -47,7 +47,7 @@ const UndoIcon: FC<{ mode: EditMode }> = ({ mode }) => {
 }
 
 const ClearRestOfMovesMenu: FC = () => {
-  const { gameState, setGameState } = useContext(BoardStateContext)
+  const { gameState, setGameState } = useContext(BasicContext)
   return (
     <Menu autoSelect={false} placement="top">
       <MenuButton
@@ -67,7 +67,7 @@ const ClearRestOfMovesMenu: FC = () => {
 }
 
 const ClearMainGameMenu: FC = () => {
-  const { setGameState } = useContext(BoardStateContext)
+  const { setGameState } = useContext(BasicContext)
   const { advancedState, setAdvancedState } = useContext(AdvancedContext)
   const onClearGame = () => {
     setGameState(new GameState())

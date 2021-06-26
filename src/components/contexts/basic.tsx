@@ -1,7 +1,7 @@
 import { createContext, FC, useState } from 'react'
 import { BoardState, ConfirmState, GameState } from '../../state'
 
-export type BoardStateContext = {
+export type BasicContext = {
   boardState: BoardState
   gameState: GameState
   confirmState?: ConfirmState
@@ -10,7 +10,7 @@ export type BoardStateContext = {
   setConfirmState: (s?: ConfirmState) => void
 }
 
-export const BoardStateContext = createContext<BoardStateContext>({
+export const BasicContext = createContext<BasicContext>({
   boardState: new BoardState(),
   gameState: new GameState(),
   confirmState: undefined,
@@ -32,7 +32,7 @@ export const BoardStateProvider: FC = ({ children }) => {
   }
   const [confirmState, setConfirmState] = useState<ConfirmState>()
   return (
-    <BoardStateContext.Provider
+    <BasicContext.Provider
       value={{
         boardState,
         gameState: boardState.mainGame,
@@ -43,6 +43,6 @@ export const BoardStateProvider: FC = ({ children }) => {
       }}
     >
       {children}
-    </BoardStateContext.Provider>
+    </BasicContext.Provider>
   )
 }

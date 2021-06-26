@@ -24,10 +24,10 @@ import {
   RiRadioButtonLine,
 } from 'react-icons/ri'
 import { BoardOption, BoardState, EditMode } from '../../../state'
-import { BoardStateContext } from '../../contexts'
+import { BasicContext } from '../../contexts'
 
 const Default: FC = () => {
-  const { boardState, setBoardState } = useContext(BoardStateContext)
+  const { boardState, setBoardState } = useContext(BasicContext)
   return (
     <>
       <Menu autoSelect={false} placement="top">
