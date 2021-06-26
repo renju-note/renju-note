@@ -23,7 +23,7 @@ import {
   RiEditLine,
   RiRadioButtonLine,
 } from 'react-icons/ri'
-import { BoardOption, BoardState, EditMode } from '../../../state'
+import { BoardMode, BoardOption, BoardState } from '../../../state'
 import { BasicContext } from '../../contexts'
 
 const Default: FC = () => {
@@ -37,37 +37,37 @@ const Default: FC = () => {
             defaultValue={boardState.mode}
             title="Mode"
             type="radio"
-            onChange={(value: any) => setBoardState(boardState.setMode(value as EditMode))}
+            onChange={(value: any) => setBoardState(boardState.setMode(value as BoardMode))}
           >
-            <MenuItemOption value={EditMode.mainMoves}>
+            <MenuItemOption value={BoardMode.mainMoves}>
               <Flex alignItems="center">
-                <ModeIcon mode={EditMode.mainMoves} />
+                <ModeIcon mode={BoardMode.mainMoves} />
                 <Text ml={2}>Move</Text>
               </Flex>
             </MenuItemOption>
             <MenuDivider ml="2rem" />
-            <MenuItemOption value={EditMode.freeBlacks}>
+            <MenuItemOption value={BoardMode.freeBlacks}>
               <Flex alignItems="center">
-                <ModeIcon mode={EditMode.freeBlacks} />
+                <ModeIcon mode={BoardMode.freeBlacks} />
                 <Text ml={2}>Add Black Stones</Text>
               </Flex>
             </MenuItemOption>
-            <MenuItemOption value={EditMode.freeWhites}>
+            <MenuItemOption value={BoardMode.freeWhites}>
               <Flex alignItems="center">
-                <ModeIcon mode={EditMode.freeWhites} />
+                <ModeIcon mode={BoardMode.freeWhites} />
                 <Text ml={2}>Add White Stones</Text>
               </Flex>
             </MenuItemOption>
             <MenuDivider ml="2rem" />
-            <MenuItemOption value={EditMode.markerPoints}>
+            <MenuItemOption value={BoardMode.markerPoints}>
               <Flex alignItems="center">
-                <ModeIcon mode={EditMode.markerPoints} />
+                <ModeIcon mode={BoardMode.markerPoints} />
                 <Text ml={2}>Mark Points</Text>
               </Flex>
             </MenuItemOption>
-            <MenuItemOption value={EditMode.markerLines}>
+            <MenuItemOption value={BoardMode.markerLines}>
               <Flex alignItems="center">
-                <ModeIcon mode={EditMode.markerLines} />
+                <ModeIcon mode={BoardMode.markerLines} />
                 <Text ml={2}>Mark Lines</Text>
               </Flex>
             </MenuItemOption>
@@ -110,17 +110,17 @@ const Default: FC = () => {
   )
 }
 
-const ModeIcon: FC<{ mode: EditMode }> = ({ mode }) => {
+const ModeIcon: FC<{ mode: BoardMode }> = ({ mode }) => {
   switch (mode) {
-    case EditMode.mainMoves:
+    case BoardMode.mainMoves:
       return <Icon boxSize="small" as={RiRadioButtonLine} />
-    case EditMode.freeBlacks:
+    case BoardMode.freeBlacks:
       return <Icon boxSize="small" as={RiAddCircleFill} />
-    case EditMode.freeWhites:
+    case BoardMode.freeWhites:
       return <Icon boxSize="small" as={RiAddCircleLine} />
-    case EditMode.markerPoints:
+    case BoardMode.markerPoints:
       return <Icon boxSize="small" as={RiEditCircleFill} />
-    case EditMode.markerLines:
+    case BoardMode.markerLines:
       return <Icon boxSize="small" as={RiEditLine} />
     default:
       return <Icon boxSize="small" as={RiRadioButtonLine} />

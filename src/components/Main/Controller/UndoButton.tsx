@@ -9,7 +9,7 @@ import {
   RiIndeterminateCircleFill,
   RiIndeterminateCircleLine,
 } from 'react-icons/ri'
-import { EditMode, GameState, TabName } from '../../../state'
+import { BoardMode, GameState, TabName } from '../../../state'
 import { AdvancedContext, BasicContext } from '../../contexts'
 
 const Default: FC = () => {
@@ -28,17 +28,17 @@ const Default: FC = () => {
   )
 }
 
-const UndoIcon: FC<{ mode: EditMode }> = ({ mode }) => {
+const UndoIcon: FC<{ mode: BoardMode }> = ({ mode }) => {
   switch (mode) {
-    case EditMode.mainMoves:
+    case BoardMode.mainMoves:
       return <RiCloseCircleLine />
-    case EditMode.freeBlacks:
+    case BoardMode.freeBlacks:
       return <RiIndeterminateCircleFill />
-    case EditMode.freeWhites:
+    case BoardMode.freeWhites:
       return <RiIndeterminateCircleLine />
-    case EditMode.markerPoints:
+    case BoardMode.markerPoints:
       return <RiEraserFill />
-    case EditMode.markerLines:
+    case BoardMode.markerLines:
       return <RiEraserLine />
     default:
       return <RiCloseCircleLine />

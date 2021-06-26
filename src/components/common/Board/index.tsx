@@ -1,6 +1,6 @@
 import React, { FC, useContext } from 'react'
 import { Point } from '../../../rule'
-import { BoardOption, BoardState, EditMode, GameState } from '../../../state'
+import { BoardMode, BoardOption, BoardState, GameState } from '../../../state'
 import { PreferenceContext, PreferenceOption, SystemContext } from '../../contexts'
 import Base from './Base'
 import Markers from './Markers'
@@ -17,7 +17,7 @@ type Props = {
 const Default: FC<Props> = ({ id, onClickPoint, boardState, gameState }) => {
   const system = useContext(SystemContext)
   const { preference } = useContext(PreferenceContext)
-  const game = boardState.mode === EditMode.preview ? gameState.main : gameState.current
+  const game = boardState.mode === BoardMode.preview ? gameState.main : gameState.current
   const onClick =
     onClickPoint &&
     ((e: React.MouseEvent<SVGElement, MouseEvent>) => {
@@ -25,7 +25,7 @@ const Default: FC<Props> = ({ id, onClickPoint, boardState, gameState }) => {
       const [bx, by] = [e.clientX - base.x, e.clientY - base.y]
       onClickPoint(system.p([bx, by]))
     })
-  const isPreview = boardState.mode === EditMode.preview
+  const isPreview = boardState.mode === BoardMode.preview
   return (
     <svg id={id} width={system.W} height={system.W} onClick={onClick}>
       <Base showIndices={preference.has(PreferenceOption.showIndices)} showOverlay={isPreview} />

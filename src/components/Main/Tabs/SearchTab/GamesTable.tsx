@@ -2,7 +2,7 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
 import { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { GameView, RIFDatabase, RIFPlayer } from '../../../../database'
 import { Game } from '../../../../rule'
-import { BoardState, ConfirmOption, ConfirmState, EditMode, GameState } from '../../../../state'
+import { BoardMode, BoardState, ConfirmOption, ConfirmState, GameState } from '../../../../state'
 import { AdvancedContext, BasicContext } from '../../../contexts'
 import { WonIcon } from '../common'
 
@@ -25,10 +25,10 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
       gameid: gv.id,
       cursor: boardState.mainGame.current.size,
     })
-    if (boardState.mode !== EditMode.preview) {
+    if (boardState.mode !== BoardMode.preview) {
       setAdvancedState(searchState.setHiddenGame(boardState.mainGame))
     }
-    setBoardState(boardState.setMainGame(previewGame).setMode(EditMode.preview))
+    setBoardState(boardState.setMainGame(previewGame).setMode(BoardMode.preview))
 
     const onOpen = () => {
       setBoardState(new BoardState({ mainGame: previewGame }))
@@ -36,7 +36,7 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
       setConfirmState(undefined)
     }
     const onCancel = () => {
-      setBoardState(boardState.setMainGame(originalGame).setMode(EditMode.mainMoves))
+      setBoardState(boardState.setMainGame(originalGame).setMode(BoardMode.mainMoves))
       setAdvancedState(searchState.setHiddenGame(undefined))
       setConfirmState(undefined)
     }
@@ -69,10 +69,11 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
       <Tbody>
         {items.map((g, key) => {
           const mgid =
-            boardState.mode === EditMode.preview
+            boardState.mode === BoardMode.preview
               ? searchState.hiddenGame?.gameid
               : boardState.mainGame.gameid
-          const pgid = boardState.mode === EditMode.preview ? boardState.mainGame.gameid : undefined
+          const pgid =
+            boardState.mode === BoardMode.preview ? boardState.mainGame.gameid : undefined
           return (
             <Tr
               key={key}
