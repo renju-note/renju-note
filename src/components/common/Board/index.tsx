@@ -27,7 +27,11 @@ const Default: FC<Props> = ({ id, onClickPoint, state }) => {
   const isPreview = state.mode === BoardMode.preview
   return (
     <svg id={id} width={system.W} height={system.W} onClick={onClick}>
-      <Base showIndices={preference.has(PreferenceOption.showIndices)} showOverlay={isPreview} />
+      <Base
+        showIndices={preference.has(PreferenceOption.showIndices)}
+        showOverlay={isPreview}
+        colorBase={preference.has(PreferenceOption.colorBase)}
+      />
       {!isPreview && (
         <Properties
           board={state.current}
