@@ -30,7 +30,7 @@ const Default: FC = () => {
 
 const UndoIcon: FC<{ mode: BoardMode }> = ({ mode }) => {
   switch (mode) {
-    case BoardMode.mainMoves:
+    case BoardMode.game:
       return <RiCloseCircleLine />
     case BoardMode.freeBlacks:
       return <RiIndeterminateCircleFill />

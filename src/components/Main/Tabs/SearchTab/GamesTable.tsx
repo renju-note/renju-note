@@ -36,7 +36,7 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
       setConfirmState(undefined)
     }
     const onCancel = () => {
-      setBoardState(boardState.setMainGame(originalGame).setMode(BoardMode.mainMoves))
+      setBoardState(boardState.setMainGame(originalGame).setMode(BoardMode.game))
       setAdvancedState(searchState.setHiddenGame(undefined))
       setConfirmState(undefined)
     }

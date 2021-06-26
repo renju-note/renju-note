@@ -39,9 +39,9 @@ const Default: FC = () => {
             type="radio"
             onChange={(value: any) => setBoardState(boardState.setMode(value as BoardMode))}
           >
-            <MenuItemOption value={BoardMode.mainMoves}>
+            <MenuItemOption value={BoardMode.game}>
               <Flex alignItems="center">
-                <ModeIcon mode={BoardMode.mainMoves} />
+                <ModeIcon mode={BoardMode.game} />
                 <Text ml={2}>Move</Text>
               </Flex>
             </MenuItemOption>
@@ -112,7 +112,7 @@ const Default: FC = () => {
 
 const ModeIcon: FC<{ mode: BoardMode }> = ({ mode }) => {
   switch (mode) {
-    case BoardMode.mainMoves:
+    case BoardMode.game:
       return <Icon boxSize="small" as={RiRadioButtonLine} />
     case BoardMode.freeBlacks:
       return <Icon boxSize="small" as={RiAddCircleFill} />
