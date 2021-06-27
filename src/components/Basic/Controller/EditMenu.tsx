@@ -27,6 +27,9 @@ import { BasicContext } from '../../contexts'
 
 const Default: FC = () => {
   const { boardState, setBoardState } = useContext(BasicContext)
+  const onInvertMoves = (inverted: boolean) => {
+    setBoardState(boardState.setGame(boardState.game.invertMoves(inverted)))
+  }
   return (
     <>
       <Menu autoSelect={false} placement="top">
@@ -75,10 +78,8 @@ const Default: FC = () => {
           <MenuOptionGroup
             title="Transform"
             type="checkbox"
-            value={boardState.inverted ? ['inverted'] : []}
-            onChange={(value: any) =>
-              setBoardState(boardState.setInverted((value as string[]).includes('inverted')))
-            }
+            value={boardState.game.main.inverted ? ['inverted'] : []}
+            onChange={(value: any) => onInvertMoves((value as string[]).includes('inverted'))}
           >
             <MenuItemOption value="inverted">
               <Flex alignItems="center">

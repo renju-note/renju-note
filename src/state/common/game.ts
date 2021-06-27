@@ -5,7 +5,6 @@ export class GameState {
   readonly cursor: number = 0
   readonly branch: Point[] = []
   readonly gameid: number | undefined
-  private cache: Game | undefined
 
   constructor(init?: undefined | Partial<GameState>) {
     if (init !== undefined) {
@@ -54,7 +53,7 @@ export class GameState {
 
   clearRest(): GameState {
     if (!this.canClearRest) return this
-    return this.update({ main: this.main.partial(this.cursor) }).toLast()
+    return this.update({ main: this.main.cut(this.cursor) }).toLast()
   }
 
   /* main game */
@@ -132,15 +131,20 @@ export class GameState {
     return new GameState({ main: this.current, cursor: this.current.size })
   }
 
+  invertMoves(inverted: boolean): GameState {
+    return this.update({
+      main: this.main.invert(inverted),
+      gameid: undefined,
+    })
+  }
+
   /* current game */
 
   get current(): Game {
-    if (this.cache === undefined) {
-      this.cache = new Game({
-        moves: [...this.main.partial(this.cursor).moves, ...this.branch],
-      })
-    }
-    return this.cache
+    return new Game({
+      moves: [...this.main.cut(this.cursor).moves, ...this.branch],
+      inverted: this.main.inverted,
+    })
   }
 
   get blacks(): Point[] {
@@ -163,6 +167,7 @@ export class GameState {
     const codes: string[] = []
     if (this.gameid !== undefined) codes.push(`gid:${this.gameid}`)
     if (!this.main.empty) codes.push(`g:${this.main.encode()}`)
+    if (this.main.inverted) codes.push(`o:i`)
     if (this.cursor !== 0) codes.push(`c:${this.cursor}`)
     return codes.join(',')
   }
@@ -173,7 +178,8 @@ export class GameState {
     const gameCode = find('g:')
     const cursorCode = find('c:')
     const gidCode = find('gid:')
-    const main = Game.decode(gameCode) ?? new Game()
+    const invertedCode = find('o:')
+    const main = (Game.decode(gameCode) ?? new Game()).invert(invertedCode.includes('i'))
     const cursor = Math.min(main.size, parseInt(cursorCode) || 0)
     const gameid = parseInt(gidCode) || undefined
     return new GameState({ main, cursor, gameid })
