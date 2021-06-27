@@ -98,11 +98,9 @@ const VCFComponent: FC = () => {
     if (solution === undefined || solution.length === 0) return
     const message = 'All of current moves are converted to free (unordered) stones, OK?'
     if (!window.confirm(message)) return
-    let newBoardState = boardState.convertMovesToStones().setNumberdedPoints([])
-    newBoardState = newBoardState
-      .setInverted(!vcfTurn)
-      .setGame(new GameState({ main: new Game({ moves: solution }) }))
-    setBoardState(newBoardState)
+    const newGame = new GameState({ main: new Game({ moves: solution, inverted: !vcfTurn }) })
+    const newBoard = boardState.convertMovesToStones().setNumberdedPoints([]).setGame(newGame)
+    setBoardState(newBoard)
     setSolution(undefined)
   }
   const onClear = () => {

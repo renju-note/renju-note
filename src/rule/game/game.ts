@@ -3,15 +3,14 @@ import { equal, Point } from '../foundation'
 
 export class Game {
   readonly moves: Point[] = []
-  private blacksCache: Point[] | undefined
-  private whitesCache: Point[] | undefined
+  readonly inverted: boolean = false
 
   constructor(init?: undefined | Partial<Game>) {
     if (init !== undefined) Object.assign(this, init)
   }
 
   private update(fields: Partial<Game>): Game {
-    return new Game({ ...this, ...fields, blacksCache: undefined, whitesCache: undefined })
+    return new Game({ ...this, ...fields })
   }
 
   move(p: Point): Game {
@@ -32,8 +31,12 @@ export class Game {
     return this.moves.findIndex(q => equal(p, q)) >= 0
   }
 
-  partial(length: number): Game {
+  cut(length: number): Game {
     return this.update({ moves: this.moves.slice(0, length) })
+  }
+
+  invert(inverted: boolean): Game {
+    return this.update({ inverted })
   }
 
   get canUndo(): boolean {
@@ -41,25 +44,13 @@ export class Game {
   }
 
   get blacks(): Point[] {
-    if (this.blacksCache === undefined) {
-      const result: Point[] = []
-      for (let i = 0; i < this.moves.length; i += 2) {
-        result[~~(i / 2)] = this.moves[i]
-      }
-      this.blacksCache = result
-    }
-    return this.blacksCache
+    const r = this.inverted ? 1 : 0
+    return this.moves.filter((p, i) => i % 2 === r)
   }
 
   get whites(): Point[] {
-    if (this.whitesCache === undefined) {
-      const result: Point[] = []
-      for (let i = 1; i < this.moves.length; i += 2) {
-        result[~~((i - 1) / 2)] = this.moves[i]
-      }
-      this.whitesCache = result
-    }
-    return this.whitesCache
+    const r = this.inverted ? 0 : 1
+    return this.moves.filter((p, i) => i % 2 === r)
   }
 
   get lastMove(): Point | undefined {
@@ -67,7 +58,8 @@ export class Game {
   }
 
   get isBlackTurn(): boolean {
-    return this.moves.length % 2 === 0
+    const r = this.inverted ? 1 : 0
+    return this.moves.length % 2 === r
   }
 
   get size(): number {

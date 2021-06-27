@@ -22,7 +22,6 @@ export const BoardMode: Record<BoardMode, BoardMode> = {
 export class BoardState {
   readonly mode: BoardMode = BoardMode.game
   readonly game: GameState = new GameState()
-  readonly inverted: boolean = false
   readonly freeBlacks: PointsState = new PointsState()
   readonly freeWhites: PointsState = new PointsState()
   readonly markerPoints: PointsState = new PointsState()
@@ -58,13 +57,7 @@ export class BoardState {
   }
 
   private canEditMove(p: Point): boolean {
-    const isBlackTurn = this.inverted ? !this.game.isBlackTurn : this.game.isBlackTurn
-    return (
-      this.game.canMove(p) &&
-      !this.freeBlacks.has(p) &&
-      !this.freeWhites.has(p) &&
-      !(isBlackTurn && this.current.forbidden(p))
-    )
+    return this.game.canMove(p) && !this.freeBlacks.has(p) && !this.freeWhites.has(p)
   }
 
   private canEditFreeStone(p: Point): boolean {
@@ -100,10 +93,6 @@ export class BoardState {
 
   setGame(game: GameState): BoardState {
     return this.update({ game })
-  }
-
-  setInverted(inverted: boolean): BoardState {
-    return this.update({ inverted })
   }
 
   /* undo */
@@ -169,11 +158,11 @@ export class BoardState {
   }
 
   get blacks(): Point[] {
-    return [...(this.inverted ? this.game.whites : this.game.blacks), ...this.freeBlacks.points]
+    return [...this.game.blacks, ...this.freeBlacks.points]
   }
 
   get whites(): Point[] {
-    return [...(this.inverted ? this.game.blacks : this.game.whites), ...this.freeWhites.points]
+    return [...this.game.whites, ...this.freeWhites.points]
   }
 
   /* encode */
@@ -192,7 +181,6 @@ export class BoardState {
     const codes: string[] = []
     const mainGameCode = this.game.encode()
     if (mainGameCode !== '') codes.push(mainGameCode)
-    if (this.inverted) codes.push(`o:i`)
     if (!this.freeBlacks.empty) codes.push(`b:${this.freeBlacks.encode()}`)
     if (!this.freeWhites.empty) codes.push(`w:${this.freeWhites.encode()}`)
     if (!this.markerPoints.empty) codes.push(`p:${this.markerPoints.encode()}`)
@@ -203,8 +191,7 @@ export class BoardState {
   static decode(code: string): BoardState | undefined {
     const codes = code.split(',')
     const find = (s: string) => codes.find(c => c.startsWith(s))?.replace(s, '') ?? ''
-    const invertedCode = find('o:')
-    const mainGameCode = `gid:${find('gid:')},g:${find('g:')},c:${find('c:')}`
+    const mainGameCode = `gid:${find('gid:')},g:${find('g:')},o:${find('o:')},c:${find('c:')}`
     const freeBlacksCode = find('b:')
     const freeWhitesCode = find('w:')
     const markerPointsCode = find('p:')
@@ -212,7 +199,6 @@ export class BoardState {
     return new BoardState({
       mode: BoardMode.game,
       game: GameState.decode(mainGameCode) ?? new GameState(),
-      inverted: invertedCode.includes('i'),
       freeBlacks: PointsState.decode(freeBlacksCode) ?? new PointsState(),
       freeWhites: PointsState.decode(freeWhitesCode) ?? new PointsState(),
       markerPoints: PointsState.decode(markerPointsCode) ?? new PointsState(),

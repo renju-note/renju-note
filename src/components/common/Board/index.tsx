@@ -50,7 +50,6 @@ const Default: FC<Props> = ({ id, onClickPoint, state }) => {
       )}
       <Stones
         game={game}
-        inverted={state.inverted}
         showOrders={preference.has(PreferenceOption.showOrders)}
         showLastMove={preference.has(PreferenceOption.emphasizeLastMove)}
         freeBlacks={state.freeBlacks}
