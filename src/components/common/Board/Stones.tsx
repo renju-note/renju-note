@@ -6,18 +6,25 @@ import { PointMarker, Stone } from './common'
 
 type Props = {
   game: Game
-  invert: boolean
+  inverted: boolean
   showOrders: boolean
   showLastMove: boolean
   freeBlacks: PointsState
   freeWhites: PointsState
 }
 
-const Default: FC<Props> = ({ game, invert, showOrders, showLastMove, freeBlacks, freeWhites }) => {
+const Default: FC<Props> = ({
+  game,
+  inverted,
+  showOrders,
+  showLastMove,
+  freeBlacks,
+  freeWhites,
+}) => {
   return (
     <g>
       {showLastMove && game.lastMove && <LastMove point={game.lastMove} />}
-      <Moves points={game.moves} invert={invert} showOrders={showOrders} />
+      <Moves points={game.moves} invert={inverted} showOrders={showOrders} />
       <FreeStones points={freeBlacks.points} black={true} />
       <FreeStones points={freeWhites.points} black={false} />
     </g>

@@ -1,6 +1,6 @@
 import React, { FC, useContext } from 'react'
 import { Point } from '../../../rule'
-import { BoardMode, BoardOption, BoardState } from '../../../state'
+import { BoardMode, BoardState } from '../../../state'
 import { PreferenceContext, PreferenceOption, SystemContext } from '../../contexts'
 import Base from './Base'
 import Markers from './Markers'
@@ -45,12 +45,12 @@ const Default: FC<Props> = ({ id, onClickPoint, state }) => {
           points={state.markerPoints}
           segments={state.markerLines}
           sequence={state.numberedPoints}
-          showPointsLabel={state.options.has(BoardOption.labelMarkers)}
+          showPointsLabel={preference.has(PreferenceOption.showOrders)}
         />
       )}
       <Stones
         game={game}
-        invert={state.options.has(BoardOption.invertMoves)}
+        inverted={state.inverted}
         showOrders={preference.has(PreferenceOption.showOrders)}
         showLastMove={preference.has(PreferenceOption.emphasizeLastMove)}
         freeBlacks={state.freeBlacks}

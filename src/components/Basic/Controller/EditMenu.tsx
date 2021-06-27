@@ -16,14 +16,13 @@ import { FC, useContext } from 'react'
 import {
   RiAddCircleFill,
   RiAddCircleLine,
-  RiAtLine,
   RiContrastFill,
   RiDeleteBinFill,
   RiEditCircleFill,
   RiEditLine,
   RiRadioButtonLine,
 } from 'react-icons/ri'
-import { BoardMode, BoardOption, BoardState } from '../../../state'
+import { BoardMode, BoardState } from '../../../state'
 import { BasicContext } from '../../contexts'
 
 const Default: FC = () => {
@@ -34,7 +33,7 @@ const Default: FC = () => {
         <MenuButton as={IconButton} icon={<ModeIcon mode={boardState.mode} />} aria-label="edit" />
         <MenuList>
           <MenuOptionGroup
-            defaultValue={boardState.mode}
+            value={boardState.mode}
             title="Mode"
             type="radio"
             onChange={(value: any) => setBoardState(boardState.setMode(value as BoardMode))}
@@ -76,19 +75,15 @@ const Default: FC = () => {
           <MenuOptionGroup
             title="Transform"
             type="checkbox"
-            defaultValue={boardState.options.values}
-            onChange={(value: any) => setBoardState(boardState.setOptions(value as BoardOption[]))}
+            value={boardState.inverted ? ['inverted'] : []}
+            onChange={(value: any) =>
+              setBoardState(boardState.setInverted((value as string[]).includes('inverted')))
+            }
           >
-            <MenuItemOption value={BoardOption.invertMoves}>
+            <MenuItemOption value="inverted">
               <Flex alignItems="center">
                 <Icon boxSize="small" as={RiContrastFill} />
                 <Text ml={2}>Invert Moves</Text>
-              </Flex>
-            </MenuItemOption>
-            <MenuItemOption value={BoardOption.labelMarkers}>
-              <Flex alignItems="center">
-                <Icon boxSize="small" as={RiAtLine} />
-                <Text ml={2}>Label Markers</Text>
               </Flex>
             </MenuItemOption>
           </MenuOptionGroup>
