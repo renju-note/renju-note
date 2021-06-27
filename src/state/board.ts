@@ -190,6 +190,17 @@ export class BoardState {
   }
 
   /* encode */
+  convertMovesToStones(): BoardState {
+    return this.update({
+      mode: BoardMode.game,
+      options: this.options.off(['invertMoves']),
+      game: new GameState(),
+      freeBlacks: new PointsState({ points: this.blacks }),
+      freeWhites: new PointsState({ points: this.whites }),
+    })
+  }
+
+  /* encode */
 
   encode(): string {
     const codes: string[] = []
