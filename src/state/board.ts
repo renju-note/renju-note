@@ -1,5 +1,5 @@
 import { Board, N_LINES, Point } from '../rule'
-import { GameState, OptionsState, PointsState, SegmentsState } from './common'
+import { GameState, PointsState, SegmentsState } from './common'
 
 const boardModes = [
   'game',
@@ -19,19 +19,10 @@ export const BoardMode: Record<BoardMode, BoardMode> = {
   preview: 'preview',
 } as const
 
-const boardOptions = ['invertMoves', 'labelMarkers'] as const
-export type BoardOption = typeof boardOptions[number]
-export const BoardOption: Record<BoardOption, BoardOption> = {
-  invertMoves: 'invertMoves',
-  labelMarkers: 'labelMarkers',
-} as const
-
-export type BoardOptionsState = OptionsState<BoardOption>
-
 export class BoardState {
   readonly mode: BoardMode = BoardMode.game
-  readonly options: BoardOptionsState = new OptionsState<BoardOption>()
   readonly game: GameState = new GameState()
+  readonly inverted: boolean = false
   readonly freeBlacks: PointsState = new PointsState()
   readonly freeWhites: PointsState = new PointsState()
   readonly markerPoints: PointsState = new PointsState()
@@ -107,12 +98,12 @@ export class BoardState {
     })
   }
 
-  setOptions(options: BoardOption[]): BoardState {
-    return this.update({ options: new OptionsState<BoardOption>().on(options) })
-  }
-
   setGame(game: GameState): BoardState {
     return this.update({ game })
+  }
+
+  setInverted(inverted: boolean): BoardState {
+    return this.update({ inverted })
   }
 
   /* undo */
@@ -185,15 +176,10 @@ export class BoardState {
     return [...(this.inverted ? this.game.blacks : this.game.whites), ...this.freeWhites.points]
   }
 
-  private get inverted(): boolean {
-    return this.options.has(BoardOption.invertMoves)
-  }
-
   /* encode */
   convertMovesToStones(): BoardState {
     return this.update({
       mode: BoardMode.game,
-      options: this.options.off(['invertMoves']),
       game: new GameState(),
       freeBlacks: new PointsState({ points: this.blacks }),
       freeWhites: new PointsState({ points: this.whites }),
@@ -206,7 +192,7 @@ export class BoardState {
     const codes: string[] = []
     const mainGameCode = this.game.encode()
     if (mainGameCode !== '') codes.push(mainGameCode)
-    if (!this.options.empty) codes.push(`o:${encodeBoardOptions(this.options)}`)
+    if (this.inverted) codes.push(`o:i`)
     if (!this.freeBlacks.empty) codes.push(`b:${this.freeBlacks.encode()}`)
     if (!this.freeWhites.empty) codes.push(`w:${this.freeWhites.encode()}`)
     if (!this.markerPoints.empty) codes.push(`p:${this.markerPoints.encode()}`)
@@ -217,7 +203,7 @@ export class BoardState {
   static decode(code: string): BoardState | undefined {
     const codes = code.split(',')
     const find = (s: string) => codes.find(c => c.startsWith(s))?.replace(s, '') ?? ''
-    const optionsCode = find('o:')
+    const invertedCode = find('o:')
     const mainGameCode = `gid:${find('gid:')},g:${find('g:')},c:${find('c:')}`
     const freeBlacksCode = find('b:')
     const freeWhitesCode = find('w:')
@@ -225,26 +211,12 @@ export class BoardState {
     const markerLinesCode = find('l:')
     return new BoardState({
       mode: BoardMode.game,
-      options: decodeBoardOptions(optionsCode) ?? new OptionsState<BoardOption>(),
       game: GameState.decode(mainGameCode) ?? new GameState(),
+      inverted: invertedCode.includes('i'),
       freeBlacks: PointsState.decode(freeBlacksCode) ?? new PointsState(),
       freeWhites: PointsState.decode(freeWhitesCode) ?? new PointsState(),
       markerPoints: PointsState.decode(markerPointsCode) ?? new PointsState(),
       markerLines: SegmentsState.decode(markerLinesCode) ?? new SegmentsState(),
     })
   }
-}
-
-const encodeBoardOptions = (options: BoardOptionsState): string => {
-  const shortName = (o: string): string => o[0]
-  return options.values.map(shortName).join('')
-}
-
-const decodeBoardOptions = (code: string): BoardOptionsState => {
-  const longName = (s: string): BoardOption | undefined => boardOptions.find(o => o.startsWith(s))
-  const values = code
-    .split('')
-    .map(longName)
-    .filter(v => v !== undefined) as BoardOption[]
-  return new OptionsState<BoardOption>().on(values)
 }
