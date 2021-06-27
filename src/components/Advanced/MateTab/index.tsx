@@ -26,7 +26,8 @@ import {
 } from 'react-icons/ri'
 // eslint-disable-next-line
 import Worker from 'worker-loader!./quintet'
-import { encodePoints, Point } from '../../../rule'
+import { encodePoints, Game, Point } from '../../../rule'
+import { GameState } from '../../../state'
 import { BasicContext } from '../../contexts'
 
 const worker = new Worker()
@@ -93,9 +94,19 @@ const VCFComponent: FC = () => {
     worker.postMessage(data)
     setSolving(true)
   }
-  const onClear = () => {
+  const onPut = () => {
+    if (solution === undefined || solution.length === 0) return
+    const message = 'All of current moves are converted to free (unordered) stones, OK?'
+    if (!window.confirm(message)) return
+    let newBoardState = boardState.convertMovesToStones().setNumberdedPoints([])
+    if (!vcfTurn) newBoardState = newBoardState.setOptions(['invertMoves'])
+    newBoardState = newBoardState.setGame(new GameState({ main: new Game({ moves: solution }) }))
+    setBoardState(newBoardState)
     setSolution(undefined)
+  }
+  const onClear = () => {
     setBoardState(boardState.setNumberdedPoints([]))
+    setSolution(undefined)
   }
   return (
     <Stack>
@@ -124,6 +135,11 @@ const VCFComponent: FC = () => {
           ) : (
             <Button size="sm" onClick={onClear}>
               Clear
+            </Button>
+          )}
+          {solution !== undefined && solution.length > 0 && (
+            <Button size="sm" variant="outline" colorScheme="purple" onClick={onPut}>
+              Put on Board
             </Button>
           )}
         </Stack>
