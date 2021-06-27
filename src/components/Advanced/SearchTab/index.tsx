@@ -29,6 +29,7 @@ const Default: FC = () => {
   const [hit, setHit] = useState<number>(0)
   const [error, setError] = useState<string | undefined>()
   const onSearch = async (moves?: Point[], playerId?: number, page?: number) => {
+    // TODO: error when game is inverted
     const { ids, hit, error } = await analyzedDB.search({
       moves,
       playerId,

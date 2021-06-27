@@ -27,8 +27,14 @@ import { BasicContext } from '../../contexts'
 
 const Default: FC = () => {
   const { boardState, setBoardState } = useContext(BasicContext)
-  const onInvertMoves = (inverted: boolean) => {
-    setBoardState(boardState.setGame(boardState.game.invertMoves(inverted)))
+  const onInvertMoves = () => {
+    const gameState = boardState.game.invertMoves(!boardState.game.main.inverted)
+    setBoardState(boardState.setGame(gameState))
+  }
+  const onResetAll = () => {
+    const message = 'All moves, free stones and markers will be cleared. Sure?'
+    if (!window.confirm(message)) return
+    setBoardState(new BoardState())
   }
   return (
     <>
@@ -75,26 +81,12 @@ const Default: FC = () => {
             </MenuItemOption>
           </MenuOptionGroup>
           <MenuDivider />
-          <MenuOptionGroup
-            title="Transform"
-            type="checkbox"
-            value={boardState.game.main.inverted ? ['inverted'] : []}
-            onChange={(value: any) => onInvertMoves((value as string[]).includes('inverted'))}
-          >
-            <MenuItemOption value="inverted">
-              <Flex alignItems="center">
-                <Icon boxSize="small" as={RiContrastFill} />
-                <Text ml={2}>Invert Moves</Text>
-              </Flex>
-            </MenuItemOption>
-          </MenuOptionGroup>
+          <MenuItem onClick={onInvertMoves}>
+            <Icon boxSize="small" as={RiContrastFill} />
+            <Text ml={2}>Invert Moves</Text>
+          </MenuItem>
           <MenuDivider />
-          <MenuItem
-            onClick={() => {
-              const message = 'All moves, added stones and markers will be cleared. Sure?'
-              if (window.confirm(message)) setBoardState(new BoardState())
-            }}
-          >
+          <MenuItem onClick={onResetAll}>
             <Icon boxSize="small" as={RiDeleteBinFill} color="red.500" />
             <Text ml={2} color="red.500">
               Reset All
