@@ -32,7 +32,7 @@ const Default: FC = () => {
     setBoardState(boardState.setGame(gameState))
   }
   const onResetAll = () => {
-    const message = 'All moves, free stones and markers will be cleared. Sure?'
+    const message = 'All moves, free stones and markers will be cleared. OK?'
     if (!window.confirm(message)) return
     setBoardState(new BoardState())
   }

@@ -96,7 +96,7 @@ const VCFComponent: FC = () => {
   }
   const onPut = () => {
     if (solution === undefined || solution.length === 0) return
-    const message = 'All of current moves are converted to free (unordered) stones, OK?'
+    const message = 'All of existent moves will be converted to free (unordered) stones. OK?'
     if (!window.confirm(message)) return
     const newGame = new GameState({ main: new Game({ moves: solution, inverted: !vcfTurn }) })
     const newBoard = boardState.convertMovesToStones().setNumberdedPoints([]).setGame(newGame)
@@ -138,7 +138,7 @@ const VCFComponent: FC = () => {
           )}
           {solution !== undefined && solution.length > 0 && (
             <Button size="sm" variant="outline" colorScheme="purple" onClick={onPut}>
-              Put on Board
+              Move on Board
             </Button>
           )}
         </Stack>
