@@ -6,18 +6,19 @@ import { BoardMode, BoardState, ConfirmOption, ConfirmState, GameState } from '.
 import { AdvancedContext, BasicContext } from '../../contexts'
 import { WonIcon } from '../common'
 
-const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
+const Default: FC = () => {
   const db = useMemo(() => new RIFDatabase(), [])
   const { boardState, setBoardState, setConfirmState } = useContext(BasicContext)
   const { searchState, setSearchState } = useContext(AdvancedContext)
+  const ids = searchState.result
   const [items, setItems] = useState<GameView[]>([])
   useEffect(() => {
-    if (gameIds.length === 0) {
+    if (ids.length === 0) {
       setItems([])
       return
     }
-    ;(async () => setItems(await db.getGameViews(gameIds)))()
-  }, [gameIds])
+    ;(async () => setItems(await db.getGameViews(ids)))()
+  }, [ids])
   const onClick = (gv: GameView) => {
     const originalGame = searchState.hiddenGame ?? boardState.game
     const previewGame = new GameState({

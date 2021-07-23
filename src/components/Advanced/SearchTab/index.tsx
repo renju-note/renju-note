@@ -9,33 +9,34 @@ import SearchController from './SearchController'
 
 const Default: FC = () => {
   const db = useMemo(() => new AnalyzedDatabase(), [])
-  const { searchState } = useContext(AdvancedContext)
-  const searchMoves = searchState.moves
-  const searchPlayerId = searchState.playerId
-  const pageSize = 20
-  const [page, setPage] = useState<number>(0)
-  const [ids, setIds] = useState<number[]>([])
-  const [hit, setHit] = useState<number>(0)
+  const { searchState, setSearchState } = useContext(AdvancedContext)
+  const queryMoves = searchState.queryMoves
+  const queryPlayerId = searchState.queryPlayerId
   const [error, setError] = useState<string | undefined>()
-  const onSearch = async (moves?: Point[], playerId?: number, page?: number) => {
+  const onSearch = async (query: {
+    moves?: Point[]
+    playerId?: number
+    limit: number
+    offset: number
+  }) => {
     // TODO: error when game is inverted
-    const { ids, hit, error } = await db.search({
-      moves,
-      playerId,
-      limit: pageSize,
-      offset: (page ?? 0) * pageSize,
+    const { hit, ids, error } = await db.search({
+      moves: query.moves,
+      playerId: query.playerId,
+      limit: query.limit,
+      offset: query.offset,
     })
-    setIds(ids)
-    setHit(hit)
+    setSearchState(searchState.setResult(hit, ids))
     setError(error)
   }
   useEffect(() => {
-    setPage(0)
-    onSearch(searchMoves, searchPlayerId)
-  }, [searchMoves?.length, searchPlayerId])
-  useEffect(() => {
-    onSearch(searchMoves, searchPlayerId, page)
-  }, [page])
+    onSearch({
+      moves: queryMoves,
+      playerId: queryPlayerId,
+      limit: searchState.queryLimit,
+      offset: searchState.queryOffset,
+    })
+  }, [queryMoves?.length, queryPlayerId, searchState.pager.page])
   return (
     <Stack justify="center" align="center">
       <Box width="100%">
@@ -46,14 +47,14 @@ const Default: FC = () => {
           {error}
         </Text>
       )}
-      {ids.length > 0 && (
+      {searchState.result.length > 0 && (
         <Center>
-          <GamesPager page={page} setPage={setPage} hit={hit} pageSize={pageSize} />
+          <GamesPager />
         </Center>
       )}
-      {ids.length > 0 && (
+      {searchState.result.length > 0 && (
         <Box width="100%">
-          <GamesTable gameIds={ids} />
+          <GamesTable />
         </Box>
       )}
     </Stack>
