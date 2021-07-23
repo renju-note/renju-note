@@ -12,7 +12,6 @@ const Default: FC = () => {
   const query = searchState.query
   const [error, setError] = useState<string | undefined>()
   useEffect(() => {
-    console.log('search')
     ;(async () => {
       const { hit, ids, error } = await db.search(query)
       setSearchState(searchState.setResult(hit, ids))
