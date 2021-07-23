@@ -12,6 +12,7 @@ const Default: FC = () => {
   const { tabsState, setTabsState, searchState, setSearchState } = useContext(AdvancedContext)
   const boardMoves = boardState.game.current.moves
   useEffect(() => {
+    // TODO: error when game is inverted
     setSearchState(searchState.setBoardMoves(boardMoves))
   }, [boardMoves.length])
   return (

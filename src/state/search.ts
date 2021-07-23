@@ -104,8 +104,12 @@ export class SearchState {
     return this.pager.page * this.pager.pageSize
   }
 
-  setResult(hit: number, result: number[]): SearchState {
-    return this.update({ result, pager: new PagerState({ hit, page: this.pager.page }) })
+  setHitAndResult(hit: number, result: number[]): SearchState {
+    return this.update({ result, pager: new PagerState({ hit }) })
+  }
+
+  setResult(result: number[]): SearchState {
+    return this.update({ result })
   }
 
   setHiddenGame(game: GameState | undefined): SearchState {

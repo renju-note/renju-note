@@ -1,7 +1,6 @@
 import { Box, Center, Stack, Text } from '@chakra-ui/react'
 import { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { AnalyzedDatabase } from '../../../database'
-import { Point } from '../../../rule'
 import { AdvancedContext } from '../../contexts'
 import GamesPager from './GamesPager'
 import GamesTable from './GamesTable'
@@ -10,33 +9,33 @@ import SearchController from './SearchController'
 const Default: FC = () => {
   const db = useMemo(() => new AnalyzedDatabase(), [])
   const { searchState, setSearchState } = useContext(AdvancedContext)
-  const queryMoves = searchState.queryMoves
-  const queryPlayerId = searchState.queryPlayerId
   const [error, setError] = useState<string | undefined>()
-  const onSearch = async (query: {
-    moves?: Point[]
-    playerId?: number
-    limit: number
-    offset: number
-  }) => {
-    // TODO: error when game is inverted
-    const { hit, ids, error } = await db.search({
-      moves: query.moves,
-      playerId: query.playerId,
-      limit: query.limit,
-      offset: query.offset,
-    })
-    setSearchState(searchState.setResult(hit, ids))
-    setError(error)
-  }
   useEffect(() => {
-    onSearch({
-      moves: queryMoves,
-      playerId: queryPlayerId,
-      limit: searchState.queryLimit,
-      offset: searchState.queryOffset,
-    })
-  }, [queryMoves?.length, queryPlayerId, searchState.pager.page])
+    console.log('search')
+    ;(async () => {
+      const { hit, ids, error } = await db.search({
+        moves: searchState.queryMoves,
+        playerId: searchState.queryPlayerId,
+        limit: searchState.queryLimit,
+        offset: 0,
+      })
+      setSearchState(searchState.setHitAndResult(hit, ids))
+      setError(error)
+    })()
+  }, [searchState.queryMoves?.length, searchState.queryPlayerId, searchState.queryLimit])
+  useEffect(() => {
+    console.log('page')
+    ;(async () => {
+      const { ids, error } = await db.search({
+        moves: searchState.queryMoves,
+        playerId: searchState.queryPlayerId,
+        limit: searchState.queryLimit,
+        offset: searchState.queryOffset,
+      })
+      setSearchState(searchState.setResult(ids))
+      setError(error)
+    })()
+  }, [searchState.queryOffset])
   return (
     <Stack justify="center" align="center">
       <Box width="100%">
