@@ -2,8 +2,8 @@ import { Point } from '../rule'
 import { GameState } from './common'
 
 type SearchQuery = {
-  moves?: Point[]
-  playerId?: number
+  moves: Point[] | undefined
+  playerId: number | undefined
   limit: number
   offset: number
 }
@@ -68,8 +68,8 @@ export class PagerState {
 }
 
 export class SearchState {
-  readonly boardMoves: Point[] = []
-  readonly followMoves: boolean = true
+  readonly moves: Point[] = []
+  readonly useMoves: boolean = true
   readonly playerId?: number
   readonly pager: PagerState = new PagerState()
   readonly result: number[] = []
@@ -83,16 +83,15 @@ export class SearchState {
     return new SearchState({ ...this, ...fields })
   }
 
-  setBoardMoves(ps: Point[]): SearchState {
-    let next = this.update({ boardMoves: ps })
-    if (this.followMoves && this.boardMoves.toString() !== next.boardMoves.toString())
-      next = next.resetPager()
+  setMoves(ps: Point[]): SearchState {
+    let next = this.update({ moves: ps })
+    if (this.useMoves && this.moves.toString() !== next.moves.toString()) next = next.resetPager()
     return next
   }
 
-  setFollowMoves(on: boolean): SearchState {
-    let next = this.update({ followMoves: on })
-    if (this.followMoves !== next.followMoves) next = next.resetPager()
+  setUseMoves(on: boolean): SearchState {
+    let next = this.update({ useMoves: on })
+    if (this.useMoves !== next.useMoves) next = next.resetPager()
     return next
   }
 
@@ -112,7 +111,7 @@ export class SearchState {
 
   get query(): SearchQuery {
     return {
-      moves: this.followMoves && this.boardMoves.length > 0 ? this.boardMoves : undefined,
+      moves: this.useMoves && this.moves.length > 0 ? this.moves : undefined,
       playerId: this.playerId,
       limit: this.pager.pageSize,
       offset: this.pager.page * this.pager.pageSize,

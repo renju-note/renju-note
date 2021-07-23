@@ -13,7 +13,7 @@ const Default: FC = () => {
   const boardMoves = boardState.game.current.moves
   useEffect(() => {
     // TODO: error when game is inverted
-    setSearchState(searchState.setBoardMoves(boardMoves))
+    setSearchState(searchState.setMoves(boardMoves))
   }, [boardMoves.length])
   return (
     <Tabs

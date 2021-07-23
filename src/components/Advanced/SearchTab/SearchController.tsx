@@ -34,7 +34,7 @@ const Default: FC = () => {
 
 const MovesInput: FC = () => {
   const { searchState, setSearchState } = useContext(AdvancedContext)
-  const encodedMoves = new Game({ moves: searchState.boardMoves }).encode(',')
+  const encodedMoves = new Game({ moves: searchState.moves }).encode(',')
   return (
     <InputGroup size="sm">
       <InputLeftAddon>
@@ -43,8 +43,8 @@ const MovesInput: FC = () => {
       <Input type="string" placeholder="put moves on board" isReadOnly value={encodedMoves} />
       <InputRightElement>
         <Checkbox
-          isChecked={searchState.followMoves}
-          onChange={e => setSearchState(searchState.setFollowMoves(e.target.checked))}
+          isChecked={searchState.useMoves}
+          onChange={e => setSearchState(searchState.setUseMoves(e.target.checked))}
         />
       </InputRightElement>
     </InputGroup>
