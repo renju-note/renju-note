@@ -1,14 +1,20 @@
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
-import { FC, useContext } from 'react'
+import { FC, useContext, useEffect } from 'react'
 import { TabName } from '../../state'
-import { AdvancedContext } from '../contexts'
+import { AdvancedContext, BasicContext } from '../contexts'
 import DetailTab from './DetailTab'
 import MateTab from './MateTab'
 import SearchTab from './SearchTab'
 import SetupTab from './SetupTab'
 
 const Default: FC = () => {
-  const { tabsState, setTabsState } = useContext(AdvancedContext)
+  const { boardState } = useContext(BasicContext)
+  const { tabsState, setTabsState, searchState, setSearchState } = useContext(AdvancedContext)
+  const boardMoves = boardState.game.current.moves
+  useEffect(() => {
+    // TODO: error when game is inverted
+    setSearchState(searchState.setMoves(boardMoves))
+  }, [boardMoves.length])
   return (
     <Tabs
       width="100%"

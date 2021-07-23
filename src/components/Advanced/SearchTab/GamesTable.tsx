@@ -6,10 +6,12 @@ import { BoardMode, BoardState, ConfirmOption, ConfirmState, GameState } from '.
 import { AdvancedContext, BasicContext } from '../../contexts'
 import { WonIcon } from '../common'
 
-const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
+const Default: FC = () => {
   const db = useMemo(() => new RIFDatabase(), [])
   const { boardState, setBoardState, setConfirmState } = useContext(BasicContext)
-  const { searchState, setSearchState: setAdvancedState } = useContext(AdvancedContext)
+  const isPreviewMode = boardState.mode === BoardMode.preview
+  const { searchState } = useContext(AdvancedContext)
+  const gameIds = searchState.gameIds
   const [items, setItems] = useState<GameView[]>([])
   useEffect(() => {
     if (gameIds.length === 0) {
@@ -18,26 +20,27 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
     }
     ;(async () => setItems(await db.getGameViews(gameIds)))()
   }, [gameIds])
+  const [hiddenGame, setHiddenGame] = useState<GameState>()
   const onClick = (gv: GameView) => {
-    const originalGame = searchState.hiddenGame ?? boardState.game
+    const originalGame = hiddenGame ?? boardState.game
     const previewGame = new GameState({
       main: new Game({ moves: gv.moves }),
       gameid: gv.id,
       cursor: boardState.game.current.size,
     })
-    if (boardState.mode !== BoardMode.preview) {
-      setAdvancedState(searchState.setHiddenGame(boardState.game))
+    if (!isPreviewMode) {
+      setHiddenGame(boardState.game)
     }
     setBoardState(boardState.setGame(previewGame).setMode(BoardMode.preview))
 
     const onOpen = () => {
       setBoardState(new BoardState({ game: previewGame }))
-      setAdvancedState(searchState.setHiddenGame(undefined))
+      setHiddenGame(undefined)
       setConfirmState(undefined)
     }
     const onCancel = () => {
       setBoardState(boardState.setGame(originalGame).setMode(BoardMode.game))
-      setAdvancedState(searchState.setHiddenGame(undefined))
+      setHiddenGame(undefined)
       setConfirmState(undefined)
     }
     const confirmState = new ConfirmState({
@@ -68,11 +71,8 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
       <colgroup span={1} style={{ width: '10%' }} />
       <Tbody>
         {items.map((g, key) => {
-          const mgid =
-            boardState.mode === BoardMode.preview
-              ? searchState.hiddenGame?.gameid
-              : boardState.game.gameid
-          const pgid = boardState.mode === BoardMode.preview ? boardState.game.gameid : undefined
+          const mgid = isPreviewMode ? hiddenGame?.gameid : boardState.game.gameid
+          const pgid = isPreviewMode ? boardState.game.gameid : undefined
           return (
             <Tr
               key={key}
