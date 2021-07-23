@@ -9,8 +9,8 @@ import { WonIcon } from '../common'
 const Default: FC = () => {
   const db = useMemo(() => new RIFDatabase(), [])
   const { boardState, setBoardState, setConfirmState } = useContext(BasicContext)
+  const isPreviewMode = boardState.mode === BoardMode.preview
   const { searchState } = useContext(AdvancedContext)
-  const [hiddenGame, setHiddenGame] = useState<GameState>()
   const gameIds = searchState.gameIds
   const [items, setItems] = useState<GameView[]>([])
   useEffect(() => {
@@ -20,6 +20,7 @@ const Default: FC = () => {
     }
     ;(async () => setItems(await db.getGameViews(gameIds)))()
   }, [gameIds])
+  const [hiddenGame, setHiddenGame] = useState<GameState>()
   const onClick = (gv: GameView) => {
     const originalGame = hiddenGame ?? boardState.game
     const previewGame = new GameState({
@@ -27,7 +28,7 @@ const Default: FC = () => {
       gameid: gv.id,
       cursor: boardState.game.current.size,
     })
-    if (boardState.mode !== BoardMode.preview) {
+    if (!isPreviewMode) {
       setHiddenGame(boardState.game)
     }
     setBoardState(boardState.setGame(previewGame).setMode(BoardMode.preview))
@@ -70,9 +71,8 @@ const Default: FC = () => {
       <colgroup span={1} style={{ width: '10%' }} />
       <Tbody>
         {items.map((g, key) => {
-          const mgid =
-            boardState.mode === BoardMode.preview ? hiddenGame?.gameid : boardState.game.gameid
-          const pgid = boardState.mode === BoardMode.preview ? boardState.game.gameid : undefined
+          const mgid = isPreviewMode ? hiddenGame?.gameid : boardState.game.gameid
+          const pgid = isPreviewMode ? boardState.game.gameid : undefined
           return (
             <Tr
               key={key}
