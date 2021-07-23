@@ -66,16 +66,16 @@ const PlayerInput: FC = () => {
     })()
   }
   const onSetPlayer = (player: RIFPlayer) => {
-    setSearchState(searchState.setQueryPlayerId(player.id))
+    setSearchState(searchState.setPlayerId(player.id))
     popoverDisclosure.onClose()
   }
   const onUnsetPlayer = () => {
-    setSearchState(searchState.setQueryPlayerId(undefined))
+    setSearchState(searchState.setPlayerId(undefined))
     setValue('')
     popoverDisclosure.onClose()
   }
 
-  const playerId = searchState.queryPlayerId
+  const playerId = searchState.playerId
   useEffect(() => {
     if (typeof playerId !== 'number') return
     ;(async () => {
@@ -105,7 +105,7 @@ const PlayerInput: FC = () => {
             <CloseButton
               size="sm"
               onClick={onUnsetPlayer}
-              disabled={searchState.queryPlayerId === undefined && !popoverDisclosure.isOpen}
+              disabled={searchState.playerId === undefined && !popoverDisclosure.isOpen}
             />
           </InputRightElement>
         </InputGroup>

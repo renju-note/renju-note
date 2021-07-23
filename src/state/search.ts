@@ -1,6 +1,13 @@
 import { Point } from '../rule'
 import { GameState } from './common'
 
+type SearchQuery = {
+  moves?: Point[]
+  playerId?: number
+  limit: number
+  offset: number
+}
+
 const DEFAULT_PAGE_SIZE = 20
 
 export class PagerState {
@@ -63,7 +70,7 @@ export class PagerState {
 export class SearchState {
   readonly boardMoves: Point[] = []
   readonly followMoves: boolean = true
-  readonly queryPlayerId?: number
+  readonly playerId?: number
   readonly pager: PagerState = new PagerState()
   readonly result: number[] = []
   readonly hiddenGame: GameState | undefined
@@ -77,39 +84,44 @@ export class SearchState {
   }
 
   setBoardMoves(ps: Point[]): SearchState {
-    return this.update({ boardMoves: ps })
+    let next = this.update({ boardMoves: ps })
+    if (this.followMoves && this.boardMoves.toString() !== next.boardMoves.toString())
+      next = next.resetPager()
+    return next
   }
 
   setFollowMoves(on: boolean): SearchState {
-    return this.update({ followMoves: on })
+    let next = this.update({ followMoves: on })
+    if (this.followMoves !== next.followMoves) next = next.resetPager()
+    return next
   }
 
-  get queryMoves(): Point[] | undefined {
-    return this.followMoves && this.boardMoves.length > 0 ? this.boardMoves : undefined
-  }
-
-  setQueryPlayerId(id: number | undefined): SearchState {
-    return this.update({ queryPlayerId: id })
+  setPlayerId(id: number | undefined): SearchState {
+    let next = this.update({ playerId: id })
+    if (this.playerId !== next.playerId) next = next.resetPager()
+    return next
   }
 
   setPager(pager: PagerState): SearchState {
     return this.update({ pager })
   }
 
-  get queryLimit(): number {
-    return this.pager.pageSize
+  resetPager(): SearchState {
+    return this.update({ pager: new PagerState() })
   }
 
-  get queryOffset(): number {
-    return this.pager.page * this.pager.pageSize
+  get query(): SearchQuery {
+    return {
+      moves: this.followMoves && this.boardMoves.length > 0 ? this.boardMoves : undefined,
+      playerId: this.playerId,
+      limit: this.pager.pageSize,
+      offset: this.pager.page * this.pager.pageSize,
+    }
   }
 
   setHitAndResult(hit: number, result: number[]): SearchState {
-    return this.update({ result, pager: new PagerState({ hit }) })
-  }
-
-  setResult(result: number[]): SearchState {
-    return this.update({ result })
+    const pager = new PagerState({ hit, page: this.pager.page })
+    return this.update({ result, pager })
   }
 
   setHiddenGame(game: GameState | undefined): SearchState {

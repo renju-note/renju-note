@@ -173,7 +173,7 @@ const Player: FC<{ player: RIFPlayer; countriesMap: Map<number, RIFCountry> }> =
 }) => {
   const { searchState, setSearchState, tabsState, setTabsState } = useContext(AdvancedContext)
   const onClick = () => {
-    setSearchState(searchState.setQueryPlayerId(player.id))
+    setSearchState(searchState.setPlayerId(player.id))
     setTabsState(tabsState.setCurrent(TabName.search))
   }
   return (
