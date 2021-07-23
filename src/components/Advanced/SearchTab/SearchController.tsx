@@ -20,7 +20,8 @@ import {
 import { FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { RiRadioButtonLine, RiUser3Fill } from 'react-icons/ri'
 import { RIFDatabase, RIFPlayer } from '../../../database'
-import { AdvancedContext, BasicContext } from '../../contexts'
+import { Game } from '../../../rule'
+import { AdvancedContext } from '../../contexts'
 
 const Default: FC = () => {
   return (
@@ -32,19 +33,14 @@ const Default: FC = () => {
 }
 
 const MovesInput: FC = () => {
-  const { boardState } = useContext(BasicContext)
   const { searchState, setSearchState } = useContext(AdvancedContext)
+  const encodedMoves = new Game({ moves: searchState.boardMoves }).encode(',')
   return (
     <InputGroup size="sm">
       <InputLeftAddon>
         <RiRadioButtonLine />
       </InputLeftAddon>
-      <Input
-        type="string"
-        placeholder="put moves on board"
-        isReadOnly
-        value={boardState.game.current.encode(',')}
-      />
+      <Input type="string" placeholder="put moves on board" isReadOnly value={encodedMoves} />
       <InputRightElement>
         <Checkbox
           isChecked={searchState.followMoves}

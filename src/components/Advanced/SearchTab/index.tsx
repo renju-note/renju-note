@@ -2,13 +2,12 @@ import { Box, Center, Stack, Text } from '@chakra-ui/react'
 import { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { AnalyzedDatabase } from '../../../database'
 import { Point } from '../../../rule'
-import { AdvancedContext, BasicContext } from '../../contexts'
+import { AdvancedContext } from '../../contexts'
 import GamesPager from './GamesPager'
 import GamesTable from './GamesTable'
 import SearchController from './SearchController'
 
 const Default: FC = () => {
-  const { boardState } = useContext(BasicContext)
   const { searchState } = useContext(AdvancedContext)
   const analyzedDB = useMemo(() => new AnalyzedDatabase(), [])
   const pageSize = 20
@@ -18,10 +17,7 @@ const Default: FC = () => {
     ;(async () => setReady(await analyzedDB.ready()))()
   }, [])
 
-  const searchMoves =
-    searchState.followMoves && boardState.game.current.size > 0
-      ? boardState.game.current.moves
-      : undefined
+  const searchMoves = searchState.moves
   const searchPlayerId = searchState.playerId
   const [page, setPage] = useState<number>(0)
 
