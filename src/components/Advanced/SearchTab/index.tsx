@@ -15,7 +15,7 @@ const Default: FC = () => {
     console.log('search')
     ;(async () => {
       const { hit, ids, error } = await db.search(query)
-      setSearchState(searchState.setHitAndResult(hit, ids))
+      setSearchState(searchState.setResult(hit, ids))
       setError(error)
     })()
   }, [query.moves?.toString(), query.playerId, query.limit, query.offset])
@@ -29,12 +29,12 @@ const Default: FC = () => {
           {error}
         </Text>
       )}
-      {searchState.result.length > 0 && (
+      {searchState.gameIds.length > 0 && (
         <Center>
           <GamesPager />
         </Center>
       )}
-      {searchState.result.length > 0 && (
+      {searchState.gameIds.length > 0 && (
         <Box width="100%">
           <GamesTable />
         </Box>

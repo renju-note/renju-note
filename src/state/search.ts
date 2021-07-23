@@ -72,7 +72,7 @@ export class SearchState {
   readonly useMoves: boolean = true
   readonly playerId?: number
   readonly pager: PagerState = new PagerState()
-  readonly result: number[] = []
+  readonly gameIds: number[] = []
   readonly hiddenGame: GameState | undefined
 
   constructor(init?: undefined | Partial<SearchState>) {
@@ -118,9 +118,9 @@ export class SearchState {
     }
   }
 
-  setHitAndResult(hit: number, result: number[]): SearchState {
+  setResult(hit: number, gameIds: number[]): SearchState {
     const pager = new PagerState({ hit, page: this.pager.page })
-    return this.update({ result, pager })
+    return this.update({ gameIds, pager })
   }
 
   setHiddenGame(game: GameState | undefined): SearchState {

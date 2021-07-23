@@ -10,15 +10,15 @@ const Default: FC = () => {
   const db = useMemo(() => new RIFDatabase(), [])
   const { boardState, setBoardState, setConfirmState } = useContext(BasicContext)
   const { searchState, setSearchState } = useContext(AdvancedContext)
-  const ids = searchState.result
+  const gameIds = searchState.gameIds
   const [items, setItems] = useState<GameView[]>([])
   useEffect(() => {
-    if (ids.length === 0) {
+    if (gameIds.length === 0) {
       setItems([])
       return
     }
-    ;(async () => setItems(await db.getGameViews(ids)))()
-  }, [ids])
+    ;(async () => setItems(await db.getGameViews(gameIds)))()
+  }, [gameIds])
   const onClick = (gv: GameView) => {
     const originalGame = searchState.hiddenGame ?? boardState.game
     const previewGame = new GameState({
