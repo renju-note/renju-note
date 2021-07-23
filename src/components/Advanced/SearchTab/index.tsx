@@ -8,25 +8,18 @@ import GamesTable from './GamesTable'
 import SearchController from './SearchController'
 
 const Default: FC = () => {
+  const db = useMemo(() => new AnalyzedDatabase(), [])
   const { searchState } = useContext(AdvancedContext)
-  const analyzedDB = useMemo(() => new AnalyzedDatabase(), [])
-  const pageSize = 20
-
-  const [ready, setReady] = useState<boolean>()
-  useEffect(() => {
-    ;(async () => setReady(await analyzedDB.ready()))()
-  }, [])
-
   const searchMoves = searchState.moves
   const searchPlayerId = searchState.playerId
+  const pageSize = 20
   const [page, setPage] = useState<number>(0)
-
   const [ids, setIds] = useState<number[]>([])
   const [hit, setHit] = useState<number>(0)
   const [error, setError] = useState<string | undefined>()
   const onSearch = async (moves?: Point[], playerId?: number, page?: number) => {
     // TODO: error when game is inverted
-    const { ids, hit, error } = await analyzedDB.search({
+    const { ids, hit, error } = await db.search({
       moves,
       playerId,
       limit: pageSize,
@@ -48,13 +41,6 @@ const Default: FC = () => {
       <Box width="100%">
         <SearchController />
       </Box>
-      {!ready && (
-        <Text color="red.600" my="1rem">
-          Search failed (maybe app was updated).
-          <br />
-          Please load file again from &lsquo;Setup&rsquo; tab.
-        </Text>
-      )}
       {error && (
         <Text color="gray.600" py="1rem">
           {error}

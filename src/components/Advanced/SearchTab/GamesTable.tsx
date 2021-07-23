@@ -9,7 +9,7 @@ import { WonIcon } from '../common'
 const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
   const db = useMemo(() => new RIFDatabase(), [])
   const { boardState, setBoardState, setConfirmState } = useContext(BasicContext)
-  const { searchState, setSearchState: setAdvancedState } = useContext(AdvancedContext)
+  const { searchState, setSearchState } = useContext(AdvancedContext)
   const [items, setItems] = useState<GameView[]>([])
   useEffect(() => {
     if (gameIds.length === 0) {
@@ -26,18 +26,18 @@ const Default: FC<{ gameIds: number[] }> = ({ gameIds }) => {
       cursor: boardState.game.current.size,
     })
     if (boardState.mode !== BoardMode.preview) {
-      setAdvancedState(searchState.setHiddenGame(boardState.game))
+      setSearchState(searchState.setHiddenGame(boardState.game))
     }
     setBoardState(boardState.setGame(previewGame).setMode(BoardMode.preview))
 
     const onOpen = () => {
       setBoardState(new BoardState({ game: previewGame }))
-      setAdvancedState(searchState.setHiddenGame(undefined))
+      setSearchState(searchState.setHiddenGame(undefined))
       setConfirmState(undefined)
     }
     const onCancel = () => {
       setBoardState(boardState.setGame(originalGame).setMode(BoardMode.game))
-      setAdvancedState(searchState.setHiddenGame(undefined))
+      setSearchState(searchState.setHiddenGame(undefined))
       setConfirmState(undefined)
     }
     const confirmState = new ConfirmState({
