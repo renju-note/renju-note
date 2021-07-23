@@ -9,7 +9,8 @@ import { WonIcon } from '../common'
 const Default: FC = () => {
   const db = useMemo(() => new RIFDatabase(), [])
   const { boardState, setBoardState, setConfirmState } = useContext(BasicContext)
-  const { searchState, setSearchState } = useContext(AdvancedContext)
+  const { searchState } = useContext(AdvancedContext)
+  const [hiddenGame, setHiddenGame] = useState<GameState>()
   const gameIds = searchState.gameIds
   const [items, setItems] = useState<GameView[]>([])
   useEffect(() => {
@@ -20,25 +21,25 @@ const Default: FC = () => {
     ;(async () => setItems(await db.getGameViews(gameIds)))()
   }, [gameIds])
   const onClick = (gv: GameView) => {
-    const originalGame = searchState.hiddenGame ?? boardState.game
+    const originalGame = hiddenGame ?? boardState.game
     const previewGame = new GameState({
       main: new Game({ moves: gv.moves }),
       gameid: gv.id,
       cursor: boardState.game.current.size,
     })
     if (boardState.mode !== BoardMode.preview) {
-      setSearchState(searchState.setHiddenGame(boardState.game))
+      setHiddenGame(boardState.game)
     }
     setBoardState(boardState.setGame(previewGame).setMode(BoardMode.preview))
 
     const onOpen = () => {
       setBoardState(new BoardState({ game: previewGame }))
-      setSearchState(searchState.setHiddenGame(undefined))
+      setHiddenGame(undefined)
       setConfirmState(undefined)
     }
     const onCancel = () => {
       setBoardState(boardState.setGame(originalGame).setMode(BoardMode.game))
-      setSearchState(searchState.setHiddenGame(undefined))
+      setHiddenGame(undefined)
       setConfirmState(undefined)
     }
     const confirmState = new ConfirmState({
@@ -70,9 +71,7 @@ const Default: FC = () => {
       <Tbody>
         {items.map((g, key) => {
           const mgid =
-            boardState.mode === BoardMode.preview
-              ? searchState.hiddenGame?.gameid
-              : boardState.game.gameid
+            boardState.mode === BoardMode.preview ? hiddenGame?.gameid : boardState.game.gameid
           const pgid = boardState.mode === BoardMode.preview ? boardState.game.gameid : undefined
           return (
             <Tr

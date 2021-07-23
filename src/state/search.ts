@@ -1,5 +1,4 @@
 import { Point } from '../rule'
-import { GameState } from './common'
 
 type SearchQuery = {
   moves: Point[] | undefined
@@ -73,7 +72,6 @@ export class SearchState {
   readonly playerId?: number
   readonly pager: PagerState = new PagerState()
   readonly gameIds: number[] = []
-  readonly hiddenGame: GameState | undefined
 
   constructor(init?: undefined | Partial<SearchState>) {
     if (init !== undefined) Object.assign(this, init)
@@ -121,9 +119,5 @@ export class SearchState {
   setResult(hit: number, gameIds: number[]): SearchState {
     const pager = new PagerState({ hit, page: this.pager.page })
     return this.update({ gameIds, pager })
-  }
-
-  setHiddenGame(game: GameState | undefined): SearchState {
-    return this.update({ hiddenGame: game })
   }
 }
