@@ -27,12 +27,12 @@ import { AdvancedContext, BasicContext } from '../../contexts'
 import { WonIcon } from '../common'
 
 const Default: FC = () => {
-  const { searchState } = useContext(AdvancedContext)
+  const { searchResultState } = useContext(AdvancedContext)
   const [pager, setPager] = useState<PagerState>(new PagerState())
   useEffect(() => {
-    setPager(new PagerState({ hit: searchState.gameIds.length }))
-  }, [searchState.gameIds])
-  const gameIds = searchState.gameIds.slice(pager.pageStart, pager.pageEnd)
+    setPager(new PagerState({ hit: searchResultState.gameIds.length }))
+  }, [searchResultState.gameIds])
+  const gameIds = searchResultState.gameIds.slice(pager.pageStart, pager.pageEnd)
   return (
     <>
       <Center>

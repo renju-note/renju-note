@@ -9,11 +9,12 @@ import SetupTab from './SetupTab'
 
 const Default: FC = () => {
   const { boardState } = useContext(BasicContext)
-  const { tabsState, setTabsState, searchState, setSearchState } = useContext(AdvancedContext)
+  const { tabsState, setTabsState, searchQueryState, setSearchQueryState } =
+    useContext(AdvancedContext)
   const boardMoves = boardState.game.current.moves
   useEffect(() => {
     // TODO: error when game is inverted
-    setSearchState(searchState.setMoves(boardMoves))
+    setSearchQueryState(searchQueryState.setMoves(boardMoves))
   }, [boardMoves.length])
   return (
     <Tabs

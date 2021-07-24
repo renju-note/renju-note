@@ -5,31 +5,28 @@ type SearchQuery = {
   playerId: number | undefined
 }
 
-export class SearchState {
+export class SearchQueryState {
   readonly moves: Point[] = []
   readonly useMoves: boolean = true
   readonly playerId?: number
-  readonly hit: number = 0
-  readonly gameIds: number[] = []
-  readonly error?: string
 
-  constructor(init?: undefined | Partial<SearchState>) {
+  constructor(init?: undefined | Partial<SearchQueryState>) {
     if (init !== undefined) Object.assign(this, init)
   }
 
-  private update(fields: Partial<SearchState>): SearchState {
-    return new SearchState({ ...this, ...fields })
+  private update(fields: Partial<SearchQueryState>): SearchQueryState {
+    return new SearchQueryState({ ...this, ...fields })
   }
 
-  setMoves(ps: Point[]): SearchState {
+  setMoves(ps: Point[]): SearchQueryState {
     return this.update({ moves: ps })
   }
 
-  setUseMoves(on: boolean): SearchState {
+  setUseMoves(on: boolean): SearchQueryState {
     return this.update({ useMoves: on })
   }
 
-  setPlayerId(id: number | undefined): SearchState {
+  setPlayerId(id: number | undefined): SearchQueryState {
     return this.update({ playerId: id })
   }
 
@@ -39,8 +36,14 @@ export class SearchState {
       playerId: this.playerId,
     }
   }
+}
 
-  setResult(hit: number, gameIds: number[], error?: string): SearchState {
-    return this.update({ hit, gameIds, error })
+export class SearchResultState {
+  readonly hit: number = 0
+  readonly gameIds: number[] = []
+  readonly error?: string
+
+  constructor(init?: undefined | Partial<SearchResultState>) {
+    if (init !== undefined) Object.assign(this, init)
   }
 }

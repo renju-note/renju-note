@@ -1,18 +1,19 @@
 import { Box, Stack, Text } from '@chakra-ui/react'
 import { FC, useContext, useEffect, useMemo } from 'react'
 import { AnalyzedDatabase } from '../../../database'
+import { SearchResultState } from '../../../state'
 import { AdvancedContext } from '../../contexts'
 import SearchController from '../common/SearchController'
 import GamesSelector from './GamesSelector'
 
 const Default: FC = () => {
   const db = useMemo(() => new AnalyzedDatabase(), [])
-  const { searchState, setSearchState } = useContext(AdvancedContext)
-  const query = searchState.query
+  const { searchQueryState, searchResultState, setSearchResultState } = useContext(AdvancedContext)
+  const query = searchQueryState.query
   useEffect(() => {
     ;(async () => {
       const { hit, ids, error } = await db.search(query)
-      setSearchState(searchState.setResult(hit, ids, error))
+      setSearchResultState(new SearchResultState({ hit, gameIds: ids, error }))
     })()
   }, [query.moves?.toString(), query.playerId])
   return (
@@ -20,12 +21,12 @@ const Default: FC = () => {
       <Box width="100%">
         <SearchController />
       </Box>
-      {searchState.error && (
+      {searchResultState.error && (
         <Text color="gray.600" py="1rem">
-          {searchState.error}
+          {searchResultState.error}
         </Text>
       )}
-      {searchState.gameIds.length > 0 && <GamesSelector />}
+      {searchResultState.gameIds.length > 0 && <GamesSelector />}
     </Stack>
   )
 }

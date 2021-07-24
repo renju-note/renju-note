@@ -33,8 +33,8 @@ const Default: FC = () => {
 }
 
 const MovesInput: FC = () => {
-  const { searchState, setSearchState } = useContext(AdvancedContext)
-  const encodedMoves = new Game({ moves: searchState.moves }).encode(',')
+  const { searchQueryState, setSearchQueryState } = useContext(AdvancedContext)
+  const encodedMoves = new Game({ moves: searchQueryState.moves }).encode(',')
   return (
     <InputGroup size="sm">
       <InputLeftAddon>
@@ -43,8 +43,8 @@ const MovesInput: FC = () => {
       <Input type="string" placeholder="put moves on board" isReadOnly value={encodedMoves} />
       <InputRightElement>
         <Checkbox
-          isChecked={searchState.useMoves}
-          onChange={e => setSearchState(searchState.setUseMoves(e.target.checked))}
+          isChecked={searchQueryState.useMoves}
+          onChange={e => setSearchQueryState(searchQueryState.setUseMoves(e.target.checked))}
         />
       </InputRightElement>
     </InputGroup>
@@ -52,7 +52,7 @@ const MovesInput: FC = () => {
 }
 
 const PlayerInput: FC = () => {
-  const { searchState, setSearchState } = useContext(AdvancedContext)
+  const { searchQueryState, setSearchQueryState } = useContext(AdvancedContext)
   const rifDB = useMemo(() => new RIFDatabase(), [])
 
   const [value, setValue] = useState<string>('')
@@ -66,16 +66,16 @@ const PlayerInput: FC = () => {
     })()
   }
   const onSetPlayer = (player: RIFPlayer) => {
-    setSearchState(searchState.setPlayerId(player.id))
+    setSearchQueryState(searchQueryState.setPlayerId(player.id))
     popoverDisclosure.onClose()
   }
   const onUnsetPlayer = () => {
-    setSearchState(searchState.setPlayerId(undefined))
+    setSearchQueryState(searchQueryState.setPlayerId(undefined))
     setValue('')
     popoverDisclosure.onClose()
   }
 
-  const playerId = searchState.playerId
+  const playerId = searchQueryState.playerId
   useEffect(() => {
     if (typeof playerId !== 'number') return
     ;(async () => {
@@ -105,7 +105,7 @@ const PlayerInput: FC = () => {
             <CloseButton
               size="sm"
               onClick={onUnsetPlayer}
-              disabled={searchState.playerId === undefined && !popoverDisclosure.isOpen}
+              disabled={searchQueryState.playerId === undefined && !popoverDisclosure.isOpen}
             />
           </InputRightElement>
         </InputGroup>
