@@ -37,8 +37,8 @@ const indexedFields: Record<TableName, string> = {
 type SearchQuery = {
   moves: Point[] | undefined
   playerId: number | undefined
-  limit: number
-  offset: number
+  limit?: number
+  offset?: number
   desc?: boolean
 }
 
@@ -99,8 +99,8 @@ export class AnalyzedDatabase extends Dexie {
   async search({
     moves,
     playerId,
-    limit,
-    offset,
+    limit = MAX_SEARCH_HIT,
+    offset = 0,
     desc = true,
   }: SearchQuery): Promise<SearchResult> {
     const condition: SearchCondition = {}

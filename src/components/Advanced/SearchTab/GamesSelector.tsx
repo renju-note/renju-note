@@ -27,24 +27,28 @@ import { AdvancedContext, BasicContext } from '../../contexts'
 import { WonIcon } from '../common'
 
 const Default: FC = () => {
+  const { searchState } = useContext(AdvancedContext)
+  const [pager, setPager] = useState<PagerState>(new PagerState())
+  useEffect(() => {
+    setPager(new PagerState({ hit: searchState.gameIds.length }))
+  }, [searchState.gameIds])
+  const gameIds = searchState.gameIds.slice(pager.pageStart, pager.pageEnd)
   return (
     <>
       <Center>
-        <GamesPager />
+        <PagerController pager={pager} setPager={setPager} />
       </Center>
       <Box width="100%">
-        <GamesTable />
+        <GamesTable gameIds={gameIds} pager={pager} />
       </Box>
     </>
   )
 }
 
-const GamesPager: FC = () => {
-  const { searchState, setSearchState } = useContext(AdvancedContext)
-  const [pager, setPager] = [
-    searchState.pager,
-    (p: PagerState) => setSearchState(searchState.setPager(p)),
-  ]
+const PagerController: FC<{ pager: PagerState; setPager: (p: PagerState) => void }> = ({
+  pager,
+  setPager,
+}) => {
   return (
     <ButtonGroup spacing={1} size="sm" variant="ghost">
       <IconButton
@@ -78,12 +82,9 @@ const GamesPager: FC = () => {
   )
 }
 
-const GamesTable: FC = () => {
+const GamesTable: FC<{ gameIds: number[]; pager: PagerState }> = ({ gameIds, pager }) => {
   const db = useMemo(() => new RIFDatabase(), [])
-  const { boardState, setBoardState, setConfirmState } = useContext(BasicContext)
-  const isPreviewMode = boardState.mode === BoardMode.preview
-  const { searchState } = useContext(AdvancedContext)
-  const gameIds = searchState.gameIds
+
   const [items, setItems] = useState<GameView[]>([])
   useEffect(() => {
     if (gameIds.length === 0) {
@@ -92,6 +93,9 @@ const GamesTable: FC = () => {
     }
     ;(async () => setItems(await db.getGameViews(gameIds)))()
   }, [gameIds])
+
+  const { boardState, setBoardState, setConfirmState } = useContext(BasicContext)
+  const isPreviewMode = boardState.mode === BoardMode.preview
   const [hiddenGame, setHiddenGame] = useState<GameState>()
   const onClick = (gv: GameView) => {
     const originalGame = hiddenGame ?? boardState.game

@@ -14,7 +14,7 @@ const Default: FC = () => {
       const { hit, ids, error } = await db.search(query)
       setSearchState(searchState.setResult(hit, ids, error))
     })()
-  }, [query.moves?.toString(), query.playerId, query.limit, query.offset])
+  }, [query.moves?.toString(), query.playerId])
   return (
     <Stack justify="center" align="center">
       <Box width="100%">

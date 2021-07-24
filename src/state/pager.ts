@@ -50,6 +50,14 @@ export class PagerState {
     return this.navigate(0)
   }
 
+  get pageStart(): number {
+    return this.page * this.pageSize
+  }
+
+  get pageEnd(): number {
+    return Math.min((this.page + 1) * this.pageSize, this.hit)
+  }
+
   toString(): string {
     const start = this.page * this.pageSize + 1
     const last = Math.min((this.page + 1) * this.pageSize, this.hit)
