@@ -482,3 +482,41 @@ const unknownRIFTournament = (): RIFTournament => ({
   rule: 0,
   rated: false,
 })
+
+export const playerShortName = (p: RIFPlayer): string =>
+  `${p.name.trim()[0] ?? '?'}. ${p.surname.trim()}`
+
+export const ruleShortName = (name: string): string => {
+  if (name === 'RIF') {
+    return 'RIF'
+  }
+  let m = name.match(/^Soosyrv(-[0-9]+)?$/)
+  if (m) {
+    return `SS${m[1] ?? ''}`
+  }
+  m = name.match(/^Taraguchi(-[0-9]+)?$/)
+  if (m) {
+    return `TG${m[1] ?? ''}`
+  }
+  m = name.match(/^Yamasyrv(-[0-9]+)?$/)
+  if (m) {
+    return `YS${m[1] ?? ''}`
+  }
+  m = name.match(/^Yamaguchi$/)
+  if (m) {
+    return 'YG'
+  }
+  m = name.match(/^Tarannikov$/)
+  if (m) {
+    return 'TN'
+  }
+  m = name.match(/^Sakata$/)
+  if (m) {
+    return 'SK'
+  }
+  m = name.match(/^LinHuan$/)
+  if (m) {
+    return 'LH'
+  }
+  return 'other'
+}

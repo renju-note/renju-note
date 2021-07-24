@@ -1,12 +1,84 @@
-import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Center,
+  IconButton,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react'
 import { FC, useContext, useEffect, useMemo, useState } from 'react'
-import { GameView, RIFDatabase, RIFPlayer } from '../../../database'
+import { FiChevronLeft, FiChevronRight, FiChevronsLeft, FiChevronsRight } from 'react-icons/fi'
+import { GameView, playerShortName, RIFDatabase, ruleShortName } from '../../../database'
 import { Game } from '../../../rule'
-import { BoardMode, BoardState, ConfirmOption, ConfirmState, GameState } from '../../../state'
+import {
+  BoardMode,
+  BoardState,
+  ConfirmOption,
+  ConfirmState,
+  GameState,
+  PagerState,
+} from '../../../state'
 import { AdvancedContext, BasicContext } from '../../contexts'
 import { WonIcon } from '../common'
 
 const Default: FC = () => {
+  return (
+    <>
+      <Center>
+        <GamesPager />
+      </Center>
+      <Box width="100%">
+        <GamesTable />
+      </Box>
+    </>
+  )
+}
+
+const GamesPager: FC = () => {
+  const { searchState, setSearchState } = useContext(AdvancedContext)
+  const [pager, setPager] = [
+    searchState.pager,
+    (p: PagerState) => setSearchState(searchState.setPager(p)),
+  ]
+  return (
+    <ButtonGroup spacing={1} size="sm" variant="ghost">
+      <IconButton
+        aria-label="first"
+        icon={<FiChevronsLeft />}
+        isDisabled={pager.isFirst}
+        onClick={() => setPager(pager.toFirst())}
+      />
+      <IconButton
+        aria-label="prev"
+        icon={<FiChevronLeft />}
+        isDisabled={pager.isFirst}
+        onClick={() => setPager(pager.prev())}
+      />
+      <Button isDisabled width="8rem">
+        {pager.toString()}
+      </Button>
+      <IconButton
+        aria-label="next"
+        icon={<FiChevronRight />}
+        isDisabled={pager.isLast}
+        onClick={() => setPager(pager.next())}
+      />
+      <IconButton
+        aria-label="last"
+        icon={<FiChevronsRight />}
+        isDisabled={pager.isLast}
+        onClick={() => setPager(pager.toLast())}
+      />
+    </ButtonGroup>
+  )
+}
+
+const GamesTable: FC = () => {
   const db = useMemo(() => new RIFDatabase(), [])
   const { boardState, setBoardState, setConfirmState } = useContext(BasicContext)
   const isPreviewMode = boardState.mode === BoardMode.preview
@@ -98,43 +170,6 @@ const Default: FC = () => {
       </Tbody>
     </Table>
   )
-}
-
-const playerShortName = (p: RIFPlayer): string => `${p.name.trim()[0] ?? '?'}. ${p.surname.trim()}`
-
-const ruleShortName = (name: string): string => {
-  if (name === 'RIF') {
-    return 'RIF'
-  }
-  let m = name.match(/^Soosyrv(-[0-9]+)?$/)
-  if (m) {
-    return `SS${m[1] ?? ''}`
-  }
-  m = name.match(/^Taraguchi(-[0-9]+)?$/)
-  if (m) {
-    return `TG${m[1] ?? ''}`
-  }
-  m = name.match(/^Yamasyrv(-[0-9]+)?$/)
-  if (m) {
-    return `YS${m[1] ?? ''}`
-  }
-  m = name.match(/^Yamaguchi$/)
-  if (m) {
-    return 'YG'
-  }
-  m = name.match(/^Tarannikov$/)
-  if (m) {
-    return 'TN'
-  }
-  m = name.match(/^Sakata$/)
-  if (m) {
-    return 'SK'
-  }
-  m = name.match(/^LinHuan$/)
-  if (m) {
-    return 'LH'
-  }
-  return 'other'
 }
 
 export default Default
