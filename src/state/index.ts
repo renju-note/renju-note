@@ -1,5 +1,6 @@
 export * from './board'
 export * from './common'
 export * from './confirm'
+export * from './pager'
 export * from './search'
 export * from './tabs'
