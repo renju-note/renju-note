@@ -7,6 +7,7 @@ import DetailTab from './DetailTab'
 import MateTab from './MateTab'
 import SearchTab from './SearchTab'
 import SetupTab from './SetupTab'
+import StatsTab from './StatsTab'
 
 const Default: FC = () => {
   const db = useMemo(() => new AnalyzedDatabase(), [])
@@ -48,6 +49,12 @@ const AdvancedTabs: FC = () => {
               return (
                 <TabPanel key={key} px={0}>
                   <SearchTab />
+                </TabPanel>
+              )
+            case TabName.stats:
+              return (
+                <TabPanel key={key} px={0}>
+                  <StatsTab />
                 </TabPanel>
               )
             case TabName.detail:

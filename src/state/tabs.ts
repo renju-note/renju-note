@@ -1,7 +1,8 @@
-const tabNames = ['search', 'detail', 'mate', 'setup'] as const
+const tabNames = ['search', 'stats', 'detail', 'mate', 'setup'] as const
 export type TabName = typeof tabNames[number]
 export const TabName: Record<TabName, TabName> = {
   search: 'search',
+  stats: 'stats',
   detail: 'detail',
   mate: 'mate',
   setup: 'setup',

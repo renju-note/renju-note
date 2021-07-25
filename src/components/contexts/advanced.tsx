@@ -39,7 +39,7 @@ export const AdvancedContextProvider: FC = ({ children }) => {
       if (await ready()) {
         setTabsState(
           tabsState
-            .setNames([TabName.search, TabName.detail, TabName.mate, TabName.setup])
+            .setNames([TabName.search, TabName.stats, TabName.detail, TabName.mate, TabName.setup])
             .setCurrent(TabName.search)
         )
       }

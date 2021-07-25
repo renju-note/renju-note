@@ -1,21 +1,30 @@
 import { N_LINES, Point } from '../rule/foundation'
 import { Bitboard } from './bitboard'
 
+export type VariantId = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7
+export type Mirrored = boolean
 export type Degree = 0 | 90 | 180 | 270
-export type Mirror = boolean
-export type Variant = [Degree, Mirror]
+export type Variant = {
+  id: VariantId
+  mirrored: Mirrored
+  degree: Degree
+}
 export type Variants = [Variant, Variant, Variant, Variant, Variant, Variant, Variant, Variant]
 
-export const variants = [
-  [0, false],
-  [0, true],
-  [90, false],
-  [90, true],
-  [180, false],
-  [180, true],
-  [270, false],
-  [270, true],
+export const variants: Variants = [
+  { id: 0, mirrored: false, degree: 0 },
+  { id: 1, mirrored: true, degree: 0 },
+  { id: 2, mirrored: false, degree: 90 },
+  { id: 3, mirrored: true, degree: 90 },
+  { id: 4, mirrored: false, degree: 180 },
+  { id: 5, mirrored: true, degree: 180 },
+  { id: 6, mirrored: false, degree: 270 },
+  { id: 7, mirrored: true, degree: 270 },
 ]
+
+export const reverseVariantId = (v: VariantId): VariantId => {
+  return [0, 1, 6, 3, 4, 5, 2, 7][v] as VariantId
+}
 
 export type PointsVariants = [
   Point[],
@@ -29,19 +38,10 @@ export type PointsVariants = [
 ]
 
 export const pointsVariants = (ps: Point[]): PointsVariants => {
-  return [
-    pointsVariant(ps, [0, false]),
-    pointsVariant(ps, [0, true]),
-    pointsVariant(ps, [90, false]),
-    pointsVariant(ps, [90, true]),
-    pointsVariant(ps, [180, false]),
-    pointsVariant(ps, [180, true]),
-    pointsVariant(ps, [270, false]),
-    pointsVariant(ps, [270, true]),
-  ]
+  return variants.map(v => pointsVariant(ps, v.mirrored, v.degree)) as PointsVariants
 }
 
-export const pointsVariant = (ps: Point[], [degree, mirror]: Variant): Point[] => {
+const pointsVariant = (ps: Point[], mirror: Mirrored, degree: Degree): Point[] => {
   const N = N_LINES + 1
   const result: Point[] = []
   for (let i = 0; i < ps.length; i++) {
@@ -77,6 +77,14 @@ export type BitboardVariants = [
   Bitboard
 ]
 
+export const toBitboardVariants = (movesVariants: PointsVariants): BitboardVariants => {
+  const ret = emptyBitboardVariants()
+  for (let v = 0; v < movesVariants.length; v++) {
+    ret[v].putMovesMut(true, movesVariants[v])
+  }
+  return ret
+}
+
 export const emptyBitboardVariants = (): BitboardVariants => {
   return [
     new Bitboard(),
@@ -90,14 +98,23 @@ export const emptyBitboardVariants = (): BitboardVariants => {
   ]
 }
 
-export const canonicalBitboardString = (bvs: BitboardVariants): string => {
-  return minString(bvs.map(b => b.toString()))
+export const canonicalBitboard = (bvs: BitboardVariants): [VariantId, Bitboard] => {
+  const v = minString(bvs.map(b => b.toString()))[0] as VariantId
+  return [v, bvs[v]]
 }
 
-const minString = (ss: string[]): string => {
-  let min = ss[0]
+export const canonicalBitboardString = (bvs: BitboardVariants): [VariantId, string] => {
+  return minString(bvs.map(b => b.toString())) as [VariantId, string]
+}
+
+const minString = (ss: string[]): [number, string] => {
+  let minI = 0
+  let minS = ss[0]
   for (let i = 1; i < ss.length; i++) {
-    if (ss[i] < min) min = ss[i]
+    if (ss[i] < minS) {
+      minI = i
+      minS = ss[i]
+    }
   }
-  return min
+  return [minI, minS]
 }

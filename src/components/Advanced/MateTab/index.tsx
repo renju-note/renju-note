@@ -26,7 +26,7 @@ import {
 } from 'react-icons/ri'
 // eslint-disable-next-line
 import Worker from 'worker-loader!./quintet'
-import { encodePoints, Game, Point } from '../../../rule'
+import { decode225, encode225, encodePoints, Game, Point } from '../../../rule'
 import { GameState } from '../../../state'
 import { BasicContext } from '../../contexts'
 
@@ -79,15 +79,15 @@ const VCFComponent: FC = () => {
 
   worker.onmessage = (event: MessageEvent) => {
     const { rawSolution } = event.data as { rawSolution: Uint8Array | undefined }
-    const solution = rawSolution === undefined ? [] : Array.from(rawSolution).map(decodeXY)
+    const solution = rawSolution === undefined ? [] : Array.from(rawSolution).map(decode225)
     setSolution(solution)
     setBoardState(boardState.setNumberdedPoints(solution.filter((_, i) => i % 2 === 0)))
     setSolving(false)
   }
   const onSolve = () => {
     const data = {
-      blacks: new Uint8Array(boardState.current.blacks.map(encodeXY)),
-      whites: new Uint8Array(boardState.current.whites.map(encodeXY)),
+      blacks: new Uint8Array(boardState.current.blacks.map(encode225)),
+      whites: new Uint8Array(boardState.current.whites.map(encode225)),
       turn: vcfTurn,
       depthLimit: DEPTH_LIMIT,
     }
@@ -177,9 +177,5 @@ const StonesInput: FC<{ icon: React.ReactElement; ps: Point[]; placeholder: stri
     </InputGroup>
   )
 }
-
-const encodeXY = (p: Point): number => (p[0] - 1) * 15 + p[1] - 1
-
-const decodeXY = (c: number): Point => [~~(c / 15) + 1, (c % 15) + 1]
 
 export default Default
