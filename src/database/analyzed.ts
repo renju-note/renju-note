@@ -1,6 +1,6 @@
 import Dexie, { Table } from 'dexie'
+import { encodeAccumulatedMoves } from '../analysis'
 import { Game, Point } from '../rule'
-import { encodeMoves } from './encoding'
 import { RIFDatabase, RIFGame } from './rif'
 
 const VERSION = 2
@@ -79,7 +79,7 @@ export class AnalyzedDatabase extends Dexie {
       const items = await rif.getGamesByIdRange(startId, startId + CHUNK_SIZE)
       const games = items.map(item => {
         const game = Game.decode(item.move) ?? new Game({})
-        const boardCodes = encodeMoves(game.moves.slice(0, MAX_ENCODE_MOVES)).slice(
+        const boardCodes = encodeAccumulatedMoves(game.moves.slice(0, MAX_ENCODE_MOVES)).slice(
           MIN_ENCODE_MOVES - 1
         )
         return {
@@ -119,7 +119,7 @@ export class AnalyzedDatabase extends Dexie {
           error: `Too many moves to search (${moves.length} > ${MAX_ENCODE_MOVES})`,
         }
       }
-      const boardCode = encodeMoves(moves)[moves.length - 1]
+      const boardCode = encodeAccumulatedMoves(moves)[moves.length - 1]
       condition.board = boardCode
     }
 
@@ -159,7 +159,7 @@ export class AnalyzedDatabase extends Dexie {
 
   async ready(): Promise<boolean> {
     try {
-      const example = encodeMoves(EXAMPLE_MOVES)[EXAMPLE_MOVES.length - 1]
+      const example = encodeAccumulatedMoves(EXAMPLE_MOVES)[EXAMPLE_MOVES.length - 1]
       return (await this.games.where({ board: example }).first()) !== undefined
     } catch (e) {
       console.log(e)
