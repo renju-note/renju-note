@@ -38,32 +38,31 @@ export type PointsVariants = [
 ]
 
 export const pointsVariants = (ps: Point[]): PointsVariants => {
-  return variants.map(v => pointsVariant(ps, v.reversed, v.rotation)) as PointsVariants
+  return variants.map(v =>
+    ps.map(p => pointVariantRaw(p, v.reversed, v.rotation))
+  ) as PointsVariants
 }
 
-const pointsVariant = (ps: Point[], reversed: Reversed, rotation: Rotation): Point[] => {
+export const pointVariant = (p: Point, v: VariantId): Point => {
+  const { reversed, rotation } = variants[v]
+  return pointVariantRaw(p, reversed, rotation)
+}
+
+const pointVariantRaw = (p: Point, reversed: Reversed, rotation: Rotation): Point => {
   const N = N_LINES + 1
-  const result: Point[] = []
-  for (let i = 0; i < ps.length; i++) {
-    const [x, y] = reversed ? [ps[i][1], ps[i][0]] : ps[i]
-    switch (rotation) {
-      case 0:
-        result[i] = [x, y]
-        break
-      case 90:
-        result[i] = [y, N - x]
-        break
-      case 180:
-        result[i] = [N - x, N - y]
-        break
-      case 270:
-        result[i] = [N - y, x]
-        break
-      default:
-        result[i] = [x, y]
-    }
+  const [x, y] = reversed ? [p[1], p[0]] : p
+  switch (rotation) {
+    case 0:
+      return [x, y]
+    case 90:
+      return [y, N - x]
+    case 180:
+      return [N - x, N - y]
+    case 270:
+      return [N - y, x]
+    default:
+      return [x, y]
   }
-  return result
 }
 
 export type BitboardVariants = [
