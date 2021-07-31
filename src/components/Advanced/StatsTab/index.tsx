@@ -7,7 +7,7 @@ import Stats from './Stats'
 const Default: FC = () => {
   const { searchResultState } = useContext(AdvancedContext)
   return (
-    <Stack justify="center" align="center">
+    <Stack width="100%">
       <Box width="100%">
         <SearchController />
       </Box>
