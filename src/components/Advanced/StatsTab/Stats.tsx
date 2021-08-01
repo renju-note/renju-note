@@ -18,12 +18,14 @@ import { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { groupByNextMove } from '../../../analysis'
 import { GameView, RIFDatabase } from '../../../database'
 import { encode, Point } from '../../../rule'
-import { AdvancedContext } from '../../contexts'
+import { BoardMode } from '../../../state'
+import { AdvancedContext, BasicContext } from '../../contexts'
 
 const Default: FC = () => {
   const db = useMemo(() => new RIFDatabase(), [])
   const { searchQueryState, searchResultState } = useContext(AdvancedContext)
   const [games, setGames] = useState<GameView[]>([])
+  const { boardState, setBoardState } = useContext(BasicContext)
   useEffect(() => {
     const gameCount = searchResultState.gameIds.length
     if (gameCount === 0) {
@@ -40,6 +42,7 @@ const Default: FC = () => {
   const maxCount = Math.max(
     ...statByNextMove.map(([p, s]) => Math.max(s.blackWon, s.whiteWon, s.draw))
   )
+  const onClick = (point: Point) => setBoardState(boardState.setMode(BoardMode.game).edit(point))
   return (
     <>
       <SimpleGrid columns={4} width="100%" textAlign="center">
@@ -82,7 +85,7 @@ const Default: FC = () => {
           <Tbody>
             {statByNextMove.map(([point, stat], key) => {
               return (
-                <Tr key={key} _hover={{ bg: 'gray.100' }}>
+                <Tr key={key} _hover={{ bg: 'gray.100' }} onClick={() => onClick(point)}>
                   <Td isNumeric>{encode(point)}</Td>
                   <Td isNumeric>{stat.all}</Td>
                   <Td isNumeric>
