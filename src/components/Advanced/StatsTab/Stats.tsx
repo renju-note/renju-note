@@ -68,8 +68,8 @@ const StatComponent: FC<{ stat: GamesStat }> = ({ stat }) => {
 
 const StatByNextMoveTable: FC<{ stats: [Point, GamesStat][] }> = ({ stats }) => {
   const { boardState, setBoardState } = useContext(BasicContext)
-  const onClick = (point: Point) => setBoardState(boardState.setMode(BoardMode.game).edit(point))
-  const denominator = Math.max(...stats.map(([p, s]) => Math.max(s.blackWon, s.whiteWon, s.draw)))
+  const onClick = (p: Point) => setBoardState(boardState.setMode(BoardMode.game).edit(p))
+  const denominator = Math.max(...stats.map(([_, s]) => Math.max(s.blackWon, s.whiteWon, s.draw)))
   return (
     <Table width="100%" size="rjn-info" variant="rjn-info">
       <Thead>
@@ -87,23 +87,23 @@ const StatByNextMoveTable: FC<{ stats: [Point, GamesStat][] }> = ({ stats }) => 
       <colgroup span={1} style={{ width: '25%' }} />
       <colgroup span={1} style={{ width: '25%' }} />
       <Tbody>
-        {stats.map(([point, stat], key) => (
-          <Tr key={key} _hover={{ bg: 'gray.100' }} onClick={() => onClick(point)}>
-            <Td isNumeric>{encode(point)}</Td>
-            <Td isNumeric>{stat.all}</Td>
+        {stats.map(([p, s], key) => (
+          <Tr key={key} _hover={{ bg: 'gray.100' }} onClick={() => onClick(p)}>
+            <Td isNumeric>{encode(p)}</Td>
+            <Td isNumeric>{s.all}</Td>
             <Td isNumeric>
-              {stat.blackWon !== 0 && (
-                <PercentileBar color="blue.200" count={stat.blackWon} denominator={denominator} />
+              {s.blackWon !== 0 && (
+                <PercentileBar color="blue.200" count={s.blackWon} denominator={denominator} />
               )}
             </Td>
             <Td isNumeric>
-              {stat.whiteWon !== 0 && (
-                <PercentileBar color="green.200" count={stat.whiteWon} denominator={denominator} />
+              {s.whiteWon !== 0 && (
+                <PercentileBar color="green.200" count={s.whiteWon} denominator={denominator} />
               )}
             </Td>
             <Td isNumeric>
-              {stat.draw !== 0 && (
-                <PercentileBar color="gray.200" count={stat.draw} denominator={denominator} />
+              {s.draw !== 0 && (
+                <PercentileBar color="gray.200" count={s.draw} denominator={denominator} />
               )}
             </Td>
           </Tr>

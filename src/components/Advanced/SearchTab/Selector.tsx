@@ -82,19 +82,19 @@ const PagerController: FC<{ pager: PagerState; setPager: (p: PagerState) => void
 const GamesTable: FC<{ gameIds: number[] }> = ({ gameIds }) => {
   const db = useMemo(() => new RIFDatabase(), [])
 
-  const [items, setItems] = useState<GameView[]>([])
+  const [games, setGames] = useState<GameView[]>([])
   useEffect(() => {
-    ;(async () => setItems(await db.getGameViews(gameIds)))()
+    ;(async () => setGames(await db.getGameViews(gameIds)))()
   }, [gameIds])
 
   const { boardState, setBoardState, setConfirmState } = useContext(BasicContext)
   const isPreviewMode = boardState.mode === BoardMode.preview
   const [hiddenGame, setHiddenGame] = useState<GameState>()
-  const onClick = (gv: GameView) => {
+  const onClick = (g: GameView) => {
     const originalGame = hiddenGame ?? boardState.game
     const previewGame = new GameState({
-      main: new Game({ moves: gv.moves }),
-      gameid: gv.id,
+      main: new Game({ moves: g.moves }),
+      gameid: g.id,
       cursor: boardState.game.current.size,
     })
     if (!isPreviewMode) {
@@ -139,7 +139,7 @@ const GamesTable: FC<{ gameIds: number[] }> = ({ gameIds }) => {
       <colgroup span={1} style={{ width: '10%' }} />
       <colgroup span={1} style={{ width: '10%' }} />
       <Tbody>
-        {items.map((g, key) => {
+        {games.map((g, key) => {
           const mgid = isPreviewMode ? hiddenGame?.gameid : boardState.game.gameid
           const pgid = isPreviewMode ? boardState.game.gameid : undefined
           return (
