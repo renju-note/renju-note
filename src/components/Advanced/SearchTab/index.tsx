@@ -2,7 +2,7 @@ import { Stack, Text } from '@chakra-ui/react'
 import { FC, useContext } from 'react'
 import { AdvancedContext } from '../../contexts'
 import SearchController from '../common/SearchController'
-import GamesSelector from './GamesSelector'
+import GamesSelector from './Selector'
 
 const Default: FC = () => {
   const { searchResultState } = useContext(AdvancedContext)
