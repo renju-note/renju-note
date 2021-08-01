@@ -35,7 +35,7 @@ const Default: FC = () => {
   return (
     <>
       <PagerController pager={pager} setPager={setPager} />
-      <GamesTable gameIds={gameIds} pager={pager} />
+      <GamesTable gameIds={gameIds} />
     </>
   )
 }
@@ -79,15 +79,11 @@ const PagerController: FC<{ pager: PagerState; setPager: (p: PagerState) => void
   )
 }
 
-const GamesTable: FC<{ gameIds: number[]; pager: PagerState }> = ({ gameIds, pager }) => {
+const GamesTable: FC<{ gameIds: number[] }> = ({ gameIds }) => {
   const db = useMemo(() => new RIFDatabase(), [])
 
   const [items, setItems] = useState<GameView[]>([])
   useEffect(() => {
-    if (gameIds.length === 0) {
-      setItems([])
-      return
-    }
     ;(async () => setItems(await db.getGameViews(gameIds)))()
   }, [gameIds])
 

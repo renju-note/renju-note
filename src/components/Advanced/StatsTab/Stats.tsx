@@ -25,13 +25,9 @@ const Default: FC = () => {
   const { searchQueryState, searchResultState } = useContext(AdvancedContext)
   const [games, setGames] = useState<GameView[]>([])
   useEffect(() => {
-    const gameCount = searchResultState.gameIds.length
-    if (gameCount === 0) {
-      setGames([])
-      return
-    }
     ;(async () => setGames(await db.getGameViews(searchResultState.gameIds)))()
   }, [searchResultState.gameIds])
+
   const queryMoves = searchQueryState.query.moves
   if (queryMoves === undefined) return <></>
   const totalStat = calcStat(games)
