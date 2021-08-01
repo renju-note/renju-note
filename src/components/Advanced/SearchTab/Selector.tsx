@@ -26,22 +26,16 @@ import { AdvancedContext, BasicContext } from '../../contexts'
 import { WonIcon } from '../common'
 
 const Default: FC = () => {
-  const db = useMemo(() => new RIFDatabase(), [])
   const { searchResultState } = useContext(AdvancedContext)
   const [pager, setPager] = useState<PagerState>(new PagerState())
   useEffect(() => {
     setPager(new PagerState({ hit: searchResultState.gameIds.length }))
   }, [searchResultState.gameIds])
-
   const gameIds = searchResultState.gameIds.slice(pager.pageStart, pager.pageEnd)
-  const [games, setGames] = useState<GameView[]>([])
-  useEffect(() => {
-    ;(async () => setGames(await db.getGameViews(gameIds)))()
-  }, [gameIds])
   return (
     <>
       <PagerController pager={pager} setPager={setPager} />
-      <GamesTable games={games} />
+      <GamesTable gameIds={gameIds} />
     </>
   )
 }
@@ -85,7 +79,12 @@ const PagerController: FC<{ pager: PagerState; setPager: (p: PagerState) => void
   )
 }
 
-const GamesTable: FC<{ games: GameView[] }> = ({ games }) => {
+const GamesTable: FC<{ gameIds: number[] }> = ({ gameIds }) => {
+  const db = useMemo(() => new RIFDatabase(), [])
+  const [games, setGames] = useState<GameView[]>([])
+  useEffect(() => {
+    ;(async () => setGames(await db.getGameViews(gameIds)))()
+  }, [gameIds])
   const { boardState, setBoardState, setConfirmState } = useContext(BasicContext)
   const isPreviewMode = boardState.mode === BoardMode.preview
   const [hiddenGame, setHiddenGame] = useState<GameState>()
