@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   ButtonGroup,
   Center,
@@ -35,12 +34,8 @@ const Default: FC = () => {
   const gameIds = searchResultState.gameIds.slice(pager.pageStart, pager.pageEnd)
   return (
     <>
-      <Center>
-        <PagerController pager={pager} setPager={setPager} />
-      </Center>
-      <Box width="100%">
-        <GamesTable gameIds={gameIds} pager={pager} />
-      </Box>
+      <PagerController pager={pager} setPager={setPager} />
+      <GamesTable gameIds={gameIds} pager={pager} />
     </>
   )
 }
@@ -50,35 +45,37 @@ const PagerController: FC<{ pager: PagerState; setPager: (p: PagerState) => void
   setPager,
 }) => {
   return (
-    <ButtonGroup spacing={1} size="sm" variant="ghost">
-      <IconButton
-        aria-label="first"
-        icon={<FiChevronsLeft />}
-        isDisabled={pager.isFirst}
-        onClick={() => setPager(pager.toFirst())}
-      />
-      <IconButton
-        aria-label="prev"
-        icon={<FiChevronLeft />}
-        isDisabled={pager.isFirst}
-        onClick={() => setPager(pager.prev())}
-      />
-      <Button isDisabled width="8rem">
-        {pager.toString()}
-      </Button>
-      <IconButton
-        aria-label="next"
-        icon={<FiChevronRight />}
-        isDisabled={pager.isLast}
-        onClick={() => setPager(pager.next())}
-      />
-      <IconButton
-        aria-label="last"
-        icon={<FiChevronsRight />}
-        isDisabled={pager.isLast}
-        onClick={() => setPager(pager.toLast())}
-      />
-    </ButtonGroup>
+    <Center>
+      <ButtonGroup spacing={1} size="sm" variant="ghost">
+        <IconButton
+          aria-label="first"
+          icon={<FiChevronsLeft />}
+          isDisabled={pager.isFirst}
+          onClick={() => setPager(pager.toFirst())}
+        />
+        <IconButton
+          aria-label="prev"
+          icon={<FiChevronLeft />}
+          isDisabled={pager.isFirst}
+          onClick={() => setPager(pager.prev())}
+        />
+        <Button isDisabled width="8rem">
+          {pager.toString()}
+        </Button>
+        <IconButton
+          aria-label="next"
+          icon={<FiChevronRight />}
+          isDisabled={pager.isLast}
+          onClick={() => setPager(pager.next())}
+        />
+        <IconButton
+          aria-label="last"
+          icon={<FiChevronsRight />}
+          isDisabled={pager.isLast}
+          onClick={() => setPager(pager.toLast())}
+        />
+      </ButtonGroup>
+    </Center>
   )
 }
 
@@ -126,7 +123,7 @@ const GamesTable: FC<{ gameIds: number[]; pager: PagerState }> = ({ gameIds, pag
     setConfirmState(confirmState)
   }
   return (
-    <Table size="rjn-info" variant="rjn-info">
+    <Table width="100%" size="rjn-info" variant="rjn-info">
       <Thead>
         <Tr>
           <Th>Date</Th>
