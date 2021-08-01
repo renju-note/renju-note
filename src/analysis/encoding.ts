@@ -1,5 +1,5 @@
 import { Point } from '../rule/foundation'
-import { canonicalBitboardString, emptyBitboardVariants, pointsVariants } from './variation'
+import { canonicalBitboardString, emptyBitboardVariants, pointsVariants } from './symmetry'
 
 export const encodeAccumulatedMoves = (moves: Point[]): string[] => {
   const boardVariants = emptyBitboardVariants()
@@ -11,7 +11,7 @@ export const encodeAccumulatedMoves = (moves: Point[]): string[] => {
       const point = movesVariants[v][i]
       boardVariants[v].putMut(black, point)
     }
-    result[i] = canonicalBitboardString(boardVariants)
+    result[i] = canonicalBitboardString(boardVariants)[1]
   }
   return result
 }

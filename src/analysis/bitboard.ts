@@ -7,6 +7,14 @@ export class Bitboard {
     this.vlines[x - 1] += (black ? 0b01 : 0b10) << (2 * (y - 1))
   }
 
+  putMovesMut(blackFirst: boolean, moves: Point[]) {
+    let black = blackFirst
+    for (const move of moves) {
+      this.putMut(black, move)
+      black = !black
+    }
+  }
+
   toString(): string {
     let result = ''
     let skip = 0

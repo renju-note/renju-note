@@ -2,7 +2,7 @@ import { Stack, Text } from '@chakra-ui/react'
 import { FC, useContext } from 'react'
 import { AdvancedContext } from '../../contexts'
 import SearchController from '../common/SearchController'
-import GamesSelector from './Selector'
+import Stats from './Stats'
 
 const Default: FC = () => {
   const { searchResultState } = useContext(AdvancedContext)
@@ -14,7 +14,7 @@ const Default: FC = () => {
           {searchResultState.error}
         </Text>
       )}
-      {searchResultState.gameIds.length > 0 && <GamesSelector />}
+      {searchResultState.gameIds.length > 0 && <Stats />}
     </Stack>
   )
 }

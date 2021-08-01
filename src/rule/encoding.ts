@@ -1,5 +1,9 @@
 import { N_LINES, Point } from './foundation'
 
+export const encode225 = (p: Point): number => (p[0] - 1) * 15 + p[1] - 1
+
+export const decode225 = (c: number): Point => [~~(c / 15) + 1, (c % 15) + 1]
+
 export const xCode = (x: number) => X_CODES.charAt(x - 1)
 
 export const yCode = (x: number) => x.toString()
