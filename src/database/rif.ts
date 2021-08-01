@@ -155,6 +155,7 @@ export class RIFDatabase extends Dexie {
   }
 
   async getGameViews(gameIds: RIFGame['id'][]): Promise<GameView[]> {
+    if (gameIds.length === 0) return []
     const games = await this.games.bulkGet(gameIds)
     const [blacks, whites, publishers, tournaments, rules, openings] = await Promise.all([
       this.players.bulkGet(games.map(g => g?.black ?? 0)),
