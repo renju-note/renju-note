@@ -26,7 +26,7 @@ import {
 } from 'react-icons/ri'
 // eslint-disable-next-line
 import Worker from 'worker-loader!./quintet'
-import { decode225, encode225, encodePoints, Game, Point } from '../../../rule'
+import { encodePoints, Game, Point } from '../../../rule'
 import { GameState } from '../../../state'
 import { BasicContext } from '../../contexts'
 
@@ -78,16 +78,15 @@ const VCFComponent: FC = () => {
   const [solving, setSolving] = useState<boolean>(false)
 
   worker.onmessage = (event: MessageEvent) => {
-    const { rawSolution } = event.data as { rawSolution: Uint8Array | undefined }
-    const solution = rawSolution === undefined ? [] : Array.from(rawSolution).map(decode225)
+    const { solution } = event.data as { solution: Point[] }
     setSolution(solution)
     setBoardState(boardState.setNumberdedPoints(solution.filter((_, i) => i % 2 === 0)))
     setSolving(false)
   }
   const onSolve = () => {
     const data = {
-      blacks: new Uint8Array(boardState.current.blacks.map(encode225)),
-      whites: new Uint8Array(boardState.current.whites.map(encode225)),
+      blacks: boardState.current.blacks,
+      whites: boardState.current.whites,
       turn: vcfTurn,
       depthLimit: DEPTH_LIMIT,
     }
