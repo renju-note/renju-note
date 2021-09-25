@@ -165,14 +165,15 @@ const StonesInput: FC<{ icon: React.ReactElement; ps: Point[]; placeholder: stri
 }) => {
   const toast = useToast()
   const code = encodePoints(ps, ',')
-  const { onCopy } = useClipboard(code)
+  const { onCopy, value } = useClipboard(code)
   const onClickCopy = () => {
+    if (!value) return
     onCopy()
     toast({
       title: 'Copied.',
       description: `Paste them as you need.`,
       status: 'success',
-      duration: 3000,
+      duration: 5000,
       isClosable: true,
     })
   }
