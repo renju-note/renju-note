@@ -15,6 +15,7 @@ import {
   Stack,
   Text,
   useClipboard,
+  useToast,
 } from '@chakra-ui/react'
 import * as React from 'react'
 import { FC, useContext, useState } from 'react'
@@ -162,8 +163,19 @@ const StonesInput: FC<{ icon: React.ReactElement; ps: Point[]; placeholder: stri
   ps,
   placeholder,
 }) => {
+  const toast = useToast()
   const code = encodePoints(ps, ',')
   const { onCopy } = useClipboard(code)
+  const onClickCopy = () => {
+    onCopy()
+    toast({
+      title: 'Copied.',
+      description: `Paste them as you need.`,
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+    })
+  }
   return (
     <InputGroup size="sm">
       <InputLeftAddon width="5rem">
@@ -171,7 +183,7 @@ const StonesInput: FC<{ icon: React.ReactElement; ps: Point[]; placeholder: stri
       </InputLeftAddon>
       <Input type="string" isReadOnly value={code} placeholder={placeholder} />
       <InputRightElement>
-        <IconButton aria-label="copy" size="xs" icon={<RiClipboardLine />} onClick={onCopy} />
+        <IconButton aria-label="copy" size="xs" icon={<RiClipboardLine />} onClick={onClickCopy} />
       </InputRightElement>
     </InputGroup>
   )
