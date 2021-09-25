@@ -40,14 +40,15 @@ const Default: FC = () => {
   // Copy Moves to Clipboard
   const { boardState } = useContext(BasicContext)
   const code = encodePoints(boardState.game.current.moves, ',')
-  const { onCopy } = useClipboard(code)
+  const { onCopy, value } = useClipboard(code)
   const onCopyMovesToClipboard = () => {
+    if (!value) return
     onCopy()
     toast({
       title: 'Copied.',
       description: `Paste them as you need.`,
       status: 'success',
-      duration: 3000,
+      duration: 5000,
       isClosable: true,
     })
   }
@@ -60,7 +61,7 @@ const Default: FC = () => {
       title: 'Downloaded.',
       description: "Check your browser's status.",
       status: 'success',
-      duration: 3000,
+      duration: 5000,
       isClosable: true,
     })
   }
