@@ -10,7 +10,6 @@ import {
   MenuList,
   MenuOptionGroup,
   Text,
-  useDisclosure,
 } from '@chakra-ui/react'
 import 'firebase/analytics'
 import { FC, useContext } from 'react'
@@ -28,7 +27,6 @@ import { BasicContext } from '../../contexts'
 
 const Default: FC = () => {
   const { boardState, setBoardState } = useContext(BasicContext)
-  const { isOpen, onToggle, onClose } = useDisclosure()
   const onSetMode = (value: string | string[]) => {
     setBoardState(boardState.setMode(value as BoardMode))
   }
@@ -39,19 +37,14 @@ const Default: FC = () => {
   }
   const onResetAll = () => {
     const message = 'All moves, free stones and markers will be cleared. OK?'
-    onClose()
     if (!window.confirm(message)) return
     setBoardState(new BoardState())
+    window.location.reload()
   }
   return (
     <>
-      <Menu autoSelect={false} placement="top" isOpen={isOpen}>
-        <MenuButton
-          as={IconButton}
-          icon={<ModeIcon mode={boardState.mode} />}
-          aria-label="edit"
-          onClick={onToggle}
-        />
+      <Menu autoSelect={false} placement="top" closeOnSelect={false}>
+        <MenuButton as={IconButton} icon={<ModeIcon mode={boardState.mode} />} aria-label="edit" />
         <MenuList>
           <MenuOptionGroup type="radio" title="Mode" value={boardState.mode} onChange={onSetMode}>
             <MenuItemOption value={BoardMode.game}>
