@@ -38,7 +38,7 @@ const Default: FC = () => {
   }
   return (
     <>
-      <Menu autoSelect={false} placement="top">
+      <Menu autoSelect={false} placement="top" closeOnSelect={false}>
         <MenuButton as={IconButton} icon={<ModeIcon mode={boardState.mode} />} aria-label="edit" />
         <MenuList>
           <MenuOptionGroup
