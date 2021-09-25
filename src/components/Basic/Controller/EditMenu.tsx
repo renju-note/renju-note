@@ -39,7 +39,6 @@ const Default: FC = () => {
     const message = 'All moves, free stones and markers will be cleared. OK?'
     if (!window.confirm(message)) return
     setBoardState(new BoardState())
-    window.location.reload()
   }
   return (
     <>
