@@ -76,12 +76,6 @@ const Default: FC = () => {
         <Box>
           <UnorderedList>
             <ListItem>
-              It seems that this feature works only on PC with the latest version of either Chrome
-              or Firefox, but does not on Mobile devices, also does not with other browsers
-              including Safari and IE. This is probably due to problems around XML parsers they
-              provide and any solution is not found yet.
-            </ListItem>
-            <ListItem>
               The data loaded from file will be stored only in your browser&apos;s storage and{' '}
               <b>never</b> uploaded to anywhere. Keep in mind that, once the storage was resetted by
               an action like deleting histories, your data will be also deleted as well.
