@@ -11,6 +11,7 @@ import {
   Menu,
   MenuButton,
   MenuDivider,
+  MenuGroup,
   MenuItem,
   MenuList,
   Text,
@@ -84,22 +85,25 @@ const Default: FC = () => {
       <Menu autoSelect={false} placement="top-start">
         <MenuButton as={IconButton} icon={<RiMenuLine />} />
         <MenuList>
-          <MenuItem onClick={onCopyMovesToClipboard}>
-            <Icon boxSize="small" as={RiClipboardLine} />
-            <Text ml={2}>Copy Moves to Clipboard</Text>
-          </MenuItem>
-          <MenuItem onClick={onDownloadBoardPicture}>
-            <Icon boxSize="small" as={RiDownload2Line} />
-            <Text ml={2}>Download Board Picture</Text>
-          </MenuItem>
-          <MenuDivider />
-          <MenuItem onClick={toggleMode}>
-            <Icon boxSize="small" as={modeIcon} />
-            <Text ml={2} mr={1}>
-              {isAdvanced ? 'Basic Mode' : 'Advanced Mode'}
-            </Text>
-            {!isAdvanced && <Icon boxSize="small" as={RiFlaskFill} />}
-          </MenuItem>
+          <MenuGroup title="Actions">
+            <MenuItem onClick={onCopyMovesToClipboard}>
+              <Icon boxSize="small" as={RiClipboardLine} />
+              <Text ml={2}>Copy Moves to Clipboard</Text>
+            </MenuItem>
+            <MenuItem onClick={onDownloadBoardPicture}>
+              <Icon boxSize="small" as={RiDownload2Line} />
+              <Text ml={2}>Download Board Picture</Text>
+            </MenuItem>
+          </MenuGroup>
+          <MenuGroup title="Advanced">
+            <MenuItem onClick={toggleMode}>
+              <Icon boxSize="small" as={modeIcon} />
+              <Text ml={2} mr={1}>
+                {isAdvanced ? 'Basic Mode' : 'Advanced Mode'}
+              </Text>
+              {!isAdvanced && <Icon boxSize="small" as={RiFlaskFill} />}
+            </MenuItem>
+          </MenuGroup>
           <MenuDivider />
           <MenuItem onClick={aboutDisclosure.onOpen}>
             <Icon boxSize="small" as={RiQuestionLine} />
