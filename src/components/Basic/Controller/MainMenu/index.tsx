@@ -11,13 +11,17 @@ import {
   Menu,
   MenuButton,
   MenuDivider,
+  MenuGroup,
   MenuItem,
   MenuList,
   Text,
+  useClipboard,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react'
 import { FC, useContext } from 'react'
 import {
+  RiClipboardLine,
   RiDownload2Line,
   RiFlaskFill,
   RiFolderChartLine,
@@ -25,16 +29,47 @@ import {
   RiMenuLine,
   RiQuestionLine,
 } from 'react-icons/ri'
-import { PreferenceContext, PreferenceOption } from '../../../contexts'
+import { encodePoints } from '../../../../rule'
+import { BasicContext, PreferenceContext, PreferenceOption } from '../../../contexts'
 import AboutModal from './AboutModal'
 import DownloadHidden, { onDownload } from './DownloadHidden'
 
 const Default: FC = () => {
-  const downloadHiddenId = 'download-hidden'
+  const toast = useToast()
 
+  // Copy Moves to Clipboard
+  const { boardState } = useContext(BasicContext)
+  const code = encodePoints(boardState.game.current.moves, ',')
+  const { onCopy } = useClipboard(code)
+  const onCopyMovesToClipboard = () => {
+    onCopy()
+    toast({
+      title: 'Copied.',
+      description: `Paste them as you need.`,
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+    })
+  }
+
+  // Download Board Picture
+  const downloadHiddenId = 'download-hidden'
+  const onDownloadBoardPicture = () => {
+    onDownload(downloadHiddenId)
+    toast({
+      title: 'Downloaded.',
+      description: "Check your browser's status.",
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+    })
+  }
+
+  // Advanced Mode
   const advancedModeDisclosure = useDisclosure()
   const { preference, setPreference } = useContext(PreferenceContext)
   const isAdvanced = preference.has(PreferenceOption.advancedMode)
+  const modeIcon = isAdvanced ? RiFolderForbidLine : RiFolderChartLine
   const toggleMode = () => {
     if (isAdvanced) {
       setPreference(preference.off([PreferenceOption.advancedMode]))
@@ -43,7 +78,6 @@ const Default: FC = () => {
       setPreference(preference.on([PreferenceOption.advancedMode]))
     }
   }
-  const modeIcon = isAdvanced ? RiFolderForbidLine : RiFolderChartLine
 
   const aboutDisclosure = useDisclosure()
   return (
@@ -51,18 +85,25 @@ const Default: FC = () => {
       <Menu autoSelect={false} placement="top-start">
         <MenuButton as={IconButton} icon={<RiMenuLine />} />
         <MenuList>
-          <MenuItem onClick={() => onDownload(downloadHiddenId)}>
-            <Icon boxSize="small" as={RiDownload2Line} />
-            <Text ml={2}>Download Picture</Text>
-          </MenuItem>
-          <MenuDivider />
-          <MenuItem onClick={toggleMode}>
-            <Icon boxSize="small" as={modeIcon} />
-            <Text ml={2} mr={1}>
-              {isAdvanced ? 'Basic Mode' : 'Advanced Mode'}
-            </Text>
-            {!isAdvanced && <Icon boxSize="small" as={RiFlaskFill} />}
-          </MenuItem>
+          <MenuGroup title="Actions">
+            <MenuItem onClick={onCopyMovesToClipboard}>
+              <Icon boxSize="small" as={RiClipboardLine} />
+              <Text ml={2}>Copy Moves to Clipboard</Text>
+            </MenuItem>
+            <MenuItem onClick={onDownloadBoardPicture}>
+              <Icon boxSize="small" as={RiDownload2Line} />
+              <Text ml={2}>Download Board Picture</Text>
+            </MenuItem>
+          </MenuGroup>
+          <MenuGroup title="Advanced">
+            <MenuItem onClick={toggleMode}>
+              <Icon boxSize="small" as={modeIcon} />
+              <Text ml={2} mr={1}>
+                {isAdvanced ? 'Basic Mode' : 'Advanced Mode'}
+              </Text>
+              {!isAdvanced && <Icon boxSize="small" as={RiFlaskFill} />}
+            </MenuItem>
+          </MenuGroup>
           <MenuDivider />
           <MenuItem onClick={aboutDisclosure.onOpen}>
             <Icon boxSize="small" as={RiQuestionLine} />

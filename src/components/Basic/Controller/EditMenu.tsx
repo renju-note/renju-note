@@ -60,7 +60,6 @@ const Default: FC = () => {
                 <Text ml={2}>Move</Text>
               </Flex>
             </MenuItemOption>
-            <MenuDivider ml="2rem" />
             <MenuItemOption value={BoardMode.freeBlacks}>
               <Flex alignItems="center">
                 <ModeIcon mode={BoardMode.freeBlacks} />
@@ -73,7 +72,6 @@ const Default: FC = () => {
                 <Text ml={2}>Add White Stones</Text>
               </Flex>
             </MenuItemOption>
-            <MenuDivider ml="2rem" />
             <MenuItemOption value={BoardMode.markerPoints}>
               <Flex alignItems="center">
                 <ModeIcon mode={BoardMode.markerPoints} />
@@ -87,7 +85,6 @@ const Default: FC = () => {
               </Flex>
             </MenuItemOption>
           </MenuOptionGroup>
-          <MenuDivider />
           <MenuOptionGroup
             type="checkbox"
             title="Option"
