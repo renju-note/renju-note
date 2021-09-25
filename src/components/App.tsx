@@ -32,7 +32,7 @@ const Main: FC = () => {
   return (
     <BasicContextProvider>
       <Center my="0.5rem">
-        <Wrap justify="center" spacing="0.5rem">
+        <Wrap justify="center">
           <WrapItem w={system.W}>
             <Basic />
           </WrapItem>

@@ -10,6 +10,7 @@ import {
   MenuList,
   MenuOptionGroup,
   Text,
+  useDisclosure,
 } from '@chakra-ui/react'
 import 'firebase/analytics'
 import { FC, useContext } from 'react'
@@ -27,26 +28,32 @@ import { BasicContext } from '../../contexts'
 
 const Default: FC = () => {
   const { boardState, setBoardState } = useContext(BasicContext)
-  const onInvertMoves = () => {
-    const gameState = boardState.game.invertMoves(!boardState.game.main.inverted)
+  const { isOpen, onToggle, onClose } = useDisclosure()
+  const onSetMode = (value: string | string[]) => {
+    setBoardState(boardState.setMode(value as BoardMode))
+  }
+  const onSetOptions = (value: string | string[]) => {
+    const invertMoves = (value as string[]).includes('invertMoves')
+    const gameState = boardState.game.invertMoves(invertMoves)
     setBoardState(boardState.setGame(gameState))
   }
   const onResetAll = () => {
     const message = 'All moves, free stones and markers will be cleared. OK?'
+    onClose()
     if (!window.confirm(message)) return
     setBoardState(new BoardState())
   }
   return (
     <>
-      <Menu autoSelect={false} placement="top" closeOnSelect={false}>
-        <MenuButton as={IconButton} icon={<ModeIcon mode={boardState.mode} />} aria-label="edit" />
+      <Menu autoSelect={false} placement="top" isOpen={isOpen}>
+        <MenuButton
+          as={IconButton}
+          icon={<ModeIcon mode={boardState.mode} />}
+          aria-label="edit"
+          onClick={onToggle}
+        />
         <MenuList>
-          <MenuOptionGroup
-            value={boardState.mode}
-            title="Mode"
-            type="radio"
-            onChange={(value: any) => setBoardState(boardState.setMode(value as BoardMode))}
-          >
+          <MenuOptionGroup type="radio" title="Mode" value={boardState.mode} onChange={onSetMode}>
             <MenuItemOption value={BoardMode.game}>
               <Flex alignItems="center">
                 <ModeIcon mode={BoardMode.game} />
@@ -81,10 +88,19 @@ const Default: FC = () => {
             </MenuItemOption>
           </MenuOptionGroup>
           <MenuDivider />
-          <MenuItem onClick={onInvertMoves}>
-            <Icon boxSize="small" as={RiContrastFill} />
-            <Text ml={2}>Invert Moves</Text>
-          </MenuItem>
+          <MenuOptionGroup
+            type="checkbox"
+            title="Option"
+            value={boardState.game.main.inverted ? ['invertMoves'] : []}
+            onChange={onSetOptions}
+          >
+            <MenuItemOption value="invertMoves">
+              <Flex alignItems="center">
+                <Icon boxSize="small" as={RiContrastFill} />
+                <Text ml={2}>Invert Moves</Text>
+              </Flex>
+            </MenuItemOption>
+          </MenuOptionGroup>
           <MenuDivider />
           <MenuItem onClick={onResetAll}>
             <Icon boxSize="small" as={RiDeleteBinFill} color="red.500" />
