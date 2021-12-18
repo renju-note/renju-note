@@ -1,4 +1,4 @@
-import { decodePoints, encodePoints, equal, Point } from '../../rule'
+import { parsePoints, Point, pointEqual, wrapPoint } from 'renjukit'
 
 export class PointsState {
   readonly points: Point[] = []
@@ -13,7 +13,7 @@ export class PointsState {
 
   edit(p: Point): PointsState {
     const ps = this.points
-    const idx = ps.findIndex(q => equal(p, q))
+    const idx = ps.findIndex(q => pointEqual(p, q))
     return this.update({
       points: idx < 0 ? [...ps, p] : [...ps.slice(0, idx), ...ps.slice(idx + 1)],
     })
@@ -26,7 +26,7 @@ export class PointsState {
   }
 
   has(p: Point): boolean {
-    return this.points.findIndex(q => equal(p, q)) >= 0
+    return this.points.findIndex(q => pointEqual(p, q)) >= 0
   }
 
   get canUndo(): boolean {
@@ -38,11 +38,11 @@ export class PointsState {
   }
 
   encode(): string {
-    return encodePoints(this.points)
+    return this.points.map(p => wrapPoint(p).toString()).join('')
   }
 
   static decode(code: string): PointsState | undefined {
-    const points = decodePoints(code)
+    const points = parsePoints(code)
     return points && new PointsState({ points: points })
   }
 }

@@ -10746,6 +10746,11 @@ renderkid@^2.0.4:
     lodash "^4.17.21"
     strip-ansi "^3.0.1"
 
+renjukit@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/renjukit/-/renjukit-0.7.0.tgz#76c88210d1983dc92e61c6595c5c425619b42ed5"
+  integrity sha512-Jy6CwNskuvvZcHUp/CvxLrapEXwoTGaG6HbejXcI+sPhP5ry5BadlHzUXFNzTD6XaGW9OUyxAxnUC1Qh6rjdlQ==
+
 repeat-element@^1.1.2:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/repeat-element/-/repeat-element-1.1.4.tgz#be681520847ab58c7568ac75fbfad28ed42d39e9"

@@ -25,9 +25,10 @@ import {
   RiClipboardLine,
   RiRadioButtonLine,
 } from 'react-icons/ri'
+import { Player, Point, wrapBoard, wrapPoints } from 'renjukit'
 // eslint-disable-next-line
 import Worker from 'worker-loader!./quintet'
-import { encodePoints, Game, Point } from '../../../rule'
+import { Game } from '../../../rule'
 import { GameState } from '../../../state'
 import { BasicContext } from '../../contexts'
 
@@ -55,16 +56,17 @@ const Default: FC = () => {
 
 const CurrentStateComponent: FC = () => {
   const { boardState } = useContext(BasicContext)
+  const current = wrapBoard(boardState.current)
   return (
     <SimpleGrid width="100%" columns={2} spacing={1} minChildWidth="240px">
       <StonesInput
         icon={<RiCheckboxBlankCircleFill />}
-        ps={boardState.current.blacks}
+        ps={current.stones(Player.black)}
         placeholder="black stones"
       />
       <StonesInput
         icon={<RiCheckboxBlankCircleLine />}
-        ps={boardState.current.whites}
+        ps={current.stones(Player.white)}
         placeholder="white stones"
       />
     </SimpleGrid>
@@ -73,6 +75,7 @@ const CurrentStateComponent: FC = () => {
 
 const VCFComponent: FC = () => {
   const { boardState, setBoardState } = useContext(BasicContext)
+  const current = wrapBoard(boardState.current)
 
   const [vcfTurn, setVcfTurn] = useState<boolean>(true)
   const [solution, setSolution] = useState<Point[]>()
@@ -86,8 +89,8 @@ const VCFComponent: FC = () => {
   }
   const onSolve = () => {
     const data = {
-      blacks: boardState.current.blacks,
-      whites: boardState.current.whites,
+      blacks: current.stones(Player.black),
+      whites: current.stones(Player.white),
       turn: vcfTurn,
       depthLimit: DEPTH_LIMIT,
     }
@@ -164,7 +167,7 @@ const StonesInput: FC<{ icon: React.ReactElement; ps: Point[]; placeholder: stri
   placeholder,
 }) => {
   const toast = useToast()
-  const code = encodePoints(ps, ',')
+  const code = wrapPoints(ps).toString()
   const { onCopy, value } = useClipboard(code)
   const onClickCopy = () => {
     if (!value) return

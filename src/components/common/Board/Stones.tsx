@@ -1,5 +1,6 @@
 import { FC, useContext } from 'react'
-import { Game, Point } from '../../../rule'
+import { Point } from 'renjukit'
+import { Game } from '../../../rule'
 import { PointsState } from '../../../state'
 import { SystemContext } from '../../contexts'
 import { PointMarker, Stone } from './common'

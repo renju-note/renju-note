@@ -1,4 +1,4 @@
-import { Point } from '../rule/foundation'
+import { Point } from 'renjukit'
 import { canonicalBitboardString, emptyBitboardVariants, pointsVariants } from './symmetry'
 
 export const encodeAccumulatedMoves = (moves: Point[]): string[] => {

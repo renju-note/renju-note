@@ -1,4 +1,4 @@
-import { N_LINES, Point } from '../rule/foundation'
+import { BOARD_SIZE, Point } from 'renjukit'
 import { Bitboard } from './bitboard'
 
 export type VariantId = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7
@@ -49,7 +49,7 @@ export const pointVariant = (p: Point, v: VariantId): Point => {
 }
 
 const pointVariantRaw = (p: Point, reversed: Reversed, rotation: Rotation): Point => {
-  const N = N_LINES + 1
+  const N = BOARD_SIZE - 1
   const [x, y] = reversed ? [p[1], p[0]] : p
   switch (rotation) {
     case 0:

@@ -1,6 +1,7 @@
 import Dexie, { Table } from 'dexie'
+import { Point } from 'renjukit'
 import { encodeAccumulatedMoves } from '../analysis'
-import { Game, Point } from '../rule'
+import { Game } from '../rule'
 import { RIFDatabase, RIFGame } from './rif'
 
 const VERSION = 2

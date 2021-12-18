@@ -1,4 +1,5 @@
-import { equal, Game, Point } from '../../rule'
+import { Point, pointEqual } from 'renjukit'
+import { Game } from '../../rule'
 
 export class GameState {
   readonly main: Game = new Game()
@@ -25,7 +26,7 @@ export class GameState {
     if (!this.canMove(p)) return this
     if (this.isBranching) {
       return this.moveBranch(p)
-    } else if (!this.isLast && equal(p, this.main.moves[this.cursor])) {
+    } else if (!this.isLast && pointEqual(p, this.main.moves[this.cursor])) {
       return this.forward()
     } else if (!this.isLast || this.isReadOnly) {
       return this.moveBranch(p)

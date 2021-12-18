@@ -1,5 +1,5 @@
 import React, { FC, useContext } from 'react'
-import { Point } from '../../../rule'
+import { Point } from 'renjukit'
 import { BoardMode, BoardState } from '../../../state'
 import { PreferenceContext, PreferenceOption, SystemContext } from '../../contexts'
 import Base from './Base'

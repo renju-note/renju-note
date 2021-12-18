@@ -1,5 +1,6 @@
 import { FC, useContext } from 'react'
-import { Board, Point, Property, RowKind } from '../../../rule'
+import { Board, Player, Point, Row, RowKind, wrapBoard } from 'renjukit'
+import { wrapRow } from 'renjukit/dist/board/row'
 import { SystemContext } from '../../contexts'
 import { PointMarker, SegmentMarker } from './common'
 
@@ -11,47 +12,48 @@ type Props = {
 }
 
 const Default: FC<Props> = ({ board, showRows, showEyes, showForbiddens }) => {
+  const board_ = wrapBoard(board)
   return (
     <g>
       {showRows && (
         <>
-          <Rows properties={board.properties(true, RowKind.two)} black />
-          <Rows properties={board.properties(true, RowKind.sword)} black />
-          <Rows properties={board.properties(true, RowKind.three)} black />
-          <Rows properties={board.properties(true, RowKind.four)} black />
-          <Rows properties={board.properties(false, RowKind.two)} />
-          <Rows properties={board.properties(false, RowKind.sword)} />
-          <Rows properties={board.properties(false, RowKind.three)} />
-          <Rows properties={board.properties(false, RowKind.four)} />
+          <Rows rows={board_.rows(Player.black, RowKind.two)} black />
+          <Rows rows={board_.rows(Player.black, RowKind.sword)} black />
+          <Rows rows={board_.rows(Player.black, RowKind.three)} black />
+          <Rows rows={board_.rows(Player.black, RowKind.four)} black />
+          <Rows rows={board_.rows(Player.white, RowKind.two)} />
+          <Rows rows={board_.rows(Player.white, RowKind.sword)} />
+          <Rows rows={board_.rows(Player.white, RowKind.three)} />
+          <Rows rows={board_.rows(Player.white, RowKind.four)} />
         </>
       )}
       {showEyes && (
         <>
-          <Eyes properties={board.properties(true, RowKind.three)} black />
-          <Eyes properties={board.properties(true, RowKind.four)} black emphasized />
-          <Eyes properties={board.properties(false, RowKind.three)} />
-          <Eyes properties={board.properties(false, RowKind.four)} emphasized />
+          <Eyes rows={board_.rows(Player.black, RowKind.three)} black />
+          <Eyes rows={board_.rows(Player.black, RowKind.four)} black emphasized />
+          <Eyes rows={board_.rows(Player.white, RowKind.three)} />
+          <Eyes rows={board_.rows(Player.white, RowKind.four)} emphasized />
         </>
       )}
-      {showForbiddens && <Forbiddens points={board.forbiddens} />}
+      {showForbiddens && <Forbiddens points={board_.forbiddens().map(([_, p]) => p)} />}
     </g>
   )
 }
 
-type PropertiesProps = {
+type RowsProps = {
   black?: boolean
-  properties: Property[]
+  rows: Row[]
   emphasized?: boolean
 }
 
-const Rows: FC<PropertiesProps> = ({ black, properties }) => {
+const Rows: FC<RowsProps> = ({ black, rows }) => {
   const system = useContext(SystemContext)
   const stroke = black ? 'blue' : 'darkgreen'
-  const segments = properties.map((p, key) => (
+  const segments = rows.map((row, key) => (
     <SegmentMarker
       key={key}
-      start={system.c(p.start)}
-      end={system.c(p.end)}
+      start={system.c(row.start)}
+      end={system.c(row.end)}
       stroke={stroke}
       strokeWidth={system.propertyRowStrokeWidth}
       strokeDasharray={system.propertyRowStrokeDasharray}
@@ -60,12 +62,13 @@ const Rows: FC<PropertiesProps> = ({ black, properties }) => {
   return <g>{segments}</g>
 }
 
-const Eyes: FC<PropertiesProps> = ({ black, properties, emphasized }) => {
+const Eyes: FC<RowsProps> = ({ black, rows, emphasized }) => {
   const system = useContext(SystemContext)
   const r = (system.C * 2) / 10
   const color = black ? 'blue' : 'darkgreen'
-  const gs = properties.map((p, m) => {
-    const rects = p.eyes.map((e, n) => {
+  const gs = rows.map((row, m) => {
+    const row_ = wrapRow(row)
+    const rects = row_.eyes().map((e, n) => {
       const [cx, cy] = system.c(e)
       return emphasized ? (
         <PointMarker shape="diamond" key={n} cx={cx} cy={cy} r={r} color={color} opacity={0.7} />

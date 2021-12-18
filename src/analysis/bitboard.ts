@@ -1,10 +1,10 @@
-import { N_LINES, Point } from '../rule/foundation'
+import { BOARD_SIZE, Point } from 'renjukit'
 
 export class Bitboard {
-  private readonly vlines: number[] = new Array(N_LINES).fill(0)
+  private readonly vlines: number[] = new Array(BOARD_SIZE).fill(0)
 
   putMut(black: boolean, [x, y]: Point) {
-    this.vlines[x - 1] += (black ? 0b01 : 0b10) << (2 * (y - 1))
+    this.vlines[x] += (black ? 0b01 : 0b10) << (2 * y)
   }
 
   putMovesMut(blackFirst: boolean, moves: Point[]) {

@@ -1,13 +1,12 @@
 import { ButtonProps } from '@chakra-ui/react'
 import { createContext, FC, useMemo } from 'react'
-import { encode, N_LINES, Point, xCode, yCode } from '../../rule'
+import { BOARD_SIZE, Point } from 'renjukit'
 
 export type BoardWidth = 640 | 360 | 320
 
 export type BoardCoordinate = [number, number]
 
 export class System {
-  readonly N: number = N_LINES
   readonly W: BoardWidth
   readonly C: number // cell size
   readonly P: number // padding
@@ -29,11 +28,11 @@ export class System {
   }
 
   cx(x: number): number {
-    return this.P + (x - 1) * this.C
+    return this.P + x * this.C
   }
 
   cy(y: number): number {
-    return this.P + (this.N - y) * this.C
+    return this.P + (BOARD_SIZE - 1 - y) * this.C
   }
 
   c([x, y]: Point): BoardCoordinate {
@@ -41,23 +40,11 @@ export class System {
   }
 
   p([bx, by]: [number, number]): Point {
-    return [adjust((bx - this.P) / this.C + 1), adjust((this.W - by - this.P) / this.C + 1)]
-  }
-
-  xCode(x: number): string {
-    return xCode(x)
-  }
-
-  yCode(y: number): string {
-    return yCode(y)
-  }
-
-  code([x, y]: Point): string {
-    return encode([x, y])
+    return [adjust((bx - this.P) / this.C), adjust((this.W - by - this.P) / this.C)]
   }
 
   get indices(): number[] {
-    return new Array(this.N).fill(null).map((_, i) => i + 1)
+    return new Array(BOARD_SIZE).fill(null).map((_, i) => i)
   }
 
   get buttonSize(): ButtonProps['size'] {
@@ -167,4 +154,4 @@ export const SystemContextProvider: FC = ({ children }) => {
   return <SystemContext.Provider value={system}>{children}</SystemContext.Provider>
 }
 
-const adjust = (n: number): number => Math.min(Math.max(1, Math.round(n)), N_LINES)
+const adjust = (n: number): number => Math.min(Math.max(0, Math.round(n)), BOARD_SIZE - 1)
