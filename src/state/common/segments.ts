@@ -1,4 +1,4 @@
-import { parsePoints, Point, pointEqual, wrapPoint } from 'renjukit'
+import { parsePoints, Point, pointEqual, wrapPoints } from 'renjukit'
 
 type Segment = [Point, Point]
 
@@ -55,13 +55,7 @@ export class SegmentsState {
   }
 
   encode(): string {
-    return this.segments
-      .map(([start, end]) => {
-        const s = wrapPoint(start)
-        const e = wrapPoint(end)
-        return `${s.toString()}${e.toString()}`
-      })
-      .join('')
+    return this.segments.map(s => wrapPoints(s).toString('')).join('')
   }
 
   static decode(code: string): SegmentsState | undefined {
