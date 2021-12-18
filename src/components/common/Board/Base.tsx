@@ -1,5 +1,5 @@
 import { FC, useContext } from 'react'
-import { pointXToString, pointYToString } from 'renjukit'
+import { BOARD_SIZE, pointXToString, pointYToString } from 'renjukit'
 import { SystemContext } from '../../contexts'
 
 type Props = {
@@ -49,7 +49,7 @@ const Rulers: FC<StrokeProps> = ({ stroke }) => {
       x1={system.cx(x)}
       y1={system.cy(0)}
       x2={system.cx(x)}
-      y2={system.cy(system.N - 1)}
+      y2={system.cy(BOARD_SIZE - 1)}
       stroke={stroke}
       strokeLinecap="round"
       strokeWidth={system.rulerStrokeWidth}
@@ -60,7 +60,7 @@ const Rulers: FC<StrokeProps> = ({ stroke }) => {
       key={key}
       x1={system.cx(0)}
       y1={system.cy(y)}
-      x2={system.cx(system.N - 1)}
+      x2={system.cx(BOARD_SIZE - 1)}
       y2={system.cy(y)}
       stroke={stroke}
       strokeLinecap="round"

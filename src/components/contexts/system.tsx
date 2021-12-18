@@ -7,7 +7,6 @@ export type BoardWidth = 640 | 360 | 320
 export type BoardCoordinate = [number, number]
 
 export class System {
-  readonly N: number = BOARD_SIZE
   readonly W: BoardWidth
   readonly C: number // cell size
   readonly P: number // padding
@@ -33,7 +32,7 @@ export class System {
   }
 
   cy(y: number): number {
-    return this.P + (this.N - 1 - y) * this.C
+    return this.P + (BOARD_SIZE - 1 - y) * this.C
   }
 
   c([x, y]: Point): BoardCoordinate {
@@ -45,7 +44,7 @@ export class System {
   }
 
   get indices(): number[] {
-    return new Array(this.N).fill(null).map((_, i) => i)
+    return new Array(BOARD_SIZE).fill(null).map((_, i) => i)
   }
 
   get buttonSize(): ButtonProps['size'] {
