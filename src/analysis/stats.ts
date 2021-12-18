@@ -1,4 +1,4 @@
-import { decodePoint, Point, wrapPoint } from 'renjukit'
+import { BOARD_SIZE, Point } from 'renjukit'
 import {
   canonicalBitboard,
   inverseVariantId,
@@ -57,7 +57,7 @@ const groupByNextMove = (query: Point[], dataset: Point[][]): [Point, number[]][
     const headMovesVariants = pointsVariants(headMoves)
     const canonicalVariantId = canonicalBitboard(toBitboardVariants(headMovesVariants))[0]
     const canonicalNextMove = pointVariant(nextMove, canonicalVariantId)
-    const pointCode = wrapPoint(canonicalNextMove).encode()
+    const pointCode = encodeFast(canonicalNextMove)
     const item = mapByPointCode.get(pointCode)
     if (item === undefined) {
       mapByPointCode.set(pointCode, [i])
@@ -70,17 +70,21 @@ const groupByNextMove = (query: Point[], dataset: Point[][]): [Point, number[]][
   const inversedVariantId = inverseVariantId(queryVariantId)
   const mapByBoardCode = new Map<string, [Point, number[]]>()
   for (const [code, indices] of Array.from(mapByPointCode.entries())) {
-    const nextMove = pointVariant(decodePoint(code)!, inversedVariantId)
+    const nextMove = pointVariant(decodeFast(code), inversedVariantId)
     const moves = [...query, nextMove]
     const boardCode = canonicalBitboard(toBitboardVariants(pointsVariants(moves)))[1].toString()
     const item = mapByBoardCode.get(boardCode)
     if (item === undefined) {
       mapByBoardCode.set(boardCode, [nextMove, indices])
     } else {
-      if (wrapPoint(nextMove).encode() < wrapPoint(item[0]).encode()) item[0] = nextMove
+      if (encodeFast(nextMove) < encodeFast(item[0])) item[0] = nextMove
       item[1].push(...indices)
     }
   }
 
   return Array.from(mapByBoardCode.values())
 }
+
+const encodeFast = (p: Point): number => p[0] * BOARD_SIZE + p[1]
+
+const decodeFast = (c: number): Point => [~~(c / BOARD_SIZE), c % BOARD_SIZE]
