@@ -16,9 +16,9 @@ import {
   Tr,
 } from '@chakra-ui/react'
 import { FC, useContext, useEffect, useMemo, useState } from 'react'
+import { Point, wrapPoint } from 'renjukit'
 import { calcStat, calcStatByNextMove, GamesStat } from '../../../analysis'
 import { GameView, RIFDatabase } from '../../../database'
-import { encode, Point } from '../../../rule'
 import { BoardMode } from '../../../state'
 import { AdvancedContext, BasicContext } from '../../contexts'
 
@@ -187,7 +187,7 @@ const StatByNextMoveTable: FC<{
           const [won, lost] = isBlackRight ? [white, black] : [black, white]
           return (
             <Tr key={key} _hover={{ bg: 'gray.100' }} onClick={() => onClick(p)}>
-              <Td isNumeric>{encode(p)}</Td>
+              <Td isNumeric>{wrapPoint(p).toString()}</Td>
               <Td isNumeric>{s.all}</Td>
               <Td isNumeric>
                 {won.count !== 0 && (

@@ -1,5 +1,5 @@
 import { FC, useContext } from 'react'
-import { Point } from '../../../../rule'
+import { Point } from 'renjukit'
 import { SystemContext } from '../../../contexts'
 
 export const Stone: FC<{ black: boolean; point: Point; label?: string }> = ({

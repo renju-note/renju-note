@@ -29,7 +29,7 @@ import {
   RiMenuLine,
   RiQuestionLine,
 } from 'react-icons/ri'
-import { encodePoints } from '../../../../rule'
+import { wrapPoints } from 'renjukit'
 import { BasicContext, PreferenceContext, PreferenceOption } from '../../../contexts'
 import AboutModal from './AboutModal'
 import DownloadHidden, { onDownload } from './DownloadHidden'
@@ -39,7 +39,7 @@ const Default: FC = () => {
 
   // Copy Moves to Clipboard
   const { boardState } = useContext(BasicContext)
-  const code = encodePoints(boardState.game.current.moves, ',')
+  const code = wrapPoints(boardState.game.current.moves).toString()
   const { onCopy, value } = useClipboard(code)
   const onCopyMovesToClipboard = () => {
     if (!value) return

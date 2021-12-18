@@ -1,5 +1,5 @@
 import { FC, useContext } from 'react'
-import { Point } from '../../rule'
+import { Point } from 'renjukit'
 import Board from '../common/Board'
 import { BasicContext } from '../contexts'
 

@@ -1,4 +1,5 @@
 import { FC, useContext } from 'react'
+import { pointXToString, pointYToString } from 'renjukit'
 import { SystemContext } from '../../contexts'
 
 type Props = {
@@ -46,9 +47,9 @@ const Rulers: FC<StrokeProps> = ({ stroke }) => {
     <line
       key={key}
       x1={system.cx(x)}
-      y1={system.cy(1)}
+      y1={system.cy(0)}
       x2={system.cx(x)}
-      y2={system.cy(system.N)}
+      y2={system.cy(system.N - 1)}
       stroke={stroke}
       strokeLinecap="round"
       strokeWidth={system.rulerStrokeWidth}
@@ -57,9 +58,9 @@ const Rulers: FC<StrokeProps> = ({ stroke }) => {
   const horizontalLines = system.indices.map((y, key) => (
     <line
       key={key}
-      x1={system.cx(1)}
+      x1={system.cx(0)}
       y1={system.cy(y)}
-      x2={system.cx(system.N)}
+      x2={system.cx(system.N - 1)}
       y2={system.cy(y)}
       stroke={stroke}
       strokeLinecap="round"
@@ -77,11 +78,11 @@ const Rulers: FC<StrokeProps> = ({ stroke }) => {
 const Stars: FC = () => {
   const system = useContext(SystemContext)
   const points = [
-    [4, 4],
-    [4, 12],
-    [8, 8],
-    [12, 4],
-    [12, 12],
+    [3, 3],
+    [3, 11],
+    [7, 7],
+    [11, 3],
+    [11, 11],
   ]
   return (
     <g>
@@ -105,13 +106,13 @@ const Indices: FC<StrokeProps> = ({ stroke }) => {
     <text
       key={key}
       x={system.cx(x)}
-      y={system.cy(1) + (system.P * 19) / 20 - system.indexPadding}
+      y={system.cy(0) + (system.P * 19) / 20 - system.indexPadding}
       textAnchor="middle"
       fill={stroke}
       fontSize={system.indexFontSize}
       fontFamily="Roboto"
     >
-      {system.xCode(x)}
+      {pointXToString(x)}
     </text>
   ))
   const yIndices = system.indices.map((y, key) => (
@@ -125,7 +126,7 @@ const Indices: FC<StrokeProps> = ({ stroke }) => {
       fontSize={system.indexFontSize}
       fontFamily="Roboto"
     >
-      {system.yCode(y)}
+      {pointYToString(y)}
     </text>
   ))
   return (

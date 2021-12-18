@@ -1,5 +1,4 @@
-import { decodePoints, encodePoints } from '../encoding'
-import { equal, Point } from '../foundation'
+import { parsePoints, Point, pointEqual, wrapPoints } from 'renjukit'
 
 export class Game {
   readonly moves: Point[] = []
@@ -28,7 +27,7 @@ export class Game {
   }
 
   has(p: Point): boolean {
-    return this.moves.findIndex(q => equal(p, q)) >= 0
+    return this.moves.findIndex(q => pointEqual(p, q)) >= 0
   }
 
   cut(length: number): Game {
@@ -71,11 +70,11 @@ export class Game {
   }
 
   encode(separator: string = ''): string {
-    return encodePoints(this.moves, separator)
+    return wrapPoints(this.moves).toString(separator)
   }
 
   static decode(code: string): Game | undefined {
-    const points = decodePoints(code)
+    const points = parsePoints(code)
     return points && new Game({ moves: points })
   }
 }

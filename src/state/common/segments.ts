@@ -1,4 +1,4 @@
-import { decodePoints, encode, equal, Point } from '../../rule'
+import { parsePoints, Point, pointEqual, wrapPoint } from 'renjukit'
 
 type Segment = [Point, Point]
 
@@ -55,11 +55,17 @@ export class SegmentsState {
   }
 
   encode(): string {
-    return this.segments.map(([start, end]) => `${encode(start)}${encode(end)}`).join('')
+    return this.segments
+      .map(([start, end]) => {
+        const s = wrapPoint(start)
+        const e = wrapPoint(end)
+        return `${s.toString()}${e.toString()}`
+      })
+      .join('')
   }
 
   static decode(code: string): SegmentsState | undefined {
-    const points = decodePoints(code)
+    const points = parsePoints(code)
     if (!points) return undefined
     if (points.length % 2 !== 0) return undefined
     const segments: Segment[] = []
@@ -71,16 +77,14 @@ export class SegmentsState {
   }
 }
 
-const includes = (segments: Segment[], [start, end]: Segment): boolean => {
-  return (
-    segments.findIndex(
-      ([s, e]) => (equal(start, s) && equal(end, e)) || (equal(start, e) && equal(end, s))
-    ) >= 0
-  )
-}
+const includes = (segments: Segment[], [start, end]: Segment): boolean =>
+  segments.findIndex(
+    ([s, e]) =>
+      (pointEqual(start, s) && pointEqual(end, e)) || (pointEqual(start, e) && pointEqual(end, s))
+  ) >= 0
 
 const valid = ([start, end]: Segment): boolean => {
-  if (equal(start, end)) return false
+  if (pointEqual(start, end)) return false
   const [sx, sy] = start
   const [ex, ey] = end
   return (

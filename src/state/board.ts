@@ -1,4 +1,4 @@
-import { Board, N_LINES, Point } from '../rule'
+import { Board, makeBoard, Point } from 'renjukit'
 import { GameState, PointsState, SegmentsState } from './common'
 
 const boardModes = [
@@ -147,13 +147,7 @@ export class BoardState {
   }
 
   get current(): Board {
-    if (this.cache === undefined) {
-      this.cache = new Board({
-        size: N_LINES,
-        blacks: this.blacks,
-        whites: this.whites,
-      })
-    }
+    if (this.cache === undefined) this.cache = makeBoard(this.blacks, this.whites)
     return this.cache
   }
 

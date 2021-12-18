@@ -1,4 +1,4 @@
-import { Point } from '../rule'
+import { Point } from 'renjukit'
 
 type SearchQuery = {
   moves: Point[] | undefined

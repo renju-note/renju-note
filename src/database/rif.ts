@@ -1,5 +1,5 @@
 import Dexie, { Table } from 'dexie'
-import { decodePoints, Point } from '../rule'
+import { parsePoints, Point } from 'renjukit'
 
 const CHUNK_SIZE = 2000
 
@@ -175,7 +175,7 @@ export class RIFDatabase extends Dexie {
         white: whites[i] ?? unknownRIFPlayer(),
         blackWon,
         whiteWon,
-        moves: decodePoints(game?.move ?? '') ?? [],
+        moves: parsePoints(game?.move ?? '') ?? [],
         btime: game?.btime ?? 0,
         wtime: game?.wtime ?? 0,
         opening: openings[i] ?? unknownRIFOpening(),

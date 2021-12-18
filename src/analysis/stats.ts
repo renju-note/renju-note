@@ -1,4 +1,4 @@
-import { decode225, encode225, Point } from '../rule'
+import { decodePoint, Point, wrapPoint } from 'renjukit'
 import {
   canonicalBitboard,
   inverseVariantId,
@@ -57,7 +57,7 @@ const groupByNextMove = (query: Point[], dataset: Point[][]): [Point, number[]][
     const headMovesVariants = pointsVariants(headMoves)
     const canonicalVariantId = canonicalBitboard(toBitboardVariants(headMovesVariants))[0]
     const canonicalNextMove = pointVariant(nextMove, canonicalVariantId)
-    const pointCode = encode225(canonicalNextMove)
+    const pointCode = wrapPoint(canonicalNextMove).encode()
     const item = mapByPointCode.get(pointCode)
     if (item === undefined) {
       mapByPointCode.set(pointCode, [i])
@@ -70,14 +70,14 @@ const groupByNextMove = (query: Point[], dataset: Point[][]): [Point, number[]][
   const inversedVariantId = inverseVariantId(queryVariantId)
   const mapByBoardCode = new Map<string, [Point, number[]]>()
   for (const [code, indices] of Array.from(mapByPointCode.entries())) {
-    const nextMove = pointVariant(decode225(code), inversedVariantId)
+    const nextMove = pointVariant(decodePoint(code)!, inversedVariantId)
     const moves = [...query, nextMove]
     const boardCode = canonicalBitboard(toBitboardVariants(pointsVariants(moves)))[1].toString()
     const item = mapByBoardCode.get(boardCode)
     if (item === undefined) {
       mapByBoardCode.set(boardCode, [nextMove, indices])
     } else {
-      if (encode225(nextMove) < encode225(item[0])) item[0] = nextMove
+      if (wrapPoint(nextMove).encode() < wrapPoint(item[0]).encode()) item[0] = nextMove
       item[1].push(...indices)
     }
   }
