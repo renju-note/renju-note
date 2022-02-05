@@ -32,7 +32,8 @@ import { Game } from '../../../rule'
 import { GameState } from '../../../state'
 import { BasicContext } from '../../contexts'
 
-const worker = new Worker()
+const workerVcf = new Worker()
+const workerVct = new Worker()
 
 const DEPTH_LIMIT = 100
 
@@ -44,6 +45,10 @@ const Default: FC = () => {
         VCF
       </Heading>
       <VCFComponent />
+      <Heading as="h2" size="sm" pt="1rem">
+        VCT (unstable)
+      </Heading>
+      <VCTComponent />
       <Text color="gray.600" pt="3rem" pb="1rem" textAlign="center">
         Powered by&nbsp;
         <Link href="https://github.com/renju-note/quintet" color="teal.500" isExternal>
@@ -77,11 +82,11 @@ const VCFComponent: FC = () => {
   const { boardState, setBoardState } = useContext(BasicContext)
   const current = wrapBoard(boardState.current)
 
-  const [vcfTurn, setVcfTurn] = useState<boolean>(true)
+  const [turn, setTurn] = useState<boolean>(true)
   const [solution, setSolution] = useState<Point[]>()
   const [solving, setSolving] = useState<boolean>(false)
 
-  worker.onmessage = (event: MessageEvent) => {
+  workerVcf.onmessage = (event: MessageEvent) => {
     const { solution } = event.data as { solution: Point[] }
     setSolution(solution)
     setBoardState(boardState.setNumberdedPoints(solution.filter((_, i) => i % 2 === 0)))
@@ -89,19 +94,20 @@ const VCFComponent: FC = () => {
   }
   const onSolve = () => {
     const data = {
+      kind: 'vcf',
       blacks: current.stones(Player.black),
       whites: current.stones(Player.white),
-      turn: vcfTurn,
+      turn: turn,
       depthLimit: DEPTH_LIMIT,
     }
-    worker.postMessage(data)
+    workerVcf.postMessage(data)
     setSolving(true)
   }
   const onPut = () => {
     if (solution === undefined || solution.length === 0) return
     const message = 'All of existent moves will be converted to free (unordered) stones. OK?'
     if (!window.confirm(message)) return
-    const newGame = new GameState({ main: new Game({ moves: solution, inverted: !vcfTurn }) })
+    const newGame = new GameState({ main: new Game({ moves: solution, inverted: !turn }) })
     const newBoard = boardState.convertMovesToStones().setNumberdedPoints([]).setGame(newGame)
     setBoardState(newBoard)
     setSolution(undefined)
@@ -119,15 +125,104 @@ const VCFComponent: FC = () => {
               aria-label="black"
               width="3rem"
               icon={<RiCheckboxBlankCircleFill />}
-              variant={vcfTurn ? 'solid' : 'outline'}
-              onClick={() => setVcfTurn(true)}
+              variant={turn ? 'solid' : 'outline'}
+              onClick={() => setTurn(true)}
             />
             <IconButton
               aria-label="white"
               width="3rem"
               icon={<RiCheckboxBlankCircleLine />}
-              variant={!vcfTurn ? 'solid' : 'outline'}
-              onClick={() => setVcfTurn(false)}
+              variant={!turn ? 'solid' : 'outline'}
+              onClick={() => setTurn(false)}
+            />
+          </ButtonGroup>
+          {solution === undefined ? (
+            <Button isLoading={solving} size="sm" colorScheme="purple" onClick={onSolve}>
+              Solve
+            </Button>
+          ) : (
+            <Button size="sm" onClick={onClear}>
+              Clear
+            </Button>
+          )}
+          {solution !== undefined && solution.length > 0 && (
+            <Button size="sm" variant="outline" colorScheme="purple" onClick={onPut}>
+              Move on Board
+            </Button>
+          )}
+        </Stack>
+        <Box marginLeft="auto">
+          {solution !== undefined &&
+            (solution.length !== 0 ? (
+              <Badge colorScheme="green">found</Badge>
+            ) : (
+              <Badge colorScheme="red">not found</Badge>
+            ))}
+        </Box>
+      </Flex>
+      {solution !== undefined && solution.length !== 0 && (
+        <StonesInput icon={<RiRadioButtonLine />} ps={solution} placeholder="solution" />
+      )}
+    </Stack>
+  )
+}
+
+const VCTComponent: FC = () => {
+  const { boardState, setBoardState } = useContext(BasicContext)
+  const current = wrapBoard(boardState.current)
+
+  const [turn, setTurn] = useState<boolean>(true)
+  const [solution, setSolution] = useState<Point[]>()
+  const [solving, setSolving] = useState<boolean>(false)
+
+  workerVct.onmessage = (event: MessageEvent) => {
+    const { solution } = event.data as { solution: Point[] }
+    setSolution(solution)
+    setBoardState(boardState.setNumberdedPoints(solution.filter((_, i) => i % 2 === 0)))
+    setSolving(false)
+  }
+  const onSolve = () => {
+    const data = {
+      kind: 'vct',
+      blacks: current.stones(Player.black),
+      whites: current.stones(Player.white),
+      turn: turn,
+      depthLimit: DEPTH_LIMIT,
+    }
+    workerVct.postMessage(data)
+    setSolving(true)
+  }
+  const onPut = () => {
+    if (solution === undefined || solution.length === 0) return
+    const message = 'All of existent moves will be converted to free (unordered) stones. OK?'
+    if (!window.confirm(message)) return
+    const newGame = new GameState({ main: new Game({ moves: solution, inverted: !turn }) })
+    const newBoard = boardState.convertMovesToStones().setNumberdedPoints([]).setGame(newGame)
+    setBoardState(newBoard)
+    setSolution(undefined)
+  }
+  const onClear = () => {
+    setBoardState(boardState.setNumberdedPoints([]))
+    setSolution(undefined)
+  }
+  return (
+    <Stack>
+      <Flex>
+        <Stack isInline>
+          <ButtonGroup size="sm" isAttached>
+            <IconButton
+              aria-label="black"
+              width="3rem"
+              icon={<RiCheckboxBlankCircleFill />}
+              variant={turn ? 'solid' : 'outline'}
+              onClick={() => setTurn(true)}
+            />
+            <IconButton
+              aria-label="white"
+              width="3rem"
+              icon={<RiCheckboxBlankCircleLine />}
+              variant={!turn ? 'solid' : 'outline'}
+              onClick={() => setTurn(false)}
             />
           </ButtonGroup>
           {solution === undefined ? (
