@@ -152,10 +152,18 @@ const KindButtonGroup: FC<{ kind: MateKind; setKind: (kind: MateKind) => void }>
   setKind,
 }) => (
   <ButtonGroup size="sm" isAttached>
-    <Button variant={kind === 'vcf' ? 'solid' : 'outline'} onClick={() => setKind('vcf')}>
+    <Button
+      width="3rem"
+      variant={kind === 'vcf' ? 'solid' : 'outline'}
+      onClick={() => setKind('vcf')}
+    >
       VCF
     </Button>
-    <Button variant={kind === 'vct' ? 'solid' : 'outline'} onClick={() => setKind('vct')}>
+    <Button
+      width="3rem"
+      variant={kind === 'vct' ? 'solid' : 'outline'}
+      onClick={() => setKind('vct')}
+    >
       VCT
     </Button>
   </ButtonGroup>
@@ -167,18 +175,18 @@ const TurnButtonGroup: FC<{ turn: boolean; setTurn: (turn: boolean) => void }> =
 }) => (
   <ButtonGroup size="sm" isAttached>
     <IconButton
-      aria-label="black"
       width="3rem"
-      icon={<RiCheckboxBlankCircleFill />}
       variant={turn ? 'solid' : 'outline'}
       onClick={() => setTurn(true)}
+      icon={<RiCheckboxBlankCircleFill />}
+      aria-label="black"
     />
     <IconButton
-      aria-label="white"
       width="3rem"
-      icon={<RiCheckboxBlankCircleLine />}
       variant={!turn ? 'solid' : 'outline'}
       onClick={() => setTurn(false)}
+      icon={<RiCheckboxBlankCircleLine />}
+      aria-label="white"
     />
   </ButtonGroup>
 )
