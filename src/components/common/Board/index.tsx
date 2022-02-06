@@ -44,8 +44,9 @@ const Default: FC<Props> = ({ id, onClickPoint, state }) => {
         <Markers
           points={state.markerPoints}
           segments={state.markerLines}
-          sequence={state.numberedPoints}
+          path={state.numberedPoints}
           showPointsLabel={preference.has(PreferenceOption.showOrders)}
+          pathAppearance="everyOther"
         />
       )}
       <Stones

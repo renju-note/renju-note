@@ -89,7 +89,7 @@ const VCFComponent: FC = () => {
   workerVcf.onmessage = (event: MessageEvent) => {
     const { solution } = event.data as { solution: Point[] }
     setSolution(solution)
-    setBoardState(boardState.setNumberdedPoints(solution.filter((_, i) => i % 2 === 0)))
+    setBoardState(boardState.setNumberdedPoints(solution))
     setSolving(false)
   }
   const onSolve = () => {
@@ -178,7 +178,7 @@ const VCTComponent: FC = () => {
   workerVct.onmessage = (event: MessageEvent) => {
     const { solution } = event.data as { solution: Point[] }
     setSolution(solution)
-    setBoardState(boardState.setNumberdedPoints(solution.filter((_, i) => i % 2 === 0)))
+    setBoardState(boardState.setNumberdedPoints(solution))
     setSolving(false)
   }
   const onSolve = () => {

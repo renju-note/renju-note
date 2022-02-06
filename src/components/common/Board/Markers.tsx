@@ -3,18 +3,21 @@ import { PointsState, SegmentsState } from '../../../state'
 import { SystemContext } from '../../contexts'
 import { PointMarker, SegmentMarker } from './common'
 
+type PathAppearance = 'everyOther' | 'eachFromBlack' | 'eachFromWhite'
+
 type Props = {
   segments: SegmentsState
   points: PointsState
-  sequence: PointsState
   showPointsLabel: boolean
+  path: PointsState
+  pathAppearance: PathAppearance
 }
 
-const Default: FC<Props> = ({ segments, points, sequence, showPointsLabel }) => (
+const Default: FC<Props> = ({ segments, points, path, showPointsLabel, pathAppearance }) => (
   <g>
     <Segments state={segments} />
     <Points state={points} showLabel={showPointsLabel} />
-    <Sequence state={sequence} />
+    <Path state={path} appearance={pathAppearance} />
   </g>
 )
 
@@ -69,31 +72,51 @@ const Points: FC<{ state: PointsState; showLabel: boolean }> = ({ state, showLab
   return <g>{markers}</g>
 }
 
-const Sequence: FC<{ state: PointsState }> = ({ state }) => {
+const Path: FC<{ state: PointsState; appearance: PathAppearance }> = ({ state, appearance }) => {
   const system = useContext(SystemContext)
   const r = (system.C * 3) / 8
   const last = state.points.length - 1
   const markers = state.points.map((p, key) => {
-    const isFirst = key === 0
-    const isLast = key === last
     const [cx, cy] = system.c(p)
-    return (
+    const hide = appearance === 'everyOther' && key % 2 === 1
+    const [color, fontColor] = pathPointColor(appearance, key, last)
+    return hide ? (
+      <></>
+    ) : (
       <PointMarker
         key={key}
         shape="circle"
         cx={cx}
         cy={cy}
         r={r}
-        color={isFirst || isLast ? 'indigo' : 'white'}
+        color={color}
         opacity={0.8}
         label={`${key + 1}`}
-        fontColor={isFirst || isLast ? 'white' : 'indigo'}
+        fontColor={fontColor}
         fontSize={system.markerFontSize}
         fontFamily="Roboto"
       />
     )
   })
   return <g>{markers}</g>
+}
+
+const pathPointColor = (
+  appearance: PathAppearance,
+  key: number,
+  last: number
+): [string, string] => {
+  const isFirst = key === 0
+  const isLast = key === last
+  const isStarter = key % 2 === 0
+  switch (appearance) {
+    case 'everyOther':
+      return isFirst || isLast ? ['indigo', 'white'] : ['white', 'indigo']
+    case 'eachFromBlack':
+      return isStarter ? ['black', 'white'] : ['white', 'black']
+    case 'eachFromWhite':
+      return isStarter ? ['white', 'black'] : ['black', 'white']
+  }
 }
 
 export default Default
