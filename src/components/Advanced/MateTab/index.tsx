@@ -1,10 +1,6 @@
 import {
-  Badge,
-  Box,
   Button,
   ButtonGroup,
-  Flex,
-  Heading,
   IconButton,
   Input,
   InputGroup,
@@ -16,6 +12,7 @@ import {
   Text,
   useClipboard,
   useToast,
+  Spinner,
 } from '@chakra-ui/react'
 import * as React from 'react'
 import { FC, useContext, useState } from 'react'
@@ -23,6 +20,7 @@ import {
   RiCheckboxBlankCircleFill,
   RiCheckboxBlankCircleLine,
   RiClipboardLine,
+  RiContrastFill,
   RiRadioButtonLine,
 } from 'react-icons/ri'
 import { Player, Point, wrapBoard, wrapPoints } from 'renjukit'
@@ -30,7 +28,9 @@ import { Player, Point, wrapBoard, wrapPoints } from 'renjukit'
 import Worker from 'worker-loader!./quintet'
 import { Game } from '../../../rule'
 import { GameState } from '../../../state'
-import { BasicContext } from '../../contexts'
+import { BasicContext, PreferenceContext, PreferenceOption } from '../../contexts'
+
+type MateKind = 'vcf' | 'vct'
 
 const worker = new Worker()
 
@@ -40,10 +40,7 @@ const Default: FC = () => {
   return (
     <Stack>
       <CurrentStateComponent />
-      <Heading as="h2" size="sm" pt="1rem">
-        VCF
-      </Heading>
-      <VCFComponent />
+      <MateComponent />
       <Text color="gray.600" pt="3rem" pb="1rem" textAlign="center">
         Powered by&nbsp;
         <Link href="https://github.com/renju-note/quintet" color="teal.500" isExternal>
@@ -73,91 +70,162 @@ const CurrentStateComponent: FC = () => {
   )
 }
 
-const VCFComponent: FC = () => {
+const MateComponent: FC = () => {
   const { boardState, setBoardState } = useContext(BasicContext)
   const current = wrapBoard(boardState.current)
 
-  const [vcfTurn, setVcfTurn] = useState<boolean>(true)
+  const [turn, setTurn] = useState<boolean>(true)
+  const [kind, setKind] = useState<MateKind>('vcf')
   const [solution, setSolution] = useState<Point[]>()
   const [solving, setSolving] = useState<boolean>(false)
 
   worker.onmessage = (event: MessageEvent) => {
-    const { solution } = event.data as { solution: Point[] }
+    const { solution, turn } = event.data as { solution: Point[]; turn: boolean }
     setSolution(solution)
-    setBoardState(boardState.setNumberdedPoints(solution.filter((_, i) => i % 2 === 0)))
+    setBoardState(boardState.setMarkerPath(solution).setPathTurn(turn))
     setSolving(false)
   }
+
   const onSolve = () => {
     const data = {
       blacks: current.stones(Player.black),
       whites: current.stones(Player.white),
-      turn: vcfTurn,
+      kind: kind,
+      turn: turn,
       depthLimit: DEPTH_LIMIT,
     }
     worker.postMessage(data)
     setSolving(true)
   }
-  const onPut = () => {
-    if (solution === undefined || solution.length === 0) return
-    const message = 'All of existent moves will be converted to free (unordered) stones. OK?'
-    if (!window.confirm(message)) return
-    const newGame = new GameState({ main: new Game({ moves: solution, inverted: !vcfTurn }) })
-    const newBoard = boardState.convertMovesToStones().setNumberdedPoints([]).setGame(newGame)
-    setBoardState(newBoard)
-    setSolution(undefined)
-  }
-  const onClear = () => {
-    setBoardState(boardState.setNumberdedPoints([]))
+
+  const onReset = () => {
+    setBoardState(boardState.setMarkerPath([]))
     setSolution(undefined)
   }
   return (
-    <Stack>
-      <Flex>
-        <Stack isInline>
-          <ButtonGroup size="sm" isAttached>
-            <IconButton
-              aria-label="black"
-              width="3rem"
-              icon={<RiCheckboxBlankCircleFill />}
-              variant={vcfTurn ? 'solid' : 'outline'}
-              onClick={() => setVcfTurn(true)}
-            />
-            <IconButton
-              aria-label="white"
-              width="3rem"
-              icon={<RiCheckboxBlankCircleLine />}
-              variant={!vcfTurn ? 'solid' : 'outline'}
-              onClick={() => setVcfTurn(false)}
-            />
-          </ButtonGroup>
-          {solution === undefined ? (
-            <Button isLoading={solving} size="sm" colorScheme="purple" onClick={onSolve}>
-              Solve
-            </Button>
-          ) : (
-            <Button size="sm" onClick={onClear}>
-              Clear
-            </Button>
-          )}
-          {solution !== undefined && solution.length > 0 && (
-            <Button size="sm" variant="outline" colorScheme="purple" onClick={onPut}>
-              Move on Board
-            </Button>
-          )}
-        </Stack>
-        <Box marginLeft="auto">
-          {solution !== undefined &&
-            (solution.length !== 0 ? (
-              <Badge colorScheme="green">found</Badge>
-            ) : (
-              <Badge colorScheme="red">not found</Badge>
-            ))}
-        </Box>
-      </Flex>
-      {solution !== undefined && solution.length !== 0 && (
-        <StonesInput icon={<RiRadioButtonLine />} ps={solution} placeholder="solution" />
+    <>
+      <Stack isInline>
+        <KindButtonGroup kind={kind} setKind={setKind} />
+        <TurnButtonGroup turn={turn} setTurn={setTurn} />
+      </Stack>
+      {solution === undefined ? (
+        <Button size="sm" colorScheme="blue" onClick={onSolve}>
+          {solving && <Spinner size="sm" mr="0.5rem" />}
+          {solving ? 'Press to Abort' : 'Solve'}
+        </Button>
+      ) : solution.length === 0 ? (
+        <Button size="sm" colorScheme="red" variant="outline" onClick={onReset}>
+          Not Found. (Press to Reset)
+        </Button>
+      ) : (
+        <Button size="sm" colorScheme="green" variant="outline" onClick={onReset}>
+          Found! (Press to Reset)
+        </Button>
       )}
-    </Stack>
+      {solution !== undefined && solution.length !== 0 && (
+        <SolutionComponent
+          turn={turn}
+          solution={solution}
+          resetSolution={() => setSolution(undefined)}
+        />
+      )}
+    </>
+  )
+}
+
+const KindButtonGroup: FC<{ kind: MateKind; setKind: (kind: MateKind) => void }> = ({
+  kind,
+  setKind,
+}) => (
+  <ButtonGroup size="sm" isAttached>
+    <Button
+      width="3rem"
+      variant={kind === 'vcf' ? 'solid' : 'outline'}
+      onClick={() => setKind('vcf')}
+    >
+      VCF
+    </Button>
+    <Button
+      width="3rem"
+      variant={kind === 'vct' ? 'solid' : 'outline'}
+      onClick={() => setKind('vct')}
+    >
+      VCT
+    </Button>
+  </ButtonGroup>
+)
+
+const TurnButtonGroup: FC<{ turn: boolean; setTurn: (turn: boolean) => void }> = ({
+  turn,
+  setTurn,
+}) => (
+  <ButtonGroup size="sm" isAttached>
+    <IconButton
+      width="3rem"
+      variant={turn ? 'solid' : 'outline'}
+      onClick={() => setTurn(true)}
+      icon={<RiCheckboxBlankCircleFill />}
+      aria-label="black"
+    />
+    <IconButton
+      width="3rem"
+      variant={!turn ? 'solid' : 'outline'}
+      onClick={() => setTurn(false)}
+      icon={<RiCheckboxBlankCircleLine />}
+      aria-label="white"
+    />
+  </ButtonGroup>
+)
+
+const SolutionComponent: FC<{
+  turn: boolean
+  solution: Point[]
+  resetSolution: () => void
+}> = ({ turn, solution, resetSolution }) => {
+  const { boardState, setBoardState } = useContext(BasicContext)
+  const onPut = () => {
+    const message = 'All of existent moves will be converted to free (unordered) stones. OK?'
+    if (!window.confirm(message)) return
+    const newGame = new GameState({ main: new Game({ moves: solution, inverted: !turn }) })
+    const newBoard = boardState.convertMovesToStones().setMarkerPath([]).setGame(newGame)
+    setBoardState(newBoard)
+    resetSolution()
+  }
+  return (
+    <>
+      <StonesInput icon={<RiRadioButtonLine />} ps={solution} placeholder="solution" />
+      <Stack isInline>
+        <AppearanceButtonGroup />
+        <Button size="sm" variant="ghost" onClick={onPut}>
+          Move on Board
+        </Button>
+      </Stack>
+    </>
+  )
+}
+
+const AppearanceButtonGroup: FC = () => {
+  const { preference, setPreference } = useContext(PreferenceContext)
+  const isOn = preference.has(PreferenceOption.pathEveryOther)
+  const setOn = () => setPreference(preference.on([PreferenceOption.pathEveryOther]))
+  const setOff = () => setPreference(preference.off([PreferenceOption.pathEveryOther]))
+  return (
+    <ButtonGroup size="sm" isAttached>
+      <IconButton
+        width="3rem"
+        variant={isOn ? 'solid' : 'outline'}
+        onClick={setOn}
+        icon={<RiRadioButtonLine />}
+        aria-label="everyOther"
+      />
+      <IconButton
+        width="3rem"
+        variant={!isOn ? 'solid' : 'outline'}
+        onClick={setOff}
+        icon={<RiContrastFill />}
+        aria-label="eachFrom"
+      />
+    </ButtonGroup>
   )
 }
 

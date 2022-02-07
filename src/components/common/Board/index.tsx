@@ -25,6 +25,11 @@ const Default: FC<Props> = ({ id, onClickPoint, state }) => {
       onClickPoint(system.p([bx, by]))
     })
   const isPreview = state.mode === BoardMode.preview
+  const pathAppearance = preference.has(PreferenceOption.pathEveryOther)
+    ? 'everyOther'
+    : state.pathTurn
+    ? 'eachFromBlack'
+    : 'eachFromWhite'
   return (
     <svg id={id} width={system.W} height={system.W} onClick={onClick}>
       <Base
@@ -44,8 +49,9 @@ const Default: FC<Props> = ({ id, onClickPoint, state }) => {
         <Markers
           points={state.markerPoints}
           segments={state.markerLines}
-          sequence={state.numberedPoints}
+          path={state.markerPath}
           showPointsLabel={preference.has(PreferenceOption.showOrders)}
+          pathAppearance={pathAppearance}
         />
       )}
       <Stones
