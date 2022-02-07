@@ -109,7 +109,7 @@ const MateComponent: FC = () => {
         <TurnButtonGroup turn={turn} setTurn={setTurn} />
       </Stack>
       {solution === undefined ? (
-        <Button size="sm" colorScheme="purple" onClick={onSolve}>
+        <Button size="sm" colorScheme="blue" onClick={onSolve}>
           {solving && <Spinner size="sm" mr="0.5rem" />}
           {solving ? 'Press to Abort' : 'Solve'}
         </Button>
