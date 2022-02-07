@@ -26,7 +26,8 @@ export class BoardState {
   readonly freeWhites: PointsState = new PointsState()
   readonly markerPoints: PointsState = new PointsState()
   readonly markerLines: SegmentsState = new SegmentsState()
-  readonly numberedPoints: PointsState = new PointsState()
+  readonly markerPath: PointsState = new PointsState()
+  readonly pathTurn: boolean = true
   private cache: Board | undefined
 
   constructor(init?: undefined | Partial<BoardState>) {
@@ -142,8 +143,12 @@ export class BoardState {
 
   /* general */
 
-  setNumberdedPoints(points: Point[]): BoardState {
-    return this.update({ numberedPoints: new PointsState({ points }) })
+  setMarkerPath(points: Point[]): BoardState {
+    return this.update({ markerPath: new PointsState({ points }) })
+  }
+
+  setPathTurn(pathTurn: boolean): BoardState {
+    return this.update({ pathTurn })
   }
 
   get current(): Board {

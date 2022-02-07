@@ -23,7 +23,7 @@ ctx.onmessage = async (event: MessageEvent) => {
     rawSolution === undefined
       ? []
       : Array.from(rawSolution).map(code => [quintet.decode_x(code), quintet.decode_y(code)])
-  ctx.postMessage({ solution })
+  ctx.postMessage({ solution, turn })
 }
 
 export default {}
