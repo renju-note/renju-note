@@ -13,6 +13,7 @@ import {
   useClipboard,
   useToast,
   Spinner,
+  useNumberInput,
 } from '@chakra-ui/react'
 import * as React from 'react'
 import { FC, useContext, useState } from 'react'
@@ -31,8 +32,6 @@ import { GameState } from '../../../state'
 import { BasicContext, PreferenceContext, PreferenceOption } from '../../contexts'
 
 type MateKind = 'vcf' | 'vct'
-
-const DEPTH_LIMIT = 100
 
 const Default: FC = () => (
   <Stack>
@@ -70,8 +69,9 @@ const MateComponent: FC = () => {
   const { boardState, setBoardState } = useContext(BasicContext)
   const current = wrapBoard(boardState.current)
 
-  const [turn, setTurn] = useState<boolean>(true)
   const [kind, setKind] = useState<MateKind>('vcf')
+  const [turn, setTurn] = useState<boolean>(true)
+  const [depthLimit, setDepthLimit] = useState<number>(20)
   const [solution, setSolution] = useState<Point[]>()
   const [solving, setSolving] = useState<boolean>(false)
 
@@ -90,7 +90,7 @@ const MateComponent: FC = () => {
       whites: current.stones(Player.white),
       kind: kind,
       turn: turn,
-      depthLimit: DEPTH_LIMIT,
+      depthLimit: depthLimit,
     }
     worker.postMessage(data)
     setSolving(true)
@@ -111,6 +111,7 @@ const MateComponent: FC = () => {
       <Stack isInline>
         <KindButtonGroup kind={kind} setKind={setKind} />
         <TurnButtonGroup turn={turn} setTurn={setTurn} />
+        <DepthLimitButtonGroup depthLimit={depthLimit} setDepthLimit={setDepthLimit} />
       </Stack>
       <SolveButton
         solution={solution}
@@ -173,6 +174,30 @@ const TurnButtonGroup: FC<{ turn: boolean; setTurn: (turn: boolean) => void }> =
     />
   </ButtonGroup>
 )
+
+const DepthLimitButtonGroup: FC<{ depthLimit: number; setDepthLimit: (d: number) => void }> = ({
+  depthLimit,
+  setDepthLimit,
+}) => {
+  const { getInputProps, getIncrementButtonProps, getDecrementButtonProps } = useNumberInput({
+    step: 1,
+    min: 1,
+    max: 100,
+    value: depthLimit,
+    onChange: s => setDepthLimit(parseInt(s, 10)),
+  })
+
+  const inc = getIncrementButtonProps()
+  const dec = getDecrementButtonProps()
+  const input = getInputProps({ readOnly: true })
+  return (
+    <ButtonGroup size="sm" isAttached>
+      <Button {...dec}>-</Button>
+      <Input size="sm" width="3rem" textAlign="right" {...input} />
+      <Button {...inc}>+</Button>
+    </ButtonGroup>
+  )
+}
 
 const SolveButton: FC<{
   solution: Point[] | undefined
