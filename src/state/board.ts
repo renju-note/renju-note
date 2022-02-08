@@ -1,4 +1,4 @@
-import { Board, makeBoard, Point } from 'renjukit'
+import { Board, makeBoard, Player, Point, wrapBoard } from 'renjukit'
 import { GameState, PointsState, SegmentsState } from './common'
 
 const boardModes = [
@@ -166,11 +166,12 @@ export class BoardState {
 
   /* encode */
   convertMovesToStones(): BoardState {
+    const board = wrapBoard(this.current)
     return this.update({
       mode: BoardMode.game,
       game: new GameState(),
-      freeBlacks: new PointsState({ points: this.blacks }),
-      freeWhites: new PointsState({ points: this.whites }),
+      freeBlacks: new PointsState({ points: board.stones(Player.black) }),
+      freeWhites: new PointsState({ points: board.stones(Player.white) }),
     })
   }
 
