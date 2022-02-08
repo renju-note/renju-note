@@ -32,24 +32,20 @@ import { BasicContext, PreferenceContext, PreferenceOption } from '../../context
 
 type MateKind = 'vcf' | 'vct'
 
-const worker = new Worker()
-
 const DEPTH_LIMIT = 100
 
-const Default: FC = () => {
-  return (
-    <Stack>
-      <CurrentStateComponent />
-      <MateComponent />
-      <Text color="gray.600" pt="3rem" pb="1rem" textAlign="center">
-        Powered by&nbsp;
-        <Link href="https://github.com/renju-note/quintet" color="teal.500" isExternal>
-          quintet
-        </Link>
-      </Text>
-    </Stack>
-  )
-}
+const Default: FC = () => (
+  <Stack>
+    <CurrentStateComponent />
+    <MateComponent />
+    <Text color="gray.600" pt="3rem" pb="1rem" textAlign="center">
+      Powered by&nbsp;
+      <Link href="https://github.com/renju-note/quintet" color="teal.500" isExternal>
+        quintet
+      </Link>
+    </Text>
+  </Stack>
+)
 
 const CurrentStateComponent: FC = () => {
   const { boardState } = useContext(BasicContext)
@@ -79,6 +75,8 @@ const MateComponent: FC = () => {
   const [solution, setSolution] = useState<Point[]>()
   const [solving, setSolving] = useState<boolean>(false)
 
+  const [worker, setWorker] = useState(() => new Worker())
+
   worker.onmessage = (event: MessageEvent) => {
     const { solution, turn } = event.data as { solution: Point[]; turn: boolean }
     setSolution(solution)
@@ -98,9 +96,15 @@ const MateComponent: FC = () => {
     setSolving(true)
   }
 
-  const onReset = () => {
+  const onClear = () => {
     setBoardState(boardState.setMarkerPath([]))
     setSolution(undefined)
+  }
+
+  const onAbort = () => {
+    worker.terminate()
+    setWorker(new Worker())
+    setSolving(false)
   }
   return (
     <>
@@ -108,25 +112,18 @@ const MateComponent: FC = () => {
         <KindButtonGroup kind={kind} setKind={setKind} />
         <TurnButtonGroup turn={turn} setTurn={setTurn} />
       </Stack>
-      {solution === undefined ? (
-        <Button size="sm" colorScheme="blue" onClick={onSolve}>
-          {solving && <Spinner size="sm" mr="0.5rem" />}
-          {solving ? 'Press to Abort' : 'Solve'}
-        </Button>
-      ) : solution.length === 0 ? (
-        <Button size="sm" colorScheme="red" variant="outline" onClick={onReset}>
-          Not Found. (Press to Reset)
-        </Button>
-      ) : (
-        <Button size="sm" colorScheme="green" variant="outline" onClick={onReset}>
-          Found! (Press to Reset)
-        </Button>
-      )}
+      <SolveButton
+        solution={solution}
+        solving={solving}
+        onSolve={onSolve}
+        onAbort={onAbort}
+        onClear={onClear}
+      />
       {solution !== undefined && solution.length !== 0 && (
         <SolutionComponent
           turn={turn}
           solution={solution}
-          resetSolution={() => setSolution(undefined)}
+          onClearSolution={() => setSolution(undefined)}
         />
       )}
     </>
@@ -177,11 +174,46 @@ const TurnButtonGroup: FC<{ turn: boolean; setTurn: (turn: boolean) => void }> =
   </ButtonGroup>
 )
 
+const SolveButton: FC<{
+  solution: Point[] | undefined
+  solving: boolean
+  onSolve: () => void
+  onAbort: () => void
+  onClear: () => void
+}> = ({ solution, solving, onSolve, onAbort, onClear }) => {
+  if (solving) {
+    return (
+      <Button size="sm" variant="outline" colorScheme="blue" onClick={onAbort}>
+        <Spinner size="sm" mr="0.5rem" />
+        Press to Abort
+      </Button>
+    )
+  } else if (solution !== undefined && solution.length === 0) {
+    return (
+      <Button size="sm" variant="outline" colorScheme="red" onClick={onClear}>
+        Not Found. (Press to Reset)
+      </Button>
+    )
+  } else if (solution !== undefined && solution.length !== 0) {
+    return (
+      <Button size="sm" variant="outline" colorScheme="green" onClick={onClear}>
+        Found! (Press to Reset)
+      </Button>
+    )
+  } else {
+    return (
+      <Button size="sm" colorScheme="blue" onClick={onSolve}>
+        Solve
+      </Button>
+    )
+  }
+}
+
 const SolutionComponent: FC<{
   turn: boolean
   solution: Point[]
-  resetSolution: () => void
-}> = ({ turn, solution, resetSolution }) => {
+  onClearSolution: () => void
+}> = ({ turn, solution, onClearSolution }) => {
   const { boardState, setBoardState } = useContext(BasicContext)
   const onPut = () => {
     const message = 'All of existent moves will be converted to free (unordered) stones. OK?'
@@ -189,7 +221,7 @@ const SolutionComponent: FC<{
     const newGame = new GameState({ main: new Game({ moves: solution, inverted: !turn }) })
     const newBoard = boardState.convertMovesToStones().setMarkerPath([]).setGame(newGame)
     setBoardState(newBoard)
-    resetSolution()
+    onClearSolution()
   }
   return (
     <>
