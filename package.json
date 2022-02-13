@@ -15,7 +15,7 @@
     "@chakra-ui/react": "^1.5.0",
     "@emotion/react": "^11.0.0",
     "@emotion/styled": "^11.0.0",
-    "@renju-note/quintet": "^0.8.1",
+    "@renju-note/quintet": "^0.9.1",
     "dexie": "^3.0.2",
     "firebase": "^8.4.1",
     "framer-motion": "^4.0.0",
