@@ -17,7 +17,7 @@ ctx.onmessage = async (event: MessageEvent) => {
   const whiteCodes = new Uint8Array(whites.map(([x, y]) => quintet.encode_xy(x, y)))
   const rawSolution =
     kind == 'vct'
-      ? quintet.solve_vct(blackCodes, whiteCodes, turn, depthLimit)
+      ? quintet.solve_vct_dfpn(blackCodes, whiteCodes, turn, depthLimit)
       : quintet.solve_vcf(blackCodes, whiteCodes, turn, depthLimit)
   const solution =
     rawSolution === undefined

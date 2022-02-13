@@ -71,7 +71,7 @@ const MateComponent: FC = () => {
 
   const [kind, setKind] = useState<MateKind>('vcf')
   const [turn, setTurn] = useState<boolean>(true)
-  const [depthLimit, setDepthLimit] = useState<number>(20)
+  const [depthLimit, setDepthLimit] = useState<number>(8)
   const [solution, setSolution] = useState<Point[]>()
   const [solving, setSolving] = useState<boolean>(false)
 
@@ -180,11 +180,11 @@ const DepthLimitButtonGroup: FC<{ depthLimit: number; setDepthLimit: (d: number)
   setDepthLimit,
 }) => {
   const { getInputProps, getIncrementButtonProps, getDecrementButtonProps } = useNumberInput({
-    step: 1,
+    step: 2,
     min: 1,
-    max: 100,
-    value: depthLimit,
-    onChange: s => setDepthLimit(parseInt(s, 10)),
+    max: 225,
+    value: depthLimit * 2 - 1,
+    onChange: s => setDepthLimit(~~((parseInt(s, 10) + 1) / 2)),
   })
 
   const inc = getIncrementButtonProps()
