@@ -38,8 +38,8 @@ const Default: FC<Props> = ({ isOpen, onClose }) => {
             <List>
               <ListItem>
                 <ListIcon as={FiTwitter} />
-                <Link href="//twitter.com/renjunotecom" color="teal.500" isExternal>
-                  @renjunotecom
+                <Link href="//twitter.com/yubessy_renju" color="teal.500" isExternal>
+                  @yubessy_renju
                 </Link>
                 &nbsp;-&nbsp;contact
               </ListItem>
