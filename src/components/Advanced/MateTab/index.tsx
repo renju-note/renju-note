@@ -31,7 +31,7 @@ import { Game } from '../../../rule'
 import { GameState } from '../../../state'
 import { BasicContext, PreferenceContext, PreferenceOption } from '../../contexts'
 
-type MateKind = 'vcf' | 'vct'
+type MateMode = 'vcf' | 'vct'
 
 const Default: FC = () => (
   <Stack>
@@ -69,9 +69,9 @@ const MateComponent: FC = () => {
   const { boardState, setBoardState } = useContext(BasicContext)
   const current = wrapBoard(boardState.current)
 
-  const [kind, setKind] = useState<MateKind>('vcf')
+  const [mode, setMode] = useState<MateMode>('vcf')
+  const [limit, setLimit] = useState<number>(8)
   const [turn, setTurn] = useState<boolean>(true)
-  const [depthLimit, setDepthLimit] = useState<number>(8)
   const [solution, setSolution] = useState<Point[]>()
   const [solving, setSolving] = useState<boolean>(false)
 
@@ -86,11 +86,11 @@ const MateComponent: FC = () => {
 
   const onSolve = () => {
     const data = {
+      mode,
+      limit,
       blacks: current.stones(Player.black),
       whites: current.stones(Player.white),
-      kind: kind,
-      turn: turn,
-      depthLimit: depthLimit,
+      turn,
     }
     worker.postMessage(data)
     setSolving(true)
@@ -109,9 +109,9 @@ const MateComponent: FC = () => {
   return (
     <>
       <Stack isInline>
-        <KindButtonGroup kind={kind} setKind={setKind} />
+        <ModeButtonGroup kind={mode} setKind={setMode} />
         <TurnButtonGroup turn={turn} setTurn={setTurn} />
-        <DepthLimitButtonGroup depthLimit={depthLimit} setDepthLimit={setDepthLimit} />
+        <LimitButtonGroup limit={limit} setLimit={setLimit} />
       </Stack>
       <SolveButton
         solution={solution}
@@ -131,7 +131,7 @@ const MateComponent: FC = () => {
   )
 }
 
-const KindButtonGroup: FC<{ kind: MateKind; setKind: (kind: MateKind) => void }> = ({
+const ModeButtonGroup: FC<{ kind: MateMode; setKind: (kind: MateMode) => void }> = ({
   kind,
   setKind,
 }) => (
@@ -175,16 +175,16 @@ const TurnButtonGroup: FC<{ turn: boolean; setTurn: (turn: boolean) => void }> =
   </ButtonGroup>
 )
 
-const DepthLimitButtonGroup: FC<{ depthLimit: number; setDepthLimit: (d: number) => void }> = ({
-  depthLimit,
-  setDepthLimit,
+const LimitButtonGroup: FC<{ limit: number; setLimit: (d: number) => void }> = ({
+  limit,
+  setLimit,
 }) => {
   const { getInputProps, getIncrementButtonProps, getDecrementButtonProps } = useNumberInput({
     step: 2,
     min: 1,
     max: 225,
-    value: depthLimit * 2 - 1,
-    onChange: s => setDepthLimit(~~((parseInt(s, 10) + 1) / 2)),
+    value: limit * 2 - 1,
+    onChange: s => setLimit(~~((parseInt(s, 10) + 1) / 2)),
   })
 
   const inc = getIncrementButtonProps()
