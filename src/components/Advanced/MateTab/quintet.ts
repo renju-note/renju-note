@@ -3,20 +3,21 @@
 const ctx: Worker = self as any
 
 interface SolveArguments {
-  mode: 'vcf' | 'vct'
   turn: boolean
+  mode: 'vcf' | 'vct'
   limit: number
+  threatLimit: number
   blacks: [number, number][]
   whites: [number, number][]
 }
 
 ctx.onmessage = async (event: MessageEvent) => {
   const quintet = await import('@renju-note/quintet')
-  const { mode, limit, blacks, whites, turn } = event.data as SolveArguments
+  const { mode, limit, blacks, whites, turn, threatLimit } = event.data as SolveArguments
   const blackCodes = new Uint8Array(blacks.map(([x, y]) => quintet.encode_xy(x, y)))
   const whiteCodes = new Uint8Array(whites.map(([x, y]) => quintet.encode_xy(x, y)))
   const modeCode = mode == 'vcf' ? 0 : 16; // 0 = VCF, 16 = VCTDFPN
-  const rawSolution = quintet.solve(modeCode, limit, blackCodes, whiteCodes, turn, limit);
+  const rawSolution = quintet.solve(modeCode, limit, blackCodes, whiteCodes, turn, threatLimit);
   console.log(rawSolution)
   const solution =
     rawSolution === undefined
