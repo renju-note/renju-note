@@ -82,8 +82,8 @@ const Default: FC = () => {
             </ListItem>
             <ListItem>
               RIF&apos;s official dataset can be downloaded from{' '}
-              <Link href="http://www.renju.net/downloads/games.php" color="teal.500" isExternal>
-                RenjuNet
+              <Link href="//www.renju.net/game/" color="teal.500" isExternal>
+                RenjuNet (XML format)
               </Link>
               . Be sure to follow rules presented on the site.
             </ListItem>
