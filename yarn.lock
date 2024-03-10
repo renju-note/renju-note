@@ -2509,10 +2509,10 @@
     prop-types "^15.7.2"
     tslib "^2.1.0"
 
-"@renju-note/quintet@^0.10.3":
-  version "0.10.3"
-  resolved "https://registry.yarnpkg.com/@renju-note/quintet/-/quintet-0.10.3.tgz#d88f29e172efc44106d53211d6592327a9c18bfe"
-  integrity sha512-KAc4d9bs3jXM1HG8nSYbHD7E/Yryk7HdDa9npoxQwciaIoogq8pMgcsxqUtCjWvaUhMu3XQmyBM+N0y/S2tDDQ==
+"@renju-note/quintet@^0.10.4":
+  version "0.10.4"
+  resolved "https://registry.yarnpkg.com/@renju-note/quintet/-/quintet-0.10.4.tgz#b11a42b584e8cd98551cfe1be1eadd383f6c463f"
+  integrity sha512-ccnPtne1INFDbOSTFQE+q0vJjMd3/vixWGK0LnVOmJ6kSSoxK3tbJULN4rMk4styaULJh2PC5oLNwUgfCOx5gg==
 
 "@rollup/plugin-node-resolve@^7.1.1":
   version "7.1.3"
