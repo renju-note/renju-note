@@ -57,7 +57,7 @@
   "private": true,
   "proxy": "http://localhost:5050",
   "scripts": {
-    "build": "craco build",
+    "build": "NODE_OPTIONS='--openssl-legacy-provider' craco build",
     "eject": "craco eject",
     "fmt": "prettier --write 'src/**/*'",
     "lint": "eslint --fix 'src/**/*'",
